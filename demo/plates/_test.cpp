@@ -239,7 +239,7 @@ int main() {
   //     // return true;
   //     return math::similarity (U,V) > std::cos(M_PI * 130.0f/180.0f);
   // };
-  // auto is_low_stress = [average_separation](auto A, auto U, auto O, auto V) { 
+  // auto is_unfractured = [average_separation](auto A, auto U, auto O, auto V) { 
   //     // count += 1.0f;
   //     // sum += glm::distance(A+U,B+V) - glm::distance(A,B);
   //     // return math::similarity(U,B-A) <= 0.5 && (glm::distance(A+U,B+V) - glm::distance(A,B)) < 7500.0f;
@@ -254,20 +254,28 @@ int main() {
   //     auto displacement = (std::abs(glm::distance(A+U,B+V)-average_separation) / average_separation);
   //     return std::isnan(displacement) || (displacement < 1.2e5f);
   // };
-  auto is_low_stress = [](vec3 A, vec3 U, vec3 B, vec3 V) { 
+  auto is_unfractured = [](vec3 A, vec3 U, vec3 B, vec3 V) { 
       // std::cout<<std::to_string(V.x) << " " << std::to_string(V.y) << " " << std::to_string(V.z) <<std::endl;
       // vec3 A2 = A+U;
       // vec3 B2 = B+V;
-      vec3 I  = B-A;
-      // vec3 I2 = B2-A2;
-      vec3 DL = V-U; //=I2-I;
+      vec3 I = B-A;
       float l = glm::length(I);
+      vec3 K = glm::normalize(A+B);
+      vec3 J = l*glm::normalize(glm::cross(I,K)); // orthogonal to I, running along the surface, same scale as I
+      // vec3 I2 = B2-A2;
+      vec3 DL = V-U; // equivalent to I2-I, calculated as V-U to avoid precision issues;
       float tensile_DL = glm::dot(DL,I) / l; // effectively the scalar projection of DL onto I
+      float shear_DL = glm::dot(DL,J) / l; // effectively the scalar projection of DL onto J
       float tensile_stress_factor = tensile_DL / l; // proportionate to tensile stress
-      float compressive_strength(-0.0);
-      float tensile_strength(3.0e-11);
-      std::cout<<std::to_string(tensile_stress_factor*1e12) <<std::endl;
-      return compressive_strength < tensile_stress_factor && tensile_stress_factor < tensile_strength;
+      float shear_stress_factor = shear_DL / l; // proportionate to shear stress
+      float compressive_strength(-1e-30);
+      float tensile_strength(3e-11);
+      float shear_strength(3e-11);
+      std::cout<<std::to_string(shear_stress_factor*1e12) <<std::endl;
+      return 
+        compressive_strength < tensile_stress_factor && tensile_stress_factor < tensile_strength
+        && std::abs(shear_stress_factor) < shear_strength;
+      ;
   };
   auto distance = [average_separation](auto A, auto U, auto B, auto V) { 
     return 1.0f; // don't care about priority, it will all get considered in the end
@@ -279,7 +287,7 @@ int main() {
   // };
 
   // segmentation
-  auto fill = unlayered::neighbor_based_flood_filling<int,float>(is_low_stress, distance);
+  auto fill = unlayered::neighbor_based_flood_filling<int,float>(is_unfractured, distance);
   iterated::Ternary ternary;
   std::vector<float> lengths(vertex_gradient.size());
   metric3.length(vertex_gradient, lengths);
