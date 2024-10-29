@@ -233,12 +233,12 @@ int main() {
   calculus.gradient(coarse, vertex_scalars1, vertex_gradient);
 
   float average_separation(world_radius/meter*3.1415926535/coarse.vertices_per_meridian());
-  auto is_similar = [average_separation](auto A, auto U, auto O, auto V) { 
-      // auto AOV = math::similarity(A-O,V) > -0.5f;
-      // return std::isnan(AOV)? true : AOV;
-      // return true;
-      return math::similarity (U,V) > std::cos(M_PI * 90.0f/180.0f);
-  };
+  // auto is_similar = [average_separation](auto A, auto U, auto O, auto V) { 
+  //     // auto AOV = math::similarity(A-O,V) > -0.5f;
+  //     // return std::isnan(AOV)? true : AOV;
+  //     // return true;
+  //     return math::similarity (U,V) > std::cos(M_PI * 130.0f/180.0f);
+  // };
   // auto is_low_stress = [average_separation](auto A, auto U, auto O, auto V) { 
   //     // count += 1.0f;
   //     // sum += glm::distance(A+U,B+V) - glm::distance(A,B);
@@ -254,13 +254,23 @@ int main() {
   //     auto displacement = (std::abs(glm::distance(A+U,B+V)-average_separation) / average_separation);
   //     return std::isnan(displacement) || (displacement < 1.2e5f);
   // };
-  auto distance = [average_separation](auto A, auto U, auto O, auto V) { 
-      auto B = A + average_separation*glm::normalize(O-A);
-      auto displacement = (std::abs(glm::distance(A+U,B+V)-average_separation) / average_separation);
-      // auto AO = std::acos(math::similarity(A,O));
-      // auto UV = std::acos(math::similarity(U,V));
-      return displacement;
-      // return AO;// + std::isnan(UV)?0.0f:UV;
+  auto is_low_stress = [](vec3 A, vec3 U, vec3 B, vec3 V) { 
+      // std::cout<<std::to_string(V.x) << " " << std::to_string(V.y) << " " << std::to_string(V.z) <<std::endl;
+      // vec3 A2 = A+U;
+      // vec3 B2 = B+V;
+      vec3 I  = B-A;
+      // vec3 I2 = B2-A2;
+      vec3 DL = V-U; //=I2-I;
+      float l = glm::length(I);
+      float tensile_DL = glm::dot(DL,I) / l; // effectively the scalar projection of DL onto I
+      float tensile_stress_factor = tensile_DL / l; // proportionate to tensile stress
+      float compressive_strength(-0.0);
+      float tensile_strength(3.0e-11);
+      std::cout<<std::to_string(tensile_stress_factor*1e12) <<std::endl;
+      return compressive_strength < tensile_stress_factor && tensile_stress_factor < tensile_strength;
+  };
+  auto distance = [average_separation](auto A, auto U, auto B, auto V) { 
+    return 1.0f; // don't care about priority, it will all get considered in the end
   };
   // auto displacement = [average_separation](auto A, auto U, auto O, auto V) { 
   //     auto B = A + average_separation*glm::normalize(O-A);
@@ -269,24 +279,24 @@ int main() {
   // };
 
   // segmentation
-  auto fill = unlayered::seed_based_flood_filling<int,float>(is_similar, distance);
+  auto fill = unlayered::neighbor_based_flood_filling<int,float>(is_low_stress, distance);
   iterated::Ternary ternary;
   std::vector<float> lengths(vertex_gradient.size());
   metric3.length(vertex_gradient, lengths);
   std::vector<bool> is_considered(vertex_gradient.size(), true);
-  unlayered::SeedBasedFloodFillState<int,float> state1 (int(order.max_id(lengths)), int(vertex_gradient.size()));
+  unlayered::FloodFillState<int,float> state1 (int(order.max_id(lengths)), int(vertex_gradient.size()));
   for (int i = 0; i < 30; ++i)
   {
     fill.advance(coarse, vertex_gradient, is_considered, state1);
   }
   ternary(is_considered, lengths, procedural::uniform(0), lengths);
-  unlayered::SeedBasedFloodFillState<int,float> state2 (int(order.max_id(lengths)), int(vertex_gradient.size()));
+  unlayered::FloodFillState<int,float> state2 (int(order.max_id(lengths)), int(vertex_gradient.size()));
   for (int i = 0; i < 30; ++i)
   {
     fill.advance(coarse, vertex_gradient, is_considered, state2);
   }
   ternary(is_considered, lengths, procedural::uniform(0), lengths);
-  unlayered::SeedBasedFloodFillState<int,float> state3 (int(order.max_id(lengths)), int(vertex_gradient.size()));
+  unlayered::FloodFillState<int,float> state3 (int(order.max_id(lengths)), int(vertex_gradient.size()));
   for (int i = 0; i < 30; ++i)
   {
     fill.advance(coarse, vertex_gradient, is_considered, state3);
