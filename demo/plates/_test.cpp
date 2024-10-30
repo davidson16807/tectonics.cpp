@@ -277,8 +277,19 @@ int main() {
         && std::abs(shear_stress_factor) < shear_strength;
       ;
   };
-  auto distance = [average_separation](auto A, auto U, auto B, auto V) { 
-    return 1.0f; // don't care about priority, it will all get considered in the end
+  auto distance = [average_separation](vec3 A, vec3 U, vec3 B, vec3 V) { 
+    vec3 I = B-A;
+    float l = glm::length(I);
+    vec3 K = glm::normalize(A+B);
+    vec3 J = l*glm::normalize(glm::cross(I,K)); // orthogonal to I, running along the surface, same scale as I
+    // vec3 I2 = B2-A2;
+    vec3 DL = V-U; // equivalent to I2-I, calculated as V-U to avoid precision issues;
+    float tensile_DL = glm::dot(DL,I) / l; // effectively the scalar projection of DL onto I
+    float shear_DL = glm::dot(DL,J) / l; // effectively the scalar projection of DL onto J
+    float tensile_stress_factor = tensile_DL / l; // proportionate to tensile stress
+    float shear_stress_factor = shear_DL / l; // proportionate to shear stress
+    return std::abs(tensile_stress_factor) + std::abs(shear_stress_factor);
+    // return 1.0f; // don't care about priority, it will all get considered in the end
   };
   // auto displacement = [average_separation](auto A, auto U, auto O, auto V) { 
   //     auto B = A + average_separation*glm::normalize(O-A);
