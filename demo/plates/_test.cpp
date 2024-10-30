@@ -232,7 +232,7 @@ int main() {
   std::vector<vec3> vertex_gradient(coarse.vertex_count());
   calculus.gradient(coarse, vertex_scalars1, vertex_gradient);
 
-  float average_separation(world_radius/meter*3.1415926535/coarse.vertices_per_meridian());
+  // float average_separation(world_radius/meter*3.1415926535/coarse.vertices_per_meridian());
   // auto is_similar = [average_separation](auto A, auto U, auto O, auto V) { 
   //     // auto AOV = math::similarity(A-O,V) > -0.5f;
   //     // return std::isnan(AOV)? true : AOV;
@@ -277,7 +277,7 @@ int main() {
         && std::abs(shear_stress_factor) < shear_strength;
       ;
   };
-  auto distance = [average_separation](vec3 A, vec3 U, vec3 B, vec3 V) { 
+  auto distance = [](vec3 A, vec3 U, vec3 B, vec3 V) { 
     vec3 I = B-A;
     float l = glm::length(I);
     vec3 K = glm::normalize(A+B);
@@ -303,24 +303,16 @@ int main() {
   std::vector<float> lengths(vertex_gradient.size());
   metric3.length(vertex_gradient, lengths);
   std::vector<bool> is_considered(vertex_gradient.size(), true);
-  unlayered::FloodFillState<int,float> state1 (int(order.max_id(lengths)), int(vertex_gradient.size()));
-  for (int i = 0; i < 30; ++i)
+  std::vector<unlayered::FloodFillState<int,float>> states;
+  for(std::size_t j(0); j<8; j++)
   {
-    fill.advance(coarse, vertex_gradient, is_considered, state1);
+    states.emplace_back(int(order.max_id(lengths)), int(vertex_gradient.size()));
+    for (int i = 0; i < 30; ++i)
+    {
+      fill.advance(coarse, vertex_gradient, is_considered, states[j]);
+    }
+    ternary(is_considered, lengths, procedural::uniform(0), lengths);
   }
-  ternary(is_considered, lengths, procedural::uniform(0), lengths);
-  unlayered::FloodFillState<int,float> state2 (int(order.max_id(lengths)), int(vertex_gradient.size()));
-  for (int i = 0; i < 30; ++i)
-  {
-    fill.advance(coarse, vertex_gradient, is_considered, state2);
-  }
-  ternary(is_considered, lengths, procedural::uniform(0), lengths);
-  unlayered::FloodFillState<int,float> state3 (int(order.max_id(lengths)), int(vertex_gradient.size()));
-  for (int i = 0; i < 30; ++i)
-  {
-    fill.advance(coarse, vertex_gradient, is_considered, state3);
-  }
-  ternary(is_considered, lengths, procedural::uniform(0), lengths);
 
   iterated::Bitset bitset{adapted::BooleanBitset{}};
   unlayered::Morphology morphology{bitset};
@@ -419,12 +411,14 @@ int main() {
 
       if (frame_id == 0)
       {
-        fill.advance(coarse, vertex_gradient, is_considered, state1);
-        fill.advance(coarse, vertex_gradient, is_considered, state2);
-        fill.advance(coarse, vertex_gradient, is_considered, state3);
-        ternary(state1.is_included, procedural::uniform(1), buffer_scalars1, buffer_scalars1);
-        ternary(state2.is_included, procedural::uniform(2), buffer_scalars1, buffer_scalars1);
-        ternary(state3.is_included, procedural::uniform(3), buffer_scalars1, buffer_scalars1);
+        for (std::size_t j(1); j < states.size(); ++j)
+        {
+          fill.advance(coarse, vertex_gradient, is_considered, states[j]);
+        }
+        for (std::size_t j(1); j < states.size(); ++j)
+        {
+          ternary(states[j].is_included, procedural::uniform(j), buffer_scalars1, buffer_scalars1);
+        }
       }
       frame_id = (frame_id+1)%10;
 

@@ -7,7 +7,7 @@
 // in-house libraries
 #include <index/iterated/Nary.hpp>
 
-#include "FloodFillCandidateComparison.hpp"
+#include "FloodFillState.hpp"
 
 namespace unlayered
 {
