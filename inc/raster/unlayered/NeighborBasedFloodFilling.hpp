@@ -59,7 +59,8 @@ namespace unlayered
                     {
                         if (is_similar(
                                 grid.vertex_position(cell_id), raster[cell_id], 
-                                neighbor_position, raster[neighbor_id]))
+                                neighbor_position, raster[neighbor_id],
+                                grid.vertex_position(io.seed_id)))
                         {
                             // add neighbor to region
                             is_considered[neighbor_id] = 0;
@@ -67,7 +68,8 @@ namespace unlayered
                             io.candidates.emplace(neighbor_id, 
                                 priority(
                                     grid.vertex_position(cell_id), raster[cell_id], 
-                                    neighbor_position, raster[neighbor_id])
+                                    neighbor_position, raster[neighbor_id],
+                                    grid.vertex_position(io.seed_id))
                             );
                         }
                     }
