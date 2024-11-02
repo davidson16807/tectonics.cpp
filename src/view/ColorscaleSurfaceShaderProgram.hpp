@@ -1,7 +1,6 @@
 #pragma once
 
 // std libraries
-#include <regex>          // std::regex
 #include <vector>         // std::vector
 #include <unordered_set>  // std::unordered_set
 

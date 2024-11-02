@@ -1,0 +1,93 @@
+all light that reaches the camera comes from considering:
+	emission
+	reflection
+	extinction
+	attenuation
+	scattering
+
+things these shaders model:
+	surface emission
+	surface reflection
+	gas emission
+	gas scattering/attenuation
+	camera point spread function
+
+things these shaders do not distinguish:
+	terrestrial vs gas giant
+	gas giant vs brown dwarf vs star
+
+RealisticSphereSwarmShaderProgram
+	conditions:
+		far enough away not too appreciate terrain
+		close enough not to allow point source
+	behavior: 
+		raymarching done in fragment shader
+	hot gasses:
+		radius where temperature/density is inconsequential
+		core temperature
+	hot surfaces:
+		surface temperature
+		emmisivity (potentially assumed constant)
+	gasses:
+		betas for rayleigh/mie/absorption
+		reference radius
+		density at reference radius
+		atmosphere scale height
+	surfaces:
+		main light source position
+		main light source temperature
+		main light source luminosity
+		surface reflectivity
+		surface roughness
+		surface metallicity (?)
+	radius
+	position
+
+RealisticPointSourceSwarmShaderProgram
+	conditions:
+		far enough away not to be represented by point source
+	behavior: 
+		raymarching done in vertex shader
+		gaussian point spread function calculated procedurally in fragment shader
+	hot gasses:
+		luminosity
+		surface temperature
+	hot surfaces:
+		surface temperature
+		emmisivity (potentially assumed constant)
+	gasses:
+		betas for rayleigh/mie/absorption
+		reference radius
+		density at reference radius
+		atmosphere scale height
+	surfaces:
+		main light source position
+		main light source temperature
+		main light source luminosity
+		surface reflectivity
+		surface roughness
+		surface metallicity (?)
+	position
+	point spread function parameter(s)
+
+RealisticSurfaceShaderProgram
+	conditions:
+		close enough to appreciate differences in terrain
+	behavior:
+		no raymarching
+	hot surfaces:
+		surface temperature
+		emmisivity (potentially assumed constant)
+	surfaces:
+		surface reflectivity
+		surface roughness
+		surface metallicity (?)
+
+RealisticAtmosphereSwarmShaderProgram
+	betas for rayleigh/mie/absorption
+	reference radius
+	density at reference radius
+	atmosphere scale height
+
+RealisticRingSwarmShaderProgram
+
