@@ -22,6 +22,7 @@ namespace view
 		glm::mat4 view_matrix;
 		glm::mat4 model_matrix;
 		glm::mat4 projection_matrix;
+		glm::vec2 resolution;
 		ProjectionType projection_type;
 		RenderPassType render_pass;
 
@@ -29,6 +30,7 @@ namespace view
 			view_matrix(1),
 			model_matrix(1),
 			projection_matrix(1),
+			resolution(1),
 			projection_type(ProjectionType::perspective),
 			render_pass(RenderPassType::solids)
 		{}
