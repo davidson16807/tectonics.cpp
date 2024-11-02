@@ -118,13 +118,17 @@ namespace view
 			        	where clip_position = 2 * gl_FragCoord/resolution - 1, 
 			        	however element_for_clip assumes a single value for all fragments.
 			        	Fortunately, this shader program is intended for rendering distant objects,
-			        	so projection can be assumed to be roughly orthographic.
+			        	so projection can be assumed to be roughly orthographic,
+			        	such that vec3(0,0,1) is the view direction.
 			        	Element vertices are hard coded so that x and y element coordinates
 			        	approximate those of a unit sphere.
 			        	*/
 			        	float z = 1-dot(fragment_element_position.xy, fragment_element_position.xy);
 			        	if(z<0.0) { discard; }
-			            fragment_color = vec4(fragment_element_position.xy,z,1);
+			        	vec3 N = vec3(fragment_element_position.xy,z);
+			        	vec3 V = vec3(0,0,1);
+			        	vec3 L = normalize(vec3(1,1,1));
+			            fragment_color = vec4(vec3(dot(N,L)),1);
 			        }
 				)"
 			),
