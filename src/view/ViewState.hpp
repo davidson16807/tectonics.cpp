@@ -23,6 +23,7 @@ namespace view
 		glm::mat4 model_matrix;
 		glm::mat4 projection_matrix;
 		glm::vec2 resolution;
+		float point_spread_function_clipspace_standard_deviation;
 		ProjectionType projection_type;
 		RenderPassType render_pass;
 
@@ -31,9 +32,11 @@ namespace view
 			model_matrix(1),
 			projection_matrix(1),
 			resolution(1),
+			point_spread_function_clipspace_standard_deviation(1.0),
 			projection_type(ProjectionType::perspective),
 			render_pass(RenderPassType::solids)
 		{}
 	};
 
 }
+
