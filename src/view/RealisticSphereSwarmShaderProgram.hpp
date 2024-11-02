@@ -27,7 +27,7 @@ namespace view
 	No further assumptions are made about the spheres. 
 
 	The assumptions above are designed so that `RealisticSphereSwarmShaderProgram` 
-	should be able to represent virtually all heavenly spherical bodies when seen from a distance.
+	should be able to approximate virtually all heavenly spherical bodies when viewed from a distance.
 	`RealisticSphereSwarmShaderProgram` can be combined with other shaders 
 	to capture notable nonspherical effects such as black hole discs and ringed bodies.
 	*/
@@ -65,6 +65,7 @@ namespace view
 	    GLuint modelMatrixLocation;
 	    GLuint viewMatrixLocation;
 		GLuint projectionMatrixLocation;
+		GLuint resolutionLocation;
 
 		bool isDisposed;
 
@@ -75,12 +76,13 @@ namespace view
 			        uniform mat4  global_for_local;
 			        uniform mat4  view_for_global;
 			        uniform mat4  clip_for_view;
+			        uniform mat4  view_for_clip;
 			        in      vec3  element_position;
 			        in      vec3  instance_origin;
 			        in      float instance_radius;
-			        out     vec4  fragment_color_in;
+			        out     mat4  element_for_clip;
+			        out     vec3  fragment_element_position;
 			        void main(){
-			            fragment_color_in = vec4(1);
 			        	/*
 			        	spheres are billboards, which must always face the camera:
 			        	for position data: the local→view map is the usual implementation
@@ -92,22 +94,37 @@ namespace view
 			        	mat4 instance_for_element = mat4(scale_map[0], scale_map[1], scale_map[2], vec4(instance_origin,1));
 			        	mat4 global_for_element = global_for_local * instance_for_element;
 			        	mat4 position_map = view_for_global * global_for_element;
-			        	mat4 view_for_local = mat4(global_for_element[0], global_for_element[1], global_for_element[2], position_map[3]);
-			            gl_Position = clip_for_view * view_for_local * vec4(element_position,1);
+			        	mat4 view_for_element = mat4(global_for_element[0], global_for_element[1], global_for_element[2], position_map[3]);
+			        	mat4 clip_for_element = clip_for_view * view_for_element;
+			        	vec4 clip_position = clip_for_element * vec4(element_position,1);
+			        	element_for_clip = inverse(clip_for_element);
+			        	fragment_element_position = element_position;
+			            gl_Position = clip_position;
 			        };
 				)"
 			),
 			fragmentShaderGlsl(
 				R"(#version 330
 			        precision mediump float;
-			        in      vec4  fragment_color_in;
+			        uniform vec2  resolution;
+			        in      mat4  element_for_clip;
+			        in      vec3  fragment_element_position;
 			        out     vec4  fragment_color;
 
 			        void main() {
 			        	/*
-			        	the vertex shader is designed such that element coordinates (0,0) are always centermost
+			        	We tried implementing this to consider projection 
+			        	by setting element_position = element_for_clip * clip_position,
+			        	where clip_position = 2 * gl_FragCoord/resolution - 1, 
+			        	however element_for_clip assumes a single value for all fragments.
+			        	Fortunately, this shader program is intended for rendering distant objects,
+			        	so projection can be assumed to be roughly orthographic.
+			        	Element vertices are hard coded so that x and y element coordinates
+			        	approximate those of a unit sphere.
 			        	*/
-			            fragment_color = fragment_color_in;
+			        	float z = 1-dot(fragment_element_position.xy, fragment_element_position.xy);
+			        	if(z<0.0) { discard; }
+			            fragment_color = vec4(fragment_element_position.xy,z,1);
 			        }
 				)"
 			),
@@ -174,6 +191,7 @@ namespace view
 			viewMatrixLocation = glGetUniformLocation(shaderProgramId, "view_for_global");
 			modelMatrixLocation = glGetUniformLocation(shaderProgramId, "global_for_local");
 			projectionMatrixLocation = glGetUniformLocation(shaderProgramId, "clip_for_view");
+			resolutionLocation = glGetUniformLocation(shaderProgramId, "resolution");
 
 	        // ATTRIBUTES
 
@@ -264,6 +282,7 @@ namespace view
 	        glUniformMatrix4fv(viewMatrixLocation,       1, GL_FALSE, glm::value_ptr(view_state.view_matrix));
 	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(view_state.model_matrix));
 	        glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(view_state.projection_matrix));
+	        glUniform2fv      (resolutionLocation,       1, glm::value_ptr(view_state.resolution));
 
 			glDrawArraysInstanced(GL_TRIANGLES, /*array offset*/ 0, /*vertex count*/ elementPositions.size(), instance_origin.size());
 		}
