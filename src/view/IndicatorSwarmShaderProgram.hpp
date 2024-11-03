@@ -39,7 +39,7 @@ namespace view
 		GLuint elementPositionBufferId;
 
 		// instance buffer ids
-		GLuint instancePositionBufferId;
+		GLuint instanceOriginBufferId;
 		GLuint instanceHeadingBufferId;
 		GLuint instanceUpBufferId;
 		GLuint instanceColorBufferId;
@@ -49,7 +49,7 @@ namespace view
 	    GLuint elementPositionLocation;
 
 	    // instance attributes
-		GLuint instancePositionLocation;
+		GLuint instanceOriginLocation;
 		GLuint instanceHeadingLocation;
 		GLuint instanceUpLocation;
 		GLuint instanceColorLocation;
@@ -70,7 +70,7 @@ namespace view
 			        uniform mat4  view_matrix;
 			        uniform mat4  projection_matrix;
 			        in      vec3  element_position;
-			        in      vec3  instance_position;
+			        in      vec3  instance_origin;
 			        in      vec3  instance_heading;
 			        in      vec3  instance_up;
 			        in      vec4  instance_color;
@@ -82,7 +82,7 @@ namespace view
 			            vec3 I = normalize(instance_up);
 			            vec3 J = cross(I,K);
 			            mat3 instance_matrix = instance_scale * (mat3(I,J,K));
-			        	vec3 instance_element_position = (instance_matrix * element_position) + instance_position;
+			        	vec3 instance_element_position = (instance_matrix * element_position) + instance_origin;
 			        	// NOTE: for a heads up display, set all `*_matrix` parameters to identity
 			            gl_Position = projection_matrix * view_matrix * model_matrix * vec4(instance_element_position,1);
 			        };
@@ -167,9 +167,9 @@ namespace view
 		    glEnableVertexAttribArray(elementPositionLocation);
 
 			// create a new vertex buffer object, VBO
-			glGenBuffers(1, &instancePositionBufferId);
-			instancePositionLocation = glGetAttribLocation(shaderProgramId, "instance_position");
-		    glEnableVertexAttribArray(instancePositionLocation);
+			glGenBuffers(1, &instanceOriginBufferId);
+			instanceOriginLocation = glGetAttribLocation(shaderProgramId, "instance_origin");
+		    glEnableVertexAttribArray(instanceOriginLocation);
 
 			// create a new vertex buffer object, VBO
 			glGenBuffers(1, &instanceHeadingBufferId);
@@ -200,7 +200,7 @@ namespace view
 		        isDisposed = true;
 		        glDeleteBuffers(1, &elementPositionBufferId);
 		        glDeleteBuffers(1, &instanceColorBufferId);
-		        glDeleteBuffers(1, &instancePositionBufferId);
+		        glDeleteBuffers(1, &instanceOriginBufferId);
 		        glDeleteBuffers(1, &instanceHeadingBufferId);
 		        glDeleteBuffers(1, &instanceUpBufferId);
 		        glDeleteProgram(shaderProgramId);
@@ -218,7 +218,7 @@ namespace view
 		template <typename T>
 		void draw(
 			const std::vector<glm::vec3>& element_position, 
-			const std::vector<glm::vec3>& instance_position, 
+			const std::vector<glm::vec3>& instance_origin, 
 			const std::vector<glm::vec3>& instance_heading, 
 			const std::vector<glm::vec3>& instance_up, 
 			const std::vector<T>& instance_scale, 
@@ -246,13 +246,13 @@ namespace view
 	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*element_position.size(), &element_position.front(), GL_STATIC_DRAW);
 		    glEnableVertexAttribArray(elementPositionLocation);
             glVertexAttribPointer(elementPositionLocation, 3, GL_FLOAT, normalize, stride, offset);
-		    glVertexAttribDivisor(instancePositionBufferId,0);
+		    glVertexAttribDivisor(instanceOriginBufferId,0);
 
-			glBindBuffer(GL_ARRAY_BUFFER, instancePositionBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*instance_position.size(), &instance_position.front(), GL_DYNAMIC_DRAW);
-		    glEnableVertexAttribArray(instancePositionLocation);
-            glVertexAttribPointer(instancePositionLocation, 3, GL_FLOAT, normalize, stride, offset);
-		    glVertexAttribDivisor(instancePositionLocation,1);
+			glBindBuffer(GL_ARRAY_BUFFER, instanceOriginBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*instance_origin.size(), &instance_origin.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(instanceOriginLocation);
+            glVertexAttribPointer(instanceOriginLocation, 3, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceOriginLocation,1);
 
 			glBindBuffer(GL_ARRAY_BUFFER, instanceHeadingBufferId);
 	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*instance_heading.size(), &instance_heading.front(), GL_DYNAMIC_DRAW);
@@ -283,7 +283,7 @@ namespace view
 	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(view_state.model_matrix));
 	        glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(view_state.projection_matrix));
 
-			glDrawArraysInstanced(gl_mode, /*array offset*/ 0, /*vertex count*/ element_position.size(), instance_position.size());
+			glDrawArraysInstanced(gl_mode, /*array offset*/ 0, /*vertex count*/ element_position.size(), instance_origin.size());
 		}
 	};
 }

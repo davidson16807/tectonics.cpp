@@ -81,7 +81,7 @@ namespace view
 		GLint maxColorLocation;
 		GLint minColorValueLocation;
 		GLint maxColorValueLocation;
-		GLint darken_thresholdLocation;
+		GLint darkenThresholdLocation;
 
 		bool isDisposed;
 
@@ -247,7 +247,7 @@ namespace view
 			maxColorLocation = glGetUniformLocation(shaderProgramId, "max_color");
 			minColorValueLocation = glGetUniformLocation(shaderProgramId, "min_color_value");
 			maxColorValueLocation = glGetUniformLocation(shaderProgramId, "max_color_value");
-			darken_thresholdLocation = glGetUniformLocation(shaderProgramId, "darken_threshold");
+			darkenThresholdLocation = glGetUniformLocation(shaderProgramId, "darken_threshold");
 
 	        // ATTRIBUTES
 
@@ -395,7 +395,7 @@ namespace view
 	        glUniform3fv(maxColorLocation, 1, glm::value_ptr(colorscale_state.max_color));
 	        glUniform1f (minColorValueLocation, colorscale_state.min_color_value);
 	        glUniform1f (maxColorValueLocation, colorscale_state.max_color_value);
-	        glUniform1f (darken_thresholdLocation, colorscale_state.darken_threshold);
+	        glUniform1f (darkenThresholdLocation, colorscale_state.darken_threshold);
 	        glUniform1i (colorscaleTypeLocation, colorscale_state.colorscale_type);
 	        glUniform1f (cullingThresholdLocation, colorscale_state.culling_threshold);
 

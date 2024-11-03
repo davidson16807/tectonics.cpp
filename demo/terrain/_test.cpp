@@ -164,7 +164,7 @@ int main() {
   std::vector<bool> mask2(grid.vertex_count());
   std::vector<bool> mask3(grid.vertex_count());
 
-  copy(vertex_colored_scalars, buffer_color_values);
+  // copy(vertex_colored_scalars, buffer_color_values);
   copy(vertex_scalars1, buffer_scalars1);
   // copy(vertex_scalars2, buffer_scalars2);
   copy(vertex_positions, buffer_positions);
@@ -188,7 +188,8 @@ int main() {
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
   view::ColorscaleSurfacesViewState colorscale_state;
-  colorscale_state.max_color_value = whole::max(buffer_color_values);
+  colorscale_state.max_color_value = whole::max(buffer_scalars1);
+  colorscale_state.min_color_value = whole::min(buffer_scalars1);
   colorscale_state.darken_threshold = whole::mean(buffer_scalars2);
 
   // initialize shader program
@@ -208,7 +209,7 @@ int main() {
 
       colorscale_program.draw(
         buffer_positions,    // position
-        buffer_scalars1, // color value
+        buffer_scalars1,    // color value
         buffer_uniform,      // displacement
         buffer_uniform,      // darken
         buffer_uniform,      // culling

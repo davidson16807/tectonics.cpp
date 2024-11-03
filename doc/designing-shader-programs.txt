@@ -34,8 +34,7 @@ RealisticSphereSwarmShaderProgram
 		density at reference radius
 		atmosphere scale height
 	surfaces:
-		main light source position
-		main light source temperature
+x		main light source position
 		main light source luminosity
 		surface reflectivity
 		surface roughness
@@ -48,7 +47,7 @@ RealisticPointSourceSwarmShaderProgram
 		far enough away not to be represented by point source
 	behavior: 
 		raymarching done in vertex shader
-		gaussian point spread function calculated procedurally in fragment shader
+x		gaussian point spread function calculated procedurally in fragment shader
 	hot gasses:
 		luminosity
 		surface temperature
@@ -61,8 +60,7 @@ RealisticPointSourceSwarmShaderProgram
 		density at reference radius
 		atmosphere scale height
 	surfaces:
-		main light source position
-		main light source temperature
+x		main light source position
 		main light source luminosity
 		surface reflectivity
 		surface roughness

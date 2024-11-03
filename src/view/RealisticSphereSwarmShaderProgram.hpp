@@ -21,9 +21,10 @@ namespace view
 	In gases and plasmas, density drops exponentially with radius,
 	and temperature varies with radius in the same manner seen in main sequence stars
 	(for planets with atmospheres, this assumption is inconsequential).
-	The spheres are illuminated by no more than one point light source, 
+	The spheres are illuminated by no more than one point source of light, 
 	or one point light source overwhelms all others,
 	and the spheres do not create light in any way aside from thermal emission.
+	The projection that spheres are viewed with is suitably close to orthographic.
 	No further assumptions are made about the spheres. 
 
 	The assumptions above are designed so that `RealisticSphereSwarmShaderProgram` 
@@ -77,12 +78,10 @@ namespace view
 			        uniform mat4  global_for_local;
 			        uniform mat4  view_for_global;
 			        uniform mat4  clip_for_view;
-			        uniform mat4  view_for_clip;
 			        in      vec3  element_position;
 			        in      vec3  instance_origin;
 			        in      float instance_radius;
 			        in      vec3  instance_light_source;
-			        out     mat4  element_for_clip;
 			        out     vec3  fragment_element_position;
 			        out     vec3  fragment_light_direction;
 
@@ -95,10 +94,8 @@ namespace view
 			            for scaling data:  local→view = local→global→view = local→global
 			        	*/
 			            mat4 scale_map = mat4(instance_radius);
-			        	mat4 local_for_element = mat4(scale_map[0], scale_map[1], scale_map[2], vec4(instance_origin,1));
-			        	mat4 global_for_element = global_for_local * local_for_element;
-			        	mat4 position_map = view_for_global * global_for_element;
-			        	mat4 view_for_element = mat4(global_for_element[0], global_for_element[1], global_for_element[2], position_map[3]);
+			        	vec4 view_for_element_origin = view_for_global * global_for_local * vec4(instance_origin,1);
+			        	mat4 view_for_element = mat4(scale_map[0], scale_map[1], scale_map[2], view_for_element_origin);
 			        	vec4 clip_position = clip_for_view * view_for_element * vec4(element_position,1);
 			        	fragment_element_position = element_position;
 			        	fragment_light_direction = (
@@ -114,8 +111,6 @@ namespace view
 			fragmentShaderGlsl(
 				R"(#version 330
 			        precision mediump float;
-			        uniform vec2  resolution;
-			        in      vec3  instance_origin;
 			        in      vec3  fragment_element_position;
 			        in      vec3  fragment_light_direction;
 			        out     vec4  fragment_color;
