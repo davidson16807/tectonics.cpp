@@ -23,7 +23,7 @@ namespace view
 	No further assumptions are made about the spheres. 
 
 	The assumptions above are designed so that `RealisticPointSourceSwarmShaderProgram` 
-	should be able to approximate virtually all heavenly point sources of light.
+	should be able to approximate virtually all naturally forming heavenly point sources of light.
 	*/
 
 	class RealisticPointSourceSwarmShaderProgram
@@ -64,6 +64,7 @@ namespace view
 		GLuint pointSpreadFuntionClipSpaceStandardDeviationLocation;
 		GLuint pointSpreadFuntionStandardDeviationCutoffLocation;
 		GLuint intensityCutoffLocation;
+		GLuint resolutionLocation;
 
 		bool isDisposed;
 
@@ -75,6 +76,7 @@ namespace view
 			        uniform mat4  view_for_global;
 			        uniform mat4  clip_for_view;
 			        uniform mat4  view_for_clip;
+			        uniform vec2  resolution;
 			        uniform float point_spread_function_clipspace_standard_deviation;
 			        uniform float point_spread_function_standard_deviation_cutoff;
 			        in      vec3  element_position;
@@ -114,17 +116,7 @@ namespace view
 			        	for rotation data: the local→view map is identity
 			            for scaling data:  the local→view map is a scaling transform
 			        	*/
-			            mat4 identity = mat4(1);
-			            mat4 scale_map = mat4(
-			            	point_spread_function_clipspace_standard_deviation *
-			            	point_spread_function_standard_deviation_cutoff
-			            );
-			        	mat4 local_for_element = mat4(identity[0], identity[1], identity[2], vec4(instance_origin,1));
-			        	mat4 global_for_element = global_for_local * local_for_element;
-			        	mat4 position_map = view_for_global * global_for_element;
-			        	mat4 view_for_element = mat4(scale_map[0], scale_map[1], scale_map[2], position_map[3]);
-			        	vec4 clip_position = clip_for_view * view_for_element * vec4(element_position,1);
-			        	fragment_element_position = element_position;
+
 			        	// L: direction from point source to light, in clip space
 			        	vec3 L = (
 			        		clip_for_view * 
@@ -137,6 +129,12 @@ namespace view
 			        	float reflection_angle = acos(dot(V,L));
 			        	float fraction = approx_fraction_of_diffusely_reflected_light_of_sphere(reflection_angle);
 			        	fragment_point_intensity = vec3(1.0 * fraction); // TODO: remove assumption of unit irradiance illumination
+
+			            vec2 scale = point_spread_function_clipspace_standard_deviation * point_spread_function_standard_deviation_cutoff * vec2(1, resolution.x / resolution.y);
+			        	vec4 clip_for_element_origin = clip_for_view * view_for_global * global_for_local * vec4(instance_origin,1);
+			        	vec4 clip_position = vec4(clip_for_element_origin.xy+element_position.xy*scale*clip_for_element_origin.z, 0, clip_for_element_origin.z);
+			        	fragment_element_position = element_position;
+
 			            gl_Position = clip_position;
 			        };
 				)"
@@ -158,11 +156,13 @@ namespace view
 					}
 
 			        void main() {
-			        	float r = dot(fragment_element_position.xy, fragment_element_position.xy) * point_spread_function_standard_deviation_cutoff;
+			        	float r = (dot(fragment_element_position.xy, fragment_element_position.xy)) * point_spread_function_standard_deviation_cutoff;
 			        	float sigma = point_spread_function_clipspace_standard_deviation;
 			        	vec3 intensity = vec3(fragment_point_intensity)*exp(-r*r/(2.0*sigma*sigma))/sqrt(2.0*pi);
+			        	if(isnan(r)) { discard; }
 			        	if(r>point_spread_function_standard_deviation_cutoff) { discard; }
 			        	if(max3(intensity)<intensity_cutoff) { discard; }
+			            // fragment_color = vec4(1.0);
 			            fragment_color = vec4(intensity,1.0);
 			        }
 				)"
@@ -233,6 +233,7 @@ namespace view
 			pointSpreadFuntionClipSpaceStandardDeviationLocation = glGetUniformLocation(shaderProgramId, "point_spread_function_clipspace_standard_deviation");
 			pointSpreadFuntionStandardDeviationCutoffLocation = glGetUniformLocation(shaderProgramId, "point_spread_function_standard_deviation_cutoff");
 			intensityCutoffLocation = glGetUniformLocation(shaderProgramId, "intensity_cutoff");
+			resolutionLocation = glGetUniformLocation(shaderProgramId, "resolution");
 
 	        // ATTRIBUTES
 
@@ -336,9 +337,10 @@ namespace view
 	        glUniformMatrix4fv(viewMatrixLocation,       1, GL_FALSE, glm::value_ptr(view_state.view_matrix));
 	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(view_state.model_matrix));
 	        glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(view_state.projection_matrix));
+	        glUniform2fv      (resolutionLocation, 1, glm::value_ptr(view_state.resolution));
 	        glUniform1f       (pointSpreadFuntionClipSpaceStandardDeviationLocation, view_state.point_spread_function_clipspace_standard_deviation);
 	        glUniform1f       (pointSpreadFuntionStandardDeviationCutoffLocation, 3.0f);
-	        glUniform1f       (intensityCutoffLocation, 0.03f);
+	        glUniform1f       (intensityCutoffLocation, 0.01f);
 
 			glDrawArraysInstanced(GL_TRIANGLES, /*array offset*/ 0, /*vertex count*/ elementPositions.size(), origin.size());
 		}
