@@ -100,6 +100,7 @@ int main() {
   };
 
   std::vector<float> instance_radii(instance_origins.size(),0.1);
+  std::vector<vec3> instance_light_luminosity(instance_origins.size(),vec3(3));
   std::vector<vec3> instance_light_source(instance_origins.size(),vec3(0));
 
   // initialize control state
@@ -137,6 +138,7 @@ int main() {
         instance_origins,
         instance_radii,
         instance_light_source,
+        instance_origins,
         view_state
       );
 

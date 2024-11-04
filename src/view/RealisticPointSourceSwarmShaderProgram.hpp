@@ -48,6 +48,7 @@ namespace view
 		GLuint instanceOriginBufferId;
 		GLuint instanceRadiusBufferId;
 		GLuint instanceLightSourceBufferId;
+		GLuint instanceLightLuminosityBufferId;
 
 		// element attributes
 	    GLuint elementPositionLocation;
@@ -56,6 +57,7 @@ namespace view
 		GLuint instanceOriginLocation;
 		GLuint instanceRadiusLocation;
 		GLuint instanceLightSourceLocation;
+		GLuint instanceLightLuminosityLocation;
 
 		// uniforms
 	    GLuint modelMatrixLocation;
@@ -64,6 +66,8 @@ namespace view
 		GLuint pointSpreadFuntionPixelStandardDeviationLocation;
 		GLuint pointSpreadFuntionStandardDeviationCutoffLocation;
 		GLuint intensityCutoffLocation;
+		GLuint exposureIntensityLocation;
+		GLuint gammaLocation;
 		GLuint resolutionLocation;
 
 		bool isDisposed;
@@ -90,7 +94,6 @@ namespace view
 			        out     float fragment_clipspace_radius;
 
 			        const   float pi = 3.141592653589793238462643383279;
-
 
 			        float max3 (vec3 v) {
 					  return max (max (v.x, v.y), v.z);
@@ -137,7 +140,7 @@ namespace view
 			        	vec3 V = vec3(0,0,-1); 
 			        	float reflection_angle = acos(dot(V,L));
 			        	float fraction = approx_fraction_of_diffusely_reflected_light_of_sphere(reflection_angle);
-			        	fragment_point_intensity = vec3(3.0 * fraction); // TODO: remove assumption of unit irradiance illumination
+			        	fragment_point_intensity = instance_light_luminosity * fraction; // TODO: remove assumption of unit irradiance illumination
 
 			        	// solve for r at which intensity==intensity_cutoff to find fragment_clipspace_radius
 			        	float sigma2 = point_spread_function_pixel_standard_deviation * point_spread_function_pixel_standard_deviation / (resolution.x * resolution.x);
@@ -159,6 +162,8 @@ namespace view
 			        uniform vec2  resolution;
 			        uniform float point_spread_function_pixel_standard_deviation;
 			        uniform float intensity_cutoff;
+			        uniform float exposure_intensity;
+			        uniform float gamma;
 			        in      vec3  fragment_element_position;
 			        in      vec3  fragment_point_intensity;
 			        in      float fragment_clipspace_radius;
@@ -166,14 +171,28 @@ namespace view
 
 			        const   float pi = 3.141592653589793238462643383279;
 
+					/*
+					This function returns a rgb vector that best represents color at a given wavelength
+					It is from Alan Zucconi: https://www.alanzucconi.com/2017/07/15/improving-the-rainbow/
+					I've adapted the function so that coefficients are expressed in meters.
+					*/
+					vec3 get_rgb_signal_of_rgb_intensity(
+					    in vec3 intensity, in float gamma
+					){
+					    return vec3(
+					        pow(intensity.x, 1./gamma),
+					        pow(intensity.y, 1./gamma),
+					        pow(intensity.z, 1./gamma)
+					    );
+					}
+
 			        void main() {
 			        	float sigma2 = point_spread_function_pixel_standard_deviation * point_spread_function_pixel_standard_deviation / (resolution.x * resolution.x);
 			        	float r2 = dot(fragment_element_position.xy, fragment_element_position.xy) * fragment_clipspace_radius;
 			        	vec3 intensity = vec3(fragment_point_intensity)*exp(-r2/(2.0*sigma2))/sqrt(2.0*pi);
 			        	if(r2>fragment_clipspace_radius) { discard; }
-			        	// if(isnan(r)) { discard; }
-			            // fragment_color = vec4(1.0);
-			            fragment_color = vec4(intensity,1.0);
+					    vec3 ldr_tone_map = 1.0 - exp(-intensity/exposure_intensity);
+					    fragment_color = vec4(get_rgb_signal_of_rgb_intensity(ldr_tone_map, gamma), 1);
 			        }
 				)"
 			),
@@ -242,6 +261,8 @@ namespace view
 			projectionMatrixLocation = glGetUniformLocation(shaderProgramId, "clip_for_view");
 			pointSpreadFuntionPixelStandardDeviationLocation = glGetUniformLocation(shaderProgramId, "point_spread_function_pixel_standard_deviation");
 			intensityCutoffLocation = glGetUniformLocation(shaderProgramId, "intensity_cutoff");
+			exposureIntensityLocation = glGetUniformLocation(shaderProgramId, "exposure_intensity");
+			gammaLocation = glGetUniformLocation(shaderProgramId, "gamma");
 			resolutionLocation = glGetUniformLocation(shaderProgramId, "resolution");
 
 	        // ATTRIBUTES
@@ -271,6 +292,11 @@ namespace view
 			instanceLightSourceLocation = glGetAttribLocation(shaderProgramId, "instance_light_source");
 		    glEnableVertexAttribArray(instanceLightSourceLocation);
 
+			// create a new vertex buffer object, VBO
+			glGenBuffers(1, &instanceLightLuminosityBufferId);
+			instanceLightLuminosityLocation = glGetAttribLocation(shaderProgramId, "instance_light_luminosity");
+		    glEnableVertexAttribArray(instanceLightLuminosityLocation);
+
 		}
 
 		void dispose()
@@ -282,6 +308,7 @@ namespace view
 		        glDeleteBuffers(1, &instanceOriginBufferId);
 		        glDeleteBuffers(1, &instanceRadiusBufferId);
 		        glDeleteBuffers(1, &instanceLightSourceBufferId);
+		        glDeleteBuffers(1, &instanceLightLuminosityBufferId);
 		        glDeleteProgram(shaderProgramId);
         	}
 		}
@@ -298,6 +325,7 @@ namespace view
 			const std::vector<glm::vec3>& origin,
 			const std::vector<float>& radius,
 			const std::vector<glm::vec3>& light_source,
+			const std::vector<glm::vec3>& light_luminosity,
 			const ViewState& view_state
 		){
 
@@ -342,6 +370,12 @@ namespace view
             glVertexAttribPointer(instanceLightSourceLocation, 3, GL_FLOAT, normalize, stride, offset);
 		    glVertexAttribDivisor(instanceLightSourceLocation,1);
 
+			glBindBuffer(GL_ARRAY_BUFFER, instanceLightLuminosityBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*light_luminosity.size(), &light_luminosity.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(instanceLightLuminosityLocation);
+            glVertexAttribPointer(instanceLightLuminosityLocation, 3, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceLightLuminosityLocation,1);
+
     		// UNIFORMS
 	        glUniformMatrix4fv(viewMatrixLocation,       1, GL_FALSE, glm::value_ptr(view_state.view_matrix));
 	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(view_state.model_matrix));
@@ -350,6 +384,8 @@ namespace view
 	        glUniform1f       (pointSpreadFuntionPixelStandardDeviationLocation, view_state.point_spread_function_pixel_standard_deviation);
 	        glUniform1f       (pointSpreadFuntionStandardDeviationCutoffLocation, 3.0f);
 	        glUniform1f       (intensityCutoffLocation, 0.01f);
+	        glUniform1f       (exposureIntensityLocation, 0.1f);
+	        glUniform1f       (gammaLocation, 2.2f);
 
 			glDrawArraysInstanced(GL_TRIANGLES, /*array offset*/ 0, /*vertex count*/ elementPositions.size(), origin.size());
 		}
