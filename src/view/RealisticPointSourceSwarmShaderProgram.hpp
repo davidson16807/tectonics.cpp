@@ -82,7 +82,9 @@ namespace view
 			        uniform mat4  view_for_clip;
 			        uniform vec2  resolution;
 			        uniform float point_spread_function_pixel_standard_deviation;
-			        uniform float intensity_cutoff;
+			        uniform float exposure_intensity;
+			        uniform float gamma;
+			        uniform float signal_cutoff;
 			        in      vec3  element_position;
 			        in      vec3  instance_origin;
 			        in      float instance_radius;
@@ -121,6 +123,18 @@ namespace view
 						)*0.25;
 					}
 
+					float get_intensity_for_signal(
+					    in float intensity, in float gamma
+					){
+					    return pow(intensity, gamma);
+					}
+
+					float get_intensity_for_ldrtone(
+						in float ldr_tone, in float exposure_intensity
+					){
+						return -exposure_intensity * log(1.0 - ldr_tone);
+					}
+
 			        void main(){
 			        	/*
 			        	point sources are billboards that must always face the camera and consume the same screen space:
@@ -142,7 +156,8 @@ namespace view
 			        	float fraction = approx_fraction_of_diffusely_reflected_light_of_sphere(reflection_angle);
 			        	fragment_point_intensity = instance_light_luminosity * fraction; // TODO: remove assumption of unit irradiance illumination
 
-			        	// solve for r at which intensity==intensity_cutoff to find fragment_clipspace_radius
+			        	// solve for r at which signal==signal_cutoff to find fragment_clipspace_radius
+			        	float intensity_cutoff = get_intensity_for_ldrtone(get_intensity_for_signal(signal_cutoff, gamma), exposure_intensity);
 			        	float sigma2 = point_spread_function_pixel_standard_deviation * point_spread_function_pixel_standard_deviation / (resolution.x * resolution.x);
 			        	float standard_deviation_cutoff2 = -log(sqrt(2.0*pi) * intensity_cutoff / max3(fragment_point_intensity)) * (2.0*sigma2);
 			        	fragment_clipspace_radius = standard_deviation_cutoff2;
@@ -161,7 +176,7 @@ namespace view
 			        precision mediump float;
 			        uniform vec2  resolution;
 			        uniform float point_spread_function_pixel_standard_deviation;
-			        uniform float intensity_cutoff;
+			        uniform float signal_cutoff;
 			        uniform float exposure_intensity;
 			        uniform float gamma;
 			        in      vec3  fragment_element_position;
@@ -171,12 +186,7 @@ namespace view
 
 			        const   float pi = 3.141592653589793238462643383279;
 
-					/*
-					This function returns a rgb vector that best represents color at a given wavelength
-					It is from Alan Zucconi: https://www.alanzucconi.com/2017/07/15/improving-the-rainbow/
-					I've adapted the function so that coefficients are expressed in meters.
-					*/
-					vec3 get_rgb_signal_of_rgb_intensity(
+					vec3 get_signal3_for_intensity3(
 					    in vec3 intensity, in float gamma
 					){
 					    return vec3(
@@ -186,13 +196,26 @@ namespace view
 					    );
 					}
 
+					vec3 get_ldrtone3_for_intensity3(
+						in vec3 intensity, in float exposure_intensity
+					){
+						return 1.0 - exp(-intensity/exposure_intensity);
+					}
+
 			        void main() {
 			        	float sigma2 = point_spread_function_pixel_standard_deviation * point_spread_function_pixel_standard_deviation / (resolution.x * resolution.x);
 			        	float r2 = dot(fragment_element_position.xy, fragment_element_position.xy) * fragment_clipspace_radius;
 			        	vec3 intensity = vec3(fragment_point_intensity)*exp(-r2/(2.0*sigma2))/sqrt(2.0*pi);
 			        	if(r2>fragment_clipspace_radius) { discard; }
-					    vec3 ldr_tone_map = 1.0 - exp(-intensity/exposure_intensity);
-					    fragment_color = vec4(get_rgb_signal_of_rgb_intensity(ldr_tone_map, gamma), 1);
+					    fragment_color = vec4(
+					    	get_signal3_for_intensity3(
+					    		get_ldrtone3_for_intensity3(
+					    			intensity, 
+					    			exposure_intensity
+					    		), 
+						    	gamma
+					    	), 
+					    1);
 			        }
 				)"
 			),
@@ -260,7 +283,7 @@ namespace view
 			modelMatrixLocation = glGetUniformLocation(shaderProgramId, "global_for_local");
 			projectionMatrixLocation = glGetUniformLocation(shaderProgramId, "clip_for_view");
 			pointSpreadFuntionPixelStandardDeviationLocation = glGetUniformLocation(shaderProgramId, "point_spread_function_pixel_standard_deviation");
-			intensityCutoffLocation = glGetUniformLocation(shaderProgramId, "intensity_cutoff");
+			intensityCutoffLocation = glGetUniformLocation(shaderProgramId, "signal_cutoff");
 			exposureIntensityLocation = glGetUniformLocation(shaderProgramId, "exposure_intensity");
 			gammaLocation = glGetUniformLocation(shaderProgramId, "gamma");
 			resolutionLocation = glGetUniformLocation(shaderProgramId, "resolution");
