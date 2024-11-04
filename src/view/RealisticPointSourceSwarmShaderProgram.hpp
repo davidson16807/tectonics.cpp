@@ -61,7 +61,7 @@ namespace view
 	    GLuint modelMatrixLocation;
 	    GLuint viewMatrixLocation;
 		GLuint projectionMatrixLocation;
-		GLuint pointSpreadFuntionClipSpaceStandardDeviationLocation;
+		GLuint pointSpreadFuntionPixelStandardDeviationLocation;
 		GLuint pointSpreadFuntionStandardDeviationCutoffLocation;
 		GLuint intensityCutoffLocation;
 		GLuint resolutionLocation;
@@ -77,7 +77,7 @@ namespace view
 			        uniform mat4  clip_for_view;
 			        uniform mat4  view_for_clip;
 			        uniform vec2  resolution;
-			        uniform float point_spread_function_clipspace_standard_deviation;
+			        uniform float point_spread_function_pixel_standard_deviation;
 			        uniform float intensity_cutoff;
 			        in      vec3  element_position;
 			        in      vec3  instance_origin;
@@ -140,8 +140,8 @@ namespace view
 			        	fragment_point_intensity = vec3(3.0 * fraction); // TODO: remove assumption of unit irradiance illumination
 
 			        	// solve for r at which intensity==intensity_cutoff to find fragment_clipspace_radius
-			        	float sigma = point_spread_function_clipspace_standard_deviation;
-			        	float standard_deviation_cutoff2 = -log(sqrt(2.0*pi) * intensity_cutoff / max3(fragment_point_intensity)) * (2.0*sigma*sigma);
+			        	float sigma2 = point_spread_function_pixel_standard_deviation * point_spread_function_pixel_standard_deviation / (resolution.x * resolution.x);
+			        	float standard_deviation_cutoff2 = -log(sqrt(2.0*pi) * intensity_cutoff / max3(fragment_point_intensity)) * (2.0*sigma2);
 			        	fragment_clipspace_radius = standard_deviation_cutoff2;
 
 			            vec2 scale = sqrt(standard_deviation_cutoff2) * vec2(1, resolution.x / resolution.y);
@@ -156,7 +156,8 @@ namespace view
 			fragmentShaderGlsl(
 				R"(#version 330
 			        precision mediump float;
-			        uniform float point_spread_function_clipspace_standard_deviation;
+			        uniform vec2  resolution;
+			        uniform float point_spread_function_pixel_standard_deviation;
 			        uniform float intensity_cutoff;
 			        in      vec3  fragment_element_position;
 			        in      vec3  fragment_point_intensity;
@@ -166,7 +167,7 @@ namespace view
 			        const   float pi = 3.141592653589793238462643383279;
 
 			        void main() {
-			        	float sigma2 = point_spread_function_clipspace_standard_deviation * point_spread_function_clipspace_standard_deviation;
+			        	float sigma2 = point_spread_function_pixel_standard_deviation * point_spread_function_pixel_standard_deviation / (resolution.x * resolution.x);
 			        	float r2 = dot(fragment_element_position.xy, fragment_element_position.xy) * fragment_clipspace_radius;
 			        	vec3 intensity = vec3(fragment_point_intensity)*exp(-r2/(2.0*sigma2))/sqrt(2.0*pi);
 			        	if(r2>fragment_clipspace_radius) { discard; }
@@ -239,7 +240,7 @@ namespace view
 			viewMatrixLocation = glGetUniformLocation(shaderProgramId, "view_for_global");
 			modelMatrixLocation = glGetUniformLocation(shaderProgramId, "global_for_local");
 			projectionMatrixLocation = glGetUniformLocation(shaderProgramId, "clip_for_view");
-			pointSpreadFuntionClipSpaceStandardDeviationLocation = glGetUniformLocation(shaderProgramId, "point_spread_function_clipspace_standard_deviation");
+			pointSpreadFuntionPixelStandardDeviationLocation = glGetUniformLocation(shaderProgramId, "point_spread_function_pixel_standard_deviation");
 			intensityCutoffLocation = glGetUniformLocation(shaderProgramId, "intensity_cutoff");
 			resolutionLocation = glGetUniformLocation(shaderProgramId, "resolution");
 
@@ -346,7 +347,7 @@ namespace view
 	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(view_state.model_matrix));
 	        glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(view_state.projection_matrix));
 	        glUniform2fv      (resolutionLocation, 1, glm::value_ptr(view_state.resolution));
-	        glUniform1f       (pointSpreadFuntionClipSpaceStandardDeviationLocation, view_state.point_spread_function_clipspace_standard_deviation);
+	        glUniform1f       (pointSpreadFuntionPixelStandardDeviationLocation, view_state.point_spread_function_pixel_standard_deviation);
 	        glUniform1f       (pointSpreadFuntionStandardDeviationCutoffLocation, 3.0f);
 	        glUniform1f       (intensityCutoffLocation, 0.01f);
 
