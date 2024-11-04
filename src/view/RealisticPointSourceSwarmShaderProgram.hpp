@@ -65,7 +65,7 @@ namespace view
 		GLuint projectionMatrixLocation;
 		GLuint pointSpreadFuntionPixelStandardDeviationLocation;
 		GLuint pointSpreadFuntionStandardDeviationCutoffLocation;
-		GLuint intensityCutoffLocation;
+		GLuint signalCutoffLocation;
 		GLuint exposureIntensityLocation;
 		GLuint gammaLocation;
 		GLuint resolutionLocation;
@@ -283,7 +283,7 @@ namespace view
 			modelMatrixLocation = glGetUniformLocation(shaderProgramId, "global_for_local");
 			projectionMatrixLocation = glGetUniformLocation(shaderProgramId, "clip_for_view");
 			pointSpreadFuntionPixelStandardDeviationLocation = glGetUniformLocation(shaderProgramId, "point_spread_function_pixel_standard_deviation");
-			intensityCutoffLocation = glGetUniformLocation(shaderProgramId, "signal_cutoff");
+			signalCutoffLocation = glGetUniformLocation(shaderProgramId, "signal_cutoff");
 			exposureIntensityLocation = glGetUniformLocation(shaderProgramId, "exposure_intensity");
 			gammaLocation = glGetUniformLocation(shaderProgramId, "gamma");
 			resolutionLocation = glGetUniformLocation(shaderProgramId, "resolution");
@@ -406,9 +406,9 @@ namespace view
 	        glUniform2fv      (resolutionLocation, 1, glm::value_ptr(view_state.resolution));
 	        glUniform1f       (pointSpreadFuntionPixelStandardDeviationLocation, view_state.point_spread_function_pixel_standard_deviation);
 	        glUniform1f       (pointSpreadFuntionStandardDeviationCutoffLocation, 3.0f);
-	        glUniform1f       (intensityCutoffLocation, 0.01f);
-	        glUniform1f       (exposureIntensityLocation, 0.1f);
-	        glUniform1f       (gammaLocation, 2.2f);
+	        glUniform1f       (signalCutoffLocation, 0.01f);
+	        glUniform1f       (exposureIntensityLocation, view_state.exposure_intensity);
+	        glUniform1f       (gammaLocation, view_state.gamma);
 
 			glDrawArraysInstanced(GL_TRIANGLES, /*array offset*/ 0, /*vertex count*/ elementPositions.size(), origin.size());
 		}
