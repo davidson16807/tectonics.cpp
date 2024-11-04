@@ -68,6 +68,8 @@ namespace view
 	    GLuint modelMatrixLocation;
 	    GLuint viewMatrixLocation;
 		GLuint projectionMatrixLocation;
+		GLuint exposureIntensityLocation;
+		GLuint gammaLocation;
 
 		bool isDisposed;
 
@@ -111,9 +113,27 @@ namespace view
 			fragmentShaderGlsl(
 				R"(#version 330
 			        precision mediump float;
+			        uniform float exposure_intensity;
+			        uniform float gamma;
 			        in      vec3  fragment_element_position;
 			        in      vec3  fragment_light_direction;
 			        out     vec4  fragment_color;
+
+					vec3 get_signal3_for_intensity3(
+					    in vec3 intensity, in float gamma
+					){
+					    return vec3(
+					        pow(intensity.x, 1./gamma),
+					        pow(intensity.y, 1./gamma),
+					        pow(intensity.z, 1./gamma)
+					    );
+					}
+
+					vec3 get_ldrtone3_for_intensity3(
+						in vec3 intensity, in float exposure_intensity
+					){
+						return 1.0 - exp(-intensity/exposure_intensity);
+					}
 
 			        void main() {
 			        	/*
@@ -133,7 +153,16 @@ namespace view
 			        	vec3 N = vec3(fragment_element_position.xy,-z);
 			        	vec3 V = vec3(0,0,-1);
 			        	vec3 L = fragment_light_direction;
-			            fragment_color = vec4(vec3(dot(N,L)),1);
+			        	vec3 intensity = vec3(dot(N,L));
+			            fragment_color = vec4(
+					    	get_signal3_for_intensity3(
+					    		get_ldrtone3_for_intensity3(
+					    			intensity, 
+					    			exposure_intensity
+					    		), 
+						    	gamma
+					    	),
+			            1);
 			        }
 				)"
 			),
@@ -200,6 +229,8 @@ namespace view
 			viewMatrixLocation = glGetUniformLocation(shaderProgramId, "view_for_global");
 			modelMatrixLocation = glGetUniformLocation(shaderProgramId, "global_for_local");
 			projectionMatrixLocation = glGetUniformLocation(shaderProgramId, "clip_for_view");
+			exposureIntensityLocation = glGetUniformLocation(shaderProgramId, "exposure_intensity");
+			gammaLocation = glGetUniformLocation(shaderProgramId, "gamma");
 
 	        // ATTRIBUTES
 
@@ -303,6 +334,8 @@ namespace view
 	        glUniformMatrix4fv(viewMatrixLocation,       1, GL_FALSE, glm::value_ptr(view_state.view_matrix));
 	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(view_state.model_matrix));
 	        glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(view_state.projection_matrix));
+	        glUniform1f       (exposureIntensityLocation, view_state.exposure_intensity);
+	        glUniform1f       (gammaLocation, view_state.gamma);
 
 			glDrawArraysInstanced(GL_TRIANGLES, /*array offset*/ 0, /*vertex count*/ elementPositions.size(), origin.size());
 		}
