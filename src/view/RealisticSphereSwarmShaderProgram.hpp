@@ -55,6 +55,7 @@ namespace view
 		GLuint instanceOriginBufferId;
 		GLuint instanceRadiusBufferId;
 		GLuint instanceLightSourceBufferId;
+		GLuint instanceLightLuminosityBufferId;
 
 		// element attributes
 	    GLuint elementPositionLocation;
@@ -63,6 +64,7 @@ namespace view
 		GLuint instanceOriginLocation;
 		GLuint instanceRadiusLocation;
 		GLuint instanceLightSourceLocation;
+		GLuint instanceLightLuminosityLocation;
 
 		// uniforms
 	    GLuint modelMatrixLocation;
@@ -84,8 +86,12 @@ namespace view
 			        in      vec3  instance_origin;
 			        in      float instance_radius;
 			        in      vec3  instance_light_source;
+			        in      vec3  instance_light_luminosity;
 			        out     vec3  fragment_element_position;
 			        out     vec3  fragment_light_direction;
+			        out     vec3  fragment_light_intensity;
+
+			        const   float pi = 3.141592653589793238462643383279;
 
 			        void main(){
 			        	/*
@@ -99,12 +105,15 @@ namespace view
 			        	vec4 view_for_element_origin = view_for_global * global_for_local * vec4(instance_origin,1);
 			        	mat4 view_for_element = mat4(scale_map[0], scale_map[1], scale_map[2], view_for_element_origin);
 			        	vec4 clip_position = clip_for_view * view_for_element * vec4(element_position,1);
+			            vec3 instance_light_offset = instance_light_source-instance_origin;
+			        	float l = length(instance_light_offset);
 			        	fragment_element_position = element_position;
+			        	fragment_light_intensity = max(vec3(0),instance_light_luminosity / (4.0*pi*l*l));
 			        	fragment_light_direction = (
 			        		clip_for_view * 
 			        		view_for_global * 
 			        		global_for_local * 
-			        		vec4(normalize(instance_light_source-instance_origin),0)
+			        		vec4(instance_light_offset/l,0)
 			        	).xyz;
 			            gl_Position = clip_position;
 			        };
@@ -117,6 +126,7 @@ namespace view
 			        uniform float gamma;
 			        in      vec3  fragment_element_position;
 			        in      vec3  fragment_light_direction;
+			        in      vec3  fragment_light_intensity;
 			        out     vec4  fragment_color;
 
 					vec3 get_signal3_for_intensity3(
@@ -142,7 +152,7 @@ namespace view
 			        	where clip_position = 2 * gl_FragCoord/resolution - 1, 
 			        	and element_for_clip is passed in from the vertex shader,
 			        	however element_for_clip assumes a single value for all fragments.
-			        	Fortunately, this shader program is intended for rendering distant objects,
+			        	Fortunately, this shader program is motivated by the need to render distant objects,
 			        	so projection can be assumed to be roughly orthographic,
 			        	such that vec3(0,0,1) is the view direction.
 			        	Element vertices are hard coded so that x and y element coordinates
@@ -150,10 +160,10 @@ namespace view
 			        	*/
 			        	float z = 1-dot(fragment_element_position.xy, fragment_element_position.xy);
 			        	if(z<0.0) { discard; }
-			        	vec3 N = vec3(fragment_element_position.xy,-z);
-			        	vec3 V = vec3(0,0,-1);
-			        	vec3 L = fragment_light_direction;
-			        	vec3 intensity = vec3(dot(N,L));
+			        	vec3 Nhat = vec3(fragment_element_position.xy,-z);
+			        	vec3 Lhat = fragment_light_direction;
+			        	vec3 fraction = vec3(dot(Nhat,Lhat));
+			        	vec3 intensity = fraction * fragment_light_intensity;
 			            fragment_color = vec4(
 					    	get_signal3_for_intensity3(
 					    		get_ldrtone3_for_intensity3(
@@ -259,6 +269,11 @@ namespace view
 			instanceLightSourceLocation = glGetAttribLocation(shaderProgramId, "instance_light_source");
 		    glEnableVertexAttribArray(instanceLightSourceLocation);
 
+			// create a new vertex buffer object, VBO
+			glGenBuffers(1, &instanceLightLuminosityBufferId);
+			instanceLightLuminosityLocation = glGetAttribLocation(shaderProgramId, "instance_light_luminosity");
+		    glEnableVertexAttribArray(instanceLightLuminosityLocation);
+
 		}
 
 		void dispose()
@@ -286,6 +301,7 @@ namespace view
 			const std::vector<glm::vec3>& origin,
 			const std::vector<float>& radius,
 			const std::vector<glm::vec3>& light_source,
+			const std::vector<glm::vec3>& light_luminosity,
 			const ViewState& view_state
 		){
 
@@ -329,6 +345,12 @@ namespace view
 		    glEnableVertexAttribArray(instanceLightSourceLocation);
             glVertexAttribPointer(instanceLightSourceLocation, 3, GL_FLOAT, normalize, stride, offset);
 		    glVertexAttribDivisor(instanceLightSourceLocation,1);
+
+			glBindBuffer(GL_ARRAY_BUFFER, instanceLightLuminosityBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*light_luminosity.size(), &light_luminosity.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(instanceLightLuminosityLocation);
+            glVertexAttribPointer(instanceLightLuminosityLocation, 3, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceLightLuminosityLocation,1);
 
     		// UNIFORMS
 	        glUniformMatrix4fv(viewMatrixLocation,       1, GL_FALSE, glm::value_ptr(view_state.view_matrix));

@@ -136,6 +136,7 @@ int main() {
         instance_origins,
         instance_radii,
         instance_light_source,
+        instance_origins,
         view_state
       );
 
