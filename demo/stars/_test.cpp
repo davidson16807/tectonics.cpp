@@ -93,6 +93,38 @@ int main() {
     vec3( 1, 1, 1)
   };
 
+  std::vector<vec3> instance_surface_emissions{ 
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 1),//
+    vec3( 0, 1, 0),//
+    vec3( 0, 1, 1),//
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+
+    vec3( 0, 0, 0),
+    vec3( 1, 0, 0),//
+    vec3( 1, 0, 1),//
+    vec3( 1, 1, 0),//
+    vec3( 1, 1, 1),//
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0)
+  };
+
   std::vector<float> instance_radii(instance_origins.size(),0.1);
   std::vector<vec3> instance_light_luminosity(instance_origins.size(),vec3(3));
   std::vector<vec3> instance_light_source(instance_origins.size(),vec3(0));
@@ -134,6 +166,7 @@ int main() {
         instance_radii,
         instance_light_source,
         instance_origins,
+        instance_surface_emissions,
         view_state
       );
 

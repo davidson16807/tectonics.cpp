@@ -99,6 +99,38 @@ int main() {
     vec3( 1, 1, 1)
   };
 
+  std::vector<vec3> instance_surface_emissions{ 
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 1),//
+    vec3( 0, 1, 0),//
+    vec3( 0, 1, 1),//
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+
+    vec3( 0, 0, 0),
+    vec3( 1, 0, 0),//
+    vec3( 1, 0, 1),//
+    vec3( 1, 1, 0),//
+    vec3( 1, 1, 1),//
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0),
+    vec3( 0, 0, 0)
+  };
+
   std::vector<float> instance_radii(instance_origins.size(),0.1);
   std::vector<vec3> instance_light_source(instance_origins.size(),vec3(0));
 
@@ -117,7 +149,7 @@ int main() {
   );
   view_state.view_matrix = control_state.get_view_matrix();
   view_state.resolution = glm::vec2(850, 640);
-  view_state.exposure_intensity = 0.001f;
+  view_state.exposure_intensity = 0.0003f;
   // view_state.projection_type = view::ProjectionType::heads_up_display;
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
@@ -138,6 +170,7 @@ int main() {
         instance_radii,
         instance_light_source,
         instance_origins,
+        instance_surface_emissions,
         view_state
       );
 
