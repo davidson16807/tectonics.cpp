@@ -15,11 +15,10 @@ namespace view
 
 	/*
 	`RealisticPointSourceSwarmShaderProgram` renders a swarm of physically realistic point sources.
-	The point sources are very small or very distant spheres. 
-	The spheres are held together by gravity and have uniform material properties.
+	The point sources are approximated as very small or distant spheres
+	that are composed of a diffusely reflective material wtih uniform material properties and emissions.
 	The spheres are illuminated by no more than one point source of light, 
 	or one point light source overwhelms all others,
-	and the spheres do not create light in any way aside from thermal emission.
 	No further assumptions are made about the spheres. 
 
 	The assumptions above are designed so that `RealisticPointSourceSwarmShaderProgram` 

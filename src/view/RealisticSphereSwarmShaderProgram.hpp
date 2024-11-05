@@ -16,20 +16,16 @@ namespace view
 	/*
 	`RealisticSphereSwarmShaderProgram` renders a swarm of physically realistic spheres.
 	The spheres are held together by gravity.
-	Phases of matter within the spheres are sorted by density in the usual order (solid>liquid>gas>plasma).
-	Each phase has uniform material properties aside from temperature and density in gases and plasmas. 
-	In gases and plasmas, density drops exponentially with radius,
-	and temperature varies with radius in the same manner seen in main sequence stars
-	(for planets with atmospheres, this assumption is inconsequential).
+	The surface of spheres are approximated as a diffusely reflective material
+	that has uniform material properties and emission.
 	The spheres are illuminated by no more than one point source of light, 
-	or one point light source overwhelms all others,
-	and the spheres do not create light in any way aside from thermal emission.
+	or one point light source overwhelms all others.
 	The projection that spheres are viewed with is suitably close to orthographic.
 	No further assumptions are made about the spheres. 
 
 	The assumptions above are designed so that `RealisticSphereSwarmShaderProgram` 
 	should be able to approximate virtually all heavenly spherical bodies when viewed from a distance.
-	`RealisticSphereSwarmShaderProgram` can be combined with other shaders 
+	`RealisticSphereSwarmShaderProgram` is also intended to allow combination with other shaders 
 	to capture notable nonspherical effects such as black hole discs and ringed bodies.
 	*/
 
