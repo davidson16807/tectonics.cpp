@@ -113,7 +113,7 @@ int main() {
   view_state.view_matrix = control_state.get_view_matrix();
   view_state.resolution = glm::vec2(850, 640);
   view_state.point_spread_function_pixel_standard_deviation = 1.0f;
-  view_state.exposure_intensity = 0.03f;
+  view_state.exposure_intensity = 0.0001f;
   // view_state.projection_type = view::ProjectionType::heads_up_display;
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);

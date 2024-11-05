@@ -144,8 +144,10 @@ namespace view
 			        	*/
 
 			        	// L: direction from point source to light, in clip space
+			        	vec4 view_for_element_origin = view_for_global * global_for_local * vec4(instance_origin,1);
 			            vec3 instance_light_offset = instance_light_source-instance_origin;
 			        	float l = length(instance_light_offset);
+			        	float v = length(view_for_element_origin);
 			        	vec3 Lhat = (
 			        		clip_for_view * 
 			        		view_for_global * 
@@ -156,7 +158,7 @@ namespace view
 			        	vec3 V = vec3(0,0,-1); 
 			        	float reflection_angle = acos(dot(V,Lhat));
 			        	float fraction = approx_fraction_of_diffusely_reflected_light_of_sphere(reflection_angle);
-			        	fragment_point_intensity = fraction * instance_light_luminosity / (4.0*pi*l*l); // TODO: remove assumption of unit irradiance illumination
+			        	fragment_point_intensity = fraction * instance_light_luminosity / (4.0*pi*l*l) / (4.0*pi*v*v); // TODO: remove assumption of unit irradiance illumination
 
 			        	// solve for r at which signal==signal_cutoff to find fragment_clipspace_radius
 			        	float intensity_cutoff = get_intensity_for_ldrtone(get_intensity_for_signal(signal_cutoff, gamma), exposure_intensity);

@@ -106,9 +106,10 @@ namespace view
 			        	mat4 view_for_element = mat4(scale_map[0], scale_map[1], scale_map[2], view_for_element_origin);
 			        	vec4 clip_position = clip_for_view * view_for_element * vec4(element_position,1);
 			            vec3 instance_light_offset = instance_light_source-instance_origin;
+			        	float v = length(view_for_element_origin);
 			        	float l = length(instance_light_offset);
 			        	fragment_element_position = element_position;
-			        	fragment_light_intensity = max(vec3(0),instance_light_luminosity / (4.0*pi*l*l));
+			        	fragment_light_intensity = max(vec3(0),instance_light_luminosity / (4.0*pi*l*l) / (4.0*pi*v*v));
 			        	fragment_light_direction = (
 			        		clip_for_view * 
 			        		view_for_global * 
