@@ -91,7 +91,7 @@ namespace view
 			        out     vec3  fragment_light_intensity;
 			        out     vec3  fragment_surface_emission;
 
-			        const   float pi = 3.141592653589793238462643383279;
+			        const   float PI = 3.141592653589793238462643383279;
 
 			        void main(){
 			        	/*
@@ -108,8 +108,8 @@ namespace view
 			            vec3 instance_illumination_offset = instance_illumination_source-instance_origin;
 			        	float v = length(view_for_element_origin);
 			        	float l = length(instance_illumination_offset);
-			        	fragment_light_intensity = max(vec3(0),instance_illumination_luminosity) / (4.0*pi*l*l) / (4.0*pi*v*v);
-			        	fragment_surface_emission = instance_surface_emission / (4.0*pi*v*v);
+			        	fragment_light_intensity = max(vec3(0),instance_illumination_luminosity) / (4.0*PI*l*l) / (4.0*PI*v*v);
+			        	fragment_surface_emission = instance_surface_emission / (4.0*PI*v*v);
 			        	fragment_light_direction = (
 			        		clip_for_view * 
 			        		view_for_global * 
@@ -126,11 +126,216 @@ namespace view
 			        precision mediump float;
 			        uniform float exposure_intensity;
 			        uniform float gamma;
+			        uniform vec3  wavelength3;
 			        in      vec3  fragment_element_position;
 			        in      vec3  fragment_light_direction;
 			        in      vec3  fragment_light_intensity;
 			        in      vec3  fragment_surface_emission;
 			        out     vec4  fragment_color;
+
+			        const float PI = 3.141592653589793238462643383279;
+					const float BIG = 1e20;
+					const float SMALL = 1e-20;
+
+					const float METER = 1.0;
+					const float SECOND = 1.0;
+					const float JOULE = 1.0;
+					const float KELVIN = 1.0;
+
+					const float SPEED_OF_LIGHT = 299792.458 * METER / SECOND;
+					const float BOLTZMANN_CONSTANT = 1.3806485279e-23 * JOULE / KELVIN;
+					const float PLANCK_CONSTANT = 6.62607004e-34 * JOULE * SECOND;
+
+					struct maybe_vec2
+					{
+					    vec2 value;
+					    bool exists;
+					};
+
+					maybe_vec2 get_bounding_distances_along_ray(in maybe_vec2 distances_along_line){
+					    return 
+					      maybe_vec2(
+					        vec2(
+					          max(min(distances_along_line.value.x, distances_along_line.value.y), 0.0),
+					          max(distances_along_line.value.x, distances_along_line.value.y)
+					        ),
+					        distances_along_line.exists && max(distances_along_line.value.x, distances_along_line.value.y) > 0.
+					      );
+					}
+
+					maybe_vec2 get_distances_along_line_to_negation(
+					    in maybe_vec2 positive,
+					    in maybe_vec2 negative
+					) {
+					    // as long as intersection with positive exists, 
+					    // and negative doesn't completely surround it, there will be an intersection
+					    bool exists =
+					        positive.exists && !(negative.value.x < positive.value.x && positive.value.y < negative.value.y);
+					    // find the first region of intersection
+					    float entrance = !negative.exists ? positive.value.x : min(negative.value.y, positive.value.x);
+					    float exit = !negative.exists ? positive.value.y : min(negative.value.x, positive.value.y);
+					    // if the first region is behind us, find the second region
+					    if (exit < 0. && 0. < positive.value.y)
+					    {
+					        entrance = negative.value.y;
+					        exit = positive.value.y;
+					    }
+					    return maybe_vec2( vec2(entrance, exit), exists );
+					}
+
+					/*
+					A0 line reference
+					A  line direction, normalized
+					B0 sphere origin
+					R  sphere radius along each coordinate axis
+					*/
+					maybe_vec2 get_distances_along_3d_line_to_sphere(
+					    in vec3 A0,
+					    in vec3 A,
+					    in vec3 B0,
+					    in float r
+					){
+					    float t = dot(B0 - A0, A);
+					    vec3  At = A0 + A*t - B0;
+					    float y2 = r*r - dot(At,At);
+					    float dxr = sqrt(max(y2, SMALL));
+					    return maybe_vec2(
+					        vec2(t - dxr, t + dxr),
+					        y2 > 0.
+					    );
+					}
+
+					float get_fraction_of_radius_for_star_with_temperature(float temperature, float core_temperature)
+					{
+					    return sqrt(max(1.0 - (temperature / core_temperature), 0.0));
+					}
+
+					/*
+					"approx_air_column_density_ratio_through_atmosphere" 
+					  calculates the distance you would need to travel 
+					  along the surface to encounter the same number of particles in the column. 
+					It does this by finding an integral using integration by substitution, 
+					  then tweaking that integral to prevent division by 0. 
+					All distances are recorded in scale heights.
+					"a" and "b" are distances along the ray from closest approach.
+					  The ray is fired in the positive direction.
+					  If there is no intersection with the planet, 
+					  a and b are distances from the closest approach to the upper bound.
+					"z2" is the closest distance from the ray to the center of the world, squared.
+					"r0" is the radius of the world.
+					*/
+					float approx_air_column_density_ratio_through_atmosphere(
+					    in float a,
+					    in float b,
+					    in float z2,
+					    in float r0
+					){
+						/*
+					    GUIDE TO VARIABLE NAMES:
+					     "x*" distance along the ray from closest approach
+					     "z*" distance from the center of the world at closest approach
+					     "r*" distance ("radius") from the center of the world
+					     "*0" variable at reference point
+					     "*2" the square of a variable
+					     "ch" a nudge we give to prevent division by zero, analogous to the Chapman function
+						*/
+					    const float SQRT_HALF_PI = sqrt(PI/2.);
+					    const float k = 0.6; // "k" is an empirically derived constant
+					    float x0 = sqrt(max(r0*r0 - z2, SMALL));
+					    // if obstructed by the world, approximate answer by using a ludicrously large number
+					    if (a < x0 && -x0 < b && z2 < r0*r0) { return BIG; }
+					    float abs_a  = abs(a);
+					    float abs_b  = abs(b);
+					    float z      = sqrt(z2);
+					    float sqrt_z = sqrt(z);
+					    float ra     = sqrt(a*a+z2);
+					    float rb     = sqrt(b*b+z2);
+					    float ch0    = (1. - 1./(2.*r0)) * SQRT_HALF_PI * sqrt_z + k*x0;
+					    float cha    = (1. - 1./(2.*ra)) * SQRT_HALF_PI * sqrt_z + k*abs_a;
+					    float chb    = (1. - 1./(2.*rb)) * SQRT_HALF_PI * sqrt_z + k*abs_b;
+					    float s0     = min(exp(r0- z),1.) / (x0/r0 + 1./ch0);
+					    float sa     = exp(r0-ra) / max(abs_a/ra + 1./cha, 0.01);
+					    float sb     = exp(r0-rb) / max(abs_b/rb + 1./chb, 0.01);
+					    return max( sign(b)*(s0-sb) - sign(a)*(s0-sa), 0.0 );
+					}
+
+					vec3 get_intensity3_of_light_emitted_by_atmosphere(
+					    vec3 view_origin, vec3 view_direction, float view_start_length, float view_stop_length, vec3 view_wavelengths,
+					    vec3 position, 
+					    float radius_temperature0, //radius at which temperature is effectively 0
+					    float radius_beta, //radius at which beta_* values are sampled
+					    float temperature_change_per_radius2, 
+					    // ^^^ "radius" here is radius_temperature0
+					    // for planets, radius_temperature0 can be set to the slope of a linear relationship to a suitable approximation
+					    // for stars, this is equivalent to the core temperature of the star
+					    float atmosphere_scale_height,
+					    vec3 beta_ray, vec3 beta_mie, vec3 beta_abs,
+					    int step_count
+					){
+						/*
+					    For an excellent introduction to what we're try to do here, see Alan Zucconi: 
+					      https://www.alanzucconi.com/2017/10/10/atmospheric-scattering-3/
+					    We will be using most of the same terminology and variable names.
+					    GUIDE TO VARIABLE NAMES:
+					     Uppercase letters indicate vectors.
+					     Lowercase letters indicate scalars.
+					     Going for terseness because I tried longhand names and trust me, you can't read them.
+					     "*v*"    property of the view ray, the ray cast from the viewer to the object being viewed
+					     "*l*"    property of the light ray, the ray cast from the object to the light source
+					     "y*"     distance from the center of the world to the plane shared by view and light ray
+					     "z*"     distance from the center of the world to along the plane shared by the view and light ray 
+					     "r*"     a distance ("radius") from the center of the world
+					     "h*"     the atmospheric scale height, the distance at which air density reduces by a factor of e
+					     "*2"     the square of a variable
+					     "*0"     property at the start of the raymarch
+					     "*1"     property at the end of the raymarch
+					     "*i"     property during an iteration of the raymarch
+					     "d*"     the change in a property across iterations of the raymarch
+					     "beta*"  a scattering coefficient, the number of e-foldings in light intensity per unit distance
+					     "gamma*" a phase factor, the fraction of light that's scattered in a certain direction
+					     "sigma*" a column density ratio, the density of a column of air relative to surface density
+					     "F*"     fraction of source light that reaches the viewer due to scattering for each color channel
+					     "*_ray"  property of rayleigh scattering
+					     "*_mie"  property of mie scattering
+					     "*_abs"  property of absorption
+					    setup variable shorthands
+					    express all distances in scale heights 
+					    express all positions relative to world origin
+					    */
+					    float h = atmosphere_scale_height;
+					    vec3 V0 = (view_origin + view_direction * view_start_length - position) / h;
+					    vec3 V1 = (view_origin + view_direction * view_stop_length - position) / h;
+					    vec3 V = view_direction; // unit vector pointing to pixel being viewed
+					    float v0 = dot(V0,V);
+					    float v1 = dot(V1,V);
+					    // "beta_*" indicates the rest of the fractional loss.
+					    // it is dependant on wavelength, and the density ratio, which is dependant on height
+					    // So all together, the fraction of sunlight that scatters to a given angle is: beta(wavelength) * gamma(angle) * density_ratio(height)
+					    vec3 beta_sum = h*(beta_ray + beta_mie + beta_abs);
+					    // number of iterations within the raymarch
+					    float dv = (v1 - v0) / float(step_count);
+					    float vi = v0;
+					    float z2 = dot(V0,V0) - v0*v0;
+					    float sigma; // columnar density encountered along the entire path, relative to surface density, effectively the distance along the surface needed to obtain a similar column density
+					    vec3 F = vec3(0); // total intensity for each color channel, found as the sum of light intensities for each path from the light source to the camera
+					    for (int i = 0; i < step_count; ++i)
+					    {
+					        sigma = approx_air_column_density_ratio_through_atmosphere(v0, vi, z2, radius_beta);
+					        float ti = temperature_change_per_radius2 * (1.0 - pow(sqrt(vi*vi+z2) / radius_temperature0, 2));
+					        F += (
+					            // incoming scattered light: the intensity of light that goes towards the camera
+					            // I * exp(r-sqrt(vi*vi+y2+zv2)) * beta_gamma * dv 
+					            // newly created emitted light: the intensity of light that is generated by the parcel towards the camera
+					            + beta_abs * dv
+					              * 2.0 * PLANCK_CONSTANT * SPEED_OF_LIGHT*SPEED_OF_LIGHT / (view_wavelengths*view_wavelengths*view_wavelengths*view_wavelengths*view_wavelengths)
+					              * exp(radius_beta-sqrt(vi*vi+z2)) / (exp(PLANCK_CONSTANT * SPEED_OF_LIGHT/(view_wavelengths*BOLTZMANN_CONSTANT*ti)) - 1.0) 
+					            )
+					            // outgoing scattered light: the fraction of light that scatters away from camera
+					            * exp(-beta_sum * sigma);
+					        vi += dv;
+					    }
+					    return F;
+					}
 
 					vec3 get_signal3_for_intensity3(
 					    in vec3 intensity, in float gamma
@@ -163,14 +368,44 @@ namespace view
 			        	*/
 			        	float z = 1-dot(fragment_element_position.xy, fragment_element_position.xy);
 			        	if(z<0.0) { discard; }
-			        	vec3 Nhat = vec3(fragment_element_position.xy,-z);
-			        	vec3 Lhat = fragment_light_direction;
-			        	vec3 fraction = vec3(dot(Nhat,Lhat));
-			        	vec3 intensity = fraction * fragment_light_intensity + fragment_surface_emission;
+			        	vec3 N = vec3(fragment_element_position.xy,-z);
+			        	vec3 L = fragment_light_direction;
+			        	vec3 E_gas_emitted = vec3(0);
+    					// float r  = fragment_radius; // radius at which "surface" temperature and beta_* variables are sampled
+			        	// vec3  V  = vec3(0,0,1); 
+    					// vec3  V0 = (N+V)*r; // origin of view ray, assumes orthographic projection, anywhere outside the sphere is sufficiently distant
+    					// vec3  O  = vec3(0,0,0);  // center of the star
+    					// float h  = fragment_atmosphere_scale_height;
+				    	// float t  = fragment_surface_temperature;
+				    	// float dtdr2 = fragment_temperature_change_per_radius2;
+					    // `r1` is the radius at which temperature is modeled as 0
+					    // float r1 = r / get_fraction_of_radius_for_star_with_temperature(t, dtdr2); 
+    					// float r0 = r - 5.0*h; // innermost radius of the atmosphere march
+					    // maybe_vec2 air_along_view_ray = 
+					    //     get_bounding_distances_along_ray(
+					    //         get_distances_along_line_to_negation(
+					    //             get_distances_along_3d_line_to_sphere(V0, V, O, r1),
+					    //             get_distances_along_3d_line_to_sphere(V0, V, O, r0)
+					    //         )
+					    //     );
+					    // if(air_along_view_ray.exists)
+					    // {
+					    //     float v0 = air_along_view_ray.value.x;
+					    //     float v1 = air_along_view_ray.value.y;
+					    //     vec3 E_gas_emitted = get_intensity3_of_light_emitted_by_atmosphere(
+					    //         V0, V, v0, v1, wavelength3,
+					    //         O, r1, r, dtdr2, h,
+					    //         fragment_beta_ray, 
+					    //         fragment_beta_mie, 
+					    //         fragment_beta_abs
+					    //     );
+					    // }
+			        	vec3 fraction = vec3(dot(N,L));
+			        	vec3 E_surface_reflected = fraction * fragment_light_intensity + fragment_surface_emission;
 			            fragment_color = vec4(
 					    	get_signal3_for_intensity3(
 					    		get_ldrtone3_for_intensity3(
-					    			intensity, 
+					    			E_surface_reflected + E_gas_emitted, 
 					    			exposure_intensity
 					    		), 
 						    	gamma
