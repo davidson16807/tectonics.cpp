@@ -64,8 +64,9 @@ namespace view
 	    GLuint modelMatrixLocation;
 	    GLuint viewMatrixLocation;
 		GLuint projectionMatrixLocation;
-		GLuint pointSpreadFuntionPixelStandardDeviationLocation;
-		GLuint pointSpreadFuntionStandardDeviationCutoffLocation;
+		GLuint psfPixelStandardDeviationLocation;
+		GLuint psfStarburstPixelAmplitudeLocation;
+		GLuint psfStarburstRayCountLocation;
 		GLuint signalCutoffLocation;
 		GLuint exposureIntensityLocation;
 		GLuint gammaLocation;
@@ -82,7 +83,8 @@ namespace view
 			        uniform mat4  clip_for_view;
 			        uniform mat4  view_for_clip;
 			        uniform vec2  resolution;
-			        uniform float point_spread_function_pixel_standard_deviation;
+			        uniform float psf_pixel_standard_deviation;
+			        uniform float psf_starburst_pixel_amplitude;
 			        uniform float exposure_intensity;
 			        uniform float gamma;
 			        uniform float signal_cutoff;
@@ -167,8 +169,8 @@ namespace view
 
 			        	// solve for r at which signal==signal_cutoff to find fragment_clipspace_radius
 			        	float intensity_cutoff = get_intensity_for_ldrtone(get_intensity_for_signal(signal_cutoff, gamma), exposure_intensity);
-			        	float sigma2 = point_spread_function_pixel_standard_deviation * point_spread_function_pixel_standard_deviation / (resolution.x * resolution.x);
-			        	float standard_deviation_cutoff2 = -log(sqrt(2.0*pi) * intensity_cutoff / max3(fragment_point_intensity)) * (2.0*sigma2);
+			        	float sigma = (psf_pixel_standard_deviation + psf_starburst_pixel_amplitude * exp(1.0)) / resolution.x;
+			        	float standard_deviation_cutoff2 = -log(sqrt(2.0*pi) * intensity_cutoff / max3(fragment_point_intensity)) * (2.0*sigma*sigma);
 			        	fragment_clipspace_radius = standard_deviation_cutoff2;
 
 			            vec2 scale = sqrt(standard_deviation_cutoff2) * vec2(1, resolution.x / resolution.y);
@@ -184,7 +186,9 @@ namespace view
 				R"(#version 330
 			        precision mediump float;
 			        uniform vec2  resolution;
-			        uniform float point_spread_function_pixel_standard_deviation;
+			        uniform float psf_pixel_standard_deviation;
+			        uniform float psf_starburst_pixel_amplitude;
+			        uniform float psf_starburst_ray_count;
 			        uniform float signal_cutoff;
 			        uniform float exposure_intensity;
 			        uniform float gamma;
@@ -194,6 +198,10 @@ namespace view
 			        out     vec4  fragment_color;
 
 			        const   float pi = 3.141592653589793238462643383279;
+
+			        float max3 (vec3 v) {
+					  return max (max (v.x, v.y), v.z);
+					}
 
 					vec3 get_signal3_for_intensity3(
 					    in vec3 intensity, in float gamma
@@ -212,19 +220,20 @@ namespace view
 					}
 
 			        void main() {
-			        	float sigma2 = point_spread_function_pixel_standard_deviation * point_spread_function_pixel_standard_deviation / (resolution.x * resolution.x);
 			        	float r2 = dot(fragment_element_position.xy, fragment_element_position.xy) * fragment_clipspace_radius;
-			        	vec3 intensity = vec3(fragment_point_intensity)*exp(-r2/(2.0*sigma2))/sqrt(2.0*pi);
-			        	if(r2>fragment_clipspace_radius) { discard; }
-					    fragment_color = vec4(
+			        	float angle = atan(fragment_element_position.y/fragment_element_position.x);
+			        	float sigma = (psf_pixel_standard_deviation + psf_starburst_pixel_amplitude*exp(cos(angle*psf_starburst_ray_count))) / resolution.x;
+			        	vec3 intensity = vec3(fragment_point_intensity)*exp(-r2/(2.0*sigma*sigma))/sqrt(2.0*pi);
+					    vec3 signal = 
 					    	get_signal3_for_intensity3(
 					    		get_ldrtone3_for_intensity3(
 					    			intensity, 
 					    			exposure_intensity
 					    		), 
 						    	gamma
-					    	), 
-					    1);
+					    	);
+					    if(max3(signal) < signal_cutoff) {discard;};
+					    fragment_color = vec4(signal, 1);
 			        }
 				)"
 			),
@@ -291,7 +300,9 @@ namespace view
 			viewMatrixLocation = glGetUniformLocation(shaderProgramId, "view_for_global");
 			modelMatrixLocation = glGetUniformLocation(shaderProgramId, "global_for_local");
 			projectionMatrixLocation = glGetUniformLocation(shaderProgramId, "clip_for_view");
-			pointSpreadFuntionPixelStandardDeviationLocation = glGetUniformLocation(shaderProgramId, "point_spread_function_pixel_standard_deviation");
+			psfPixelStandardDeviationLocation = glGetUniformLocation(shaderProgramId, "psf_pixel_standard_deviation");
+			psfStarburstPixelAmplitudeLocation = glGetUniformLocation(shaderProgramId, "psf_starburst_pixel_amplitude");
+			psfStarburstRayCountLocation = glGetUniformLocation(shaderProgramId, "psf_starburst_ray_count");
 			signalCutoffLocation = glGetUniformLocation(shaderProgramId, "signal_cutoff");
 			exposureIntensityLocation = glGetUniformLocation(shaderProgramId, "exposure_intensity");
 			gammaLocation = glGetUniformLocation(shaderProgramId, "gamma");
@@ -425,9 +436,10 @@ namespace view
 	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(view_state.model_matrix));
 	        glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(view_state.projection_matrix));
 	        glUniform2fv      (resolutionLocation, 1, glm::value_ptr(view_state.resolution));
-	        glUniform1f       (pointSpreadFuntionPixelStandardDeviationLocation, view_state.point_spread_function_pixel_standard_deviation);
-	        glUniform1f       (pointSpreadFuntionStandardDeviationCutoffLocation, 3.0f);
-	        glUniform1f       (signalCutoffLocation, 0.01f);
+	        glUniform1f       (psfPixelStandardDeviationLocation, view_state.point_spread_function_pixel_standard_deviation);
+	        glUniform1f       (psfStarburstPixelAmplitudeLocation, view_state.point_spread_function_starburst_pixel_amplitude);
+	        glUniform1f       (psfStarburstRayCountLocation, (view_state.aperture_symmetry_axis_count%2?2:1) * view_state.aperture_symmetry_axis_count);
+	        glUniform1f       (signalCutoffLocation, 0.02f);
 	        glUniform1f       (exposureIntensityLocation, view_state.exposure_intensity);
 	        glUniform1f       (gammaLocation, view_state.gamma);
 

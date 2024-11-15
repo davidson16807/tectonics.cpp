@@ -24,6 +24,8 @@ namespace view
 		glm::mat4 projection_matrix;
 		glm::vec2 resolution;
 		float point_spread_function_pixel_standard_deviation;
+		float point_spread_function_starburst_pixel_amplitude;
+		int aperture_symmetry_axis_count;
 		float exposure_intensity;
 		float gamma;
 		ProjectionType projection_type;
@@ -35,6 +37,8 @@ namespace view
 			projection_matrix(1),
 			resolution(1),
 			point_spread_function_pixel_standard_deviation(1.0),
+			point_spread_function_starburst_pixel_amplitude(1.0),
+			aperture_symmetry_axis_count(5),
 			exposure_intensity(1.0),
 			gamma(2.2),
 			projection_type(ProjectionType::perspective),
