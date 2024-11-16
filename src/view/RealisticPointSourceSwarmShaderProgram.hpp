@@ -393,6 +393,8 @@ namespace view
 			glEnable(GL_CULL_FACE);  
 			glCullFace(GL_BACK);
 			glFrontFace(GL_CCW); 
+			glBlendEquationSeparate(GL_MAX, GL_MAX);
+			glEnable(GL_BLEND);
 
 			//ATTRIBUTES
 			glBindBuffer(GL_ARRAY_BUFFER, elementPositionBufferId);
