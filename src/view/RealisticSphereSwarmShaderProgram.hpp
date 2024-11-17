@@ -52,7 +52,9 @@ namespace view
 		GLuint instanceRadiusBufferId;
 		GLuint instanceLightSourceBufferId;
 		GLuint instanceLightLuminosityBufferId;
-		GLuint instanceSurfaceEmissionBufferId;
+		GLuint instanceBetaRayBufferId;
+		GLuint instanceBetaMieBufferId;
+		GLuint instanceBetaAbsBufferId;
 
 		// element attributes
 	    GLuint elementPositionLocation;
@@ -62,7 +64,9 @@ namespace view
 		GLuint instanceRadiusLocation;
 		GLuint instanceLightSourceLocation;
 		GLuint instanceLightLuminosityLocation;
-		GLuint instanceSurfaceEmissionLocation;
+		GLuint instanceBetaRayLocation;
+		GLuint instanceBetaMieLocation;
+		GLuint instanceBetaAbsLocation;
 
 		// uniforms
 	    GLuint modelMatrixLocation;
@@ -82,14 +86,28 @@ namespace view
 			        uniform mat4  clip_for_view;
 			        in      vec3  element_position;
 			        in      vec3  instance_origin;
-			        in      float instance_radius;
-			        in      vec3  instance_surface_emission;
 			        in      vec3  instance_illumination_source;
 			        in      vec3  instance_illumination_luminosity;
+
+					in      vec3  instance_beta_abs;
+					in      vec3  instance_beta_mie;
+					in      vec3  instance_beta_ray;
+			        in      float instance_radius;
+					// in      float instance_surface_temperature;
+					// in      float instance_temperature_change_per_radius2;
+					// in      float instance_atmosphere_scale_height;
+
 			        out     vec3  fragment_element_position;
 			        out     vec3  fragment_light_direction;
 			        out     vec3  fragment_light_intensity;
-			        out     vec3  fragment_surface_emission;
+
+					out     vec3  fragment_beta_abs;
+					out     vec3  fragment_beta_mie;
+					out     vec3  fragment_beta_ray;
+					out     float fragment_radius;
+					// out     float fragment_surface_temperature;
+					// out     float fragment_temperature_change_per_radius2;
+					// out     float fragment_atmosphere_scale_height;
 
 			        const   float PI = 3.141592653589793238462643383279;
 
@@ -109,7 +127,6 @@ namespace view
 			        	float v = length(view_for_element_origin);
 			        	float l = length(instance_illumination_offset);
 			        	fragment_light_intensity = max(vec3(0),instance_illumination_luminosity) / (4.0*PI*l*l) / (4.0*PI*v*v);
-			        	fragment_surface_emission = instance_surface_emission / (4.0*PI*v*v);
 			        	fragment_light_direction = (
 			        		clip_for_view * 
 			        		view_for_global * 
@@ -117,6 +134,13 @@ namespace view
 			        		vec4(instance_illumination_offset/l,0)
 			        	).xyz;
 			        	fragment_element_position = element_position;
+						fragment_beta_abs = instance_beta_abs;
+						fragment_beta_mie = instance_beta_mie;
+						fragment_beta_ray = instance_beta_ray;
+						fragment_radius = instance_radius;
+						// fragment_surface_temperature = instance_surface_temperature;
+						// fragment_temperature_change_per_radius2 = instance_temperature_change_per_radius2;
+						// fragment_atmosphere_scale_height = instance_atmosphere_scale_height;
 			            gl_Position = clip_position;
 			        };
 				)"
@@ -130,7 +154,6 @@ namespace view
 			        in      vec3  fragment_element_position;
 			        in      vec3  fragment_light_direction;
 			        in      vec3  fragment_light_intensity;
-			        in      vec3  fragment_surface_emission;
 			        out     vec4  fragment_color;
 
 			        const float PI = 3.141592653589793238462643383279;
@@ -401,7 +424,7 @@ namespace view
 					    //     );
 					    // }
 			        	vec3 fraction = vec3(dot(N,L));
-			        	vec3 E_surface_reflected = fraction * fragment_light_intensity + fragment_surface_emission;
+			        	vec3 E_surface_reflected = fraction * fragment_light_intensity;
 			            fragment_color = vec4(
 					    	get_signal3_for_intensity3(
 					    		get_ldrtone3_for_intensity3(
@@ -498,11 +521,6 @@ namespace view
 		    glEnableVertexAttribArray(instanceOriginLocation);
 
 			// create a new vertex buffer object, VBO
-			glGenBuffers(1, &instanceRadiusBufferId);
-			instanceRadiusLocation = glGetAttribLocation(shaderProgramId, "instance_radius");
-		    glEnableVertexAttribArray(instanceRadiusLocation);
-
-			// create a new vertex buffer object, VBO
 			glGenBuffers(1, &instanceLightSourceBufferId);
 			instanceLightSourceLocation = glGetAttribLocation(shaderProgramId, "instance_illumination_source");
 		    glEnableVertexAttribArray(instanceLightSourceLocation);
@@ -513,9 +531,29 @@ namespace view
 		    glEnableVertexAttribArray(instanceLightLuminosityLocation);
 
 			// create a new vertex buffer object, VBO
-			glGenBuffers(1, &instanceSurfaceEmissionBufferId);
-			instanceSurfaceEmissionLocation = glGetAttribLocation(shaderProgramId, "instance_surface_emission");
-		    glEnableVertexAttribArray(instanceSurfaceEmissionLocation);
+			glGenBuffers(1, &instanceBetaRayBufferId);
+			instanceBetaRayLocation = glGetAttribLocation(shaderProgramId, "instance_beta_ray");
+		    glEnableVertexAttribArray(instanceBetaRayLocation);
+
+			// create a new vertex buffer object, VBO
+			glGenBuffers(1, &instanceBetaMieBufferId);
+			instanceBetaMieLocation = glGetAttribLocation(shaderProgramId, "instance_beta_mie");
+		    glEnableVertexAttribArray(instanceBetaMieLocation);
+
+			// create a new vertex buffer object, VBO
+			glGenBuffers(1, &instanceBetaAbsBufferId);
+			instanceBetaAbsLocation = glGetAttribLocation(shaderProgramId, "instance_beta_abs");
+		    glEnableVertexAttribArray(instanceBetaAbsLocation);
+
+			// create a new vertex buffer object, VBO
+			glGenBuffers(1, &instanceOriginBufferId);
+			instanceOriginLocation = glGetAttribLocation(shaderProgramId, "instance_origin");
+		    glEnableVertexAttribArray(instanceOriginLocation);
+
+			// create a new vertex buffer object, VBO
+			glGenBuffers(1, &instanceRadiusBufferId);
+			instanceRadiusLocation = glGetAttribLocation(shaderProgramId, "instance_radius");
+		    glEnableVertexAttribArray(instanceRadiusLocation);
 
 		}
 
@@ -546,6 +584,9 @@ namespace view
 			const std::vector<glm::vec3>& light_source,
 			const std::vector<glm::vec3>& light_luminosity,
 			const std::vector<glm::vec3>& surface_emission,
+			// const std::vector<glm::vec3>& beta_ray,
+			// const std::vector<glm::vec3>& beta_mie,
+			// const std::vector<glm::vec3>& beta_abs,
 			const ViewState& view_state
 		){
 
@@ -598,11 +639,23 @@ namespace view
             glVertexAttribPointer(instanceLightLuminosityLocation, 3, GL_FLOAT, normalize, stride, offset);
 		    glVertexAttribDivisor(instanceLightLuminosityLocation,1);
 
-			glBindBuffer(GL_ARRAY_BUFFER, instanceSurfaceEmissionBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*surface_emission.size(), &surface_emission.front(), GL_DYNAMIC_DRAW);
-		    glEnableVertexAttribArray(instanceSurfaceEmissionLocation);
-            glVertexAttribPointer(instanceSurfaceEmissionLocation, 3, GL_FLOAT, normalize, stride, offset);
-		    glVertexAttribDivisor(instanceSurfaceEmissionLocation,1);
+			// glBindBuffer(GL_ARRAY_BUFFER, instanceBetaRayBufferId);
+	        // glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*beta_ray.size(), &beta_ray.front(), GL_DYNAMIC_DRAW);
+		    // glEnableVertexAttribArray(instanceBetaRayLocation);
+            // glVertexAttribPointer(instanceBetaRayLocation, 3, GL_FLOAT, normalize, stride, offset);
+		    // glVertexAttribDivisor(instanceBetaRayLocation,1);
+
+			// glBindBuffer(GL_ARRAY_BUFFER, instanceBetaMieBufferId);
+	        // glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*beta_mie.size(), &beta_mie.front(), GL_DYNAMIC_DRAW);
+		    // glEnableVertexAttribArray(instanceBetaMieLocation);
+            // glVertexAttribPointer(instanceBetaMieLocation, 3, GL_FLOAT, normalize, stride, offset);
+		    // glVertexAttribDivisor(instanceBetaMieLocation,1);
+
+			// glBindBuffer(GL_ARRAY_BUFFER, instanceBetaAbsBufferId);
+	        // glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*beta_abs.size(), &beta_abs.front(), GL_DYNAMIC_DRAW);
+		    // glEnableVertexAttribArray(instanceBetaAbsLocation);
+            // glVertexAttribPointer(instanceBetaAbsLocation, 3, GL_FLOAT, normalize, stride, offset);
+		    // glVertexAttribDivisor(instanceBetaAbsLocation,1);
 
     		// UNIFORMS
 	        glUniformMatrix4fv(viewMatrixLocation,       1, GL_FALSE, glm::value_ptr(view_state.view_matrix));
