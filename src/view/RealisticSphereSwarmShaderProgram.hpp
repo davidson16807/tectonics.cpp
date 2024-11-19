@@ -160,7 +160,17 @@ namespace view
 			        in      vec3  fragment_element_position;
 			        in      vec3  fragment_light_direction;
 			        in      vec3  fragment_light_intensity;
+
+					in      vec3  fragment_beta_abs;
+					in      vec3  fragment_beta_mie;
+					in      vec3  fragment_beta_ray;
+					in      float fragment_radius;
+					in      float fragment_surface_temperature;
+					in      float fragment_temperature_change_per_radius2;
+					in      float fragment_atmosphere_scale_height;
+
 			        out     vec4  fragment_color;
+
 
 			        const float PI = 3.141592653589793238462643383279;
 					const float BIG = 1e20;
@@ -400,12 +410,12 @@ namespace view
 			        	vec3 N = vec3(fragment_element_position.xy,-z);
 			        	vec3 L = fragment_light_direction;
 			        	vec3 E_gas_emitted = vec3(0);
-    					// float r  = fragment_radius; // radius at which "surface" temperature and beta_* variables are sampled
-			        	// vec3  V  = vec3(0,0,1); 
-    					// vec3  V0 = (N+V)*r; // origin of view ray, assumes orthographic projection, anywhere outside the sphere is sufficiently distant
-    					// vec3  O  = vec3(0,0,0);  // center of the star
-    					// float h  = fragment_atmosphere_scale_height;
-				    	// float t  = fragment_surface_temperature;
+    					float r  = fragment_radius; // radius at which "surface" temperature and beta_* variables are sampled
+			        	vec3  V  = vec3(0,0,1); 
+    					vec3  V0 = (N+V)*r; // origin of view ray, assumes orthographic projection, anywhere outside the sphere is sufficiently distant
+    					vec3  O  = vec3(0,0,0);  // center of the star
+    					float h  = fragment_atmosphere_scale_height;
+				    	float t  = fragment_surface_temperature;
 				    	// float dtdr2 = fragment_temperature_change_per_radius2;
 					    // `r1` is the radius at which temperature is modeled as 0
 					    // float r1 = r / get_fraction_of_radius_for_star_with_temperature(t, dtdr2); 
@@ -602,15 +612,14 @@ namespace view
 		void draw(
 			const std::vector<glm::vec3>& origin,
 			const std::vector<float>& radius,
-			// const std::vector<float>& surface_temperature,
-			// const std::vector<float>& temperature_change_per_radius2,
-			// const std::vector<float>& atmosphere_scale_height,
+			const std::vector<float>& surface_temperature,
+			const std::vector<float>& temperature_change_per_radius2,
+			const std::vector<float>& atmosphere_scale_height,
 			const std::vector<glm::vec3>& light_source,
 			const std::vector<glm::vec3>& light_luminosity,
-			const std::vector<glm::vec3>& surface_emission,
-			// const std::vector<glm::vec3>& beta_ray,
-			// const std::vector<glm::vec3>& beta_mie,
-			// const std::vector<glm::vec3>& beta_abs,
+			const std::vector<glm::vec3>& beta_ray,
+			const std::vector<glm::vec3>& beta_mie,
+			const std::vector<glm::vec3>& beta_abs,
 			const ViewState& view_state
 		){
 
@@ -657,23 +666,23 @@ namespace view
             glVertexAttribPointer(instanceLightLuminosityLocation, 3, GL_FLOAT, normalize, stride, offset);
 		    glVertexAttribDivisor(instanceLightLuminosityLocation,1);
 
-			// glBindBuffer(GL_ARRAY_BUFFER, instanceBetaRayBufferId);
-	        // glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*beta_ray.size(), &beta_ray.front(), GL_DYNAMIC_DRAW);
-		    // glEnableVertexAttribArray(instanceBetaRayLocation);
-            // glVertexAttribPointer(instanceBetaRayLocation, 3, GL_FLOAT, normalize, stride, offset);
-		    // glVertexAttribDivisor(instanceBetaRayLocation,1);
+			glBindBuffer(GL_ARRAY_BUFFER, instanceBetaRayBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*beta_ray.size(), &beta_ray.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(instanceBetaRayLocation);
+            glVertexAttribPointer(instanceBetaRayLocation, 3, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceBetaRayLocation,1);
 
-			// glBindBuffer(GL_ARRAY_BUFFER, instanceBetaMieBufferId);
-	        // glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*beta_mie.size(), &beta_mie.front(), GL_DYNAMIC_DRAW);
-		    // glEnableVertexAttribArray(instanceBetaMieLocation);
-            // glVertexAttribPointer(instanceBetaMieLocation, 3, GL_FLOAT, normalize, stride, offset);
-		    // glVertexAttribDivisor(instanceBetaMieLocation,1);
+			glBindBuffer(GL_ARRAY_BUFFER, instanceBetaMieBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*beta_mie.size(), &beta_mie.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(instanceBetaMieLocation);
+            glVertexAttribPointer(instanceBetaMieLocation, 3, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceBetaMieLocation,1);
 
-			// glBindBuffer(GL_ARRAY_BUFFER, instanceBetaAbsBufferId);
-	        // glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*beta_abs.size(), &beta_abs.front(), GL_DYNAMIC_DRAW);
-		    // glEnableVertexAttribArray(instanceBetaAbsLocation);
-            // glVertexAttribPointer(instanceBetaAbsLocation, 3, GL_FLOAT, normalize, stride, offset);
-		    // glVertexAttribDivisor(instanceBetaAbsLocation,1);
+			glBindBuffer(GL_ARRAY_BUFFER, instanceBetaAbsBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*beta_abs.size(), &beta_abs.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(instanceBetaAbsLocation);
+            glVertexAttribPointer(instanceBetaAbsLocation, 3, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceBetaAbsLocation,1);
 
 			glBindBuffer(GL_ARRAY_BUFFER, instanceRadiusBufferId);
 	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*radius.size(), &radius.front(), GL_DYNAMIC_DRAW);
@@ -681,23 +690,23 @@ namespace view
             glVertexAttribPointer(instanceRadiusLocation, 1, GL_FLOAT, normalize, stride, offset);
 		    glVertexAttribDivisor(instanceRadiusLocation,1);
 
-			// glBindBuffer(GL_ARRAY_BUFFER, instanceSurfaceTemperatureBufferId);
-	        // glBufferData(GL_ARRAY_BUFFER, sizeof(float)*radius.size(), &radius.front(), GL_DYNAMIC_DRAW);
-		    // glEnableVertexAttribArray(instanceSurfaceTemperatureLocation);
-            // glVertexAttribPointer(instanceSurfaceTemperatureLocation, 1, GL_FLOAT, normalize, stride, offset);
-		    // glVertexAttribDivisor(instanceSurfaceTemperatureLocation,1);
+			glBindBuffer(GL_ARRAY_BUFFER, instanceSurfaceTemperatureBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*radius.size(), &radius.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(instanceSurfaceTemperatureLocation);
+            glVertexAttribPointer(instanceSurfaceTemperatureLocation, 1, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceSurfaceTemperatureLocation,1);
 
-			// glBindBuffer(GL_ARRAY_BUFFER, instanceTemperatureChangePerRadius2BufferId);
-	        // glBufferData(GL_ARRAY_BUFFER, sizeof(float)*radius.size(), &radius.front(), GL_DYNAMIC_DRAW);
-		    // glEnableVertexAttribArray(instanceTemperatureChangePerRadius2Location);
-            // glVertexAttribPointer(instanceTemperatureChangePerRadius2Location, 1, GL_FLOAT, normalize, stride, offset);
-		    // glVertexAttribDivisor(instanceTemperatureChangePerRadius2Location,1);
+			glBindBuffer(GL_ARRAY_BUFFER, instanceTemperatureChangePerRadius2BufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*radius.size(), &radius.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(instanceTemperatureChangePerRadius2Location);
+            glVertexAttribPointer(instanceTemperatureChangePerRadius2Location, 1, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceTemperatureChangePerRadius2Location,1);
 
-			// glBindBuffer(GL_ARRAY_BUFFER, instanceAtmosphereScaleHeightBufferId);
-	        // glBufferData(GL_ARRAY_BUFFER, sizeof(float)*radius.size(), &radius.front(), GL_DYNAMIC_DRAW);
-		    // glEnableVertexAttribArray(instanceAtmosphereScaleHeightLocation);
-            // glVertexAttribPointer(instanceAtmosphereScaleHeightLocation, 1, GL_FLOAT, normalize, stride, offset);
-		    // glVertexAttribDivisor(instanceAtmosphereScaleHeightLocation,1);
+			glBindBuffer(GL_ARRAY_BUFFER, instanceAtmosphereScaleHeightBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*radius.size(), &radius.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(instanceAtmosphereScaleHeightLocation);
+            glVertexAttribPointer(instanceAtmosphereScaleHeightLocation, 1, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceAtmosphereScaleHeightLocation,1);
 
     		// UNIFORMS
 	        glUniformMatrix4fv(viewMatrixLocation,       1, GL_FALSE, glm::value_ptr(view_state.view_matrix));
