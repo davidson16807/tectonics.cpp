@@ -161,9 +161,9 @@ int main() {
     0,0,0,0,0,0,0,0,0
   };
 
-  float Re(si::jupiter_radius/si::solar_radius);//si::earth_radius / si::meter);
-  float Rj(si::jupiter_radius/si::solar_radius);//si::jupiter_radius / si::meter);
-  float Rs(1);//si::solar_radius / si::meter);
+  float Re(si::earth_radius / si::meter);
+  float Rj(si::jupiter_radius / si::meter);
+  float Rs(si::solar_radius / si::meter);
 
   std::vector<float> instance_radii{ 
     Rj,Rj,
@@ -236,12 +236,21 @@ int main() {
   // control_state.log2_height = 20.0f;
   control_state.angular_position = glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f;
 
+  using length = si::length<float>;
+  length meter(si::meter);
+  length procedural_terrain_far_distance(3e3*si::kilometer);
+  length planet_billboard_near_distance(1e7*si::kilometer); // ~10 * solar radius 
+  length point_source_near_distance(30.0*si::astronomical_unit); // semi-major axis of pluto
+
   // initialize view state
   view::ViewState view_state;
   view_state.projection_matrix = glm::perspective(
     3.14159f*45.0f/180.0f, 
     850.0f/640.0f, 
-    1e-3f, 1e16f
+    // 1e3f,
+    // 1e16f
+    planet_billboard_near_distance/meter, 
+    point_source_near_distance/meter
   );
   view_state.view_matrix = control_state.get_view_matrix();
   view_state.resolution = glm::vec2(850, 640);
