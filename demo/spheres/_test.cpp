@@ -232,7 +232,7 @@ int main() {
   // initialize control state
   update::OrbitalControlState control_state;
   control_state.min_zoom_distance = 1.0f;
-  control_state.log2_height = 2.5f;
+  control_state.log2_height = std::log2(10.0*Rs);
   // control_state.log2_height = 20.0f;
   control_state.angular_position = glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f;
 
