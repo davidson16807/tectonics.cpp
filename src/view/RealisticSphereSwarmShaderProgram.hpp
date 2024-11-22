@@ -416,40 +416,42 @@ namespace view
     					vec3  O  = vec3(0,0,0);  // center of the star
     					float h  = fragment_atmosphere_scale_height;
 				    	float t  = fragment_surface_temperature;
-				    	// float dtdr2 = fragment_temperature_change_per_radius2;
+				    	float dtdr2 = fragment_temperature_change_per_radius2;
 					    // `r1` is the radius at which temperature is modeled as 0
-					    // float r1 = r / get_fraction_of_radius_for_star_with_temperature(t, dtdr2); 
-    					// float r0 = r - 5.0*h; // innermost radius of the atmosphere march
-					    // maybe_vec2 air_along_view_ray = 
-					    //     get_bounding_distances_along_ray(
-					    //         get_distances_along_line_to_negation(
-					    //             get_distances_along_3d_line_to_sphere(V0, V, O, r1),
-					    //             get_distances_along_3d_line_to_sphere(V0, V, O, r0)
-					    //         )
-					    //     );
-					    // if(air_along_view_ray.exists)
-					    // {
-					    //     float v0 = air_along_view_ray.value.x;
-					    //     float v1 = air_along_view_ray.value.y;
-					    //     vec3 E_gas_emitted = get_intensity3_of_light_emitted_by_atmosphere(
-					    //         V0, V, v0, v1, wavelength3,
-					    //         O, r1, r, dtdr2, h,
-					    //         fragment_beta_ray, 
-					    //         fragment_beta_mie, 
-					    //         fragment_beta_abs
-					    //     );
-					    // }
+					    float r1 = r / get_fraction_of_radius_for_star_with_temperature(t, dtdr2); 
+    					float r0 = r - 5.0*h; // innermost radius of the atmosphere march
+					    maybe_vec2 air_along_view_ray = 
+					        get_bounding_distances_along_ray(
+					            get_distances_along_line_to_negation(
+					                get_distances_along_3d_line_to_sphere(V0, V, O, r1),
+					                get_distances_along_3d_line_to_sphere(V0, V, O, r0)
+					            )
+					        );
+					    if(air_along_view_ray.exists)
+					    {
+					        float v0 = air_along_view_ray.value.x;
+					        float v1 = air_along_view_ray.value.y;
+					        vec3 E_gas_emitted = get_intensity3_of_light_emitted_by_atmosphere(
+					            V0, V, v0, v1, wavelength3,
+					            O, r1, r, dtdr2, h,
+					            fragment_beta_ray, 
+					            fragment_beta_mie, 
+					            fragment_beta_abs,
+					            16
+					        );
+					    }
 			        	vec3 fraction = vec3(dot(N,L));
 			        	vec3 E_surface_reflected = fraction * fragment_light_intensity;
-			            fragment_color = vec4(
-					    	get_signal3_for_intensity3(
-					    		get_ldrtone3_for_intensity3(
-					    			E_surface_reflected + E_gas_emitted, 
-					    			exposure_intensity
-					    		), 
-						    	gamma
-					    	),
-			            1);
+			        	fragment_color = vec4(1);
+			            // fragment_color = vec4(
+					    // 	get_signal3_for_intensity3(
+					    // 		get_ldrtone3_for_intensity3(
+					    // 			E_surface_reflected + E_gas_emitted, 
+					    // 			exposure_intensity
+					    // 		), 
+						//     	gamma
+					    // 	),
+			            // 1);
 			        }
 				)"
 			),

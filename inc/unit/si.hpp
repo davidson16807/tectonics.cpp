@@ -68,8 +68,8 @@ namespace si{
       
     `units::kilometer / units::second` is also readable but violates the principle that the library work well with others,
     since many unit libraries have already taken that name.
-    Since abbreviated namespaces are preferred, we should pick the shortest abbreviation
-      recognized by an official standards institute. This is why we call it `si`.
+    Since terse namespaces are preferred, we should pick the shortest abbreviation
+    recognized by an official standards institute. This is why we call it `si`.
 
     * The library should minimize the amount of explicit unit conversion that occurs when reporting measurements.
       This applies for both unit conversion in the developer's head as well as in the developer's code.
@@ -89,7 +89,7 @@ namespace si{
       that allow work over the same range and precision afforded by the underlying system of measurements. 
       Since SI is designed to express measurements over a very wide range in orders of magnitude,
       some extremes cannot be expressed using floats (e.g. cubic yottameters)
-    so all built-in measures (e.g. `si::length<double>`) should handle doubles by default.
+    so all built-in measures (e.g. `si::kilometer3`) should use doubles by default.
       However, template aliases should be provided for all built in measures 
       to allow easily specifying other underlying types (e.g. `si::length<float>`)
   */

@@ -103,7 +103,7 @@ int main() {
   using vec3 = glm::vec3;
   // using vec4 = glm::vec4;
 
-  std::vector<vec3> instance_origins{ 
+  std::vector<vec3> instance_grid_ids{ 
     vec3( 0, 0, 1),
     vec3( 0, 0, 0),
     vec3( 0, 0,-1),
@@ -161,34 +161,42 @@ int main() {
     0,0,0,0,0,0,0,0,0
   };
 
-  std::vector<double> instance_radii{ 
-    0.0,0.0,
-    si::earth_radius/si::meter, // earth
-    si::jupiter_radius/si::meter, // large hot jupiter
-    0.85*si::jupiter_radius/si::meter, // Luhman 16A
-    0.0,0.0,0.0,0.0, 
-    0.0,
-    si::solar_radius/si::meter, // sunlike
-    0.09*si::solar_radius/si::meter, // red dwarf
-    1.7*si::jupiter_radius/si::meter, // blue giant
-    7.4*si::jupiter_radius/si::meter, // ultramassive
-    0.0,0.0,0.0,0.0,
-    0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+  float Re(si::jupiter_radius/si::solar_radius);//si::earth_radius / si::meter);
+  float Rj(si::jupiter_radius/si::solar_radius);//si::jupiter_radius / si::meter);
+  float Rs(1);//si::solar_radius / si::meter);
+
+  std::vector<float> instance_radii{ 
+    Rj,Rj,
+    Re, // earth
+    Rj, // large hot jupiter
+    0.85f*Rj, // Luhman 16A
+    Rj,Rj,Rj,Rj, 
+    Rj,
+    Rs, // sunlike
+    0.09f*Rs, // red dwarf
+    1.7f*Rj, // blue giant
+    7.4f*Rj, // ultramassive
+    Rj,Rj,Rj,Rj,
+    Rj,Rj,Rj,Rj,Rj,Rj,Rj,Rj,Rj
   };
 
+  float Me(si::earth_mass / si::kilogram);
+  float Mj(si::jupiter_mass / si::kilogram);
+  float Ms(si::solar_mass / si::kilogram);
+
   std::vector<float> instance_masses{ 
-    0.0,0.0,0.0,
-    si::earth_mass/si::kilogram, // earth
-    si::jupiter_mass/si::kilogram, // large hot jupiter
-    0.034*si::solar_mass/si::kilogram, // Luhman 16A
-    0.0,0.0,0.0, 
-    0.0,
-    1.0 * si::solar_mass/si::kilogram, // sunlike
-    0.07 * si::solar_mass/si::kilogram, // red dwarf
-    2.1 * si::solar_mass/si::kilogram, // blue giant
-    18.0 * si::solar_mass/si::kilogram, // ultramassive
-    0.0,0.0,0.0,0.0, 
-    0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+    Mj,Mj,Mj,
+    Me, // earth
+    Mj, // large hot jupiter
+    0.034f*Ms, // Luhman 16A
+    Mj,Mj,Mj, 
+    Mj,
+    1.0f * Ms, // sunlike
+    0.07f * Ms, // red dwarf
+    2.1f * Ms, // blue giant
+    18.0f * Ms, // ultramassive
+    Mj,Mj,Mj,Mj, 
+    Mj,Mj,Mj,Mj,Mj,Mj,Mj,Mj,Mj
   };
 
   /*
@@ -197,15 +205,20 @@ int main() {
   auto atmosphere = atmospheres(si::boltzmann_constant);
   auto point = point_masses(si::gravitational_constant);
   std::vector<float> instance_atmosphere_scale_height;
-  std::vector<float> instance_view_radii;
+  std::vector<vec3> instance_origins;
   for(std::size_t i=0; i<instance_radii.size(); i++)
   {
     instance_atmosphere_scale_height.push_back(
-      atmosphere.scale_height(instance_surface_temperature[i] * si::kelvin, instance_atmosphere_molecular_mass[i] * si::dalton, 
-        point.gravity(double(instance_masses[i]) * si::kilogram, instance_radii[i] * si::meter)
-      ) / si::meter
+      float(
+        atmosphere.scale_height(
+          instance_surface_temperature[i] * si::kelvin, 
+          instance_atmosphere_molecular_mass[i] * si::dalton, 
+          point.gravity(instance_masses[i] * si::kilogram, instance_radii[i] * si::meter)
+        ) / si::meter
+      )
     );
-    instance_view_radii.push_back(float(std::max(0.1, instance_radii[i]*si::meter/si::solar_radius)));
+    // instance_origins.push_back(instance_grid_ids[i]);
+    instance_origins.push_back(10.0f*Rs*instance_grid_ids[i]);
   };
 
   // "beta_*" is the rest of the fractional loss.
@@ -220,6 +233,7 @@ int main() {
   update::OrbitalControlState control_state;
   control_state.min_zoom_distance = 1.0f;
   control_state.log2_height = 2.5f;
+  // control_state.log2_height = 20.0f;
   control_state.angular_position = glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f;
 
   // initialize view state
@@ -249,12 +263,12 @@ int main() {
 
       sphere_program.draw(
         instance_origins,
-        instance_view_radii,
+        instance_radii,
         instance_surface_temperature,
         instance_core_temperature,
         instance_atmosphere_scale_height,
         instance_light_source,
-        instance_origins,
+        instance_grid_ids,
         instance_beta_ray_sun,
         instance_beta_mie_sun,
         instance_beta_abs_sun,
