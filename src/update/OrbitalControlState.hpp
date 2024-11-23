@@ -65,7 +65,6 @@ namespace update
 		static void pan(const OrbitalControlState& state_in, glm::vec2 motion, OrbitalControlState& state_out)
 		{
 			if (&state_in != &state_out) { state_out = state_in; }
-			motion = 0.2f * motion * std::exp2(state_in.log2_height)/state_in.min_zoom_distance;
 			state_out.angular_position = state_in.angular_position + motion;
 			state_out.angular_position.y = std::clamp(state_out.angular_position.y, -float(M_PI)/2.0f, float(M_PI)/2.0f);
 		}
