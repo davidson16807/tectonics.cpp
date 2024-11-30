@@ -140,9 +140,9 @@ int main() {
   temperatures for planets and brown dwarves are for earth, luhman 16, and an arbitrary hot jupiter
   */
   std::vector<float> instance_surface_temperature{ 
-    0,0,300,600,1210,0,0,0,0,
-    0,5771,2100,9700,30000,0,0,0,0,
-    0,0,0,0,0,0,0,0,0
+    1,1,301,601,1211,1,1,1,1,
+    1,5771,2101,9701,30001,1,1,1,1,
+    1,1,1,1,1,1,1,1,1
   };
 
   /*
@@ -150,15 +150,15 @@ int main() {
   temperatures for brown dwarves from Garani (2021)
   */
   std::vector<float> instance_core_temperature{ 
-    0,0,0,1e5,3e6,0,0,0,0, // earth, large hot jupiter, Luhman 16A
-    0,15e6,94e3,53e6,2e9,0,0,0,0, // sunlike, red dwarf, blue giant, ultramassive, 
-    0,0,0,0,0,0,0,0,0
+    1,1,1,1e5,3e6,1,1,1,1, // earth, large hot jupiter, Luhman 16A
+    1,15e6,94e3,53e6,2e9,1,1,1,1, // sunlike, red dwarf, blue giant, ultramassive, 
+    1,1,1,1,1,1,1,1,1
   };
 
   std::vector<float> instance_atmosphere_molecular_mass{ 
-    0,0,28.97,2.22,2.22,0,0,0,0, // earth, large hot jupiter, Luhman 16A
-    0,0.6,0.6,0.6,0.6,0,0,0,0, // hydrogen plasma, estimated by Carl Hansen, "Stellar Interiors"
-    0,0,0,0,0,0,0,0,0
+    1,1,28.97,2.22,2.22,1,1,1,1, // earth, large hot jupiter, Luhman 16A
+    1,0.6,0.6,0.6,0.6,1,1,1,1, // hydrogen plasma, estimated by Carl Hansen, "Stellar Interiors"
+    1,1,1,1,1,1,1,1,1
   };
 
   float Re(si::earth_radius / si::meter);
@@ -174,8 +174,8 @@ int main() {
     Rj,
     Rs, // sunlike
     0.09f*Rs, // red dwarf
-    1.7f*Rj, // blue giant
-    7.4f*Rj, // ultramassive
+    1.7f*Rs, // blue giant
+    7.4f*Rs, // ultramassive
     Rj,Rj,Rj,Rj,
     Rj,Rj,Rj,Rj,Rj,Rj,Rj,Rj,Rj
   };
@@ -184,7 +184,7 @@ int main() {
   float Mj(si::jupiter_mass / si::kilogram);
   float Ms(si::solar_mass / si::kilogram);
 
-  std::vector<float> instance_masses{ 
+  std::vector<float> instance_masses{
     Mj,Mj,Mj,
     Me, // earth
     Mj, // large hot jupiter
@@ -206,6 +206,7 @@ int main() {
   auto point = point_masses(si::gravitational_constant);
   std::vector<float> instance_atmosphere_scale_height;
   std::vector<vec3> instance_origins;
+  std::vector<vec3> instance_illumination_luminosity;
   for(std::size_t i=0; i<instance_radii.size(); i++)
   {
     instance_atmosphere_scale_height.push_back(
@@ -217,8 +218,10 @@ int main() {
         ) / si::meter
       )
     );
+    std::cout << instance_atmosphere_scale_height[i] << " " << instance_surface_temperature[i] << std::endl;
     // instance_origins.push_back(instance_grid_ids[i]);
     instance_origins.push_back(10.0f*Rs*instance_grid_ids[i]);
+    instance_illumination_luminosity.push_back(vec3(si::solar_luminosity/si::watt));
   };
 
   // "beta_*" is the rest of the fractional loss.
@@ -254,7 +257,8 @@ int main() {
   );
   view_state.view_matrix = control_state.get_view_matrix();
   view_state.resolution = glm::vec2(850, 640);
-  view_state.exposure_intensity = 0.0003f;
+  view_state.wavelength = glm::vec3(650e-9, 550e-9, 450e-9);
+  view_state.exposure_intensity = 1e15*si::global_solar_constant/(si::watt/si::meter2);
   // view_state.projection_type = view::ProjectionType::heads_up_display;
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
@@ -277,7 +281,7 @@ int main() {
         instance_core_temperature,
         instance_atmosphere_scale_height,
         instance_light_source,
-        instance_grid_ids,
+        instance_illumination_luminosity,
         instance_beta_ray_sun,
         instance_beta_mie_sun,
         instance_beta_abs_sun,

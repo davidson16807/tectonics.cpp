@@ -675,7 +675,7 @@ namespace si{
   as possible without requiring conversion or subnamespaces.
   SI prefixes that were ratified after 1960 (such as "nano" and "giga" ) were never incorporated into CGS as a standard, 
   so no historical literature exists that could have used CGS with these prefixes.
-  Use of these prefixes with CGS might indicate an error and should not be permitted by introducing these units.
+  Use of modern prefixes with CGS likely indicates an error and should not be permitted by introducing such units.
   */
   #define SI_DEPRECATED_PRE_1960_PREFIXED_UNITS(QUANTITY, SUFFIX) \
   constexpr QUANTITY micro ## SUFFIX ( 1e-6  * SUFFIX ); \
@@ -1075,6 +1075,5 @@ namespace si{
     return stream;
   }
 
-
-
 }
+

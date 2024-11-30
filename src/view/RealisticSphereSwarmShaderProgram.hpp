@@ -50,8 +50,8 @@ namespace view
 		// instance buffer ids
 		GLuint instanceOriginBufferId;
 		GLuint instanceRadiusBufferId;
-		GLuint instanceLightSourceBufferId;
-		GLuint instanceLightLuminosityBufferId;
+		GLuint instanceIlluminationSourceBufferId;
+		GLuint instanceIlluminationLuminosityBufferId;
 		GLuint instanceBetaRayBufferId;
 		GLuint instanceBetaMieBufferId;
 		GLuint instanceBetaAbsBufferId;
@@ -65,8 +65,8 @@ namespace view
 	    // instance attributes
 		GLuint instanceOriginLocation;
 		GLuint instanceRadiusLocation;
-		GLuint instanceLightSourceLocation;
-		GLuint instanceLightLuminosityLocation;
+		GLuint instanceIlluminationSourceLocation;
+		GLuint instanceIlluminationLuminosityLocation;
 		GLuint instanceBetaRayLocation;
 		GLuint instanceBetaMieLocation;
 		GLuint instanceBetaAbsLocation;
@@ -80,6 +80,7 @@ namespace view
 		GLuint projectionMatrixLocation;
 		GLuint exposureIntensityLocation;
 		GLuint gammaLocation;
+		GLuint wavelengthLocation;
 
 		bool isDisposed;
 
@@ -104,8 +105,8 @@ namespace view
 					in      float instance_atmosphere_scale_height;
 
 			        out     vec3  fragment_element_position;
-			        out     vec3  fragment_light_direction;
-			        out     vec3  fragment_light_intensity;
+			        out     vec3  fragment_illumination_direction;
+			        out     vec3  fragment_illumination_intensity;
 
 					out     vec3  fragment_beta_abs;
 					out     vec3  fragment_beta_mie;
@@ -132,8 +133,11 @@ namespace view
 			            vec3 instance_illumination_offset = instance_illumination_source-instance_origin;
 			        	float v = length(view_for_element_origin);
 			        	float l = length(instance_illumination_offset);
-			        	fragment_light_intensity = max(vec3(0),instance_illumination_luminosity) / (4.0*PI*l*l) / (4.0*PI*v*v);
-			        	fragment_light_direction = (
+			        	fragment_illumination_intensity = max(vec3(0),instance_illumination_luminosity) 
+			        		/ (4.0*PI*l*l)
+			        		// / (4.0*PI*v*v)
+			        	;
+			        	fragment_illumination_direction = (
 			        		clip_for_view * 
 			        		view_for_global * 
 			        		global_for_local * 
@@ -157,9 +161,13 @@ namespace view
 			        uniform float exposure_intensity;
 			        uniform float gamma;
 			        uniform vec3  wavelength3;
+			        uniform mat4  global_for_local;
+			        uniform mat4  view_for_global;
+			        uniform mat4  clip_for_view;
+			        in      vec3  instance_origin;
 			        in      vec3  fragment_element_position;
-			        in      vec3  fragment_light_direction;
-			        in      vec3  fragment_light_intensity;
+			        in      vec3  fragment_illumination_direction;
+			        in      vec3  fragment_illumination_intensity;
 
 					in      vec3  fragment_beta_abs;
 					in      vec3  fragment_beta_mie;
@@ -170,7 +178,6 @@ namespace view
 					in      float fragment_atmosphere_scale_height;
 
 			        out     vec4  fragment_color;
-
 
 			        const float PI = 3.141592653589793238462643383279;
 					const float BIG = 1e20;
@@ -226,7 +233,7 @@ namespace view
 					A0 line reference
 					A  line direction, normalized
 					B0 sphere origin
-					R  sphere radius along each coordinate axis
+					R  sphere radius
 					*/
 					maybe_vec2 get_distances_along_3d_line_to_sphere(
 					    in vec3 A0,
@@ -244,9 +251,15 @@ namespace view
 					    );
 					}
 
+					// from Carl Hansen et al., "Stellar Interiors"
 					float get_fraction_of_radius_for_star_with_temperature(float temperature, float core_temperature)
 					{
 					    return sqrt(max(1.0 - (temperature / core_temperature), 0.0));
+					}
+
+					float get_temperature_of_star_at_fraction_of_radius(float fraction_of_radius, float core_temperature) 
+					{
+					    return max( core_temperature * (1.0 - fraction_of_radius*fraction_of_radius), 0.0 );
 					}
 
 					/*
@@ -261,7 +274,7 @@ namespace view
 					  If there is no intersection with the planet, 
 					  a and b are distances from the closest approach to the upper bound.
 					"z2" is the closest distance from the ray to the center of the world, squared.
-					"r0" is the radius of the world.
+					"r0" is the radius of the world, in scale heights
 					*/
 					float approx_air_column_density_ratio_through_atmosphere(
 					    in float a,
@@ -299,78 +312,65 @@ namespace view
 					}
 
 					vec3 get_intensity3_of_light_emitted_by_atmosphere(
-					    vec3 view_origin, vec3 view_direction, float view_start_length, float view_stop_length, vec3 view_wavelengths,
-					    vec3 position, 
-					    float radius_temperature0, //radius at which temperature is effectively 0
-					    float radius_beta, //radius at which beta_* values are sampled
-					    float temperature_change_per_radius2, 
-					    // ^^^ "radius" here is radius_temperature0
-					    // for planets, radius_temperature0 can be set to the slope of a linear relationship to a suitable approximation
-					    // for stars, this is equivalent to the core temperature of the star
-					    float atmosphere_scale_height,
+					    float view_closest_distance2, float view_start_length, float view_stop_length, vec3 view_wavelengths,
+					    float star_radius_temp0, //radius at which temperature is assumed 0
+					    float star_radius_beta, //radius at which beta_* values are sampled
+					    float star_core_temperature,
 					    vec3 beta_ray, vec3 beta_mie, vec3 beta_abs,
-					    int step_count
+					    float step_count
 					){
-						/*
-					    For an excellent introduction to what we're try to do here, see Alan Zucconi: 
-					      https://www.alanzucconi.com/2017/10/10/atmospheric-scattering-3/
-					    We will be using most of the same terminology and variable names.
-					    GUIDE TO VARIABLE NAMES:
-					     Uppercase letters indicate vectors.
-					     Lowercase letters indicate scalars.
-					     Going for terseness because I tried longhand names and trust me, you can't read them.
-					     "*v*"    property of the view ray, the ray cast from the viewer to the object being viewed
-					     "*l*"    property of the light ray, the ray cast from the object to the light source
-					     "y*"     distance from the center of the world to the plane shared by view and light ray
-					     "z*"     distance from the center of the world to along the plane shared by the view and light ray 
-					     "r*"     a distance ("radius") from the center of the world
-					     "h*"     the atmospheric scale height, the distance at which air density reduces by a factor of e
-					     "*2"     the square of a variable
-					     "*0"     property at the start of the raymarch
-					     "*1"     property at the end of the raymarch
-					     "*i"     property during an iteration of the raymarch
-					     "d*"     the change in a property across iterations of the raymarch
-					     "beta*"  a scattering coefficient, the number of e-foldings in light intensity per unit distance
-					     "gamma*" a phase factor, the fraction of light that's scattered in a certain direction
-					     "sigma*" a column density ratio, the density of a column of air relative to surface density
-					     "F*"     fraction of source light that reaches the viewer due to scattering for each color channel
-					     "*_ray"  property of rayleigh scattering
-					     "*_mie"  property of mie scattering
-					     "*_abs"  property of absorption
-					    setup variable shorthands
-					    express all distances in scale heights 
-					    express all positions relative to world origin
-					    */
-					    float h = atmosphere_scale_height;
-					    vec3 V0 = (view_origin + view_direction * view_start_length - position) / h;
-					    vec3 V1 = (view_origin + view_direction * view_stop_length - position) / h;
-					    vec3 V = view_direction; // unit vector pointing to pixel being viewed
-					    float v0 = dot(V0,V);
-					    float v1 = dot(V1,V);
+					    // For an excellent introduction to what we're try to do here, see Alan Zucconi: 
+					    //   https://www.alanzucconi.com/2017/10/10/atmospheric-scattering-3/
+					    // We will be using most of the same terminology and variable names.
+					    // GUIDE TO VARIABLE NAMES:
+					    //  Uppercase letters indicate vectors.
+					    //  Lowercase letters indicate scalars.
+					    //  Going for terseness because I tried longhand names and trust me, you can't read them.
+					    //  "*v*"    property of the view ray, the ray cast from the viewer to the object being viewed
+					    //  "*l*"    property of the light ray, the ray cast from the object to the light source
+					    //  "y*"     distance from the center of the world to the plane shared by view and light ray
+					    //  "z*"     distance from the center of the world to along the plane shared by the view and light ray 
+					    //  "r*"     a distance ("radius") from the center of the world
+					    //  "*2"     the square of a variable
+					    //  "*0"     property at the start of the raymarch
+					    //  "*1"     property at the end of the raymarch
+					    //  "*i"     property during an iteration of the raymarch
+					    //  "d*"     the change in a property across iterations of the raymarch
+					    //  "beta*"  a scattering coefficient, the number of e-foldings in light intensity per unit distance
+					    //  "gamma*" a phase factor, the fraction of light that's scattered in a certain direction
+					    //  "sigma*" a column density ratio, the density of a column of air relative to surface density
+					    //  "F*"     fraction of source light that reaches the viewer due to scattering for each color channel
+					    //  "*_ray"  property of rayleigh scattering
+					    //  "*_mie"  property of mie scattering
+					    //  "*_abs"  property of absorption
+					    // setup variable shorthands
+					    // all distances are measured in scale heights 
+					    // all positions are relative to world origin
+					    float v0 = view_start_length;
+					    float v1 = view_stop_length;
 					    // "beta_*" indicates the rest of the fractional loss.
 					    // it is dependant on wavelength, and the density ratio, which is dependant on height
 					    // So all together, the fraction of sunlight that scatters to a given angle is: beta(wavelength) * gamma(angle) * density_ratio(height)
-					    vec3 beta_sum = h*(beta_ray + beta_mie + beta_abs);
+					    vec3 beta_sum = beta_ray + beta_mie + beta_abs;
 					    // number of iterations within the raymarch
-					    float dv = (v1 - v0) / float(step_count);
+					    float dv = (v1 - v0) / step_count;
 					    float vi = v0;
-					    float z2 = dot(V0,V0) - v0*v0;
+					    float z2 = view_closest_distance2;
 					    float sigma; // columnar density encountered along the entire path, relative to surface density, effectively the distance along the surface needed to obtain a similar column density
-					    vec3 F = vec3(0); // total intensity for each color channel, found as the sum of light intensities for each path from the light source to the camera
-					    for (int i = 0; i < step_count; ++i)
+					    vec3 F = vec3(10); // total intensity for each color channel, found as the sum of light intensities for each path from the light source to the camera
+					    for (float i = 0.; i < step_count; ++i)
 					    {
-					        sigma = approx_air_column_density_ratio_through_atmosphere(v0, vi, z2, radius_beta);
-					        float ti = temperature_change_per_radius2 * (1.0 - pow(sqrt(vi*vi+z2) / radius_temperature0, 2));
+					        sigma = approx_air_column_density_ratio_through_atmosphere(v0, vi, z2, star_radius_beta);
+					        float temperature = get_temperature_of_star_at_fraction_of_radius(sqrt(vi*vi+z2) / star_radius_temp0, star_core_temperature);
 					        F += (
-					            // incoming scattered light: the intensity of light that goes towards the camera
-					            // I * exp(r-sqrt(vi*vi+y2+zv2)) * beta_gamma * dv 
 					            // newly created emitted light: the intensity of light that is generated by the parcel towards the camera
-					            + beta_abs * dv
+					            beta_abs * dv
 					              * 2.0 * PLANCK_CONSTANT * SPEED_OF_LIGHT*SPEED_OF_LIGHT / (view_wavelengths*view_wavelengths*view_wavelengths*view_wavelengths*view_wavelengths)
-					              * exp(radius_beta-sqrt(vi*vi+z2)) / (exp(PLANCK_CONSTANT * SPEED_OF_LIGHT/(view_wavelengths*BOLTZMANN_CONSTANT*ti)) - 1.0) 
+					              * exp((star_radius_beta-sqrt(vi*vi+z2))) / (exp(PLANCK_CONSTANT * SPEED_OF_LIGHT/(view_wavelengths*BOLTZMANN_CONSTANT*temperature)) - 1.0) 
 					            )
 					            // outgoing scattered light: the fraction of light that scatters away from camera
-					            * exp(-beta_sum * sigma);
+					            // * exp(-beta_sum * sigma)
+					            ;
 					        vi += dv;
 					    }
 					    return F;
@@ -389,7 +389,7 @@ namespace view
 					vec3 get_ldrtone3_for_intensity3(
 						in vec3 intensity, in float exposure_intensity
 					){
-						return 1.0 - exp(-intensity/exposure_intensity);
+						return max(vec3(0.0), 1.0 - exp(-intensity/exposure_intensity));
 					}
 
 			        void main() {
@@ -405,53 +405,77 @@ namespace view
 			        	Element vertices are hard coded so that x and y element coordinates
 			        	approximate those of a unit sphere.
 			        	*/
-			        	float z = 1-dot(fragment_element_position.xy, fragment_element_position.xy);
-			        	if(z<0.0) { discard; }
-			        	vec3 N = vec3(fragment_element_position.xy,-z);
-			        	vec3 L = fragment_light_direction;
+			        	float r22d = dot(fragment_element_position.xy, fragment_element_position.xy);
+			        	if(r22d>=1) { discard; }
+			        	vec3 N = vec3(fragment_element_position.xy,-(1-sqrt(r22d)));
+			        	vec3 L = fragment_illumination_direction;
 			        	vec3 E_gas_emitted = vec3(0);
+    					float h  = fragment_atmosphere_scale_height;
     					float r  = fragment_radius; // radius at which "surface" temperature and beta_* variables are sampled
 			        	vec3  V  = vec3(0,0,1); 
-    					vec3  V0 = (N+V)*r; // origin of view ray, assumes orthographic projection, anywhere outside the sphere is sufficiently distant
-    					vec3  O  = vec3(0,0,0);  // center of the star
-    					float h  = fragment_atmosphere_scale_height;
+    					vec3  V0 = (N-V)*r; // origin of view ray, assumes orthographic projection, anywhere outside the sphere is sufficiently distant
+    					vec3  O  = vec3(0);  // center of the star
 				    	float t  = fragment_surface_temperature;
 				    	float dtdr2 = fragment_temperature_change_per_radius2;
 					    // `r1` is the radius at which temperature is modeled as 0
-					    float r1 = r / get_fraction_of_radius_for_star_with_temperature(t, dtdr2); 
+					    // float r1 = r / get_fraction_of_radius_for_star_with_temperature(t, dtdr2); 
+					    float r1 = r + 1.0*h;
     					float r0 = r - 5.0*h; // innermost radius of the atmosphere march
 					    maybe_vec2 air_along_view_ray = 
-					        get_bounding_distances_along_ray(
+					        get_bounding_distances_along_ray
+					        (
 					            get_distances_along_line_to_negation(
 					                get_distances_along_3d_line_to_sphere(V0, V, O, r1),
 					                get_distances_along_3d_line_to_sphere(V0, V, O, r0)
 					            )
 					        );
+				        float v0 = air_along_view_ray.value.x;
+				        float v1 = air_along_view_ray.value.y;
+				        // *_ variables indicate coordinates relative to world origin
+					    vec3 V0B = (V0 + V * v0 - O);
+					    vec3 V1B = (V0 + V * v1 - O);
+					    float v0B = dot(V0B,V);
+					    float v1B = dot(V1B,V);
+					    float z2 = r22d*r1*r1;
 					    if(air_along_view_ray.exists)
 					    {
-					        float v0 = air_along_view_ray.value.x;
-					        float v1 = air_along_view_ray.value.y;
-					        vec3 E_gas_emitted = get_intensity3_of_light_emitted_by_atmosphere(
-					            V0, V, v0, v1, wavelength3,
-					            O, r1, r, dtdr2, h,
-					            fragment_beta_ray, 
-					            fragment_beta_mie, 
-					            fragment_beta_abs,
-					            16
-					        );
+					        E_gas_emitted =
+						        get_intensity3_of_light_emitted_by_atmosphere(
+						            z2/h/h, v0B/h, v1B/h, vec3(650e-9*METER, 550e-9*METER, 450e-9*METER), 
+						            r1/h, r/h, dtdr2, 
+						            h*fragment_beta_ray, 
+						            h*fragment_beta_mie, 
+						            h*fragment_beta_abs,
+						            128
+						        );
 					    }
 			        	vec3 fraction = vec3(dot(N,L));
-			        	vec3 E_surface_reflected = fraction * fragment_light_intensity;
-			        	fragment_color = vec4(1);
-			            // fragment_color = vec4(
-					    // 	get_signal3_for_intensity3(
-					    // 		get_ldrtone3_for_intensity3(
-					    // 			E_surface_reflected + E_gas_emitted, 
-					    // 			exposure_intensity
-					    // 		), 
-						//     	gamma
-					    // 	),
-			            // 1);
+			        	vec3 E_surface_reflected = fraction * fragment_illumination_intensity;
+			        	vec4 view_for_element_origin = view_for_global * global_for_local * vec4(instance_origin,1);
+			            mat4 scale_map = mat4(fragment_radius);
+			        	mat4 view_for_element = mat4(scale_map[0], scale_map[1], scale_map[2], view_for_element_origin);
+			        	vec4 clip_position = clip_for_view * view_for_element * vec4(N,1);
+			        	// float h2 = 4e11;
+			            fragment_color = vec4(
+					    	get_signal3_for_intensity3(
+					    		get_ldrtone3_for_intensity3(
+					    			// E_surface_reflected + 
+					    			E_gas_emitted,
+					    			exposure_intensity
+					    		), 
+						    	gamma
+					    	)
+			            	// bvec3(air_along_view_ray.exists)
+			    			// greaterThan(E_gas_emitted,vec3(0))
+			    			// greaterThan(vec3(1),vec3(0))
+			            	// vec3(1)
+			            	// + vec3(v1B-v0B)/1e9
+			            	// + vec3(v1B-v0B)/h/1e3
+			            	// + vec3(z2)/1e16
+			            	// + vec3(z2)/h/h/1e4
+					    	// + vec3(approx_air_column_density_ratio_through_atmosphere(v1/h, v0/h, z2/h/h, r/h)*1e20)
+					    	,
+			            clip_position.z);
 			        }
 				)"
 			),
@@ -520,6 +544,7 @@ namespace view
 			projectionMatrixLocation = glGetUniformLocation(shaderProgramId, "clip_for_view");
 			exposureIntensityLocation = glGetUniformLocation(shaderProgramId, "exposure_intensity");
 			gammaLocation = glGetUniformLocation(shaderProgramId, "gamma");
+			wavelengthLocation = glGetUniformLocation(shaderProgramId, "wavelength3");
 
 	        // ATTRIBUTES
 
@@ -539,14 +564,14 @@ namespace view
 		    glEnableVertexAttribArray(instanceOriginLocation);
 
 			// create a new vertex buffer object, VBO
-			glGenBuffers(1, &instanceLightSourceBufferId);
-			instanceLightSourceLocation = glGetAttribLocation(shaderProgramId, "instance_illumination_source");
-		    glEnableVertexAttribArray(instanceLightSourceLocation);
+			glGenBuffers(1, &instanceIlluminationSourceBufferId);
+			instanceIlluminationSourceLocation = glGetAttribLocation(shaderProgramId, "instance_illumination_source");
+		    glEnableVertexAttribArray(instanceIlluminationSourceLocation);
 
 			// create a new vertex buffer object, VBO
-			glGenBuffers(1, &instanceLightLuminosityBufferId);
-			instanceLightLuminosityLocation = glGetAttribLocation(shaderProgramId, "instance_illumination_luminosity");
-		    glEnableVertexAttribArray(instanceLightLuminosityLocation);
+			glGenBuffers(1, &instanceIlluminationLuminosityBufferId);
+			instanceIlluminationLuminosityLocation = glGetAttribLocation(shaderProgramId, "instance_illumination_luminosity");
+		    glEnableVertexAttribArray(instanceIlluminationLuminosityLocation);
 
 			// create a new vertex buffer object, VBO
 			glGenBuffers(1, &instanceOriginBufferId);
@@ -598,7 +623,7 @@ namespace view
 		        glDeleteBuffers(1, &elementPositionBufferId);
 		        glDeleteBuffers(1, &instanceOriginBufferId);
 		        glDeleteBuffers(1, &instanceRadiusBufferId);
-		        glDeleteBuffers(1, &instanceLightSourceBufferId);
+		        glDeleteBuffers(1, &instanceIlluminationSourceBufferId);
 		        glDeleteProgram(shaderProgramId);
         	}
 		}
@@ -656,17 +681,17 @@ namespace view
             glVertexAttribPointer(instanceOriginLocation, 3, GL_FLOAT, normalize, stride, offset);
 		    glVertexAttribDivisor(instanceOriginLocation,1);
 
-			glBindBuffer(GL_ARRAY_BUFFER, instanceLightSourceBufferId);
+			glBindBuffer(GL_ARRAY_BUFFER, instanceIlluminationSourceBufferId);
 	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*light_source.size(), &light_source.front(), GL_DYNAMIC_DRAW);
-		    glEnableVertexAttribArray(instanceLightSourceLocation);
-            glVertexAttribPointer(instanceLightSourceLocation, 3, GL_FLOAT, normalize, stride, offset);
-		    glVertexAttribDivisor(instanceLightSourceLocation,1);
+		    glEnableVertexAttribArray(instanceIlluminationSourceLocation);
+            glVertexAttribPointer(instanceIlluminationSourceLocation, 3, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceIlluminationSourceLocation,1);
 
-			glBindBuffer(GL_ARRAY_BUFFER, instanceLightLuminosityBufferId);
+			glBindBuffer(GL_ARRAY_BUFFER, instanceIlluminationLuminosityBufferId);
 	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*light_luminosity.size(), &light_luminosity.front(), GL_DYNAMIC_DRAW);
-		    glEnableVertexAttribArray(instanceLightLuminosityLocation);
-            glVertexAttribPointer(instanceLightLuminosityLocation, 3, GL_FLOAT, normalize, stride, offset);
-		    glVertexAttribDivisor(instanceLightLuminosityLocation,1);
+		    glEnableVertexAttribArray(instanceIlluminationLuminosityLocation);
+            glVertexAttribPointer(instanceIlluminationLuminosityLocation, 3, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceIlluminationLuminosityLocation,1);
 
 			glBindBuffer(GL_ARRAY_BUFFER, instanceBetaRayBufferId);
 	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*beta_ray.size(), &beta_ray.front(), GL_DYNAMIC_DRAW);
@@ -693,19 +718,19 @@ namespace view
 		    glVertexAttribDivisor(instanceRadiusLocation,1);
 
 			glBindBuffer(GL_ARRAY_BUFFER, instanceSurfaceTemperatureBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*radius.size(), &radius.front(), GL_DYNAMIC_DRAW);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*surface_temperature.size(), &surface_temperature.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(instanceSurfaceTemperatureLocation);
             glVertexAttribPointer(instanceSurfaceTemperatureLocation, 1, GL_FLOAT, normalize, stride, offset);
 		    glVertexAttribDivisor(instanceSurfaceTemperatureLocation,1);
 
 			glBindBuffer(GL_ARRAY_BUFFER, instanceTemperatureChangePerRadius2BufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*radius.size(), &radius.front(), GL_DYNAMIC_DRAW);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*temperature_change_per_radius2.size(), &temperature_change_per_radius2.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(instanceTemperatureChangePerRadius2Location);
             glVertexAttribPointer(instanceTemperatureChangePerRadius2Location, 1, GL_FLOAT, normalize, stride, offset);
 		    glVertexAttribDivisor(instanceTemperatureChangePerRadius2Location,1);
 
 			glBindBuffer(GL_ARRAY_BUFFER, instanceAtmosphereScaleHeightBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*radius.size(), &radius.front(), GL_DYNAMIC_DRAW);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*atmosphere_scale_height.size(), &atmosphere_scale_height.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(instanceAtmosphereScaleHeightLocation);
             glVertexAttribPointer(instanceAtmosphereScaleHeightLocation, 1, GL_FLOAT, normalize, stride, offset);
 		    glVertexAttribDivisor(instanceAtmosphereScaleHeightLocation,1);
@@ -714,6 +739,7 @@ namespace view
 	        glUniformMatrix4fv(viewMatrixLocation,       1, GL_FALSE, glm::value_ptr(view_state.view_matrix));
 	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(view_state.model_matrix));
 	        glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(view_state.projection_matrix));
+	        glUniform3fv      (wavelengthLocation,       1, glm::value_ptr(view_state.wavelength));
 	        glUniform1f       (exposureIntensityLocation, view_state.exposure_intensity);
 	        glUniform1f       (gammaLocation, view_state.gamma);
 
