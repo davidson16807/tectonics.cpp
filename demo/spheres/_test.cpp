@@ -109,8 +109,9 @@ int main() {
   temperatures for planets and brown dwarves are for earth, luhman 16, and an arbitrary hot jupiter
   */
   std::vector<float> instance_surface_temperature{ 
+    30001,
     1,1,301,601,1211,1,1,1,1,
-    1,5771,2101,9701,30001,1,1,1,1,
+    1,5771,2101,9701,1,1,1,1,
     1,1,1,1,1,1,1,1,1
   };
 
@@ -119,15 +120,17 @@ int main() {
   temperatures for brown dwarves from Garani (2021)
   */
   std::vector<float> instance_core_temperature{ 
+    2e9,
     1,1,1,1e5,3e6,1,1,1,1, // earth, large hot jupiter, Luhman 16A
-    1,15e6,94e3,53e6,2e9,1,1,1,1, // sunlike, red dwarf, blue giant, ultramassive, 
+    1,15e6,94e3,53e6,1,1,1,1, // sunlike, red dwarf, blue giant, ultramassive, 
     1,1,1,1,1,1,1,1,1
   };
 
   float Hp(0.6); // molecular mass of a hydrogen plasma, estimated by Carl Hansen, "Stellar Interiors"
   std::vector<float> instance_atmosphere_molecular_mass{ 
+    Hp,
     Hp,Hp,28.97,2.22,2.22,Hp,Hp,Hp,Hp, // earth, large hot jupiter, Luhman 16A
-    Hp,Hp,Hp,Hp,Hp,Hp,Hp,Hp,Hp,
+    Hp,Hp,Hp,Hp,Hp,Hp,Hp,Hp,
     Hp,Hp,Hp,Hp,Hp,Hp,Hp,Hp,Hp
   };
 
@@ -136,6 +139,7 @@ int main() {
   float Rs(si::solar_radius / si::meter);
 
   std::vector<float> instance_radii{ 
+    7.4f*Rs, // ultramassive
     Rj,Rj,
     Re, // earth
     Rj, // large hot jupiter
@@ -145,7 +149,6 @@ int main() {
     Rs, // sunlike
     0.09f*Rs, // red dwarf
     1.7f*Rs, // blue giant
-    7.4f*Rs, // ultramassive
     Rj,Rj,Rj,Rj,
     Rj,Rj,Rj,Rj,Rj,Rj,Rj,Rj,Rj
   };
@@ -155,6 +158,7 @@ int main() {
   float Ms(si::solar_mass / si::kilogram);
 
   std::vector<float> instance_masses{
+    18.0f * Ms, // ultramassive
     Mj,Mj,Mj,
     Me, // earth
     Mj, // large hot jupiter
@@ -164,11 +168,19 @@ int main() {
     1.0f * Ms, // sunlike
     0.07f * Ms, // red dwarf
     2.1f * Ms, // blue giant
-    18.0f * Ms, // ultramassive
     Mj,Mj,Mj,Mj, 
     Mj,Mj,Mj,Mj,Mj,Mj,Mj,Mj,Mj
   };
 
+
+  // "beta_*" is the rest of the fractional loss.
+  // it is dependant on wavelength, and the density ratio
+  // So all together, the fraction of sunlight that scatters to a given angle is: beta(wavelength) * gamma(angle) * density_ratio
+  std::vector<vec3> instance_beta_ray_sun(instance_radii.size(), vec3(5.20e-6, 1.21e-5, 2.96e-5));
+  std::vector<vec3> instance_beta_mie_sun(instance_radii.size(), vec3(1e-6));
+  std::vector<vec3> instance_beta_abs_sun(instance_radii.size(), vec3(1e-6));
+  std::vector<vec3> instance_light_source(instance_radii.size(), vec3(0));
+  
   /*
   scale heights calculated from the standard equation, h=kᵦT/(mg)
   */
@@ -190,20 +202,12 @@ int main() {
         ) / si::meter
       )
     );
-    std::cout << instance_atmosphere_scale_height[i] << " " << instance_surface_temperature[i] << std::endl;
+    std::cout << instance_masses[i]/Ms << " " << instance_surface_temperature[i] << std::endl;
     double r(2.0*Rs*i);
     double theta(i*2.0*pi/phi);
     instance_origins.push_back(vec3(r*std::cos(theta),r*std::sin(theta),0.0));
     instance_illumination_luminosity.push_back(vec3(si::solar_luminosity/si::watt));
   };
-
-  // "beta_*" is the rest of the fractional loss.
-  // it is dependant on wavelength, and the density ratio
-  // So all together, the fraction of sunlight that scatters to a given angle is: beta(wavelength) * gamma(angle) * density_ratio
-  std::vector<vec3> instance_beta_ray_sun(instance_origins.size(), vec3(5.20e-6, 1.21e-5, 2.96e-5));
-  std::vector<vec3> instance_beta_mie_sun(instance_origins.size(), vec3(1e-6));
-  std::vector<vec3> instance_beta_abs_sun(instance_origins.size(), vec3(1e-6));
-  std::vector<vec3> instance_light_source(instance_origins.size(), vec3(0));
 
   // initialize control state
   update::OrbitalControlState control_state;

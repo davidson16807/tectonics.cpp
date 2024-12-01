@@ -409,6 +409,7 @@ namespace view
 			        	if(r22d>=1) { discard; }
 			        	vec3 N = vec3(fragment_element_position.xy,-(1-sqrt(r22d)));
 			        	vec3 L = fragment_illumination_direction;
+			        	float l = length(L);
 			        	vec3 E_gas_emitted = vec3(0);
     					float h  = fragment_atmosphere_scale_height;
     					float r  = fragment_radius; // radius at which "surface" temperature and beta_* variables are sampled
@@ -451,15 +452,17 @@ namespace view
 					    }
 			        	vec3 fraction = vec3(dot(N,L));
 			        	vec3 E_surface_reflected = fraction * fragment_illumination_intensity;
+			        	E_surface_reflected = any(isnan(E_surface_reflected))? vec3(0) : E_surface_reflected;
 			        	vec4 view_for_element_origin = view_for_global * global_for_local * vec4(instance_origin,1);
 			            mat4 scale_map = mat4(fragment_radius);
 			        	mat4 view_for_element = mat4(scale_map[0], scale_map[1], scale_map[2], view_for_element_origin);
 			        	vec4 clip_position = clip_for_view * view_for_element * vec4(N,1);
+			        	// fragment_color = vec4(isnan(fraction),1);
+			        	// return;
 			            fragment_color = vec4(
 					    	get_signal3_for_intensity3(
 					    		get_ldrtone3_for_intensity3(
-					    			E_surface_reflected + 
-					    			E_gas_emitted,
+					    			E_surface_reflected + E_gas_emitted,
 					    			exposure_intensity
 					    		), 
 						    	gamma
@@ -654,8 +657,8 @@ namespace view
 			glEnable(GL_CULL_FACE);  
 			glCullFace(GL_BACK);
 			glFrontFace(GL_CCW); 
-			glBlendEquationSeparate(GL_MAX, GL_MAX);
-			glEnable(GL_BLEND);
+			// glBlendEquationSeparate(GL_MAX, GL_MAX);
+			// glEnable(GL_BLEND);
 
 			//ATTRIBUTES
 			glBindBuffer(GL_ARRAY_BUFFER, elementPositionBufferId);
