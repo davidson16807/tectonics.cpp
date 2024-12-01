@@ -455,26 +455,15 @@ namespace view
 			            mat4 scale_map = mat4(fragment_radius);
 			        	mat4 view_for_element = mat4(scale_map[0], scale_map[1], scale_map[2], view_for_element_origin);
 			        	vec4 clip_position = clip_for_view * view_for_element * vec4(N,1);
-			        	// float h2 = 4e11;
 			            fragment_color = vec4(
 					    	get_signal3_for_intensity3(
 					    		get_ldrtone3_for_intensity3(
-					    			// E_surface_reflected + 
+					    			E_surface_reflected + 
 					    			E_gas_emitted,
 					    			exposure_intensity
 					    		), 
 						    	gamma
-					    	)
-			            	// bvec3(air_along_view_ray.exists)
-			    			// greaterThan(E_gas_emitted,vec3(0))
-			    			// greaterThan(vec3(1),vec3(0))
-			            	// vec3(1)
-			            	// + vec3(v1B-v0B)/1e9
-			            	// + vec3(v1B-v0B)/h/1e3
-			            	// + vec3(z2)/1e16
-			            	// + vec3(z2)/h/h/1e4
-					    	// + vec3(approx_air_column_density_ratio_through_atmosphere(v1/h, v0/h, z2/h/h, r/h)*1e20)
-					    	,
+					    	),
 			            clip_position.z);
 			        }
 				)"

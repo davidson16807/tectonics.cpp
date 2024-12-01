@@ -103,37 +103,6 @@ int main() {
   using vec3 = glm::vec3;
   // using vec4 = glm::vec4;
 
-  std::vector<vec3> instance_grid_ids{ 
-    vec3( 0, 0, 1),
-    vec3( 0, 0, 0),
-    vec3( 0, 0,-1),
-    vec3( 0,-1,-1),
-    vec3( 0,-1, 0),
-    vec3( 0,-1, 1),
-    vec3( 0, 1,-1),
-    vec3( 0, 1, 0),
-    vec3( 0, 1, 1),
-
-    vec3(-1, 0, 1),
-    vec3(-1, 0, 0),
-    vec3(-1, 0,-1),
-    vec3(-1,-1,-1),
-    vec3(-1,-1, 0),
-    vec3(-1,-1, 1),
-    vec3(-1, 1,-1),
-    vec3(-1, 1, 0),
-    vec3(-1, 1, 1),
-
-    vec3( 1, 0, 1),
-    vec3( 1, 0, 0),
-    vec3( 1, 0,-1),
-    vec3( 1,-1,-1),
-    vec3( 1,-1, 0),
-    vec3( 1,-1, 1),
-    vec3( 1, 1,-1),
-    vec3( 1, 1, 0),
-    vec3( 1, 1, 1)
-  };
 
   /*
   temperatures for stars from wikipedia
@@ -155,10 +124,11 @@ int main() {
     1,1,1,1,1,1,1,1,1
   };
 
+  float Hp(0.6); // molecular mass of a hydrogen plasma, estimated by Carl Hansen, "Stellar Interiors"
   std::vector<float> instance_atmosphere_molecular_mass{ 
-    1,1,28.97,2.22,2.22,1,1,1,1, // earth, large hot jupiter, Luhman 16A
-    1,0.6,0.6,0.6,0.6,1,1,1,1, // hydrogen plasma, estimated by Carl Hansen, "Stellar Interiors"
-    1,1,1,1,1,1,1,1,1
+    Hp,Hp,28.97,2.22,2.22,Hp,Hp,Hp,Hp, // earth, large hot jupiter, Luhman 16A
+    Hp,Hp,Hp,Hp,Hp,Hp,Hp,Hp,Hp,
+    Hp,Hp,Hp,Hp,Hp,Hp,Hp,Hp,Hp
   };
 
   float Re(si::earth_radius / si::meter);
@@ -207,6 +177,8 @@ int main() {
   std::vector<float> instance_atmosphere_scale_height;
   std::vector<vec3> instance_origins;
   std::vector<vec3> instance_illumination_luminosity;
+  double pi(3.141592653589793238462643383279);
+  double phi(1.68033);
   for(std::size_t i=0; i<instance_radii.size(); i++)
   {
     instance_atmosphere_scale_height.push_back(
@@ -219,8 +191,9 @@ int main() {
       )
     );
     std::cout << instance_atmosphere_scale_height[i] << " " << instance_surface_temperature[i] << std::endl;
-    // instance_origins.push_back(instance_grid_ids[i]);
-    instance_origins.push_back(10.0f*Rs*instance_grid_ids[i]);
+    double r(2.0*Rs*i);
+    double theta(i*2.0*pi/phi);
+    instance_origins.push_back(vec3(r*std::cos(theta),r*std::sin(theta),0.0));
     instance_illumination_luminosity.push_back(vec3(si::solar_luminosity/si::watt));
   };
 
@@ -258,7 +231,7 @@ int main() {
   view_state.view_matrix = control_state.get_view_matrix();
   view_state.resolution = glm::vec2(850, 640);
   view_state.wavelength = glm::vec3(650e-9, 550e-9, 450e-9);
-  view_state.exposure_intensity = 1e15*si::global_solar_constant/(si::watt/si::meter2);
+  view_state.exposure_intensity = 3e14*si::global_solar_constant/(si::watt/si::meter2);
   // view_state.projection_type = view::ProjectionType::heads_up_display;
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
