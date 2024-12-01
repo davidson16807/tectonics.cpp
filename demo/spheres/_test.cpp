@@ -348,14 +348,14 @@ int main() {
   float Me(si::earth_mass / si::kilogram);
   float Mj(si::jupiter_mass / si::kilogram);
   float Ms(si::solar_mass / si::kilogram);
-  si::mass minimum_stellar_mass(85.2*si::jupiter_mass);
+  si::mass minimum_stellar_mass(0.07*si::solar_mass);
 
   std::vector<float> instance_masses{
-    Mj,Mj,Mj,
+    Mj,Mj,
     Me, // earth
     Mj, // large hot jupiter
     0.034f*Ms, // Luhman 16A
-    Mj,Mj,Mj, 
+    Mj,Mj,Mj,Mj, 
     Mj,
     1.0f * Ms, // sunlike
     0.1f * Ms, // red dwarf
@@ -383,22 +383,28 @@ int main() {
   std::vector<vec3> instance_origins;
   std::vector<vec3> instance_illumination_luminosity;
   for(std::size_t i=0; i<instance_radii.size(); i++)
-  {    instance_origins.push_back(instance_grid_ids[i]*Rs*10.0f);
+  {    
+    instance_origins.push_back(instance_grid_ids[i]*Rs*10.0f);
     instance_illumination_luminosity.push_back(vec3(si::solar_luminosity/si::watt));
     auto mass = instance_masses[i]*si::kilogram;
     instance_radii[i] = mass < minimum_stellar_mass? instance_radii[i] : star.radius_estimate(mass)/si::meter;
     instance_core_temperature[i] = mass < minimum_stellar_mass? 1.0 : star.core_temperature_estimate(mass, 0.6*si::dalton)/si::kelvin;
-    instance_surface_temperature[i] = mass < minimum_stellar_mass? 1.0 : star.surface_temperature_estimate(mass)/si::kelvin;
+    instance_surface_temperature[i] = mass < minimum_stellar_mass? instance_surface_temperature[i] : star.surface_temperature_estimate(mass)/si::kelvin;
     instance_atmosphere_scale_height.push_back(
       float(
         atmosphere.scale_height(
           instance_surface_temperature[i] * si::kelvin, 
           instance_atmosphere_molecular_mass[i] * si::dalton, 
-          point.gravity(instance_masses[i] * si::kilogram, instance_radii[i] * si::meter)
+          point.gravity(mass, instance_radii[i] * si::meter)
         ) / si::meter
       )
     );
-    std::cout << instance_atmosphere_scale_height[i] << " " << instance_surface_temperature[i] << std::endl;
+    std::cout << point.gravity(mass, instance_radii[i] * si::meter) << "\t";
+    std::cout << instance_atmosphere_scale_height[i] * si::meter << "\t";
+    std::cout << instance_surface_temperature[i] * si::kelvin << "\t";
+    std::cout << instance_core_temperature[i] * si::kelvin << "\t";
+    std::cout << instance_radii[i] * si::meter << "\t";
+    std::cout << std::endl;
   };
 
   // "beta_*" is the rest of the fractional loss.
