@@ -634,9 +634,9 @@ namespace si{
   constexpr units<1, 0,-1, 0, 0, 0, 0, double> speed_of_light             (299792458.0);    // meter/second
   constexpr units<2, 1,-2,-1, 0, 0, 0, double> boltzmann_constant         (1.380649e-23);   // joule/kelvin
   constexpr units<2, 1,-2,-1,-1, 0, 0, double> universal_gas_constant     (8.314472);       // joule/kelvin/mole
-  constexpr units<0, 1,-3,-4, 0, 0, 0, double> stephan_boltzmann_constant (5.670373e-8);    // watt/(meter2*kelvin4)
+  constexpr units<0, 1,-3,-4, 0, 0, 0, double> stephan_boltzmann_constant (5.670373e-8);    // watt/(meter²*kelvin⁴)
   constexpr units<2, 1,-1, 0, 0, 0, 0, double> planck_constant            (6.62607015e-34); // joule*second
-  constexpr units<3,-1,-2, 0, 0, 0, 0, double> gravitational_constant     (6.67428e-11);    // meter3/(kilogram*second2)
+  constexpr units<3,-1,-2, 0, 0, 0, 0, double> gravitational_constant     (6.6743015e-11);    // meter³/(kilogram*second²)
 
 
   // NON SI UNITS MENTIONED IN THE SI
@@ -1039,10 +1039,10 @@ namespace si{
         result +=   A1>0? "A"  + (std::abs(  A1)>1? exponent(std::abs(  A1)) : "") : ""; 
         result +=  CD1>0? "Cd" + (std::abs( CD1)>1? exponent(std::abs( CD1)) : "") : ""; 
         result += K1<0 || MOL1<0 || A1<0 || CD1<0? "/" : "";
-        result +=   K1<0? "K"  + (std::abs(  K1)<1? exponent(std::abs(K1  )) : "") : ""; 
-        result += MOL1<0? "mol"+ (std::abs(MOL1)<1? exponent(std::abs(MOL1)) : "") : ""; 
-        result +=   A1<0? "A"  + (std::abs(  A1)<1? exponent(std::abs(  A1)) : "") : ""; 
-        result +=  CD1<0? "Cd" + (std::abs( CD1)<1? exponent(std::abs( CD1)) : "") : ""; 
+        result +=   K1<0? "K"  + (std::abs(  K1)>1? exponent(std::abs(K1  )) : "") : ""; 
+        result += MOL1<0? "mol"+ (std::abs(MOL1)>1? exponent(std::abs(MOL1)) : "") : ""; 
+        result +=   A1<0? "A"  + (std::abs(  A1)>1? exponent(std::abs(  A1)) : "") : ""; 
+        result +=  CD1<0? "Cd" + (std::abs( CD1)>1? exponent(std::abs( CD1)) : "") : ""; 
         return result;
       }
     }
@@ -1058,13 +1058,13 @@ namespace si{
     result +=   A1>0? "A"  + (std::abs(  A1)>1? exponent(std::abs(  A1)) : "") : ""; 
     result +=  CD1>0? "Cd" + (std::abs( CD1)>1? exponent(std::abs( CD1)) : "") : ""; 
     result += M1<0 || KG1<0 || S1<0 || K1<0 || MOL1<0 || A1<0 || CD1<0? "/" : "";
-    result +=   M1<0? "m"  + (std::abs(  M1)<1? exponent(std::abs(M1  )) : "") : ""; 
-    result +=  KG1<0? "kg" + (std::abs( KG1)<1? exponent(std::abs(KG1 )) : "") : ""; 
-    result +=   S1<0? "s"  + (std::abs(  S1)<1? exponent(std::abs(S1  )) : "") : ""; 
-    result +=   K1<0? "K"  + (std::abs(  K1)<1? exponent(std::abs(K1  )) : "") : ""; 
-    result += MOL1<0? "mol"+ (std::abs(MOL1)<1? exponent(std::abs(MOL1)) : "") : ""; 
-    result +=   A1<0? "A"  + (std::abs(  A1)<1? exponent(std::abs(  A1)) : "") : ""; 
-    result +=  CD1<0? "Cd" + (std::abs( CD1)<1? exponent(std::abs( CD1)) : "") : ""; 
+    result +=   M1<0? "m"  + (std::abs(  M1)>1? exponent(std::abs(M1  )) : "") : ""; 
+    result +=  KG1<0? "kg" + (std::abs( KG1)>1? exponent(std::abs(KG1 )) : "") : ""; 
+    result +=   S1<0? "s"  + (std::abs(  S1)>1? exponent(std::abs(S1  )) : "") : ""; 
+    result +=   K1<0? "K"  + (std::abs(  K1)>1? exponent(std::abs(K1  )) : "") : ""; 
+    result += MOL1<0? "mol"+ (std::abs(MOL1)>1? exponent(std::abs(MOL1)) : "") : ""; 
+    result +=   A1<0? "A"  + (std::abs(  A1)>1? exponent(std::abs(  A1)) : "") : ""; 
+    result +=  CD1<0? "Cd" + (std::abs( CD1)>1? exponent(std::abs( CD1)) : "") : ""; 
     return result;
   }
 
