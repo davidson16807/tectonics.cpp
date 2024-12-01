@@ -73,39 +73,52 @@ struct Spheres
   auto volume(const length radius) const {
       return scalar(4)/scalar(3)*pi*radius*radius*radius;
   }
-  template<typename length, glm::qualifier quality=glm::defaultp>
+  template<glm::qualifier quality=glm::defaultp>
   bool is_point_inside(
-    const glm::vec<3,length,quality> point, 
-    const glm::vec<3,length,quality> origin, 
-    const length radius
+    const glm::vec<3,scalar,quality> point, 
+    const glm::vec<3,scalar,quality> origin, 
+    const scalar radius
   ) const {
     return glm::length(point-origin) < radius;
   }
-  template<typename length, glm::qualifier quality=glm::defaultp>
-  bool distance_to_point(
-    const glm::vec<3,length,quality> point, 
-    const glm::vec<3,length,quality> origin, 
-    const length radius
+  template<glm::qualifier quality=glm::defaultp>
+  bool distance_from_surface_to_point(
+    const glm::vec<3,scalar,quality> point, 
+    const glm::vec<3,scalar,quality> origin, 
+    const scalar radius
   ) const {
     return glm::length(point-origin) - radius;
   }
   /*
-  template<typename length, glm::qualifier quality=glm::defaultp>
-  bool distance_along_line_to_surface(
-    const glm::vec<3,length,quality> point, 
-    const glm::vec<3,length,quality> origin, 
-    const length radius
+  bool is_sphere_inside(
+  ){
+    return glm::length(origin1-origin2) < radius1+radius2
+  }
+  bool is_sphere_overlapped(
+  ){
+    return glm::length(origin1-origin2) < radius1+radius2;
+  }
+  template<typename scalar, glm::qualifier quality=glm::defaultp>
+  maybe_range distance_to_surface_along_line(
+    const glm::vec<3,scalar,quality> reference, 
+    const glm::vec<3,scalar,quality> direction, 
+    const glm::vec<3,scalar,quality> origin, 
+    const scalar radius
   ) const {
 
-    float xz = glm::dot(B0 - A0, A);
-    float z = glm::length(A0 + A * xz - B0);
+    float xz = glm::dot(origin - reference, direction);
+    float z = glm::length(reference + direction * xz - origin);
     float y2 = r * r - z * z;
     float dxr = std::sqrt(std::max(y2, 1e-10));
-    return intersection(
+    return maybe_range(
         xz - dxr,
         xz + dxr, 
         y2 > 0.
     );
+  }
+  maybe_circle intersection_with_sphere(
+  ){
+    return maybe_circle(O,N,r,exists);
   }
   */
 };
@@ -400,7 +413,7 @@ int main() {
   // initialize control state
   update::OrbitalControlState control_state;
   control_state.min_zoom_distance = 1.0f;
-  control_state.log2_height = std::log2(10.0*Rs);
+  control_state.log2_height = std::log2(40.0*Rs);
   // control_state.log2_height = 20.0f;
   control_state.angular_position = glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f;
 
