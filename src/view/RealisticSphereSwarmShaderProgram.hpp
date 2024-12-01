@@ -419,8 +419,7 @@ namespace view
 				    	float t  = fragment_surface_temperature;
 				    	float dtdr2 = fragment_temperature_change_per_radius2;
 					    // `r1` is the radius at which temperature is modeled as 0
-					    // float r1 = r / get_fraction_of_radius_for_star_with_temperature(t, dtdr2); 
-					    float r1 = r + 1.0*h;
+					    float r1 = r / get_fraction_of_radius_for_star_with_temperature(t, dtdr2); 
     					float r0 = r - 5.0*h; // innermost radius of the atmosphere march
 					    maybe_vec2 air_along_view_ray = 
 					        get_bounding_distances_along_ray

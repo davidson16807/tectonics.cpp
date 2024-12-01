@@ -58,6 +58,156 @@ PointMasses<acceleration_per_area_density> point_masses(const acceleration_per_a
   return PointMasses<acceleration_per_area_density>(gravitational_constant);
 }
 
+template<typename scalar>
+struct Spheres
+{
+  const scalar pi;
+  Spheres(const scalar pi):
+    pi(pi)
+  {}
+  template<typename length>
+  auto surface_area(const length radius) const {
+      return scalar(4)*pi*radius*radius;
+  }
+  template<typename length>
+  auto volume(const length radius) const {
+      return scalar(4)/scalar(3)*pi*radius*radius*radius;
+  }
+  template<typename length, glm::qualifier quality=glm::defaultp>
+  bool is_point_inside(
+    const glm::vec<3,length,quality> point, 
+    const glm::vec<3,length,quality> origin, 
+    const length radius
+  ) const {
+    return glm::length(point-origin) < radius;
+  }
+  template<typename length, glm::qualifier quality=glm::defaultp>
+  bool distance_to_point(
+    const glm::vec<3,length,quality> point, 
+    const glm::vec<3,length,quality> origin, 
+    const length radius
+  ) const {
+    return glm::length(point-origin) - radius;
+  }
+  /*
+  template<typename length, glm::qualifier quality=glm::defaultp>
+  bool distance_along_line_to_surface(
+    const glm::vec<3,length,quality> point, 
+    const glm::vec<3,length,quality> origin, 
+    const length radius
+  ) const {
+
+    float xz = glm::dot(B0 - A0, A);
+    float z = glm::length(A0 + A * xz - B0);
+    float y2 = r * r - z * z;
+    float dxr = std::sqrt(std::max(y2, 1e-10));
+    return intersection(
+        xz - dxr,
+        xz + dxr, 
+        y2 > 0.
+    );
+  }
+  */
+};
+template<typename scalar>
+Spheres<scalar> spheres(const scalar pi)
+{
+  return Spheres<scalar>(pi);
+}
+
+template<
+  typename Spheres,
+  typename mass,
+  typename length,
+  typename luminosity,
+  typename temperature,
+  typename intensity_per_temperature4
+>
+struct Stars
+{
+  const Spheres sphere;
+  const intensity_per_temperature4 stephan_boltzmann_constant;
+  const mass solar_mean_molecular_mass;
+  const mass solar_mass;
+  const length solar_radius;
+  const luminosity solar_luminosity;
+  const temperature solar_core_temperature;
+  Stars(
+    const Spheres sphere,
+    const intensity_per_temperature4 stephan_boltzmann_constant,
+    const mass solar_mean_molecular_mass,
+    const mass solar_mass,
+    const length solar_radius,
+    const luminosity solar_luminosity,
+    const temperature solar_core_temperature
+  ):
+    sphere(sphere),
+    stephan_boltzmann_constant(stephan_boltzmann_constant),
+    solar_mean_molecular_mass(solar_mean_molecular_mass),
+    solar_mass(solar_mass),
+    solar_radius(solar_radius),
+    solar_luminosity(solar_luminosity),
+    solar_core_temperature(solar_core_temperature)
+  {}
+  // the approximations below are ripped from Artifexian's video on stars:
+  // https://www.youtube.com/watch?v=x55nxxaWXAM
+  // we only need rough guesses for these properties, so they should be good enough
+  luminosity luminosity_estimate(const mass star_mass) const
+  {
+      return solar_luminosity * pow(star_mass/solar_mass, 3.5);
+  }
+  length radius_estimate(const mass star_mass) const
+  {
+      return solar_radius * (star_mass < solar_mass? pow(star_mass/solar_mass, 0.8) : pow(star_mass/solar_mass, 0.5));
+  }
+  temperature surface_temperature_estimate(const mass star_mass) const
+  {
+      return sqrt(sqrt(intensity_estimate(star_mass) / stephan_boltzmann_constant));
+  }
+  temperature core_temperature_estimate(const mass star_mass, const mass star_mean_molecular_mass)  const
+  {
+      return (
+          solar_core_temperature 
+          * (star_mean_molecular_mass / solar_mean_molecular_mass)
+          * (star_mass / solar_mass)
+          / (radius_estimate(star_mass) / solar_radius)
+      );
+  }
+  auto intensity_estimate(const mass star_mass) const
+  {
+      return luminosity_estimate(star_mass) / sphere.surface_area(radius_estimate(star_mass));
+  }
+  // from Carl Hansen et al., "Stellar Interiors"
+};
+template<
+  typename Spheres,
+  typename mass,
+  typename length,
+  typename luminosity,
+  typename temperature,
+  typename intensity_per_temperature4
+>
+auto stars(
+    const Spheres sphere,
+    const intensity_per_temperature4 stephan_boltzmann_constant,
+    const mass solar_mass,
+    const mass solar_mean_molecular_mass,
+    const length solar_radius,
+    const luminosity solar_luminosity,
+    const temperature solar_core_temperature
+){
+  return Stars<Spheres,mass,length,luminosity,temperature,intensity_per_temperature4>
+  (
+    sphere,
+    stephan_boltzmann_constant,
+    solar_mass,
+    solar_mean_molecular_mass,
+    solar_radius,
+    solar_luminosity,
+    solar_core_temperature
+  );
+}
+
 int main() {
   // initialize GLFW
   if (!glfwInit()) {
@@ -102,6 +252,7 @@ int main() {
 
   using vec3 = glm::vec3;
   // using vec4 = glm::vec4;
+
 
   std::vector<vec3> instance_grid_ids{ 
     vec3( 0, 0, 1),
@@ -184,6 +335,7 @@ int main() {
   float Me(si::earth_mass / si::kilogram);
   float Mj(si::jupiter_mass / si::kilogram);
   float Ms(si::solar_mass / si::kilogram);
+  si::mass minimum_stellar_mass(0.09*si::solar_mass);
 
   std::vector<float> instance_masses{
     Mj,Mj,Mj,
@@ -205,11 +357,18 @@ int main() {
   */
   auto atmosphere = atmospheres(si::boltzmann_constant);
   auto point = point_masses(si::gravitational_constant);
+  auto star = stars(
+    spheres(3.14159265358979),
+    si::stephan_boltzmann_constant,
+    0.6*si::dalton,
+    si::solar_mass,
+    si::solar_radius,
+    si::solar_luminosity,
+    15e6*si::kelvin
+  );
   std::vector<float> instance_atmosphere_scale_height;
   std::vector<vec3> instance_origins;
   std::vector<vec3> instance_illumination_luminosity;
-  // double pi(3.141592653589793238462643383279);
-  // double phi(1.68033);
   for(std::size_t i=0; i<instance_radii.size(); i++)
   {
     instance_atmosphere_scale_height.push_back(
@@ -221,12 +380,13 @@ int main() {
         ) / si::meter
       )
     );
-    std::cout << instance_atmosphere_scale_height[i] << " " << instance_surface_temperature[i] << std::endl;
-    // double r(2.0*Rs*i);
-    // double theta(i*2.0*pi/phi);
-    // instance_origins.push_back(vec3(r*std::cos(theta),r*std::sin(theta),0.0));
     instance_origins.push_back(instance_grid_ids[i]*Rs*10.0f);
     instance_illumination_luminosity.push_back(vec3(si::solar_luminosity/si::watt));
+    auto mass = instance_masses[i]*si::kilogram;
+    instance_radii[i] = mass < minimum_stellar_mass? instance_radii[i] : star.radius_estimate(mass)/si::meter;
+    instance_core_temperature[i] = mass < minimum_stellar_mass? 1.0 : star.core_temperature_estimate(mass, 0.6*si::dalton)/si::kelvin;
+    instance_surface_temperature[i] = mass < minimum_stellar_mass? 1.0 : star.surface_temperature_estimate(mass)/si::kelvin;
+    std::cout << instance_atmosphere_scale_height[i] << " " << instance_surface_temperature[i] << std::endl;
   };
 
   // "beta_*" is the rest of the fractional loss.
@@ -263,7 +423,7 @@ int main() {
   view_state.view_matrix = control_state.get_view_matrix();
   view_state.resolution = glm::vec2(850, 640);
   view_state.wavelength = glm::vec3(650e-9, 550e-9, 450e-9);
-  view_state.exposure_intensity = 1e3*si::global_solar_constant/(si::watt/si::meter2);
+  view_state.exposure_intensity = 1e12*si::global_solar_constant/(si::watt/si::meter2);
   // view_state.projection_type = view::ProjectionType::heads_up_display;
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
