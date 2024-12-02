@@ -171,7 +171,7 @@ struct Stars
   }
   length radius_estimate(const mass star_mass) const
   {
-      return solar_radius * (star_mass < solar_mass? pow(star_mass/solar_mass, 0.8) : pow(star_mass/solar_mass, 0.5));
+      return solar_radius * pow(star_mass/solar_mass, 0.57);
   }
   temperature surface_temperature_estimate(const mass star_mass) const
   {
@@ -220,6 +220,7 @@ auto stars(
     solar_core_temperature
   );
 }
+
 
 int main() {
   // initialize GLFW
@@ -339,8 +340,8 @@ int main() {
     Rj,
     Rs, // sunlike
     0.09f*Rs, // red dwarf
-    1.7f*Rs, // blue giant
-    7.4f*Rs, // ultramassive
+    2.5f*Rs, // blue giant
+    9.8f*Rs, // ultramassive
     Rj,Rj,Rj,Rj,
     Rj,Rj,Rj,Rj,Rj,Rj,Rj,Rj,Rj
   };
@@ -348,7 +349,7 @@ int main() {
   float Me(si::earth_mass / si::kilogram);
   float Mj(si::jupiter_mass / si::kilogram);
   float Ms(si::solar_mass / si::kilogram);
-  si::mass minimum_stellar_mass(0.07*si::solar_mass);
+  si::mass hydrogen_burning_limit(0.07*si::solar_mass);
 
   std::vector<float> instance_masses{
     Mj,Mj,
@@ -359,8 +360,8 @@ int main() {
     Mj,
     1.0f * Ms, // sunlike
     0.1f * Ms, // red dwarf
-    2.1f * Ms, // blue giant
-    18.0f * Ms, // ultramassive
+    3.2f * Ms, // blue giant
+    35.0f * Ms, // ultramassive
     Mj,Mj,Mj,Mj, 
     Mj,Mj,Mj,Mj,Mj,Mj,Mj,Mj,Mj
   };
@@ -387,9 +388,9 @@ int main() {
     instance_origins.push_back(instance_grid_ids[i]*Rs*10.0f);
     instance_illumination_luminosity.push_back(vec3(si::solar_luminosity/si::watt));
     auto mass = instance_masses[i]*si::kilogram;
-    instance_radii[i] = mass < minimum_stellar_mass? instance_radii[i] : star.radius_estimate(mass)/si::meter;
-    instance_core_temperature[i] = mass < minimum_stellar_mass? 1.0 : star.core_temperature_estimate(mass, 0.6*si::dalton)/si::kelvin;
-    instance_surface_temperature[i] = mass < minimum_stellar_mass? instance_surface_temperature[i] : star.surface_temperature_estimate(mass)/si::kelvin;
+    instance_core_temperature[i] = mass < hydrogen_burning_limit? 1.0 : star.core_temperature_estimate(mass, 0.6*si::dalton)/si::kelvin;
+    instance_radii[i] = mass < hydrogen_burning_limit? instance_radii[i] : star.radius_estimate(mass)/si::meter;
+    instance_surface_temperature[i] = mass < hydrogen_burning_limit? instance_surface_temperature[i] : star.surface_temperature_estimate(mass)/si::kelvin;
     instance_atmosphere_scale_height.push_back(
       float(
         atmosphere.scale_height(
@@ -399,18 +400,20 @@ int main() {
         ) / si::meter
       )
     );
+    std::cout << mass / si::solar_mass << "\t";
+    std::cout << instance_radii[i] * si::meter / si::solar_radius << "\t";
     std::cout << point.gravity(mass, instance_radii[i] * si::meter) << "\t";
     std::cout << instance_atmosphere_scale_height[i] * si::meter << "\t";
     std::cout << instance_surface_temperature[i] * si::kelvin << "\t";
     std::cout << instance_core_temperature[i] * si::kelvin << "\t";
-    std::cout << instance_radii[i] * si::meter << "\t";
     std::cout << std::endl;
   };
 
   // "beta_*" is the rest of the fractional loss.
   // it is dependant on wavelength, and the density ratio
   // So all together, the fraction of sunlight that scatters to a given angle is: beta(wavelength) * gamma(angle) * density_ratio
-  std::vector<vec3> instance_beta_ray_sun(instance_origins.size(), vec3(5.20e-6, 1.21e-5, 2.96e-5));
+  std::vector<vec3> instance_beta_ray_sun(instance_origins.size(), vec3(0));
+  // std::vector<vec3> instance_beta_ray_sun(instance_origins.size(), vec3(5.20e-6, 1.21e-5, 2.96e-5));
   std::vector<vec3> instance_beta_mie_sun(instance_origins.size(), vec3(1e-6));
   std::vector<vec3> instance_beta_abs_sun(instance_origins.size(), vec3(1e-6));
   std::vector<vec3> instance_light_source(instance_origins.size(), vec3(0));
@@ -441,7 +444,7 @@ int main() {
   view_state.view_matrix = control_state.get_view_matrix();
   view_state.resolution = glm::vec2(850, 640);
   view_state.wavelength = glm::vec3(650e-9, 550e-9, 450e-9);
-  view_state.exposure_intensity = 1e9*si::global_solar_constant/(si::watt/si::meter2);
+  view_state.exposure_intensity = 1e7*si::global_solar_constant/(si::watt/si::meter2);
   // view_state.projection_type = view::ProjectionType::heads_up_display;
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
