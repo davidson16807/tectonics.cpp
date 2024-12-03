@@ -444,7 +444,7 @@ int main() {
   view_state.view_matrix = control_state.get_view_matrix();
   view_state.resolution = glm::vec2(850, 640);
   view_state.wavelength = glm::vec3(650e-9, 550e-9, 450e-9);
-  view_state.exposure_intensity = 1e7*si::global_solar_constant/(si::watt/si::meter2);
+  view_state.exposure_intensity = 1e8*si::global_solar_constant/(si::watt/si::meter2);
   // view_state.projection_type = view::ProjectionType::heads_up_display;
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);

@@ -118,6 +118,12 @@ namespace view
 
 			        const   float PI = 3.141592653589793238462643383279;
 
+					// from Carl Hansen et al., "Stellar Interiors"
+					float get_fraction_of_radius_for_star_with_temperature(float temperature, float core_temperature)
+					{
+					    return sqrt(max(1.0 - (temperature / core_temperature), 0.0));
+					}
+
 			        void main(){
 			        	/*
 			        	spheres are billboards, which must always face the camera:
@@ -126,7 +132,11 @@ namespace view
 			        	global→view is assumed not to represent scaling, so
 			            for scaling data:  local→view = local→global→view = local→global
 			        	*/
-			            mat4 scale_map = mat4(instance_radius);
+					    float radius_temp0 = instance_radius / 
+							get_fraction_of_radius_for_star_with_temperature(
+								instance_surface_temperature, 
+								instance_temperature_change_per_radius2); 
+			            mat4 scale_map = mat4(radius_temp0);
 			        	vec4 view_for_element_origin = view_for_global * global_for_local * vec4(instance_origin,1);
 			        	mat4 view_for_element = mat4(scale_map[0], scale_map[1], scale_map[2], view_for_element_origin);
 			        	vec4 clip_position = clip_for_view * view_for_element * vec4(element_position,1);
