@@ -461,7 +461,7 @@ namespace view
 					    {
 					        E_gas_emitted =
 						        get_intensity3_of_light_emitted_by_atmosphere(
-						            z2/h/h, v0B/h, v1B/h, vec3(650e-9*METER, 550e-9*METER, 450e-9*METER), 
+						            z2/h/h, v0B/h, v1B/h, vec3(wavelength3), 
 						            r1/h, r/h, dtdr2, 
 						            h*fragment_beta_ray, 
 						            h*fragment_beta_mie, 
