@@ -431,9 +431,10 @@ namespace view
 					    // `r1` is the radius at which temperature is modeled as 0
 					    float r1 = r / get_fraction_of_radius_for_star_with_temperature(t, dtdr2); 
     					float r0 = r - 0.0*h; // innermost radius of the atmosphere march
-			        	float r22d = dot(fragment_element_position.xy, fragment_element_position.xy);
-			        	if(r22d>=1) { discard; }
-			        	vec3 N = r1 * vec3(fragment_element_position.xy,-(1-sqrt(r22d)));
+    					vec2 xy = fragment_element_position.xy;
+			        	float xyxy = dot(xy, xy);
+			        	if(xyxy>=1) { discard; }
+			        	vec3 N = vec3(xy*r1/r,-(1-length(xy*r1/r)));
     					vec3 V0 = vec3(fragment_element_position.xy,-2)*r; // origin of view ray, assumes orthographic projection, anywhere outside the sphere is sufficiently distant
 			        	vec3 L = fragment_illumination_direction;
 			        	float l = length(L);
@@ -455,7 +456,7 @@ namespace view
 					    vec3 V1B = (V0 + V * v1 - O);
 					    float v0B = dot(V0B,V);
 					    float v1B = dot(V1B,V);
-					    float z2 = r22d*r1*r1;
+					    float z2 = xyxy*r1*r1;
 					    if(air_along_view_ray.exists)
 					    {
 					        E_gas_emitted =
@@ -468,21 +469,19 @@ namespace view
 						            128
 						        );
 					    }
-			        	vec3 fraction = vec3(length(N)>1? 0 : dot(N,L));
+			        	vec3 fraction = vec3(length(xy*r1/r)>1.0? 0.0 : dot(N,L));
 			        	vec3 E_surface_reflected = fraction * fragment_illumination_intensity;
 			        	E_surface_reflected = any(isnan(E_surface_reflected))? vec3(0) : E_surface_reflected;
 			        	vec4 view_for_element_origin = view_for_global * global_for_local * vec4(instance_origin,1);
 			            mat4 scale_map = mat4(fragment_radius);
 			        	mat4 view_for_element = mat4(scale_map[0], scale_map[1], scale_map[2], view_for_element_origin);
 			        	vec4 clip_position = clip_for_view * view_for_element * vec4(N,1);
-			        	// fragment_color = vec4(vec3((v1B-v0B)/1e9),1);
-			        	// fragment_color = vec4(isnan(fraction),1);
-			        	// return;
 			            fragment_color = vec4(
 					    	get_signal3_for_intensity3(
 					    		get_ldrtone3_for_intensity3(
-					    			E_surface_reflected + 
-					    			E_gas_emitted,
+					    			E_surface_reflected
+					    			// + E_gas_emitted
+					    			,
 					    			exposure_intensity
 					    		), 
 						    	gamma
