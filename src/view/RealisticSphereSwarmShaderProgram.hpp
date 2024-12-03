@@ -132,10 +132,14 @@ namespace view
 			        	global→view is assumed not to represent scaling, so
 			            for scaling data:  local→view = local→global→view = local→global
 			        	*/
-					    float radius_temp0 = instance_radius / 
-							get_fraction_of_radius_for_star_with_temperature(
-								instance_surface_temperature, 
-								instance_temperature_change_per_radius2); 
+					    float radius_temp0 = 
+							max(
+								instance_radius,
+								instance_radius / 
+								get_fraction_of_radius_for_star_with_temperature(
+									instance_surface_temperature, 
+									instance_temperature_change_per_radius2)
+							); 
 			            mat4 scale_map = mat4(radius_temp0);
 			        	vec4 view_for_element_origin = view_for_global * global_for_local * vec4(instance_origin,1);
 			        	mat4 view_for_element = mat4(scale_map[0], scale_map[1], scale_map[2], view_for_element_origin);
@@ -420,23 +424,22 @@ namespace view
 			        	Element vertices are hard coded so that x and y element coordinates
 			        	approximate those of a unit sphere.
 			        	*/
+    					float r  = fragment_radius; // radius at which "surface" temperature and beta_* variables are sampled
+				    	float t  = fragment_surface_temperature;
+				    	float dtdr2 = fragment_temperature_change_per_radius2;
+    					float h  = fragment_atmosphere_scale_height;
+					    // `r1` is the radius at which temperature is modeled as 0
+					    float r1 = r / get_fraction_of_radius_for_star_with_temperature(t, dtdr2); 
+    					float r0 = r - 0.0*h; // innermost radius of the atmosphere march
 			        	float r22d = dot(fragment_element_position.xy, fragment_element_position.xy);
 			        	if(r22d>=1) { discard; }
-			        	vec3 N = vec3(fragment_element_position.xy,-(1-sqrt(r22d)));
+			        	vec3 N = r1 * vec3(fragment_element_position.xy,-(1-sqrt(r22d)));
+    					vec3 V0 = vec3(fragment_element_position.xy,-2)*r; // origin of view ray, assumes orthographic projection, anywhere outside the sphere is sufficiently distant
 			        	vec3 L = fragment_illumination_direction;
 			        	float l = length(L);
 			        	vec3 E_gas_emitted = vec3(0);
-    					float h  = fragment_atmosphere_scale_height;
-    					float r  = fragment_radius; // radius at which "surface" temperature and beta_* variables are sampled
-			        	vec3  V  = vec3(0,0,1); 
-    					vec3  V0 = (N-V)*r; // origin of view ray, assumes orthographic projection, anywhere outside the sphere is sufficiently distant
-    					vec3  O  = vec3(0);  // center of the star
-				    	float t  = fragment_surface_temperature;
-				    	float dtdr2 = fragment_temperature_change_per_radius2;
-					    // `r1` is the radius at which temperature is modeled as 0
-					    // float r1 = r + 3.0*h; 
-					    float r1 = r / get_fraction_of_radius_for_star_with_temperature(t, dtdr2); 
-    					float r0 = r - 0.0*h; // innermost radius of the atmosphere march
+			        	vec3 V  = vec3(0,0,1); 
+    					vec3 O  = vec3(0);  // center of the star
 					    maybe_vec2 air_along_view_ray = 
 					        get_bounding_distances_along_ray
 					        (
@@ -465,7 +468,7 @@ namespace view
 						            128
 						        );
 					    }
-			        	vec3 fraction = vec3(dot(N,L));
+			        	vec3 fraction = vec3(length(N)>1? 0 : dot(N,L));
 			        	vec3 E_surface_reflected = fraction * fragment_illumination_intensity;
 			        	E_surface_reflected = any(isnan(E_surface_reflected))? vec3(0) : E_surface_reflected;
 			        	vec4 view_for_element_origin = view_for_global * global_for_local * vec4(instance_origin,1);
