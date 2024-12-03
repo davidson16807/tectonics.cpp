@@ -431,11 +431,11 @@ namespace view
 					    // `r1` is the radius at which temperature is modeled as 0
 					    float r1 = r / get_fraction_of_radius_for_star_with_temperature(t, dtdr2); 
     					float r0 = r; // innermost radius of the atmosphere march
-    					vec2 xy = fragment_element_position.xy;
-			        	float xyxy = dot(xy, xy);
-			        	if(xyxy>=1) { discard; }
-			        	vec3 N = vec3(xy*r1/r,-sqrt(max(0,1-dot(xy*r1/r, xy*r1/r))));
-    					vec3 V0 = vec3(fragment_element_position.xy,-2)*r1; // origin of view ray, assumes orthographic projection, anywhere outside the sphere is sufficiently distant
+    					vec2 X = fragment_element_position.xy;
+			        	float XX = dot(X, X);
+			        	if(XX>=1) { discard; }
+			        	vec3 N = vec3(X*r1/r,-sqrt(max(0,1-dot(X*r1/r, X*r1/r))));
+    					vec3 V0 = vec3(X,-2)*r1; // origin of view ray, assumes orthographic projection, anywhere outside the sphere is sufficiently distant
 			        	vec3 L = fragment_illumination_direction;
 			        	float l = length(L);
 			        	vec3 E_gas_emitted = vec3(0);
@@ -456,7 +456,7 @@ namespace view
 					    vec3 V1B = (V0 + V * v1 - O);
 					    float v0B = dot(V0B,V);
 					    float v1B = dot(V1B,V);
-					    float z2 = xyxy*r1*r1;
+					    float z2 = XX*r1*r1;
 					    if(air_along_view_ray.exists)
 					    {
 					        E_gas_emitted =
@@ -466,12 +466,11 @@ namespace view
 						            h*fragment_beta_ray, 
 						            h*fragment_beta_mie, 
 						            h*fragment_beta_abs,
-						            128
+						            32
 						        );
 					    }
 			        	float fraction = dot(N,L);
-			        	vec3 E_surface_reflected = length(xy*r1/r)>1.0? vec3(0) : fraction * fragment_illumination_intensity;
-			        	// vec3 E_surface_reflected = fraction * fragment_illumination_intensity;
+			        	vec3 E_surface_reflected = length(X*r1/r)>1.0? vec3(0) : fraction * fragment_illumination_intensity;
 			        	E_surface_reflected = any(isnan(E_surface_reflected))? vec3(0) : E_surface_reflected;
 			        	vec4 view_for_element_origin = view_for_global * global_for_local * vec4(instance_origin,1);
 			            mat4 scale_map = mat4(fragment_radius);
@@ -482,8 +481,7 @@ namespace view
 					    		get_ldrtone3_for_intensity3(
 					    			E_surface_reflected
 					    			+ E_gas_emitted
-					    			,
-					    			exposure_intensity
+					    			, exposure_intensity
 					    		), 
 						    	gamma
 					    	),
