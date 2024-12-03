@@ -305,7 +305,7 @@ int main() {
   temperatures for planets and brown dwarves are for earth, luhman 16, and an arbitrary hot jupiter
   */
   std::vector<float> instance_surface_temperature{ 
-    1,1,301,601,1211,1,1,1,1,
+    1,1,301,1,1,1,1,1,1,
     1,5771,2101,9701,30001,1,1,1,1,
     1,1,1,1,1,1,1,1,1
   };
@@ -315,7 +315,7 @@ int main() {
   temperatures for brown dwarves from Garani (2021)
   */
   std::vector<float> instance_core_temperature{ 
-    1,1,1,1e5,3e6,1,1,1,1, // earth, large hot jupiter, Luhman 16A
+    1,1,1,1,1,1,1,1,1, // earth, large hot jupiter, Luhman 16A
     1,15e6,94e3,53e6,2e9,1,1,1,1, // sunlike, red dwarf, blue giant, ultramassive, 
     1,1,1,1,1,1,1,1,1
   };
@@ -444,7 +444,7 @@ int main() {
   view_state.view_matrix = control_state.get_view_matrix();
   view_state.resolution = glm::vec2(850, 640);
   view_state.wavelength = glm::vec3(650e-9, 550e-9, 450e-9);
-  view_state.exposure_intensity = 1e8*si::global_solar_constant/(si::watt/si::meter2);
+  view_state.exposure_intensity = 1e2*si::global_solar_constant/(si::watt/si::meter2);
   // view_state.projection_type = view::ProjectionType::heads_up_display;
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
