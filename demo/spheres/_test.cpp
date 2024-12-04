@@ -11,6 +11,8 @@
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 
 // in house libraries
+#include <math/geometric/Spheres.hpp>
+
 #include <unit/si.hpp>                              // si::units
 #include <buffer/PyramidBuffers.hpp>                // buffer::PyramidBuffers
 
@@ -58,75 +60,6 @@ PointMasses<acceleration_per_area_density> point_masses(const acceleration_per_a
   return PointMasses<acceleration_per_area_density>(gravitational_constant);
 }
 
-template<typename scalar>
-struct Spheres
-{
-  const scalar pi;
-  Spheres(const scalar pi):
-    pi(pi)
-  {}
-  template<typename length>
-  auto surface_area(const length radius) const {
-      return scalar(4)*pi*radius*radius;
-  }
-  template<typename length>
-  auto volume(const length radius) const {
-      return scalar(4)/scalar(3)*pi*radius*radius*radius;
-  }
-  template<glm::qualifier quality=glm::defaultp>
-  bool is_point_inside(
-    const glm::vec<3,scalar,quality> point, 
-    const glm::vec<3,scalar,quality> origin, 
-    const scalar radius
-  ) const {
-    return glm::length(point-origin) < radius;
-  }
-  template<glm::qualifier quality=glm::defaultp>
-  bool distance_from_surface_to_point(
-    const glm::vec<3,scalar,quality> point, 
-    const glm::vec<3,scalar,quality> origin, 
-    const scalar radius
-  ) const {
-    return glm::length(point-origin) - radius;
-  }
-  /*
-  bool is_sphere_inside(
-  ){
-    return glm::length(origin1-origin2) < radius1+radius2
-  }
-  bool is_sphere_overlapped(
-  ){
-    return glm::length(origin1-origin2) < radius1+radius2;
-  }
-  template<typename scalar, glm::qualifier quality=glm::defaultp>
-  maybe_range distance_to_surface_along_line(
-    const glm::vec<3,scalar,quality> reference, 
-    const glm::vec<3,scalar,quality> direction, 
-    const glm::vec<3,scalar,quality> origin, 
-    const scalar radius
-  ) const {
-
-    float xz = glm::dot(origin - reference, direction);
-    float z = glm::length(reference + direction * xz - origin);
-    float y2 = r * r - z * z;
-    float dxr = std::sqrt(std::max(y2, 1e-10));
-    return maybe_range(
-        xz - dxr,
-        xz + dxr, 
-        y2 > 0.
-    );
-  }
-  maybe_circle intersection_with_sphere(
-  ){
-    return maybe_circle(O,N,r,exists);
-  }
-  */
-};
-template<typename scalar>
-Spheres<scalar> spheres(const scalar pi)
-{
-  return Spheres<scalar>(pi);
-}
 
 template<
   typename Spheres,
@@ -136,7 +69,7 @@ template<
   typename temperature,
   typename intensity_per_temperature4
 >
-struct Stars
+struct MainSequenceStars
 {
   const Spheres sphere;
   const intensity_per_temperature4 stephan_boltzmann_constant;
@@ -145,7 +78,7 @@ struct Stars
   const length solar_radius;
   const luminosity solar_luminosity;
   const temperature solar_core_temperature;
-  Stars(
+  MainSequenceStars(
     const Spheres sphere,
     const intensity_per_temperature4 stephan_boltzmann_constant,
     const mass solar_mean_molecular_mass,
@@ -200,7 +133,7 @@ template<
   typename temperature,
   typename intensity_per_temperature4
 >
-auto stars(
+auto main_sequence_stars(
     const Spheres sphere,
     const intensity_per_temperature4 stephan_boltzmann_constant,
     const mass solar_mass,
@@ -209,7 +142,7 @@ auto stars(
     const luminosity solar_luminosity,
     const temperature solar_core_temperature
 ){
-  return Stars<Spheres,mass,length,luminosity,temperature,intensity_per_temperature4>
+  return MainSequenceStars<Spheres,mass,length,luminosity,temperature,intensity_per_temperature4>
   (
     sphere,
     stephan_boltzmann_constant,
@@ -371,8 +304,8 @@ int main() {
   */
   auto atmosphere = atmospheres(si::boltzmann_constant);
   auto point = point_masses(si::gravitational_constant);
-  auto star = stars(
-    spheres(3.14159265358979),
+  auto star = main_sequence_stars(
+    geometric::spheres(3.14159265358979),
     si::stephan_boltzmann_constant,
     0.6*si::dalton,
     si::solar_mass,
