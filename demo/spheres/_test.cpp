@@ -11,7 +11,7 @@
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 
 // in house libraries
-#include <math/geometric/Spheres.hpp>
+#include <math/geometric/Spherelike.hpp>
 
 #include <unit/si.hpp>                              // si::units
 #include <buffer/PyramidBuffers.hpp>                // buffer::PyramidBuffers
@@ -62,7 +62,7 @@ PointMasses<acceleration_per_area_density> point_masses(const acceleration_per_a
 
 
 template<
-  typename Spheres,
+  typename Spherelike,
   typename mass,
   typename length,
   typename luminosity,
@@ -71,7 +71,7 @@ template<
 >
 struct MainSequenceStars
 {
-  const Spheres sphere;
+  const Spherelike sphere;
   const intensity_per_temperature4 stephan_boltzmann_constant;
   const mass solar_mean_molecular_mass;
   const mass solar_mass;
@@ -79,7 +79,7 @@ struct MainSequenceStars
   const luminosity solar_luminosity;
   const temperature solar_core_temperature;
   MainSequenceStars(
-    const Spheres sphere,
+    const Spherelike sphere,
     const intensity_per_temperature4 stephan_boltzmann_constant,
     const mass solar_mean_molecular_mass,
     const mass solar_mass,
@@ -126,7 +126,7 @@ struct MainSequenceStars
   // from Carl Hansen et al., "Stellar Interiors"
 };
 template<
-  typename Spheres,
+  typename Spherelike,
   typename mass,
   typename length,
   typename luminosity,
@@ -134,7 +134,7 @@ template<
   typename intensity_per_temperature4
 >
 auto main_sequence_stars(
-    const Spheres sphere,
+    const Spherelike sphere,
     const intensity_per_temperature4 stephan_boltzmann_constant,
     const mass solar_mass,
     const mass solar_mean_molecular_mass,
@@ -142,7 +142,7 @@ auto main_sequence_stars(
     const luminosity solar_luminosity,
     const temperature solar_core_temperature
 ){
-  return MainSequenceStars<Spheres,mass,length,luminosity,temperature,intensity_per_temperature4>
+  return MainSequenceStars<Spherelike,mass,length,luminosity,temperature,intensity_per_temperature4>
   (
     sphere,
     stephan_boltzmann_constant,
@@ -305,7 +305,7 @@ int main() {
   auto atmosphere = atmospheres(si::boltzmann_constant);
   auto point = point_masses(si::gravitational_constant);
   auto star = main_sequence_stars(
-    geometric::spheres(3.14159265358979),
+    geometric::points_and_spheres<3,double>(3.14159265358979),
     si::stephan_boltzmann_constant,
     0.6*si::dalton,
     si::solar_mass,
