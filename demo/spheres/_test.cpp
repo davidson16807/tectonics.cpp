@@ -12,6 +12,9 @@
 
 // in house libraries
 #include <math/geometric/Spherelike.hpp>
+#include <model/air/Properties.hpp>
+#include <model/orbit/Properties.hpp>
+#include <model/star/PropertiesOnMainSequence.hpp>
 
 #include <unit/si.hpp>                              // si::units
 #include <buffer/PyramidBuffers.hpp>                // buffer::PyramidBuffers
@@ -21,138 +24,6 @@
 
 #include <view/RealisticSphereSwarmShaderProgram.hpp>     // view::RealisticSphereSwarmShaderProgram
 
-
-template<typename energy_per_temperature>
-struct Atmospheres
-{
-  const energy_per_temperature boltzmann_constant;
-  Atmospheres(const energy_per_temperature boltzmann_constant):
-    boltzmann_constant(boltzmann_constant)
-  {}
-  template<typename temperature, typename mass, typename acceleration>
-  auto scale_height(const temperature atmosphere_temperature, const mass molecular_mass, const acceleration gravity) const
-  {
-    return boltzmann_constant * atmosphere_temperature / (molecular_mass * gravity);
-  }
-};
-template<typename energy_per_temperature>
-Atmospheres<energy_per_temperature> atmospheres(const energy_per_temperature boltzmann_constant)
-{
-  return Atmospheres<energy_per_temperature>(boltzmann_constant);
-}
-
-template<typename acceleration_per_area_density>
-struct PointMasses
-{
-  const acceleration_per_area_density gravitational_constant;
-  PointMasses(const acceleration_per_area_density gravitational_constant):
-    gravitational_constant(gravitational_constant)
-  {}
-  template<typename mass, typename length>
-  auto gravity(const mass point_mass, const length radius) const
-  {
-    return gravitational_constant * point_mass / (radius * radius);
-  }
-};
-template<typename acceleration_per_area_density>
-PointMasses<acceleration_per_area_density> point_masses(const acceleration_per_area_density gravitational_constant)
-{
-  return PointMasses<acceleration_per_area_density>(gravitational_constant);
-}
-
-
-template<
-  typename Spherelike,
-  typename mass,
-  typename length,
-  typename luminosity,
-  typename temperature,
-  typename intensity_per_temperature4
->
-struct MainSequenceStars
-{
-  const Spherelike sphere;
-  const intensity_per_temperature4 stephan_boltzmann_constant;
-  const mass solar_mean_molecular_mass;
-  const mass solar_mass;
-  const length solar_radius;
-  const luminosity solar_luminosity;
-  const temperature solar_core_temperature;
-  MainSequenceStars(
-    const Spherelike sphere,
-    const intensity_per_temperature4 stephan_boltzmann_constant,
-    const mass solar_mean_molecular_mass,
-    const mass solar_mass,
-    const length solar_radius,
-    const luminosity solar_luminosity,
-    const temperature solar_core_temperature
-  ):
-    sphere(sphere),
-    stephan_boltzmann_constant(stephan_boltzmann_constant),
-    solar_mean_molecular_mass(solar_mean_molecular_mass),
-    solar_mass(solar_mass),
-    solar_radius(solar_radius),
-    solar_luminosity(solar_luminosity),
-    solar_core_temperature(solar_core_temperature)
-  {}
-  // the approximations below are ripped from Artifexian's video on stars:
-  // https://www.youtube.com/watch?v=x55nxxaWXAM
-  // we only need rough guesses for these properties, so they should be good enough
-  luminosity luminosity_estimate(const mass star_mass) const
-  {
-      return solar_luminosity * pow(star_mass/solar_mass, 3.5);
-  }
-  length radius_estimate(const mass star_mass) const
-  {
-      return solar_radius * pow(star_mass/solar_mass, 0.57);
-  }
-  temperature surface_temperature_estimate(const mass star_mass) const
-  {
-      return sqrt(sqrt(intensity_estimate(star_mass) / stephan_boltzmann_constant));
-  }
-  temperature core_temperature_estimate(const mass star_mass, const mass star_mean_molecular_mass)  const
-  {
-      return (
-          solar_core_temperature 
-          * (star_mean_molecular_mass / solar_mean_molecular_mass)
-          * (star_mass / solar_mass)
-          / (radius_estimate(star_mass) / solar_radius)
-      );
-  }
-  auto intensity_estimate(const mass star_mass) const
-  {
-      return luminosity_estimate(star_mass) / sphere.surface_area(radius_estimate(star_mass));
-  }
-  // from Carl Hansen et al., "Stellar Interiors"
-};
-template<
-  typename Spherelike,
-  typename mass,
-  typename length,
-  typename luminosity,
-  typename temperature,
-  typename intensity_per_temperature4
->
-auto main_sequence_stars(
-    const Spherelike sphere,
-    const intensity_per_temperature4 stephan_boltzmann_constant,
-    const mass solar_mass,
-    const mass solar_mean_molecular_mass,
-    const length solar_radius,
-    const luminosity solar_luminosity,
-    const temperature solar_core_temperature
-){
-  return MainSequenceStars<Spherelike,mass,length,luminosity,temperature,intensity_per_temperature4>
-  (
-    sphere,
-    stephan_boltzmann_constant,
-    solar_mass,
-    solar_mean_molecular_mass,
-    solar_radius,
-    solar_luminosity,
-    solar_core_temperature
-  );
-}
 
 
 int main() {
@@ -302,9 +173,9 @@ int main() {
   /*
   scale heights calculated from the standard equation, h=kᵦT/(mg)
   */
-  auto atmosphere = atmospheres(si::boltzmann_constant);
-  auto point = point_masses(si::gravitational_constant);
-  auto star = main_sequence_stars(
+  auto atmosphere = air::properties(si::boltzmann_constant);
+  auto point = orbit::properties(si::gravitational_constant);
+  auto star = star::properties_on_main_sequence(
     geometric::points_and_spheres<3,double>(3.14159265358979),
     si::stephan_boltzmann_constant,
     0.6*si::dalton,
