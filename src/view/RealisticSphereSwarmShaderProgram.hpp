@@ -50,8 +50,9 @@ namespace view
 		// instance buffer ids
 		GLuint instanceOriginBufferId;
 		GLuint instanceRadiusBufferId;
-		GLuint instanceIlluminationSourceBufferId;
-		GLuint instanceIlluminationLuminosityBufferId;
+		GLuint instanceIlluminationTemperatureBufferId;
+		GLuint instanceIlluminationRadiusBufferId;
+		GLuint instanceIlluminationPositionBufferId;
 		GLuint instanceBetaRayBufferId;
 		GLuint instanceBetaMieBufferId;
 		GLuint instanceBetaAbsBufferId;
@@ -65,8 +66,9 @@ namespace view
 	    // instance attributes
 		GLuint instanceOriginLocation;
 		GLuint instanceRadiusLocation;
-		GLuint instanceIlluminationSourceLocation;
-		GLuint instanceIlluminationLuminosityLocation;
+		GLuint instanceIlluminationTemperatureLocation;
+		GLuint instanceIlluminationRadiusLocation;
+		GLuint instanceIlluminationPositionLocation;
 		GLuint instanceBetaRayLocation;
 		GLuint instanceBetaMieLocation;
 		GLuint instanceBetaAbsLocation;
@@ -91,10 +93,12 @@ namespace view
 			        uniform mat4  global_for_local;
 			        uniform mat4  view_for_global;
 			        uniform mat4  clip_for_view;
+			        uniform vec3  wavelength3;
 			        in      vec3  element_position;
 			        in      vec3  instance_origin;
 			        in      vec3  instance_illumination_source;
-			        in      vec3  instance_illumination_luminosity;
+			        in      float instance_illumination_temperature;
+			        in      float instance_illumination_radius;
 
 					in      vec3  instance_beta_abs;
 					in      vec3  instance_beta_mie;
@@ -117,6 +121,78 @@ namespace view
 					out     float fragment_atmosphere_scale_height;
 
 			        const   float PI = 3.141592653589793238462643383279;
+
+					const float METER = 1.0;
+					const float SECOND = 1.0;
+					const float JOULE = 1.0;
+					const float KELVIN = 1.0;
+					const float WATT = 1.0;
+
+					const float SPEED_OF_LIGHT = 299792458. * METER / SECOND;
+					const float BOLTZMANN_CONSTANT = 1.3806485279e-23 * JOULE / KELVIN;
+					const float PLANCK_CONSTANT = 6.62607004e-34 * JOULE * SECOND;
+					const float STEPHAN_BOLTZMANN_CONSTANT = 5.670373e-8 * WATT / (METER*METER* KELVIN*KELVIN*KELVIN*KELVIN);
+
+					// see Lawson 2004, "The Blackbody Fraction, Infinite Series and Spreadsheets"
+					// we only do a single iteration with n=1, because it doesn't have a noticeable effect on output
+					float solve_fraction_of_light_emitted_by_black_body_below_wavelength(
+					    in float wavelength, 
+					    in float temperature
+					){ 
+					    const float iterations = 2.;
+					    const float h = PLANCK_CONSTANT;
+					    const float k = BOLTZMANN_CONSTANT;
+					    const float c = SPEED_OF_LIGHT;
+
+					    float L = wavelength;
+					    float T = temperature;
+
+					    float C2 = h*c/k;
+					    float z  = C2 / (L*T);
+					    float z2 = z*z;
+					    float z3 = z2*z;
+					    
+					    float sum = 0.;
+					    float n2=0.;
+					    float n3=0.;
+					    for (float n=1.; n <= iterations; n++) {
+					        n2 = n*n;
+					        n3 = n2*n;
+					        sum += (z3 + 3.*z2/n + 6.*z/n2 + 6./n3) * exp(-n*z) / n;
+					    }
+					    return 15.*sum/(PI*PI*PI*PI);
+					}
+
+			        float solve_fraction_of_light_emitted_by_black_body_between_wavelengths(
+					    in float lo, 
+					    in float hi, 
+					    in float temperature
+					){
+					    return  solve_fraction_of_light_emitted_by_black_body_below_wavelength(hi, temperature) - 
+					            solve_fraction_of_light_emitted_by_black_body_below_wavelength(lo, temperature);
+					}
+
+					// This calculates the radiation (in watts/m^2) that's emitted 
+					// by a single object using the Stephan-Boltzmann equation
+					float get_intensity_of_light_emitted_by_black_body(
+					    in float temperature
+					){
+					    float T = temperature;
+					    return STEPHAN_BOLTZMANN_CONSTANT * T*T*T*T;
+					}
+
+					vec3 solve_intensity3_of_light_emitted_by_black_body_between_wavelengths(
+					    in vec3 lo3,
+					    in vec3 hi3,
+					    in float temperature
+					){
+					    return get_intensity_of_light_emitted_by_black_body(temperature)
+					         * vec3(
+					             solve_fraction_of_light_emitted_by_black_body_between_wavelengths(lo3.x, hi3.x, temperature),
+					             solve_fraction_of_light_emitted_by_black_body_between_wavelengths(lo3.y, hi3.y, temperature),
+					             solve_fraction_of_light_emitted_by_black_body_between_wavelengths(lo3.z, hi3.z, temperature)
+					           );
+					}
 
 					// from Carl Hansen et al., "Stellar Interiors"
 					float get_fraction_of_radius_for_star_with_temperature(float temperature, float core_temperature)
@@ -147,7 +223,7 @@ namespace view
 			            vec3 instance_illumination_offset = instance_illumination_source-instance_origin;
 			        	float v = length(view_for_element_origin);
 			        	float l = length(instance_illumination_offset);
-			        	fragment_illumination_intensity = max(vec3(0),instance_illumination_luminosity) 
+			        	fragment_illumination_intensity = max(vec3(0), 0.0) 
 			        		/ (4.0*PI*l*l)
 			        		// / (4.0*PI*v*v)
 			        	;
@@ -574,14 +650,19 @@ namespace view
 		    glEnableVertexAttribArray(instanceOriginLocation);
 
 			// create a new vertex buffer object, VBO
-			glGenBuffers(1, &instanceIlluminationSourceBufferId);
-			instanceIlluminationSourceLocation = glGetAttribLocation(shaderProgramId, "instance_illumination_source");
-		    glEnableVertexAttribArray(instanceIlluminationSourceLocation);
+			glGenBuffers(1, &instanceIlluminationRadiusBufferId);
+			instanceIlluminationRadiusLocation = glGetAttribLocation(shaderProgramId, "instance_illumination_radius");
+		    glEnableVertexAttribArray(instanceIlluminationRadiusLocation);
 
 			// create a new vertex buffer object, VBO
-			glGenBuffers(1, &instanceIlluminationLuminosityBufferId);
-			instanceIlluminationLuminosityLocation = glGetAttribLocation(shaderProgramId, "instance_illumination_luminosity");
-		    glEnableVertexAttribArray(instanceIlluminationLuminosityLocation);
+			glGenBuffers(1, &instanceIlluminationTemperatureBufferId);
+			instanceIlluminationTemperatureLocation = glGetAttribLocation(shaderProgramId, "instance_illumination_temperature");
+		    glEnableVertexAttribArray(instanceIlluminationTemperatureLocation);
+
+			// create a new vertex buffer object, VBO
+			glGenBuffers(1, &instanceIlluminationPositionBufferId);
+			instanceIlluminationPositionLocation = glGetAttribLocation(shaderProgramId, "instance_illumination_source");
+		    glEnableVertexAttribArray(instanceIlluminationPositionLocation);
 
 			// create a new vertex buffer object, VBO
 			glGenBuffers(1, &instanceOriginBufferId);
@@ -633,7 +714,7 @@ namespace view
 		        glDeleteBuffers(1, &elementPositionBufferId);
 		        glDeleteBuffers(1, &instanceOriginBufferId);
 		        glDeleteBuffers(1, &instanceRadiusBufferId);
-		        glDeleteBuffers(1, &instanceIlluminationSourceBufferId);
+		        glDeleteBuffers(1, &instanceIlluminationPositionBufferId);
 		        glDeleteProgram(shaderProgramId);
         	}
 		}
@@ -652,8 +733,9 @@ namespace view
 			const std::vector<float>& surface_temperature,
 			const std::vector<float>& temperature_change_per_radius2,
 			const std::vector<float>& atmosphere_scale_height,
-			const std::vector<glm::vec3>& light_source,
-			const std::vector<glm::vec3>& light_luminosity,
+			const std::vector<float>& illumination_temperature,
+			const std::vector<float>& illumination_radius,
+			const std::vector<glm::vec3>& illumination_source,
 			const std::vector<glm::vec3>& beta_ray,
 			const std::vector<glm::vec3>& beta_mie,
 			const std::vector<glm::vec3>& beta_abs,
@@ -691,17 +773,23 @@ namespace view
             glVertexAttribPointer(instanceOriginLocation, 3, GL_FLOAT, normalize, stride, offset);
 		    glVertexAttribDivisor(instanceOriginLocation,1);
 
-			glBindBuffer(GL_ARRAY_BUFFER, instanceIlluminationSourceBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*light_source.size(), &light_source.front(), GL_DYNAMIC_DRAW);
-		    glEnableVertexAttribArray(instanceIlluminationSourceLocation);
-            glVertexAttribPointer(instanceIlluminationSourceLocation, 3, GL_FLOAT, normalize, stride, offset);
-		    glVertexAttribDivisor(instanceIlluminationSourceLocation,1);
+			glBindBuffer(GL_ARRAY_BUFFER, instanceIlluminationPositionBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*illumination_source.size(), &illumination_source.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(instanceIlluminationPositionLocation);
+            glVertexAttribPointer(instanceIlluminationPositionLocation, 3, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceIlluminationPositionLocation,1);
 
-			glBindBuffer(GL_ARRAY_BUFFER, instanceIlluminationLuminosityBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*light_luminosity.size(), &light_luminosity.front(), GL_DYNAMIC_DRAW);
-		    glEnableVertexAttribArray(instanceIlluminationLuminosityLocation);
-            glVertexAttribPointer(instanceIlluminationLuminosityLocation, 3, GL_FLOAT, normalize, stride, offset);
-		    glVertexAttribDivisor(instanceIlluminationLuminosityLocation,1);
+			glBindBuffer(GL_ARRAY_BUFFER, instanceIlluminationRadiusBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*illumination_radius.size(), &illumination_radius.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(instanceIlluminationRadiusLocation);
+            glVertexAttribPointer(instanceIlluminationRadiusLocation, 1, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceIlluminationRadiusLocation,1);
+
+			glBindBuffer(GL_ARRAY_BUFFER, instanceIlluminationTemperatureBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*illumination_temperature.size(), &illumination_temperature.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(instanceIlluminationTemperatureLocation);
+            glVertexAttribPointer(instanceIlluminationTemperatureLocation, 1, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceIlluminationTemperatureLocation,1);
 
 			glBindBuffer(GL_ARRAY_BUFFER, instanceBetaRayBufferId);
 	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*beta_ray.size(), &beta_ray.front(), GL_DYNAMIC_DRAW);
