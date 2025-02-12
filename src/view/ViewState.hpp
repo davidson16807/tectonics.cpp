@@ -24,6 +24,7 @@ namespace view
 		glm::mat4 projection_matrix;
 		glm::vec2 resolution;
 		glm::vec3 wavelength;
+		glm::vec3 wavelength_standard_deviation;
 		float point_spread_function_pixel_standard_deviation;
 		float point_spread_function_starburst_pixel_amplitude;
 		int aperture_symmetry_axis_count;
@@ -38,6 +39,7 @@ namespace view
 			projection_matrix(1),
 			resolution(1),
 			wavelength(0),
+			wavelength_standard_deviation(0),
 			point_spread_function_pixel_standard_deviation(1.0),
 			point_spread_function_starburst_pixel_amplitude(1.0),
 			aperture_symmetry_axis_count(5),

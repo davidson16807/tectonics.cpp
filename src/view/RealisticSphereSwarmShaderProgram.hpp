@@ -83,6 +83,7 @@ namespace view
 		GLuint exposureIntensityLocation;
 		GLuint gammaLocation;
 		GLuint wavelengthLocation;
+		GLuint wavelengthStandardDeviationLocation;
 
 		bool isDisposed;
 
@@ -94,6 +95,7 @@ namespace view
 			        uniform mat4  view_for_global;
 			        uniform mat4  clip_for_view;
 			        uniform vec3  wavelength3;
+			        uniform vec3  wavelength3_standard_deviation;
 			        in      vec3  element_position;
 			        in      vec3  instance_origin;
 			        in      vec3  instance_illumination_source;
@@ -195,8 +197,10 @@ namespace view
 					}
 
 					// from Carl Hansen et al., "Stellar Interiors"
-					float get_fraction_of_radius_for_star_with_temperature(float temperature, float core_temperature)
-					{
+					float get_fraction_of_radius_for_star_with_temperature(
+						float temperature, 
+						float core_temperature
+					){
 					    return sqrt(max(1.0 - (temperature / core_temperature), 0.0));
 					}
 
@@ -223,10 +227,18 @@ namespace view
 			            vec3 instance_illumination_offset = instance_illumination_source-instance_origin;
 			        	float v = length(view_for_element_origin);
 			        	float l = length(instance_illumination_offset);
-			        	fragment_illumination_intensity = max(vec3(0), 0.0) 
+			        	float r = instance_illumination_radius;
+			        	fragment_illumination_intensity = max(vec3(0), 
+			        		// vec3(0)
+			        		vec3(3.828e26)
+			        		// solve_intensity3_of_light_emitted_by_black_body_between_wavelengths(
+			        		// 	wavelength3 - wavelength3_standard_deviation,
+			        		// 	wavelength3 + wavelength3_standard_deviation,
+			        		// 	instance_illumination_temperature
+			        		// )* (4.0*PI*r*r)
 			        		/ (4.0*PI*l*l)
 			        		// / (4.0*PI*v*v)
-			        	;
+			        	);
 			        	fragment_illumination_direction = (
 			        		clip_for_view * 
 			        		view_for_global * 
@@ -631,6 +643,7 @@ namespace view
 			exposureIntensityLocation = glGetUniformLocation(shaderProgramId, "exposure_intensity");
 			gammaLocation = glGetUniformLocation(shaderProgramId, "gamma");
 			wavelengthLocation = glGetUniformLocation(shaderProgramId, "wavelength3");
+			wavelengthStandardDeviationLocation = glGetUniformLocation(shaderProgramId, "wavelength3_standard_deviation");
 
 	        // ATTRIBUTES
 
@@ -838,6 +851,7 @@ namespace view
 	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(view_state.model_matrix));
 	        glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(view_state.projection_matrix));
 	        glUniform3fv      (wavelengthLocation,       1, glm::value_ptr(view_state.wavelength));
+	        glUniform3fv      (wavelengthStandardDeviationLocation, 1, glm::value_ptr(view_state.wavelength_standard_deviation));
 	        glUniform1f       (exposureIntensityLocation, view_state.exposure_intensity);
 	        glUniform1f       (gammaLocation, view_state.gamma);
 

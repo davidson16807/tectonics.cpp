@@ -60,6 +60,83 @@ class Stars:
       return self.luminosity_estimate(star_mass) / self.sphere.surface_area(self.radius_estimate(star_mass));
 
 
+
+
+SPEED_OF_LIGHT = 299792458. * METER / SECOND;
+BOLTZMANN_CONSTANT = 1.3806485279e-23 * JOULE / KELVIN;
+PLANCK_CONSTANT = 6.62607004e-34 * JOULE * SECOND;
+STEPHAN_BOLTZMANN_CONSTANT = 5.670373e-8 * WATT / (METER*METER* KELVIN*KELVIN*KELVIN*KELVIN);
+
+# see Lawson 2004, "The Blackbody Fraction, Infinite Series and Spreadsheets"
+# we only do a single iteration with n=1, because it doesn't have a noticeable effect on output
+def solve_fraction_of_light_emitted_by_black_body_below_wavelength(
+    wavelength, 
+    temperature
+): 
+    iterations = 2.;
+    h = PLANCK_CONSTANT;
+    k = BOLTZMANN_CONSTANT;
+    c = SPEED_OF_LIGHT;
+
+    float L = wavelength;
+    float T = temperature;
+
+    float C2 = h*c/k;
+    float z  = C2 / (L*T);
+    float z2 = z*z;
+    float z3 = z2*z;
+    
+    float sum = 0.;
+    float n2=0.;
+    float n3=0.;
+    for (float n=1.; n <= iterations; n++) {
+        n2 = n*n;
+        n3 = n2*n;
+        sum += (z3 + 3.*z2/n + 6.*z/n2 + 6./n3) * exp(-n*z) / n;
+    }
+    return 15.*sum/(PI*PI*PI*PI);
+}
+
+def solve_fraction_of_light_emitted_by_black_body_between_wavelengths(
+    lo, 
+    hi, 
+    temperature
+):
+    return  solve_fraction_of_light_emitted_by_black_body_below_wavelength(hi, temperature) - 
+            solve_fraction_of_light_emitted_by_black_body_below_wavelength(lo, temperature);
+}
+
+# This calculates the radiation (in watts/m^2) that's emitted 
+# by a single object using the Stephan-Boltzmann equation
+def get_intensity_of_light_emitted_by_black_body(
+    temperature
+):
+    float T = temperature;
+    return STEPHAN_BOLTZMANN_CONSTANT * T*T*T*T;
+}
+
+def solve_intensity3_of_light_emitted_by_black_body_between_wavelengths(
+    lo3,
+    hi3,
+    temperature
+):
+    return get_intensity_of_light_emitted_by_black_body(temperature)
+         * vec3(
+             solve_fraction_of_light_emitted_by_black_body_between_wavelengths(lo3.x, hi3.x, temperature),
+             solve_fraction_of_light_emitted_by_black_body_between_wavelengths(lo3.y, hi3.y, temperature),
+             solve_fraction_of_light_emitted_by_black_body_between_wavelengths(lo3.z, hi3.z, temperature)
+           );
+}
+
+# from Carl Hansen et al., "Stellar Interiors"
+def get_fraction_of_radius_for_star_with_temperature(
+  temperature, 
+  core_temperature
+):
+    return sqrt(max(1.0 - (temperature / core_temperature), 0.0));
+}
+
+
 gravitational_constant     = (6.6743015e-11); # meter³/(kilogram*second²)
 stephan_boltzmann_constant = (5.670373e-8);   # watt/(meter²*kelvin⁴)
 boltzmann_constant         = (1.380649e-23);  # joule/kelvin

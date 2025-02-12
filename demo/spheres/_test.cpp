@@ -186,11 +186,11 @@ int main() {
   );
   std::vector<float> instance_atmosphere_scale_height;
   std::vector<vec3> instance_origins;
-  std::vector<vec3> instance_illumination_luminosity;
+  std::vector<float> instance_illumination_temperature(instance_radii.size(), si::solar_temperature/si::kelvin);
+  std::vector<float> instance_illumination_radius(instance_radii.size(), si::solar_radius/si::meter);
   for(std::size_t i=0; i<instance_radii.size(); i++)
   {    
     instance_origins.push_back(instance_grid_ids[i]*Rs*10.0f);
-    instance_illumination_luminosity.push_back(vec3(si::solar_luminosity/si::watt));
     auto mass = instance_masses[i]*si::kilogram;
     instance_core_temperature[i] = mass < hydrogen_burning_limit? 1.0 : star.core_temperature_estimate(mass, 0.6*si::dalton)/si::kelvin;
     instance_radii[i] = mass < hydrogen_burning_limit? instance_radii[i] : star.radius_estimate(mass)/si::meter;
@@ -270,8 +270,9 @@ int main() {
         instance_surface_temperature,
         instance_core_temperature,
         instance_atmosphere_scale_height,
+        instance_illumination_temperature,
+        instance_illumination_radius,
         instance_light_source,
-        instance_illumination_luminosity,
         instance_beta_ray_sun,
         instance_beta_mie_sun,
         instance_beta_abs_sun,
