@@ -80,19 +80,3 @@ namespace unlayered
     }
 
 }
-
-/*
-properties to satisfy:
-* contiguous (requires floodfill)
-* symmetric with respect to plate seeds
-* cells with largest vectors must occur at boundaries 
-* lowest complexity allowable
-* in-order traversal if possible
-
-ideas:
-* priority queue for candidates, sorting on seed proximity or vector magnitude
-
-weights:
-
-*/
-

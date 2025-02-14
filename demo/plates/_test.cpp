@@ -396,6 +396,7 @@ int main() {
   arithmetic.divide(vectors_instance_scale, procedural::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
 
   int frame_id(0);
+  int iteration_id(0);
   while(!glfwWindowShouldClose(window)) {
 
       if (frame_id == 0)
@@ -408,6 +409,16 @@ int main() {
         {
           ternary(states[j].is_included, procedural::uniform(j), buffer_scalars1, buffer_scalars1);
         }
+        std::size_t candidate_count = 0;
+        for (std::size_t j(1); j < states.size(); ++j)
+        {
+          candidate_count += states[j].candidates.size();
+        }
+        if (candidate_count<=0)
+        {
+          std::cout << "DONE: " << iteration_id << std::endl;
+        }
+        iteration_id++;
       }
       frame_id = (frame_id+1)%10;
 

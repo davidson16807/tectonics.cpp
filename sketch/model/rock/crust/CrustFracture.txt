@@ -1,10 +1,10 @@
 
-`is_unfractured` returns true if two neighboring vertices should be considered apart of the same plate.
 We model plate segmentation as a brittle fracture that occurs due to slab pull forces.
 Slab pull is assumed to be proportionate but perpendicular to buoyancy force.
 For the purpose of plate segmentation, we model slab pull as being proportionate to the gradient of buoyancy,
 and since grid cells are roughly equal area, we simplify calculation 
 by modeling slab pull as being proportionate to the gradient of buoyancy pressure.
+
 
 Since plate segmentation is modeled as a brittle fracture due to slab pull forces, 
 we model convergent boundaries as places where stress exceeds a compressive strength,
@@ -49,4 +49,8 @@ In our model, we do not have the resources to repeatedly calculate stress for ev
 so we must settle for approximations.
 The approximation we settle on is an instance of the flood-fill algorithm.
 At the start of a fracturing event, we select "seed" cells where our slab pull approximation is greatest.
+
+All the above logic is implemented within `CrustIsUnfractured`,
+which overloads `operator()` so that it returns `true` 
+if two neighboring vertices should be considered apart of the same plate.
 
