@@ -2,7 +2,8 @@
 
 // C libraries
 #include <assert.h>  /* assert */
-
+#include <stdexcept> /* out_of_range */
+	
 // in-house libraries
 
 namespace aggregated
@@ -160,7 +161,7 @@ namespace aggregated
 			auto size = a.size();
 			for (auto i = 0*size; i < size; ++i)
 			{
-				if (elements.equal(a[i], b[i])){
+				if (elements.not_equal(a[i], b[i])){
 					return false;
 				}
 			}
@@ -189,7 +190,7 @@ namespace aggregated
 			auto size = a.size();
 			for (auto i = 0*size; i < size; ++i)
 			{
-				if (elements.greater_than(a[i], b[i])){
+				if (elements.less_than_equal(a[i], b[i])){
 					return false;
 				}
 			}
@@ -202,7 +203,7 @@ namespace aggregated
 			auto size = a.size();
 			for (auto i = 0*size; i < size; ++i)
 			{
-				if (elements.less_than(a[i], b[i])){
+				if (elements.greater_than_equal(a[i], b[i])){
 					return false;
 				}
 			}
@@ -215,7 +216,7 @@ namespace aggregated
 			auto size = a.size();
 			for (auto i = 0*size; i < size; ++i)
 			{
-				if (elements.greater_than_equal(a[i], b[i])){
+				if (elements.less_than(a[i], b[i])){
 					return false;
 				}
 			}
@@ -228,7 +229,7 @@ namespace aggregated
 			auto size = a.size();
 			for (auto i = 0*size; i < size; ++i)
 			{
-				if (elements.less_than_equal(a[i], b[i])){
+				if (elements.greater_than(a[i], b[i])){
 					return false;
 				}
 			}
