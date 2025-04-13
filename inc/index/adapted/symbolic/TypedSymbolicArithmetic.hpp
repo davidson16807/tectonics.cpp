@@ -27,6 +27,10 @@ namespace adapted
 			zero(zero),
 			one(one)
 		{}
+		TypedSymbolicArithmetic():
+			zero(0),
+			one(1)
+		{}
 		ADAPTER_SYMBOL_METHOD(+,  add)
 		ADAPTER_SYMBOL_METHOD(-,  subtract)
 		ADAPTER_SYMBOL_METHOD(*,  multiply)

@@ -8,6 +8,7 @@
 #include <index/iterated/Nary.hpp>
 
 #include "FloodFillState.hpp"
+#include "FloodFillCandidateComparison.hpp"
 
 namespace unlayered
 {
@@ -15,6 +16,7 @@ namespace unlayered
     template<typename id, typename scalar, typename IsSimilar, typename Priority>
     struct NeighborBasedFloodFilling
     {
+
         const IsSimilar is_similar;
         const Priority priority;
         const iterated::Identity copy;
@@ -27,6 +29,16 @@ namespace unlayered
             priority(priority),
             copy()
         {}
+
+        /*
+        */
+        void reset(
+            const id seed_id, 
+            // const std::uint8_t plate_id, 
+            FloodFillState<id,scalar>& out
+        ) const {
+            out.reset(seed_id);
+        }
 
         /*
         `advance()` needs to offer fine grain control over the implementation of larger flood-fill algorithms that map raster→raster.
@@ -91,3 +103,9 @@ namespace unlayered
 
 }
 
+/*
+properties to satisfy:
+  contiguous (requires floodfill)
+  lowest complexity allowable
+  in-order traversal if possible
+*/

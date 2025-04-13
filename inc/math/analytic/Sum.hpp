@@ -1,6 +1,7 @@
 #pragma once
 
 // std libraries
+#include <vector>    // vector
 #include <algorithm> // copy, back_inserter
 #include <initializer_list>
 

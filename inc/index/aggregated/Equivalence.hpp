@@ -10,21 +10,17 @@ namespace aggregated
 {
 
 	/*
-	An `aggregated::Metric` aggregates elements that are subject to an `adapter::Metric`.
+	An `aggregated::Equivalence` aggregates elements that are subject to an `adapter::Equivalence` relationship.
 	It intends to provide all well-known operations and relations that could be provided simply by knowing that a `*Metric` exists.
-	An `aggregated::Metric` is itself a `Metric`, but it is also in fact `Order`,
-	since distance can be checked against a threshold
 	*/
 
-	template <typename ElementMetric>
-	class MetricEquivalence
+	template <typename ElementBitset>
+	class Equivalence
 	{
-		const ElementMetric elements;
-		const T threshold;
+		const ElementBitset elements;
 	public:
-		MetricEquivalence(const ElementMetric& elements, const T threshold):
-			elements(elements),
-			threshold(threshold)
+		Equivalence(const ElementBitset& elements):
+			elements(elements)
 		{}
 
 		template <typename In1, typename In2>
@@ -36,7 +32,7 @@ namespace aggregated
 			auto size = a.size();
 			for (auto i = 0*size; i < size; ++i)
 			{
-				if (elements.distance(a[i], b[i]) > threshold){
+				if (elements.equal(a[i], b[i])) {
 					return false;
 				}
 			}
@@ -52,7 +48,7 @@ namespace aggregated
 			auto size = a.size();
 			for (auto i = 0*size; i < size; ++i)
 			{
-				if (elements.distance(a[i], b[i]) > threshold){
+				if (elements.equal(a[i], b[i])) {
 					return true;
 				}
 			}

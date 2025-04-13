@@ -1,7 +1,9 @@
 #pragma once
 
 #include <cmath>       /* log10, floor, pow, abs, sqrt */
-#include <algorithm>    // std::min
+#include <algorithm>   // std::min
+#include <array>       // std::array<std::string, ...>
+#include <string>      // std::array<std::string, ...>
 
 namespace si{
   /*
@@ -231,7 +233,6 @@ namespace si{
       raw /= T1(other);
       return *this;
     }
-
 
     template <int M2, int KG2, int S2, int K2, int MOL2, int A2, int CD2, typename T2>
     friend class units;

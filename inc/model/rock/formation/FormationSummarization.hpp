@@ -7,6 +7,7 @@
 // 3rd party libraries
 
 // in-house libraries
+#include "Formation.hpp"
 #include "FormationSummary.hpp"
 
 namespace rock

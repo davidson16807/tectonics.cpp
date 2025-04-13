@@ -2,6 +2,8 @@
 // std libraries
 #include <iostream>
 #include <string>
+#include <vector>
+#include <functional>
 
 // gl libraries
 #include <GL/glew.h>

@@ -6,6 +6,7 @@
 #include <algorithm> /* std::clamp */
 
 // in-house libraries
+#include <math/special.hpp>
 
 namespace adapted
 {

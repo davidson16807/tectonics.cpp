@@ -5,6 +5,7 @@
 
 #define GLM_FORCE_PURE          // disable anonymous structs so we can build with ISO C++
 #define GLM_ENABLE_EXPERIMENTAL // allow component-wise math
+#define GLM_FORCE_SWIZZLE   // allow swizzle methods like .xy()
 #include <glm/vec3.hpp> // *vec3
 
 // in house libraries
@@ -15,6 +16,8 @@
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
 
 #include <model/rock/stratum/StratumStore.hpp>
+#include <model/rock/formation/Formation.hpp>
+#include <model/rock/crust/Crust.hpp>
 #include <model/rock/estimated/EarthlikeIgneousFormationGeneration.hpp>
 
 #include <model/rock/crust/CrustMotion.hpp>
@@ -253,9 +256,7 @@ TEST_CASE( "slab properties that use `FormationSummary`s", "[rock]" ) {
     const int M = 2; // mineral count
     const int F = 5; // formation count
 
-    using mass = si::mass<float>;
     using length = si::length<float>;
-    using density = si::density<float>;
     length meter(si::meter);
     length radius(6.371e6f * meter);
 
