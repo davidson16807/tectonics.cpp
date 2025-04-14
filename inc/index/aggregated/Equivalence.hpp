@@ -22,6 +22,9 @@ namespace aggregated
 		Equivalence(const ElementBitset& elements):
 			elements(elements)
 		{}
+		Equivalence():
+			elements()
+		{}
 
 		template <typename In1, typename In2>
 		bool equal(const In1& a, const In2& b) const
@@ -32,7 +35,7 @@ namespace aggregated
 			auto size = a.size();
 			for (auto i = 0*size; i < size; ++i)
 			{
-				if (elements.equal(a[i], b[i])) {
+				if (elements.not_equal(a[i], b[i])) {
 					return false;
 				}
 			}

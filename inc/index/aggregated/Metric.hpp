@@ -25,6 +25,9 @@ namespace aggregated
 		Metric(const ElementMetric& elements):
 			elements(elements)
 		{}
+		Metric():
+			elements()
+		{}
 
 		template <typename In1, typename In2>
 		auto distance(const In1& a, const In2& b) const

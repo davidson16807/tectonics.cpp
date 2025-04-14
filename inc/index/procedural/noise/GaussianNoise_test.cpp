@@ -16,6 +16,7 @@
 #include <index/whole.hpp>  
 #include <index/procedural/Range.hpp>
 #include <index/procedural/Get.hpp>
+#include <index/procedural/noise/GaussianNoise.hpp>
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  
@@ -24,7 +25,7 @@
 #include "GaussianNoise.hpp"
 
 TEST_CASE( "GaussianNoise()", "[series]" ) {
-    auto noise = procedural::gaussian<double>();
+    auto noise = procedural::gaussian<double>(10.0, 10000.0);
     test::OperatorAdapter exact;
     std::vector<int> indices   {
         -1, 0, 1, 2, 3, 
@@ -33,7 +34,7 @@ TEST_CASE( "GaussianNoise()", "[series]" ) {
     };
 
     REQUIRE(test::determinism(exact,
-        "GaussianNoise(…)", TEST_INDEX(procedural::gaussian<double>()), 
+        "GaussianNoise(…)", TEST_INDEX(procedural::gaussian<double>(11.0, 10001.0)), 
         indices
     ));
 

@@ -16,6 +16,9 @@ namespace aggregated
 		Arithmetic(const ElementArithmetic& elements):
 			elements(elements)
 		{}
+		Arithmetic():
+			elements()
+		{}
 
 		template <typename T>
 		auto sum(const T& a) const

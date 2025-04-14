@@ -58,6 +58,9 @@ namespace iterated
 		Order(const ElementOrder& elements):
 			elements(elements)
 		{}
+		Order():
+			elements()
+		{}
 		ITERATED_BINARY_METHOD(elements.greater_than,        greater_than)
 		ITERATED_BINARY_METHOD(elements.less_than,           less_than)
 		ITERATED_BINARY_METHOD(elements.greater_than_equal,  greater_than_equal)

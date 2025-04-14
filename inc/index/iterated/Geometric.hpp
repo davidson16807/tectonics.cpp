@@ -58,6 +58,9 @@ namespace iterated
 		Geometric(const ElementGeometric& elements):
 			elements(elements)
 		{}
+		Geometric():
+			elements()
+		{}
 
 		ITERATED_BINARY_METHOD(elements.reflect, reflect)
 		ITERATED_BINARY_METHOD(elements.cross, cross)
