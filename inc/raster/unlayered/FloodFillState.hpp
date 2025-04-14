@@ -28,11 +28,8 @@ namespace unlayered
             // plate_id(plate_id_),
             seed_id(seed_id_)
         {
-    std::cout << "8a" << std::endl;
             candidates.emplace(seed_id_, scalar(0));
-    std::cout << "8b" << std::endl;
             is_included[seed_id_] = true;
-    std::cout << "8c" << std::endl;
         }
         FloodFillState(const FloodFillState& state):
             candidates(state.candidates),
@@ -40,7 +37,6 @@ namespace unlayered
             // plate_id(state.plate_id),
             seed_id(state.seed_id)
         {
-    std::cout << "8d " << std::to_string(state.candidates.size()) << std::endl;
         }
         void reset(
             const id seed_id_

@@ -151,7 +151,6 @@ namespace rock
             std::vector<scalar> lengths(stress.size());
             metric3.length(stress, lengths);
             std::vector<bool> is_considered(stress.size(), true);
-    std::cout << "9a" << std::endl;
             for(std::size_t j(0); j<fractures.size(); j++)
             {
                 fill.reset(id(order.max_id(lengths)), fractures[j]);
@@ -162,7 +161,6 @@ namespace rock
                 ternary(is_considered, lengths, procedural::uniform(0), lengths);
             }
 
-    std::cout << "9b" << std::endl;
             std::size_t candidate_count;
             do {
                 for (std::size_t j(1); j < fractures.size(); ++j)
@@ -174,9 +172,7 @@ namespace rock
                 {
                   candidate_count += fractures[j].candidates.size();
                 }
-    // std::cout << std::to_string(candidate_count) << std::endl;
             } while(candidate_count > 0);
-    std::cout << "9c" << std::endl;
 
         }
 
