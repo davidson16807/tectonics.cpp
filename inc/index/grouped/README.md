@@ -1,0 +1,4 @@
+`grouped` contains functions that aggregate over groups of elements within a larger series.
+groups are specified using a `group_ids` series whose size is equal to the input series being aggregated and whose contents map indices of the input series to indices of the output series.
+The size of the input and output series need not match
+`group_ids` may also usefully store ids for parent nodes in a tree. In this situation, each element in the output represents the value for a node that is aggregated from all descendants of that node. For this to be the case, the input series must store values associated with nodes in the tree, and nodes must always be ordered so that parent nodes appear after children, and the last index must represent the root node, whose parent id is itself. 
