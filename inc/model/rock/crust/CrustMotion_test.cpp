@@ -451,8 +451,10 @@ TEST_CASE( "buoyancy_forces ⋅ surface normal == 0", "[rock]" ) {
         auto slab_thickness = motion.slab_thickness(slab_volume, slab_area);
         auto slab_length = motion.slab_length(slab_area, slab_cell_count);
         auto slab_width = motion.slab_width(slab_area, slab_length);
-        auto drag_per_angular_velocity = motion.drag_per_angular_velocity(slab_length, slab_thickness, slab_width);
+        auto slab_drag_per_angular_velocity = motion.drag_per_angular_velocity(slab_length, slab_thickness, slab_width);
         auto slab_torque = motion.rigid_body_torque(fine_slab_pull, si::newton, si::newton*si::meter);
+        auto slab_angular_velocity = glm::length(slab_torque)*si::newton*si::meter/slab_drag_per_angular_velocity;
+        auto slab_period = 1.0/slab_angular_velocity;
 
         REQUIRE(slab_volume > 0.0*si::kilometer3);
         REQUIRE(slab_volume < fine.total_volume() * meter * meter * meter);
@@ -467,7 +469,22 @@ TEST_CASE( "buoyancy_forces ⋅ surface normal == 0", "[rock]" ) {
         REQUIRE(si::distance(slab_thickness * slab_area, slab_volume) < 10.0*si::meter3);
         REQUIRE(si::distance(slab_width * slab_length, slab_area) < si::meter2);
         REQUIRE(slab_width >= slab_length);
-        // REQUIRE(drag_per_angular_velocity > 0.0);
+        // REQUIRE(slab_drag_per_angular_velocity > 0.0);
+        /*
+        Solomon, "On the Forces Driving Plate Tectonics" (1975), lists angular velocities for tectonic plates
+        From those velocities we can determine the shortest period of rotation is ~180 My.
+        The longest period of rotation (excluding the plate they used as their reference frame) is ~600 My.
+        Larson, "Global plate velocities from the Global Positioning System" (1997) 
+        estimates even longer periods, from 486My to 3Gy.
+        We note that our model tends to underpredict periods.
+        In this test case, our longest period (183My) is roughly equivalent to the shortest period reported by Solomon.
+        This is surprising since we expected plate motion to only occur in our model 
+        if a precise combination of circumstances were met along a plate boundary
+        This finding at least assures us that the model is able to regularly produce these circumstances.
+        For the purpose of testing, we will only require that period assumes a valid order of magnitude.
+        */
+        REQUIRE(slab_period > 10*si::megayear);
+        REQUIRE(slab_period < 1000*si::megayear);
 
         std::cout << ascii_art.format(fine, fine_slab_existance) << std::endl;
         std::cout << slab_volume << std::endl;
@@ -476,8 +493,11 @@ TEST_CASE( "buoyancy_forces ⋅ surface normal == 0", "[rock]" ) {
         std::cout << slab_thickness << std::endl;
         std::cout << slab_length << std::endl;
         std::cout << slab_width << std::endl;
-        std::cout << drag_per_angular_velocity << std::endl;
+        std::cout << slab_drag_per_angular_velocity << std::endl;
         std::cout << glm::to_string(slab_torque) << std::endl;
+        std::cout << glm::length(slab_torque)*si::newton*si::meter << std::endl;
+        std::cout << slab_period << std::endl;
+
     }
 
 }
