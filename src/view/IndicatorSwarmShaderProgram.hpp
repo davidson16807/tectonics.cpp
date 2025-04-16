@@ -223,6 +223,7 @@ namespace view
 			const std::vector<glm::vec3>& instance_up, 
 			const std::vector<T>& instance_scale, 
 			const std::vector<glm::vec4>& instance_color, 
+			const glm::mat4 model_matrix,
 			const ViewState& view_state,
 			const unsigned int gl_mode=GL_TRIANGLES
 		){
@@ -279,8 +280,8 @@ namespace view
 		    glVertexAttribDivisor(instanceScaleLocation,1);
 
     		// UNIFORMS
+	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(model_matrix));
 	        glUniformMatrix4fv(viewMatrixLocation,       1, GL_FALSE, glm::value_ptr(view_state.view_matrix));
-	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(view_state.model_matrix));
 	        glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(view_state.projection_matrix));
 
 			glDrawArraysInstanced(gl_mode, /*array offset*/ 0, /*vertex count*/ element_position.size(), instance_origin.size());

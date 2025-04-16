@@ -245,6 +245,7 @@ int main() {
         buffer_element_vertex_ids,
         glm::vec4(-10000.0f, -10000.0f, 0.0f, 0.0f),
         glm::vec4( 10000.0f,  10000.0f, 1.0f, 1.0f),
+        glm::mat4(1),
         view_state,
         GL_TRIANGLE_STRIP
       );

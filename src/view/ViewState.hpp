@@ -20,7 +20,6 @@ namespace view
 	struct ViewState
 	{
 		glm::mat4 view_matrix;
-		glm::mat4 model_matrix;
 		glm::mat4 projection_matrix;
 		glm::vec2 resolution;
 		glm::vec3 wavelength;
@@ -34,7 +33,6 @@ namespace view
 
 		ViewState():
 			view_matrix(1),
-			model_matrix(1),
 			projection_matrix(1),
 			resolution(1),
 			wavelength(0),

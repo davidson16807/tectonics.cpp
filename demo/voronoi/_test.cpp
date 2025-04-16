@@ -20,8 +20,6 @@
 // in house libraries
 #include <index/procedural/Map.hpp>
 #include <index/procedural/Uniform.hpp>
-#include <index/glm/known.hpp>                      // greaterThan
-#include <index/known.hpp>                          // greaterThan
 #include <index/whole.hpp>                          // max, mean
 #include <index/procedural/Range.hpp>                   // Range
 #include <index/procedural/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise

@@ -246,6 +246,7 @@ namespace view
 			const std::vector<unsigned int>& element_vertex_ids,
 			const glm::vec<4,T,Q>& min_values,
 			const glm::vec<4,T,Q>& max_values,
+			const glm::mat4 model_matrix,
 			const ViewState& view_state,
 			const unsigned int gl_mode=GL_TRIANGLES
 		){
@@ -307,8 +308,8 @@ namespace view
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(T)*element_vertex_ids.size(), &element_vertex_ids.front(), GL_DYNAMIC_DRAW);
 
     		// UNIFORMS
+	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(model_matrix));
 	        glUniformMatrix4fv(viewMatrixLocation,       1, GL_FALSE, glm::value_ptr(view_state.view_matrix));
-	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(view_state.model_matrix));
 	        glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(view_state.projection_matrix));
 
 	        glUniform4fv(minValuesLocation, 1, glm::value_ptr(min_values));

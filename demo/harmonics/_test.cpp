@@ -183,6 +183,7 @@ int main() {
         buffer_uniform,      // culling
         buffer_element_vertex_ids,
         colorscale_state,
+        glm::mat4(1),
         view_state,
         GL_TRIANGLE_STRIP
       );

@@ -375,6 +375,7 @@ namespace view
 			const std::vector<glm::vec3>& light_source,
 			const std::vector<glm::vec3>& light_luminosity,
 			const std::vector<glm::vec3>& surface_emission,
+			const glm::mat4 model_matrix,
 			const ViewState& view_state
 		){
 
@@ -434,8 +435,8 @@ namespace view
 		    glVertexAttribDivisor(instanceSurfaceEmissionLocation,1);
 
     		// UNIFORMS
+	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(model_matrix));
 	        glUniformMatrix4fv(viewMatrixLocation,       1, GL_FALSE, glm::value_ptr(view_state.view_matrix));
-	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(view_state.model_matrix));
 	        glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(view_state.projection_matrix));
 	        glUniform2fv      (resolutionLocation, 1, glm::value_ptr(view_state.resolution));
 	        glUniform1f       (psfPixelStandardDeviationLocation, view_state.point_spread_function_pixel_standard_deviation);
