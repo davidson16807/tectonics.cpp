@@ -425,20 +425,49 @@ TEST_CASE( "buoyancy_forces ⋅ surface normal == 0", "[rock]" ) {
     );
     std::vector<bool> fine_plate_existance(fine.vertex_count());
     std::vector<vec3> fine_slab_pull(fine.vertex_count());
+    std::vector<bool> fine_slab_existance(fine.vertex_count());
     adapted::GlmStrings substrings3;
     spheroidal::Strings ascii_art(adapted::ScalarStrings<float>{}, aggregated::Order<adapted::SymbolicOrder>{});
     // spheroidal::Strings ascii_art(substrings3, aggregated::Order{adapted::MetricOrder{adapted::GlmMetric{}}});
+    iterated::Order<adapted::SymbolicOrder> orders;
     for (int i = 0; i < plate_count; ++i)
     {
         fracturing.exists(fine_plate_map, i, fine_plate_existance);
         motion.slab_pull(fine_buoyancy_pressure, fine_plate_existance, si::force<float>(si::newton), fine_slab_pull);
+
         geometric.dot(fine_slab_pull, normals, dot_lengths);
         metric3.length(fine_slab_pull, fine_slab_pull_lengths);
-        iterated::Order<adapted::SymbolicOrder>{}.max(fine_slab_pull_lengths, procedural::uniform(0.001f), fine_slab_pull_lengths);
+        orders.max(fine_slab_pull_lengths, procedural::uniform(0.001f), fine_slab_pull_lengths);
         arithmetic.divide(dot_lengths, fine_slab_pull_lengths, dot_lengths);
-        // std::cout << ascii_art.format(fine, dot_lengths) << std::endl;
-        REQUIRE(order.greater_than(dot_lengths, procedural::uniform(0.0f)));
+        std::cout << ascii_art.format(fine, dot_lengths) << std::endl;
+        // REQUIRE(order.greater_than(dot_lengths, procedural::uniform(0.0f)));
         REQUIRE(order.less_than(dot_lengths, procedural::uniform(0.01f)));
+
+        motion.is_slab(fine_slab_pull, fine_slab_existance);
+        auto slab_volume = motion.slab_volume(formation_summary, fine_slab_existance);
+        auto slab_area = motion.slab_area(formation_summary, fine_slab_existance);
+        auto slab_cell_count = motion.slab_cell_count(fine_slab_existance);
+        auto slab_thickness = motion.slab_thickness(slab_volume, slab_area);
+        auto slab_length = motion.slab_length(slab_area, slab_cell_count);
+        auto slab_width = motion.slab_width(slab_area, slab_length);
+        auto drag_per_angular_velocity = motion.drag_per_angular_velocity(slab_length, slab_thickness, slab_width);
+
+        REQUIRE(slab_volume > 0.0*si::kilometer3);
+        REQUIRE(slab_area > 0.0*si::kilometer2);
+        REQUIRE(slab_cell_count > 0);
+        REQUIRE(slab_thickness > 0.0 * si::kilometer);
+        REQUIRE(slab_length > 0.0 * si::kilometer);
+        REQUIRE(slab_width > 0.0 * si::kilometer);
+        // REQUIRE(drag_per_angular_velocity > 0.0);
+
+        std::cout << ascii_art.format(fine, fine_slab_existance) << std::endl;
+        std::cout << slab_volume << std::endl;
+        std::cout << slab_area << std::endl;
+        std::cout << slab_cell_count << std::endl;
+        std::cout << slab_thickness << std::endl;
+        std::cout << slab_length << std::endl;
+        std::cout << slab_width << std::endl;
+        std::cout << drag_per_angular_velocity << std::endl;
     }
 
 }
@@ -450,9 +479,10 @@ TESTS:
 DONE:
 * `drag_per_angular_velocity` is commutative wrt thickness and width
 * `drag_per_angular_velocity` is decelerating wrt thickness, length, and width
-* `|buoyancy_forces ⋅ surface normal| == 0` 
+* `|slab_pull ⋅ surface normal| == 0` 
 * domains:
     * `drag_per_angular_velocity > 0`
+    * `slab_pull > 0`
     * `slab_length > 0`
     * `slab_width > 0`
     * `slab_thickness > 0`

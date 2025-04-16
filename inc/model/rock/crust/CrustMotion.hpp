@@ -125,11 +125,11 @@ namespace rock {
 
 		void is_slab(
 			const vec3s& slab_pull,
-			const bools& is_slab
+			bools& is_slab
 		) const {
 		    for (std::size_t i = 0; i < slab_pull.size(); ++i)
 		    {
-		    	is_slab[i] = slab_pull[i].length() > 0.0f;
+		    	is_slab[i] = glm::length(slab_pull[i]) > 0.0f;
 		    }
 		}
 
@@ -142,7 +142,7 @@ namespace rock {
 			{
 				if(is_slab[i])
 				{
-					slab_volume += summary[i].thickness() *
+					slab_volume += length(summary[i].thickness()) *
 						grid.vertex_dual_area(i) * radius_units * radius_units; 
 				}
 			}
