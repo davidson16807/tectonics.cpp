@@ -21,9 +21,15 @@ namespace adapted
 	template <typename T, typename Metric>
 	struct MetricEquivalence
 	{
+		const T threshold;
+		const Metric metric;
 		MetricEquivalence(const T threshold, const Metric& metric):
 			threshold(threshold),
 			metric(metric)
+		{}
+		MetricEquivalence(const T threshold):
+			threshold(threshold),
+			metric()
 		{}
 
 		template <typename In1, typename In2>

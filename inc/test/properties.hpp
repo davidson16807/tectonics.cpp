@@ -181,7 +181,7 @@ namespace test {
             right_annihilation(adapter, z_name, z, f_name, f, as);
     }
 
-    // NOTE: unary_innihilation exists, but is not useful since it implies ∀a:f(a)=0 for some 0
+    // NOTE: unary_annihilation exists, but is not useful since it implies ∀a:f(a)=0 for some 0
 
     template<typename Adapter, typename F, typename Finv, typename A>
     bool left_invertibility(const Adapter& adapter, 

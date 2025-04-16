@@ -98,7 +98,8 @@ namespace rock
     struct CrustFracturing
     {
 
-        using iraster = std::vector<id>;
+        using ids = std::vector<id>;
+        using bools = std::vector<bool>;
 
         using Fracture = unlayered::FloodFillState<id,scalar>;
         using Fractures = std::vector<Fracture>;
@@ -177,9 +178,9 @@ namespace rock
         }
 
         template<typename Fractures>
-        void plate_counts(
+        void counts(
             const Fractures& fractures,
-            iraster& out
+            ids& out
         ) const {
 
             copy(procedural::uniform(0), out);
@@ -191,9 +192,9 @@ namespace rock
         }
 
         template<typename Fractures>
-        void plate_sizes(
+        void sizes(
             const Fractures& fractures,
-            iraster& out
+            ids& out
         ) const {
 
             copy(procedural::uniform(0), out);
@@ -205,9 +206,9 @@ namespace rock
         }
 
         template<typename Fractures>
-        void plate_map(
+        void map(
             const Fractures& fractures,
-            iraster& out
+            ids& out
         ) const {
 
             // results from fractures() are always disjoint, 
@@ -217,6 +218,17 @@ namespace rock
                 ternary(fractures[j].is_included, procedural::uniform(j), out, out);
             }
 
+        }
+
+        void exists(
+            const ids plate_map,
+            const id plate_id,
+            bools& out
+        ) const {
+            for (std::size_t i(1); i < plate_map.size(); ++i)
+            {
+                out[i] = plate_map[i] == plate_id;
+            }
         }
 
     };

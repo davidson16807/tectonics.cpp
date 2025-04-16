@@ -49,8 +49,8 @@ namespace iterated
 	struct Index
 	{
 		Index(){}
-		template <typename In1, typename Out>
-		void operator() (const Index& f, const In1& a, Out& out) const
+		template <typename F, typename In1, typename Out>
+		void operator() (const F& f, const In1& a, Out& out) const
 		{
 			assert(compatible(a,out));
 			auto size = out.size();

@@ -9,11 +9,28 @@
 #include <glm/vec3.hpp> // *vec3
 
 // in house libraries
+#include <index/adapted/symbolic/SymbolicOrder.hpp>
+#include <index/adapted/symbolic/SymbolicArithmetic.hpp>
+#include <index/adapted/symbolic/TypedSymbolicArithmetic.hpp>
+#include <index/adapted/scalar/ScalarStrings.hpp>
+#include <index/adapted/metric/MetricOrder.hpp>
+#include <index/adapted/metric/MetricEquivalence.hpp>
+#include <index/adapted/glm/GlmStrings.hpp>
+#include <index/adapted/glm/GlmGeometric.hpp>
 #include <index/iterated/Nary.hpp>
+#include <index/iterated/Order.hpp>
+#include <index/iterated/Arithmetic.hpp>
+#include <index/iterated/Geometric.hpp>
+#include <index/aggregated/Equivalence.hpp>
+#include <index/grouped/Statistics.hpp>
+#include <index/procedural/Uniform.hpp>
 
 #include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
+#include <raster/spheroidal/Strings.hpp> // spheroidal::Strings
 
-#include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
+#include <grid/dymaxion/Grid.hpp>   // dymaxion::Grid
+#include <grid/dymaxion/series.hpp> // dymaxion::BufferVertexIds
+#include <grid/dymaxion/VertexDownsamplingIds.hpp> // dymaxion::VertexDownsamplingIds
 
 #include <model/rock/stratum/StratumStore.hpp>
 #include <model/rock/formation/Formation.hpp>
@@ -28,6 +45,8 @@
 #include <test/properties.hpp>
 // #include <test/structures/grouplike.hpp>
 // #include <test/macros.hpp>
+
+#include "CrustFracturing.hpp"
 
 TEST_CASE( "drag_per_angular_velocity", "[rock]" ) {
 
@@ -296,6 +315,134 @@ TEST_CASE( "slab properties that use `FormationSummary`s", "[rock]" ) {
 
 }
 
+TEST_CASE( "buoyancy_forces ⋅ surface normal == 0", "[rock]" ) {
+
+    using vec3 = glm::vec3;
+
+    using mass = si::mass<float>;
+    using length = si::length<float>;
+    using density = si::density<float>;
+    using pressure = si::pressure<float>;
+    using acceleration = si::acceleration<float>;
+    using viscosity = si::dynamic_viscosity<float>;
+
+    length meter(si::meter);
+    length world_radius(6.371e6 * si::meter);
+    density mantle_density(3000.0*si::kilogram/si::meter3);
+    viscosity mantle_viscosity(1.57e20*si::pascal*si::second);
+
+    int vertices_per_fine_square_side(30);
+    int vertices_per_coarse_square_side(vertices_per_fine_square_side/2);
+
+    dymaxion::Grid fine(world_radius/meter, vertices_per_fine_square_side);
+    dymaxion::Grid coarse(world_radius/meter, vertices_per_coarse_square_side);
+
+    const int M(2); // number of mass pools
+
+    // INITIALIZE
+    rock::EarthlikeIgneousFormationGeneration earthlike(fine, world_radius/2.0f, 0.5f, 10, world_radius);
+    auto generation = earthlike(12.0f, 1.1e4f);
+    rock::Formation<M> igneous_formation(fine.vertex_count());
+    iterated::Identity copy;
+    copy(generation, igneous_formation);
+
+    // SUMMARIZE
+    auto age_of_world = 0.0f*si::megayear;
+    std::array<relation::PolynomialRailyardRelation<si::time<double>,si::density<double>,0,1>, 2> densities_for_age {
+        relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2890.0, 3300.0}), // Carlson & Raskin 1984
+        relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2600.0, 2600.0})
+    };
+    auto formation_summarize = rock::formation_summarization<2>(
+        rock::stratum_summarization<2>(
+          rock::AgedStratumDensity{densities_for_age, age_of_world},
+          mass(si::tonne)
+        ), 
+        fine,
+        world_radius
+    );
+    int plate_id(1);
+    rock::FormationSummary formation_summary(fine.vertex_count());
+    formation_summarize(plate_id, igneous_formation, formation_summary);
+
+    // CALCULATE BUOYANCY
+    iterated::Unary buoyancy_pressure_for_formation_summary(
+        rock::StratumSummaryBuoyancyPressure{
+            acceleration(si::standard_gravity), 
+            mantle_density, 
+        }
+    );
+    std::vector<pressure> fine_buoyancy_pressure(fine.vertex_count());
+    buoyancy_pressure_for_formation_summary(formation_summary, fine_buoyancy_pressure);
+
+    // DOWNSAMPLE
+    std::vector<pressure> coarse_buoyancy_pressure(coarse.vertex_count());
+    iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic{}};
+    aggregated::Order order{adapted::SymbolicOrder{}};
+    grouped::Statistics stats{adapted::TypedSymbolicArithmetic<float>(0.0f, 1.0f)};
+    dymaxion::VertexDownsamplingIds vertex_downsampling_ids(fine.memory, coarse.memory);
+    stats.sum(vertex_downsampling_ids, fine_buoyancy_pressure, coarse_buoyancy_pressure);
+    arithmetic.divide(coarse_buoyancy_pressure, procedural::uniform(std::pow(float(vertex_downsampling_ids.factor), 2.0f)), coarse_buoyancy_pressure);
+
+    // STRIP UNITS TO CALCULATE GRADIENT
+    std::vector<float> vertex_scalars1(coarse.vertex_count());
+    arithmetic.divide(coarse_buoyancy_pressure, procedural::uniform(pressure(1)), vertex_scalars1);
+
+    // CALCULATE STRESS
+    unlayered::VectorCalculusByFundamentalTheorem calculus;
+    std::vector<vec3> vertex_gradient(coarse.vertex_count());
+    calculus.gradient(coarse, vertex_scalars1, vertex_gradient);
+
+    // FRACTURE
+    const int plate_count = 8;
+    rock::CrustFracturing<int,float> fracturing;
+    std::vector<unlayered::FloodFillState<int,float>> fractures(plate_count, 
+        unlayered::FloodFillState<int,float>(0, coarse.vertex_count()));
+    fracturing.fracture(coarse, vertex_gradient, fractures);
+
+    std::vector<int> coarse_plate_map(coarse.vertex_count());
+    fracturing.map(fractures, coarse_plate_map);
+
+    iterated::Index index;
+    std::vector<int> fine_plate_map(fine.vertex_count());
+    index(coarse_plate_map, vertex_downsampling_ids, fine_plate_map); // SEGFAULT OCCURS HERE
+
+    auto motion = rock::crust_motion<M>(
+        calculus, fine, 
+        world_radius, 
+        acceleration(si::standard_gravity), 
+        mantle_density, 
+        mantle_viscosity
+    );
+
+    dymaxion::VertexNormals normals(fine);
+    iterated::Geometric<adapted::GlmGeometric> geometric;
+    iterated::Metric<adapted::GlmMetric> metric3;
+    std::vector<vec3> cross(fine.vertex_count());
+    std::vector<float> dot_lengths(fine.vertex_count());
+    std::vector<float> fine_slab_pull_lengths(fine.vertex_count());
+    aggregated::Equivalence<adapted::MetricEquivalence<double, adapted::GlmMetric>> equivalence(
+        adapted::MetricEquivalence<double, adapted::GlmMetric>(1e-4)
+    );
+    std::vector<bool> fine_plate_existance(fine.vertex_count());
+    std::vector<vec3> fine_slab_pull(fine.vertex_count());
+    adapted::GlmStrings substrings3;
+    spheroidal::Strings ascii_art(adapted::ScalarStrings<float>{}, aggregated::Order<adapted::SymbolicOrder>{});
+    // spheroidal::Strings ascii_art(substrings3, aggregated::Order{adapted::MetricOrder{adapted::GlmMetric{}}});
+    for (int i = 0; i < plate_count; ++i)
+    {
+        fracturing.exists(fine_plate_map, i, fine_plate_existance);
+        motion.slab_pull(fine_buoyancy_pressure, fine_plate_existance, si::force<float>(si::newton), fine_slab_pull);
+        geometric.dot(fine_slab_pull, normals, dot_lengths);
+        metric3.length(fine_slab_pull, fine_slab_pull_lengths);
+        iterated::Order<adapted::SymbolicOrder>{}.max(fine_slab_pull_lengths, procedural::uniform(0.001f), fine_slab_pull_lengths);
+        arithmetic.divide(dot_lengths, fine_slab_pull_lengths, dot_lengths);
+        // std::cout << ascii_art.format(fine, dot_lengths) << std::endl;
+        REQUIRE(order.greater_than(dot_lengths, procedural::uniform(0.0f)));
+        REQUIRE(order.less_than(dot_lengths, procedural::uniform(0.01f)));
+    }
+
+}
+
 /*
 GOTCHAS:
 * `drag_per_angular_velocity` is *not* scale invariant
@@ -303,6 +450,7 @@ TESTS:
 DONE:
 * `drag_per_angular_velocity` is commutative wrt thickness and width
 * `drag_per_angular_velocity` is decelerating wrt thickness, length, and width
+* `|buoyancy_forces ⋅ surface normal| == 0` 
 * domains:
     * `drag_per_angular_velocity > 0`
     * `slab_length > 0`
@@ -316,7 +464,6 @@ DONE:
 
 TODO:
 * `rigid_body_torque` is linear with respect to force magnitudes
-* `buoyancy_forces × surface normal == 0` 
 * `slab_thickness * slab_width * slab_length` must reproduce `slab_volume`
 * `slab_thickness * slab_area` must reproduce `slab_volume`
 * `slab_width * slab_length` must reproduce `slab_area`
@@ -333,10 +480,10 @@ TODO:
     * `rigid_body_torque`
     * `buoyancy_forces`
 
-* `buoyancy_forces` in combination with `drag_per_angular_velocity` and `CrustFracture`
+* `buoyancy_forces` in combination with `drag_per_angular_velocity` and `CrustFracturing`
     must produce velocities on the same order as velocities seen on earth
     when given earthlike `FormationSummary`s
-* nontrivial output in combination with `CrustFracture` when given earthlike `FormationSummary`s:
+* nontrivial output in combination with `CrustFracturing` when given earthlike `FormationSummary`s:
     * 0 ≤ slab_cell_count < N
     * 0 ≤ slab_volume < total_volume
     * 0 ≤ slab_area < total_area

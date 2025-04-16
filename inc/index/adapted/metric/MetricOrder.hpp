@@ -26,6 +26,9 @@ namespace adapted
 		MetricOrder(const Metric& metric):
 			metric(metric)
 		{}
+		MetricOrder():
+			metric()
+		{}
 		ADAPTER_SYMBOL_METHOD(>, greater_than)
 		ADAPTER_SYMBOL_METHOD(<, less_than)
 		ADAPTER_SYMBOL_METHOD(>=, greater_than_equal)

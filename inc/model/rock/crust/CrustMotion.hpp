@@ -115,12 +115,13 @@ namespace rock {
 		    calculus.gradient(grid, exists, slab_pull);
 		    for (std::size_t i = 0; i < slab_pull.size(); ++i)
 		    {
-		    	slab_pull[i] = // exists[i]? vec3(0) :
-		    		float(force(buoyancy_pressure[i] * grid.vertex_dual_area(i) * radius_units * radius_units)/slab_pull_units) * 
-		    		glm::normalize(-slab_pull[i]); // n̂  boundary normal
+		    	slab_pull[i] =
+		    		!exists[i]? vec3(0) :
+		    		glm::length(slab_pull[i]) == 0.0? vec3(0) :
+			    		float(force(buoyancy_pressure[i] * grid.vertex_dual_area(i) * si::area<float>(radius_units * radius_units))
+			    			/slab_pull_units) * glm::normalize(-slab_pull[i]); // n̂  boundary normal
 		    }
 		}
-
 
 		void is_slab(
 			const vec3s& slab_pull,

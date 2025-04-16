@@ -118,10 +118,10 @@ TEST_CASE( "CrustFracturing", "[rock]" ) {
     fracturing.fracture(coarse, vertex_gradient, fractures);
 
     std::vector<int> plate_counts(coarse.vertex_count());
-    fracturing.plate_counts(fractures, plate_counts);
+    fracturing.counts(fractures, plate_counts);
 
     std::vector<int> plate_map(coarse.vertex_count());
-    fracturing.plate_map(fractures, plate_map);
+    fracturing.map(fractures, plate_map);
 
     adapted::SymbolicOrder suborder;
     adapted::IdStrings<int> substrings;
@@ -136,7 +136,7 @@ TEST_CASE( "CrustFracturing", "[rock]" ) {
 
     // TEST THAT PLATES ARE NONEMPTY
     std::vector<int> plate_sizes(plate_count);
-    fracturing.plate_sizes(fractures, plate_sizes);
+    fracturing.sizes(fractures, plate_sizes);
     REQUIRE(order.not_equal(procedural::uniform(0), plate_sizes));
 
 }
