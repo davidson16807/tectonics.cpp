@@ -7,6 +7,7 @@
 #define GLM_ENABLE_EXPERIMENTAL // allow component-wise math
 #define GLM_FORCE_SWIZZLE   // allow swizzle methods like .xy()
 #include <glm/vec3.hpp> // *vec3
+#include <glm/gtx/string_cast.hpp> // *vec3
 
 // in house libraries
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
@@ -451,13 +452,21 @@ TEST_CASE( "buoyancy_forces ⋅ surface normal == 0", "[rock]" ) {
         auto slab_length = motion.slab_length(slab_area, slab_cell_count);
         auto slab_width = motion.slab_width(slab_area, slab_length);
         auto drag_per_angular_velocity = motion.drag_per_angular_velocity(slab_length, slab_thickness, slab_width);
+        auto slab_torque = motion.rigid_body_torque(fine_slab_pull, si::newton, si::newton*si::meter);
 
         REQUIRE(slab_volume > 0.0*si::kilometer3);
+        REQUIRE(slab_volume < fine.total_volume() * meter * meter * meter);
         REQUIRE(slab_area > 0.0*si::kilometer2);
+        REQUIRE(slab_area < fine.total_area() * meter * meter);
         REQUIRE(slab_cell_count > 0);
+        REQUIRE(slab_cell_count < fine.vertex_count());
         REQUIRE(slab_thickness > 0.0 * si::kilometer);
         REQUIRE(slab_length > 0.0 * si::kilometer);
         REQUIRE(slab_width > 0.0 * si::kilometer);
+        REQUIRE(si::distance(slab_thickness * slab_width * slab_length, slab_volume) < 10.0*si::meter3);
+        REQUIRE(si::distance(slab_thickness * slab_area, slab_volume) < 10.0*si::meter3);
+        REQUIRE(si::distance(slab_width * slab_length, slab_area) < si::meter2);
+        REQUIRE(slab_width >= slab_length);
         // REQUIRE(drag_per_angular_velocity > 0.0);
 
         std::cout << ascii_art.format(fine, fine_slab_existance) << std::endl;
@@ -468,6 +477,7 @@ TEST_CASE( "buoyancy_forces ⋅ surface normal == 0", "[rock]" ) {
         std::cout << slab_length << std::endl;
         std::cout << slab_width << std::endl;
         std::cout << drag_per_angular_velocity << std::endl;
+        std::cout << glm::to_string(slab_torque) << std::endl;
     }
 
 }
@@ -477,15 +487,23 @@ GOTCHAS:
 * `drag_per_angular_velocity` is *not* scale invariant
 TESTS:
 DONE:
-* `drag_per_angular_velocity` is commutative wrt thickness and width
-* `drag_per_angular_velocity` is decelerating wrt thickness, length, and width
-* `|slab_pull ⋅ surface normal| == 0` 
+* miscellaneous:
+    * `drag_per_angular_velocity` is commutative wrt thickness and width
+    * `drag_per_angular_velocity` is decelerating wrt thickness, length, and width
+    * `|slab_pull ⋅ surface normal| == 0` 
+    * `slab_thickness * slab_width * slab_length` must reproduce `slab_volume`
+    * `slab_thickness * slab_area` must reproduce `slab_volume`
+    * `slab_width * slab_length` must reproduce `slab_area`
+    * `slab_width ≥ slab_length` for procedurally generated plates
 * domains:
     * `drag_per_angular_velocity > 0`
     * `slab_pull > 0`
     * `slab_length > 0`
     * `slab_width > 0`
     * `slab_thickness > 0`
+    * `total_volume > slab_volume > 0`
+    * `total_area > slab_area > 0`
+    * `N > slab_cell_count > 0`
 * monotonic: 
     * `drag_per_angular_velocity` increases wrt length, width, and thickness
     * `slab_length` increases wrt area
@@ -494,14 +512,6 @@ DONE:
 
 TODO:
 * `rigid_body_torque` is linear with respect to force magnitudes
-* `slab_thickness * slab_width * slab_length` must reproduce `slab_volume`
-* `slab_thickness * slab_area` must reproduce `slab_volume`
-* `slab_width * slab_length` must reproduce `slab_area`
-* `slab_width ≥ slab_length` for procedurally generated plates
-* domains:
-    * `slab_volume > 0`
-    * `slab_cell_count > 0`
-    * `slab_area > 0`
 * rotationally invariant:
     * `is_slab`
     * `slab_cell_count`
@@ -511,12 +521,7 @@ TODO:
     * `buoyancy_forces`
 
 * `buoyancy_forces` in combination with `drag_per_angular_velocity` and `CrustFracturing`
-    must produce velocities on the same order as velocities seen on earth
-    when given earthlike `FormationSummary`s
-* nontrivial output in combination with `CrustFracturing` when given earthlike `FormationSummary`s:
-    * 0 ≤ slab_cell_count < N
-    * 0 ≤ slab_volume < total_volume
-    * 0 ≤ slab_area < total_area
+    must produce velocities on the same order as velocities seen on earth when given earthlike `FormationSummary`
 * `drag_per_angular_velocity` reproduces results from Schellart 2010 when combined with appropriate torque
 */
 

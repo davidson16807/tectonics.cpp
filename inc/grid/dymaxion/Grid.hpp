@@ -115,6 +115,11 @@ namespace dymaxion
 			return 4.0 * pi * voronoi.radius * voronoi.radius;
 		}
 
+		inline constexpr scalar total_volume() const 
+		{
+			return 4.0/3.0 * pi * voronoi.radius * voronoi.radius * voronoi.radius;
+		}
+
 		inline constexpr scalar total_circumference() const 
 		{
 			return 2.0 * pi * voronoi.radius;
