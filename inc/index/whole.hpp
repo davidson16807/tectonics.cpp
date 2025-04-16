@@ -74,19 +74,6 @@ namespace whole
 		return out;
 	}
 
-	template <typename In1, typename In2>
-	double distance(const In1& a, const In2& b)
-	{
-		double out(0);
-		assert(compatible(a,b));
-		auto size = a.size();
-		for (std::size_t i = 0; i < size; ++i)
-		{
-			out += math::distance(a[i], b[i]);
-		}
-		return out;
-	}
-
 	template <typename Out, typename T>
 	Out sum(const T& a)
 	{
