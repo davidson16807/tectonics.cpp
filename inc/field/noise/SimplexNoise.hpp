@@ -7,6 +7,7 @@
 // 3rd-party libraries
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
 
 namespace field
 {
@@ -48,7 +49,7 @@ namespace field
 
 		    vec4 offset0;
 
-		    vec3 isX = glm::step( P.yzw, P.xxx );        // See comments in 3D simplex function
+		    vec3 isX = glm::step( P.yzw, P.xxx ); // See comments in 3D simplex function
 		    offset0.x = isX.x + isX.y + isX.z;
 		    offset0.yzw = 1.0 - isX;
 
