@@ -14,12 +14,6 @@
 #include <index/procedural/Range.hpp>
 #include <index/procedural/Uniform.hpp>
 #include <index/procedural/noise/UnitIntervalNoise.hpp>
-#include <index/adapted/scalar/ScalarStrings.hpp>
-#include <index/adapted/scalar/ScalarMetric.hpp>
-#include <index/adapted/symbolic/SymbolicOrder.hpp>
-#include <index/aggregated/Order.hpp>
-#include <index/aggregated/Strings.hpp>
-#include <index/aggregated/Metric.hpp>
 
 #include <test/macros.hpp>
 #include <test/structures/ringlike.hpp>
@@ -30,28 +24,22 @@ namespace known {
     struct Adapter{
         T threshold;
         std::size_t test_size;
-        aggregated::Strings<adapted::ScalarStrings<T>, aggregated::Order<adapted::SymbolicOrder>> strings;
-        aggregated::Metric<adapted::ScalarMetric<T>> metric;
 
         Adapter(const T threshold, const std::size_t test_size):
             threshold(threshold),
-            test_size(test_size),
-            strings(adapted::ScalarStrings<T>(), 
-                aggregated::Order<adapted::SymbolicOrder>(
-                    adapted::SymbolicOrder())),
-            metric(adapted::ScalarMetric<T>())
+            test_size(test_size)
         {}
 
         template<typename Series1, typename Series2>
         bool equal(const Series1& a, const Series2& b) const {
-            return metric.distance(
+            return whole::distance(
                 map(a,procedural::range(test_size)),
                 map(b,procedural::range(test_size))) <= threshold;
         }
 
         template<typename Series>
         std::string print(const Series& a) const {
-            return strings.format(a);
+            return whole::to_string(a);
         }
 
     };

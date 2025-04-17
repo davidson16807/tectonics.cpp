@@ -58,9 +58,6 @@ namespace iterated
 		Trigonometry(const ElementTrigonometry& elements):
 			elements(elements)
 		{}
-		Trigonometry():
-			elements()
-		{}
 		ITERATED_UNARY_FUNCTION(elements.sin, sin)
 		ITERATED_UNARY_FUNCTION(elements.cos, cos)
 		ITERATED_UNARY_FUNCTION(elements.tan, tan)

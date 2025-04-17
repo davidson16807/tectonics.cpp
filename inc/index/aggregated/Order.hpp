@@ -17,9 +17,6 @@ namespace aggregated
 		Order(const ElementOrder& elements):
 			elements(elements)
 		{}
-		Order():
-			elements()
-		{}
 
 		template <typename T>
 		auto min(const T& a, const typename T::value_type lo, const typename T::value_type hi) const

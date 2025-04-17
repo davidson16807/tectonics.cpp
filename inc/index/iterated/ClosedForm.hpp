@@ -58,39 +58,37 @@ namespace iterated
 		ClosedForm(const ElementClosedForm& elements):
 			elements(elements)
 		{}
-		ClosedForm():
-			elements()
-		{}
 
-		ITERATED_UNARY_METHOD(elements.sign,    sign)
-		ITERATED_UNARY_METHOD(elements.bitsign, bitsign)
+		ADAPTER_UNARY_METHOD(elements.sign,    sign)
+		ADAPTER_UNARY_METHOD(elements.bitsign, bitsign)
+		ADAPTER_UNARY_METHOD(elements.abs,     abs)
 
-		ITERATED_UNARY_METHOD (elements.abs,       abs)
-		ITERATED_UNARY_METHOD (elements.floor,     floor)
-		ITERATED_UNARY_METHOD (elements.trunc,     trunc)
-		ITERATED_UNARY_METHOD (elements.round,     round)
-		ITERATED_UNARY_METHOD (elements.ceil,      ceil)
-		ITERATED_UNARY_METHOD (elements.fract,     fract)
-		ITERATED_BINARY_METHOD(elements.modulus,   modulus)  
-		ITERATED_BINARY_METHOD(elements.residue,   residue)  
-		ITERATED_BINARY_METHOD(elements.remainder, remainder)
+		ADAPTER_UNARY_METHOD (elements.abs,       abs)
+		ADAPTER_UNARY_METHOD (elements.floor,     floor)
+		ADAPTER_UNARY_METHOD (elements.trunc,     trunc)
+		ADAPTER_UNARY_METHOD (elements.round,     round)
+		ADAPTER_UNARY_METHOD (elements.ceil,      ceil)
+		ADAPTER_UNARY_METHOD (elements.fract,     fract)
+		ADAPTER_BINARY_METHOD(elements.modulus,   modulus)  
+		ADAPTER_BINARY_METHOD(elements.residue,   residue)  
+		ADAPTER_BINARY_METHOD(elements.remainder, remainder)
 
-		ITERATED_UNARY_METHOD(elements.sqrt, sqrt)
-		ITERATED_UNARY_METHOD(elements.cbrt, cbrt)
-		ITERATED_UNARY_METHOD(elements.inversesqrt, inversesqrt)
-		ITERATED_BINARY_METHOD(elements.pow, pow)
+		ADAPTER_UNARY_METHOD(elements.sqrt, sqrt)
+		ADAPTER_UNARY_METHOD(elements.cbrt, cbrt)
+		ADAPTER_UNARY_METHOD(elements.inversesqrt, inversesqrt)
+		ADAPTER_BINARY_METHOD(elements.pow, pow)
 
-		ITERATED_UNARY_METHOD(elements.exp,   exp)
-		ITERATED_UNARY_METHOD(elements.exp2,  exp2)
-		ITERATED_UNARY_METHOD(elements.exp10, exp10)
-		ITERATED_UNARY_METHOD(elements.log,   log)
-		ITERATED_UNARY_METHOD(elements.log2,  log2)
-		ITERATED_UNARY_METHOD(elements.log10, log10)
+		ADAPTER_UNARY_METHOD(elements.exp,   exp)
+		ADAPTER_UNARY_METHOD(elements.exp2,  exp2)
+		ADAPTER_UNARY_METHOD(elements.exp10, exp10)
+		ADAPTER_UNARY_METHOD(elements.log,   log)
+		ADAPTER_UNARY_METHOD(elements.log2,  log2)
+		ADAPTER_UNARY_METHOD(elements.log10, log10)
 
-		ITERATED_TRINARY_METHOD(elements.mix,        mix)  
-		ITERATED_TRINARY_METHOD(elements.step,       step) 
-		ITERATED_TRINARY_METHOD(elements.smoothstep, smoothstep)
-		ITERATED_TRINARY_METHOD(elements.linearstep, linearstep)
+		ADAPTER_TRINARY_METHOD(elements.mix,        mix)  
+		ADAPTER_TRINARY_METHOD(elements.step,       step) 
+		ADAPTER_TRINARY_METHOD(elements.smoothstep, smoothstep)
+		ADAPTER_TRINARY_METHOD(elements.linearstep, linearstep)
 
 	};
 

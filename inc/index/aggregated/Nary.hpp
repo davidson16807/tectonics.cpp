@@ -8,20 +8,19 @@
 namespace aggregated
 {
 
-	template <typename T, typename Op>
+	template <typename Op>
 	class LeftBinary
 	{
 		const Op op;
-		const T initial;
 	public:
-		LeftBinary(const Op& op, T& initial):
-			op(op),
-			initial(initial)
+		LeftBinary(const Op& op):
+			op(op)
 		{}
 
+		template <typename T>
 		auto operator() (const T& a) const
 		{
-			auto out = initial;
+			auto out = op.zero;
 			for (auto i = 0*a.size(); i < a.size(); ++i)
 			{
 				out = op(out, a[i]);
@@ -33,20 +32,19 @@ namespace aggregated
 
 	};
 
-	template <typename T, typename Op>
+	template <typename Op>
 	class RightBinary
 	{
 		const Op op;
-		const T initial;
 	public:
-		RightBinary(const Op& op, T& initial):
-			op(op),
-			initial(initial)
+		RightBinary(const Op& op):
+			op(op)
 		{}
 
+		template <typename T>
 		auto operator() (const T& a) const
 		{
-			auto out = initial;
+			auto out = op.zero;
 			for (auto i = 0*a.size(); i < a.size(); ++i)
 			{
 				out = op(a[i], out);

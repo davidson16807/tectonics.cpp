@@ -18,6 +18,13 @@ namespace adapted
 		return (a SYMBOL b);\
 	}
 
+	#define ADAPTER_UNARY_METHOD(METHOD, NAME) \
+	template <typename In1>\
+	inline auto NAME (const In1 a) const\
+	{\
+		return METHOD(a);\
+	}
+
 	struct SymbolicOrder
 	{
 		SymbolicOrder(){}

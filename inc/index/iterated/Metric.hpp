@@ -58,9 +58,6 @@ namespace iterated
 		Metric(const ElementMetric& elements):
 			elements(elements)
 		{}
-		Metric():
-			elements()
-		{}
 		ITERATED_BINARY_METHOD(elements.distance,   distance)
 		ITERATED_UNARY_METHOD(elements.normalize,  normalize)
 		ITERATED_UNARY_METHOD(elements.length,     length)
