@@ -21,6 +21,9 @@ namespace aggregated
 		Bitset(const ElementBitset& elements):
 			elements(elements)
 		{}
+		Bitset():
+			elements()
+		{}
 
 		template <typename In1>
 		bool all(const In1& a) const

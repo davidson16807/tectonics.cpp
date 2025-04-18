@@ -18,6 +18,10 @@ namespace aggregated
 			aggregation(aggregation),
 			order(order)
 		{}
+		OrderAggregation():
+			aggregation(),
+			order()
+		{}
 
 		template <typename T>
 		typename T::value_type min(const T& a, const typename T::value_type lo, const typename T::value_type hi) const

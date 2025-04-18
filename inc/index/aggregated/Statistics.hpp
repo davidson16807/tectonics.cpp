@@ -18,6 +18,10 @@ namespace aggregated
 			arithmetic(arithmetic),
 			algebraic(algebraic)
 		{}
+		Statistics():
+			arithmetic(),
+			algebraic()
+		{}
 
 		template <typename T>
 		auto sum(const T& a) const

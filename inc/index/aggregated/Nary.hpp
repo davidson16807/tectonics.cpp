@@ -16,6 +16,9 @@ namespace aggregated
 		LeftBinary(const Op& op):
 			op(op)
 		{}
+		LeftBinary():
+			op()
+		{}
 
 		template <typename T>
 		auto operator() (const T& a) const
@@ -39,6 +42,9 @@ namespace aggregated
 	public:
 		RightBinary(const Op& op):
 			op(op)
+		{}
+		RightBinary():
+			op()
 		{}
 
 		template <typename T>

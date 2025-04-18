@@ -25,6 +25,11 @@ namespace aggregated
 			aggregation(aggregation),
 			line_char_width(80)
 		{}
+		Strings():
+			strings(),
+			aggregation(),
+			line_char_width(80)
+		{}
 
 		template <typename Series, typename T>
 		std::string format(const Series& a, const T lo, const T hi) const
