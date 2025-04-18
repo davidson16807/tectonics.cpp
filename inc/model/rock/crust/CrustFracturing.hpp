@@ -213,9 +213,9 @@ namespace rock
 
             // results from fractures() are always disjoint, 
             // therefore `out` does not need to be filled with 0s
-            for (std::size_t j(1); j < fractures.size(); ++j)
+            for (std::size_t i = 0; i < fractures.size(); ++i)
             {
-                ternary(fractures[j].is_included, procedural::uniform(j), out, out);
+                ternary(fractures[i].is_included, procedural::uniform(i), out, out);
             }
 
         }
@@ -227,7 +227,7 @@ namespace rock
             flags& out
         ) const {
             using flag = typename flags::value_type;
-            for (std::size_t i(1); i < plate_map.size(); ++i)
+            for (std::size_t i(0); i < plate_map.size(); ++i)
             {
                 out[i] = flag(plate_map[i] == plate_id);
             }
