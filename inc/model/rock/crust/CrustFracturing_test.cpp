@@ -31,7 +31,7 @@
 #include <model/rock/stratum/StratumSummaryProperties.hpp>  // StratumSummaryBuoyancyPressure
 #include <model/rock/stratum/StratumSummarization.hpp>
 #include <model/rock/formation/FormationSummarization.hpp>
-#include <model/rock/estimated/EarthlikeIgneousFormationGeneration.hpp>
+#include <model/rock/formation/estimated/EarthlikeIgneousFormationGeneration.hpp>
 
 #include "CrustFracturing.hpp"
 

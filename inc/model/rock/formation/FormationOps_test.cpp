@@ -5,7 +5,7 @@
 
 // in house libraries
 #include <model/rock/stratum/StratumStore.hpp>
-#include <model/rock/estimated/EarthlikeIgneousFormationGeneration.hpp>
+#include <model/rock/formation/estimated/EarthlikeIgneousFormationGeneration.hpp>
 
 #include "Formation.hpp"
 #include "FormationOps.hpp"

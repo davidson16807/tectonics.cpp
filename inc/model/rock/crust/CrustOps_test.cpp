@@ -52,7 +52,7 @@ this file tests an assortment of functionality within rock::, namely:
 #include <model/rock/crust/CrustProperties.hpp>  // CrustMass
 #include <model/rock/crust/CrustSummaryOps.hpp>  // CrustSummaryOps
 
-#include <model/rock/estimated/EarthlikeIgneousFormationGeneration.hpp>
+#include <model/rock/formation/estimated/EarthlikeIgneousFormationGeneration.hpp>
 
 #include <model/rock/crust/_test_tools.hpp>
 
