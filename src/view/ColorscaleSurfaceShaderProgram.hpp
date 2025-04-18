@@ -102,12 +102,10 @@ namespace view
 			        in        float vertex_darken;
 			        in        uint  vertex_culling;
 			        out       float fragment_color_value;
-			        out       float fragment_displacement;
 			        out       float fragment_darken;
 			        out       float fragment_culling;
 			        void main(){
 			            fragment_color_value = vertex_color_value;
-			            fragment_displacement = vertex_displacement;
 			            fragment_darken = vertex_darken;
 			            fragment_culling = vertex_culling == 0u? 1.0 : 0.0;
 			            /* 
@@ -133,7 +131,6 @@ namespace view
 			        uniform float max_color_value;
 			        uniform float darken_threshold;
 			        in      float fragment_color_value;
-			        in      float fragment_displacement;
 			        in      float fragment_darken;
 			        in      float fragment_culling;
 			        out     vec4  fragment_color;
