@@ -385,13 +385,13 @@ TEST_CASE( "buoyancy_forces ⋅ surface normal == 0", "[rock]" ) {
     arithmetic.divide(coarse_buoyancy_pressure, procedural::uniform(std::pow(float(vertex_downsampling_ids.factor), 2.0f)), coarse_buoyancy_pressure);
 
     // STRIP UNITS TO CALCULATE GRADIENT
-    std::vector<float> vertex_scalars1(coarse.vertex_count());
-    arithmetic.divide(coarse_buoyancy_pressure, procedural::uniform(pressure(1)), vertex_scalars1);
+    std::vector<float> coarse_buoyancy_pressure_in_pascals(coarse.vertex_count());
+    arithmetic.divide(coarse_buoyancy_pressure, procedural::uniform(pressure(1)), coarse_buoyancy_pressure_in_pascals);
 
     // CALCULATE STRESS
     unlayered::VectorCalculusByFundamentalTheorem calculus;
     std::vector<vec3> vertex_gradient(coarse.vertex_count());
-    calculus.gradient(coarse, vertex_scalars1, vertex_gradient);
+    calculus.gradient(coarse, coarse_buoyancy_pressure_in_pascals, vertex_gradient);
 
     // FRACTURE
     const int plate_count = 8;
@@ -405,7 +405,7 @@ TEST_CASE( "buoyancy_forces ⋅ surface normal == 0", "[rock]" ) {
 
     iterated::Index index;
     std::vector<int> fine_plate_map(fine.vertex_count());
-    index(coarse_plate_map, vertex_downsampling_ids, fine_plate_map); // SEGFAULT OCCURS HERE
+    index(coarse_plate_map, vertex_downsampling_ids, fine_plate_map);
 
     auto motion = rock::crust_motion<M>(
         calculus, fine, 
@@ -471,12 +471,11 @@ TEST_CASE( "buoyancy_forces ⋅ surface normal == 0", "[rock]" ) {
         REQUIRE(slab_width >= slab_length);
         // REQUIRE(slab_drag_per_angular_velocity > 0.0);
         /*
-        Solomon, "On the Forces Driving Plate Tectonics" (1975), lists angular velocities for tectonic plates
-        From those velocities we can determine the shortest period of rotation is ~180 My.
+        Solomon, "On the Forces Driving Plate Tectonics" (1975), lists angular velocities for tectonic plates.
+        From those velocities, we can determine the shortest period of rotation is ~180 My.
         The longest period of rotation (excluding the plate they used as their reference frame) is ~600 My.
-        Larson, "Global plate velocities from the Global Positioning System" (1997) 
-        estimates even longer periods, from 486My to 3Gy.
-        We note that our model tends to underpredict periods.
+        Larson, "Global plate velocities from the Global Positioning System" (1997) estimates even longer periods, 
+        from 486My to 3Gy. We note that our model tends to underpredict periods.
         In this test case, our longest period (183My) is roughly equivalent to the shortest period reported by Solomon.
         This is surprising since we expected plate motion to only occur in our model 
         if a precise combination of circumstances were met along a plate boundary

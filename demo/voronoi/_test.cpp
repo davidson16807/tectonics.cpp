@@ -31,6 +31,7 @@
 #include <index/adapted/glm/GlmMetric.hpp>
 #include <index/aggregated/Order.hpp>
 #include <index/iterated/Nary.hpp>
+#include <index/iterated/Metric.hpp>
 
 #include <field/Compose.hpp>                        // Compose
 #include <field/noise/RankedFractalBrownianNoise.hpp> // dymaxion::RankedFractalBrownianNoise
@@ -44,9 +45,7 @@
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
 #include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
-#include <raster/unlayered/FloodFilling.hpp>        // unlayered::FloodFilling
 #include <raster/unlayered/Voronoi.hpp>             // unlayered::Voronoi
-#include <raster/unlayered/ImageSegmentation.hpp>   // unlayered::ImageSegmentation
 
 // #include <model/rock/stratum/StratumGenerator.hpp>  // StratumGenerator
 
@@ -107,6 +106,7 @@ int main() {
   dymaxion::WholeGridBuffers<int,float> grids(vertices_per_square_side);
   std::vector<float> buffer_color_values(grid.vertex_count());
   std::vector<float> buffer_uniform(grid.vertex_count(), 1.0f);
+  std::vector<std::byte>  buffer_culling(grid.vertex_count(), std::byte(0));
   std::vector<glm::vec3> buffer_positions(grid.vertex_count());
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(vertex_positions));
 
@@ -165,9 +165,10 @@ int main() {
         buffer_color_values, // color value
         buffer_uniform,      // displacement
         buffer_uniform,      // darken
-        buffer_uniform,      // culling
+        buffer_culling,      // culling
         buffer_element_vertex_ids,
         colorscale_state,
+        glm::mat4(1),
         view_state,
         GL_TRIANGLE_STRIP
       );

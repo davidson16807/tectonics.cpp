@@ -1,5 +1,8 @@
 #pragma once
 
+// c libraries
+#include <cstddef>        // std::byte
+
 // std libraries
 #include <vector>         // std::vector
 #include <unordered_set>  // std::unordered_set
@@ -27,7 +30,6 @@ namespace view
 		float min_color_value;
 		float max_color_value;
 		float darken_threshold;
-		float culling_threshold;
 		ColorscaleType colorscale_type;
 
 		ColorscaleSurfacesViewState():
@@ -35,7 +37,6 @@ namespace view
 			max_color(1),
 			min_color_value(0),
 			max_color_value(1),
-			culling_threshold(0.2f),
 			colorscale_type(ColorscaleType::heatscale)
 		{}
 	};
@@ -95,19 +96,20 @@ namespace view
 			        uniform   mat4  model_matrix;
 			        uniform   mat4  view_matrix;
 			        uniform   mat4  projection_matrix;
-			        uniform   float culling_threshold;
 			        in        vec4  vertex_position;
 			        in        float vertex_color_value;
 			        in        float vertex_displacement;
 			        in        float vertex_darken;
-			        in        float vertex_culling;
+			        in        uint  vertex_culling;
 			        out       float fragment_color_value;
 			        out       float fragment_displacement;
 			        out       float fragment_darken;
+			        out       float fragment_culling;
 			        void main(){
 			            fragment_color_value = vertex_color_value;
 			            fragment_displacement = vertex_displacement;
 			            fragment_darken = vertex_darken;
+			            fragment_culling = vertex_culling == 0u? 1.0 : 0.0;
 			            /* 
 			            NOTES: 
 			            * For a heads up display, set all `*_matrix` parameters to identity.
@@ -117,9 +119,7 @@ namespace view
 			            To provide at least some method of culling, 
 			            we set vertex position outside clipspace if vertex_culling is toggled off.
 			            */
-		            	gl_Position = vertex_culling < culling_threshold? 
-		            		vec4(2.0, 2.0, 2.0, 1.0)
-		            	:   projection_matrix * view_matrix * model_matrix * vertex_position;
+		            	gl_Position = projection_matrix * view_matrix * model_matrix * vertex_position;
 			        };
 				)"
 			),
@@ -135,6 +135,7 @@ namespace view
 			        in      float fragment_color_value;
 			        in      float fragment_displacement;
 			        in      float fragment_darken;
+			        in      float fragment_culling;
 			        out     vec4  fragment_color;
 
 			        /*
@@ -175,13 +176,14 @@ namespace view
 			              colorscale_type == 0? get_rgb_signal_of_fraction_for_heatmap(color_value_fraction) 
 			            : colorscale_type == 1? get_rgb_signal_of_fraction_for_topomap(color_value_fraction)
 			            :                       mix( min_color, max_color, color_value_fraction );
+			            if(fragment_culling>0.5){discard;}
 			            fragment_color = vec4(
 				            mix(
 				                vec3(0.), 
 				                color_without_ocean, 
 				                fragment_darken < darken_threshold? 0.5 : 1.0
 				            ), 
-				            1.0
+				            fragment_culling
 				        );
 			        }
 				)"
@@ -240,7 +242,6 @@ namespace view
 			viewMatrixLocation = glGetUniformLocation(shaderProgramId, "view_matrix");
 			modelMatrixLocation = glGetUniformLocation(shaderProgramId, "model_matrix");
 			projectionMatrixLocation = glGetUniformLocation(shaderProgramId, "projection_matrix");
-			cullingThresholdLocation = glGetUniformLocation(shaderProgramId, "culling_threshold");
 
 			colorscaleTypeLocation = glGetUniformLocation(shaderProgramId, "colorscale_type");
 			minColorLocation = glGetUniformLocation(shaderProgramId, "min_color");
@@ -332,7 +333,7 @@ namespace view
 			const std::vector<T>& vertex_color_value, 
 			const std::vector<float>& vertex_displacement, 
 			const std::vector<float>& vertex_darken, 
-			const std::vector<float>& vertex_culling, 
+			const std::vector<std::byte>& vertex_culling, 
 			const std::vector<unsigned int>& element_vertex_ids,
 			const ColorscaleSurfacesViewState& colorscale_state,
 			const glm::mat4 model_matrix,
@@ -370,22 +371,22 @@ namespace view
             glVertexAttribPointer(colorValueLocation, 1, GL_FLOAT, normalize, stride, offset);
 
 			glBindBuffer(GL_ARRAY_BUFFER, displacementBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*vertex_displacement.size(), &vertex_displacement.front(), GL_DYNAMIC_DRAW);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*vertex_displacement.size(), &vertex_displacement.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(displacementLocation);
             glVertexAttribPointer(displacementLocation, 1, GL_FLOAT, normalize, stride, offset);
 
 			glBindBuffer(GL_ARRAY_BUFFER, darkenBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*vertex_darken.size(), &vertex_darken.front(), GL_DYNAMIC_DRAW);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*vertex_darken.size(), &vertex_darken.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(darkenLocation);
             glVertexAttribPointer(darkenLocation, 1, GL_FLOAT, normalize, stride, offset);
 
 			glBindBuffer(GL_ARRAY_BUFFER, cullingBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(T)*vertex_culling.size(), &vertex_culling.front(), GL_DYNAMIC_DRAW);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(std::byte)*vertex_culling.size(), &vertex_culling.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(cullingLocation);
-            glVertexAttribPointer(cullingLocation, 1, GL_FLOAT, normalize, stride, offset);
+            glVertexAttribIPointer(cullingLocation, 1, GL_UNSIGNED_BYTE, stride, offset);
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementVertexBufferId);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(T)*element_vertex_ids.size(), &element_vertex_ids.front(), GL_DYNAMIC_DRAW);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*element_vertex_ids.size(), &element_vertex_ids.front(), GL_DYNAMIC_DRAW);
 
     		// UNIFORMS
 	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(model_matrix));
@@ -398,7 +399,6 @@ namespace view
 	        glUniform1f (maxColorValueLocation, colorscale_state.max_color_value);
 	        glUniform1f (darkenThresholdLocation, colorscale_state.darken_threshold);
 	        glUniform1i (colorscaleTypeLocation, colorscale_state.colorscale_type);
-	        glUniform1f (cullingThresholdLocation, colorscale_state.culling_threshold);
 
 			glDrawElements(gl_mode, /*element count*/ element_vertex_ids.size(), GL_UNSIGNED_INT, 0);
 		}

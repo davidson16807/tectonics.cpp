@@ -151,6 +151,7 @@ int main() {
         vectors_instance_up,
         vectors_instance_scale,
         vectors_instance_color,
+        glm::mat4(1),
         view_state,
         GL_TRIANGLES
       );

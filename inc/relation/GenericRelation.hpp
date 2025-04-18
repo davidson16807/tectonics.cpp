@@ -1,7 +1,10 @@
 #pragma once
 
-// std libraries
+// c libraries
 #include <cmath>
+
+// std libraries
+#include <functional>
 
 // in-house libraries
 #include <math/analytic/Scaling.hpp>

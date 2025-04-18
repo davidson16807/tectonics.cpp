@@ -22,8 +22,7 @@
 // in house libraries
 #include <index/procedural/Map.hpp>
 #include <index/procedural/Uniform.hpp>
-#include <index/glm/known.hpp>                      // greaterThan
-#include <index/known.hpp>                          // greaterThan
+#include <index/known.hpp>                          // max, mean
 #include <index/whole.hpp>                          // max, mean
 #include <index/procedural/Range.hpp>                   // Range
 #include <index/procedural/noise/UnitIntervalNoise.hpp> // UnitIntervalNoise
@@ -323,6 +322,7 @@ int main() {
   std::vector<float> buffer_scalars1(coarse.vertex_count());
   std::vector<float> buffer_scalars2(coarse.vertex_count());
   std::vector<float> buffer_uniform(coarse.vertex_count(), 1.0f);
+  std::vector<std::byte> buffer_culling(coarse.vertex_count(), std::byte(0));
   std::vector<glm::vec3> buffer_positions(coarse.vertex_count());
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(coarse_vertex_positions));
   std::cout << "vertex count:        " << coarse.vertex_count() << std::endl;
@@ -434,9 +434,10 @@ int main() {
         buffer_scalars1,  // color value
         buffer_uniform,   // displacement
         buffer_uniform,   // darken
-        buffer_uniform,   // culling
+        buffer_culling,   // culling
         buffer_element_vertex_ids,
         colorscale_state,
+        glm::mat4(1),
         view_state,
         GL_TRIANGLE_STRIP
       );
@@ -448,6 +449,7 @@ int main() {
         vectors_instance_up,
         vectors_instance_scale,
         vectors_instance_color,
+        glm::mat4(1),
         view_state,
         GL_TRIANGLES
       );

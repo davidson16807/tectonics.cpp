@@ -69,9 +69,9 @@ We attempt definitions for them as follows:
 * element    a duple: (vertex, primitive), it is a specific usage of a vertex in a primitive
 * instance   a collection of primitives that are intended for reuse
 * uniform    aspects that do not vary over the course of a `draw()` call
-* model      the set of all graphics that are uniform
-* view       the orientation of a camera that are uniform
-* projection aspects of perspective that are uniform
+* model      the uniform set of all graphics
+* view       the uniform orientation of a camera
+* projection the uniform aspects of perspective
 * attribute  aspects that are not uniform, either across elements, vertices, or instances
 * static     something that is not intended to change once per frame
 * dynamic    something that is expected to change once per frame
@@ -81,6 +81,6 @@ We also introduce or coopt the following terms:
 * graphic    either a primitive or an instance
 * pictorial  a graphic that is only meant to represent an abstract concept, such as an arrow or point
 * indicator  a pictorial instance
-* cloud      a static set of graphics where primitives do not share vertices, it either features instances or does not distincguish vertices and elements
-* swarm      a dynamic set of graphics where primitives do not share vertices, it either features instances or does not distincguish vertices and elements
+* cloud      a static set of graphics where primitives do not share vertices, it either features instances or does not distinguish vertices and elements
+* swarm      a dynamic set of graphics where primitives do not share vertices, it either features instances or does not distinguish vertices and elements
 * surface    a set of graphics where primitives share vertices and vice versa, it features an element buffer object

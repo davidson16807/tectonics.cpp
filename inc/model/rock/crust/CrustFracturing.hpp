@@ -220,14 +220,16 @@ namespace rock
 
         }
 
+        template<typename flags>
         void exists(
             const ids plate_map,
             const id plate_id,
-            bools& out
+            flags& out
         ) const {
+            using flag = typename flags::value_type;
             for (std::size_t i(1); i < plate_map.size(); ++i)
             {
-                out[i] = plate_map[i] == plate_id;
+                out[i] = flag(plate_map[i] == plate_id);
             }
         }
 

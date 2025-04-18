@@ -214,6 +214,7 @@ int main() {
   std::vector<float> buffer_color_values(grid.vertex_count());
   std::vector<float> buffer_scalars2(grid.vertex_count());
   std::vector<float> buffer_uniform(grid.vertex_count(), 1.0f);
+  std::vector<std::byte>  buffer_culling(grid.vertex_count(), std::byte(0));
   std::vector<glm::vec3> buffer_positions(grid.vertex_count());
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(vertex_positions));
   std::cout << "vertex count:        " << grid.vertex_count() << std::endl;
@@ -277,7 +278,7 @@ int main() {
         vertex_scalars1,  // color value
         buffer_uniform,   // displacement
         buffer_uniform,   // darken
-        buffer_uniform,   // culling
+        buffer_culling,   // culling
         buffer_element_vertex_ids,
         colorscale_state,
         glm::mat4(1),
