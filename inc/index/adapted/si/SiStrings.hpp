@@ -11,19 +11,23 @@
 namespace adapted
 {
 
+	namespace {
+		std::vector<std::string> si_dotshades {" ", "⋅", "⁚", "⁖", "⸬", "⁙", "░", "▒", "▓", "█"  };
+	}
+
 	class SiStrings
 	{
 		using string = std::string;
 
-		#if defined(__clang__)
-			const std::vector<const string> 
-		#else
-			const std::array<const string, 5>
-		#endif
-		shades {" ", "░", "▒", "▓", "█" };
+		const std::vector<std::string> characters;
 
 	public:
-		SiStrings(){}
+		SiStrings(std::vector<std::string> characters):
+			characters(characters)
+		{}
+		SiStrings():
+			characters(si_dotshades)
+		{}
 
 		template<int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
 		string legend(
@@ -32,10 +36,10 @@ namespace adapted
 			const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> hi
 		) const {
 			string out("");
-			for (unsigned int i = 0; i < shades.size(); ++i)
+			for (unsigned int i = 0; i < characters.size(); ++i)
 			{
-				auto bound = si::mix(lo, hi, T1(i)/T1(shades.size()));
-				out += shades[i];
+				auto bound = si::mix(lo, hi, T1(i)/T1(characters.size()));
+				out += characters[i];
 				out += " ≥ ";
 				out += si::to_string(bound);
 				out += "\n";
@@ -59,9 +63,9 @@ namespace adapted
 			}
 			else 
 			{
-			    return shades[
-			    	std::clamp(int((shades.size()) * si::linearstep(lo, hi, a)), 
-			    				0, int(shades.size()-1))
+			    return characters[
+			    	std::clamp(int((characters.size()) * si::linearstep(lo, hi, a)), 
+			    				0, int(characters.size()-1))
 		    	];
 			}
 		}
