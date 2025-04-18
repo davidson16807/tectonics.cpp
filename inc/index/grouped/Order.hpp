@@ -16,6 +16,9 @@ namespace grouped
 		Order(const ElementOrder& elements):
 			elements(elements)
 		{}
+		Order():
+			elements()
+		{}
 
 		template <typename Ids, typename In, typename Out>
 		void min (const Ids& group_ids, const In& a, const Out& out)

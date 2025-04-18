@@ -16,6 +16,9 @@ namespace grouped
 		Statistics(const ElementArithmetic& arithmetic):
 			arithmetic(arithmetic)
 		{}
+		Statistics():
+			arithmetic()
+		{}
 
 		template <typename Ids, typename Out>
 		void count (const Ids& group_ids, Out& out)

@@ -16,7 +16,11 @@ namespace inherited
 	public:
 		Statistics(const ElementArithmetic& arithmetic):
 			arithmetic(arithmetic),
-			copy(copy)
+			copy()
+		{}
+		Statistics():
+			arithmetic(),
+			copy()
 		{}
 
 		template <typename Ids, typename Out>

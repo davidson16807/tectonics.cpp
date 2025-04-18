@@ -17,7 +17,11 @@ namespace grouped
 	public:
 		Order(const ElementOrder& elements):
 			elements(elements),
-			copy(copy)
+			copy()
+		{}
+		Order():
+			elements(),
+			copy()
 		{}
 
 		template <typename Ids, typename In, typename Out>

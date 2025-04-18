@@ -58,6 +58,9 @@ namespace iterated
 		Arithmetic(const ElementArithmetic& elements):
 			elements(elements)
 		{}
+		Arithmetic():
+			elements()
+		{}
 		ITERATED_BINARY_METHOD(elements.add,      add)
 		ITERATED_BINARY_METHOD(elements.subtract, subtract)
 		ITERATED_BINARY_METHOD(elements.multiply, multiply)

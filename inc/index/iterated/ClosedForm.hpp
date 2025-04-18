@@ -58,6 +58,9 @@ namespace iterated
 		ClosedForm(const ElementClosedForm& elements):
 			elements(elements)
 		{}
+		ClosedForm():
+			elements()
+		{}
 
 		ADAPTER_UNARY_METHOD(elements.sign,    sign)
 		ADAPTER_UNARY_METHOD(elements.bitsign, bitsign)
