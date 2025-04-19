@@ -1,13 +1,14 @@
 #pragma once
 
-#include <.hpp>
-
 #include <index/procedural/Map.hpp>     // procedural::map
 
 #include <field/Compose.hpp>        // field::compose
 #include <field/Affinity.hpp>       // field::affinity
 
-#include <grid/dymaxion/series.hpp> // dymaxion::NearestVertexIds, dymaxion::VertexPositions
+#include <grid/dymaxion/Grid.hpp>   // dymaxion::Grid
+
+#include <grid/dymaxion/series.hpp> // dymaxion::VertexPositions
+#include <grid/dymaxion/field.hpp> // dymaxion::NearestVertexId
 
 // in house libraries
 
@@ -18,23 +19,25 @@ namespace rock{
     the rasters of multiple plates must be resampled onto a single global grid system
     so that they can interact with one another.
     */
+    template<typename id, typename scalar, typename mat>
     class LithosphereReferenceFrames
     {
 
-        const dymaxion::Grid grid;
-        const dymaxion::NearestVertexId nearest;
-        const dymaxion::VertexPositions positions;
+        const dymaxion::NearestVertexId<id,scalar> nearest;
+        const dymaxion::VertexPositions<id,scalar> positions;
+        const iterated::Index index;
 
     public:
 
-        LithosphereReferenceFrames(const dymaxion::Grid& grid): 
+        LithosphereReferenceFrames(const dymaxion::Grid<id,scalar>& grid):
             nearest(grid),
             positions(grid),
+            index()
         {}
 
         template<typename Raster>
         void globalize(
-            const std::vector<glm::dmat3>& locals_to_globals,
+            const std::vector<mat>& locals_to_globals,
             const std::vector<Raster>& locals,
             std::vector<Raster>& globals
         ) const {
@@ -49,13 +52,13 @@ namespace rock{
                         field::compose(nearest, field::Affinity(locals_to_globals[i])),
                         positions
                     );
-                each::get(locals, resample, globals[i]);
+                index(locals[i], resample, globals[i]);
             }
         }
 
         template<typename Raster>
         void localize(
-            const std::vector<glm::dmat3> global_to_locals,
+            const std::vector<mat> global_to_locals,
             const Raster& global,
             std::vector<Raster>& locals
         ) const {
@@ -70,7 +73,7 @@ namespace rock{
                         field::compose(nearest, field::Affinity(global_to_locals[i])),
                         positions
                     );
-                each::get(global, resample, locals[i]);
+                index(global, resample, locals[i]);
             }
         }
 

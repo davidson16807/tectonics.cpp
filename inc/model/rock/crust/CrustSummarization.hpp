@@ -12,13 +12,17 @@ namespace rock{
     template<int M, int F, typename FormationSummarization, typename CrustSummaryOps>
     class CrustSummarization
     {
+
         const FormationSummarization summarize;
         const CrustSummaryOps ops;
+
     public:
+
         CrustSummarization(const FormationSummarization& summarize, const CrustSummaryOps& ops):
             summarize(summarize),
             ops(ops)
         {}
+
         void operator() (
             const int plate_id, 
             const Crust<M,F>& crust, 
@@ -32,11 +36,16 @@ namespace rock{
                 ops.absorb(out, scratch, out);
             }
         }
+
     };
 
     template<int M, int F, typename FormationSummarization, typename CrustSummaryOps>
-    auto crust_summarization(const FormationSummarization& summarize, const CrustSummaryOps& ops){
+    auto crust_summarization(
+        const FormationSummarization& summarize, 
+        const CrustSummaryOps& ops
+    ){
         return CrustSummarization<M,F,FormationSummarization,CrustSummaryOps>(summarize, ops);
     }
 
 }
+

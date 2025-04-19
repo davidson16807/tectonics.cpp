@@ -7,12 +7,9 @@ namespace rock{
 
     class StratumSummaryOps
     {
-        const si::density<float> mantle_density;
 
     public:
-        StratumSummaryOps(const si::density<float> mantle_density):
-            mantle_density(mantle_density)
-        {}
+        StratumSummaryOps(){}
         StratumSummary combine (const StratumSummary& a, const StratumSummary& b) const
         {
             auto thickness_a = a.thickness();

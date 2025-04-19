@@ -7,8 +7,8 @@
 #include <field/Compose.hpp>        // field::compose
 #include <field/Affinity.hpp>       // field::affinity
 
-#include <grid/dymaxion/series.hpp> // dymaxion::NearestVertexIds, dymaxion::VertexPositions
-
+#include <grid/dymaxion/series.hpp> // dymaxion::VertexPositions
+#include <grid/dymaxion/field.hpp> // dymaxion::NearestVertexIds
 // in house libraries
 
 namespace rock{

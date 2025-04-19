@@ -1,13 +1,17 @@
 #pragma once
 
-#include <.hpp>
-
 #include <index/procedural/Map.hpp>     // procedural::map
 
 #include <field/Compose.hpp>        // field::compose
 #include <field/Affinity.hpp>       // field::affinity
 
-#include <grid/dymaxion/series.hpp> // dymaxion::NearestVertexIds, dymaxion::VertexPositions
+#include <grid/dymaxion/series.hpp> // dymaxion::VertexPositions
+#include <grid/dymaxion/field.hpp> // dymaxion::NearestVertexIds
+
+#include <model/rock/crust/CrustSummaryOps.hpp>
+
+#include "Lithosphere.hpp"
+#include "LithosphereSummary.hpp"
 
 // in house libraries
 
@@ -27,34 +31,35 @@ namespace rock{
     summarization .flatten   (globals,   master)            // condense globalized rasters into e.g. LithosphereSummary
     frames        .localize  (rotations, master, summaries) // resample global raster to a plate-specific for each plate
 
-    frames        .localize  (plates, precip, summaries) // we'll need precipitation specificatlly for weathering, but otherwise weathering can be in-order
+    frames        .localize  (plates, precip, summaries) // we'll need precipitation specifically for weathering, but otherwise weathering can be in-order
     */
 
     // NOTE: `M` is mineral count, `F` is formation count
-    template <int M, int F>
+    template <int M, int F, typename CrustSummarization>
     class LithosphereSummarization
     {
 
-        const CrustSummarization summarize;
-        const LithosphereSummaryTools tools;
+        const CrustSummarization summarization;
+        const CrustSummaryOps ops;
 
     public:
 
         LithosphereSummarization(
-            const CrustSummarization& summarize, const LithosphereSummaryTools tools
+            const CrustSummarization& summarization,
+            const CrustSummaryOps& ops
         ):
-            summarize(summarize), tools(tools)
+            summarization(summarization),
+            ops(ops)
         {}
 
         void summarize(
             const Lithosphere<M,F>& plates,
             LithosphereSummary& out,
-            CrustSummary& scratch_formation
+            FormationSummary& scratch_formation
         ) const {
-            *CrustSummary scratch_formation = global_formation;
             for (std::size_t i = 0; i < plates.size(); ++i)
             {
-                summarize(i, plates[i], out[i], scratch_formation);
+                summarization(i, plates[i], out[i], scratch_formation);
             }
         }
 
@@ -65,12 +70,19 @@ namespace rock{
             std::fill(out.begin(), out.end(), StratumSummary{});
             for (std::size_t i = 0; i < formations.size(); ++i)
             {
-                tools.absorb(out, formations[i], out);
+                ops.absorb(out, formations[i], out);
             }
         }
 
     };
 
+    template <int M, int F, typename CrustSummarization>
+    auto lithosphere_summarization(
+        const CrustSummarization& summarization, 
+        const CrustSummaryOps& ops
+    ){
+        return LithosphereSummarization<M,F,CrustSummarization>(summarization, ops);
+    }
 
 }
 

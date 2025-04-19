@@ -10,8 +10,9 @@ namespace dymaxion
 
 	/*
 	series.hpp contains classes of indexible objects that wrap the methods of a dymaxion::Grid.
-	with the intent of performantly participating in functions that require out-of-order memory access, 
-	such as those under vector_calculus.hpp or morphology.hpp
+	with the intent of participating in functions that require out-of-order memory access
+	(such as those under vector_calculus.hpp or morphology.hpp),
+	while still leveraging the procedural functionality within dymaxion::Grid
 	*/
 
 	#define DYMAXION_SERIES(TYPE, SIZE, TITLE, LOWER, METHOD) \

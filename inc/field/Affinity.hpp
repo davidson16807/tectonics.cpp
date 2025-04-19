@@ -13,7 +13,7 @@ namespace field
 	struct Affinity
 	{
 	    using size_type = std::size_t;
-		using value_type = glm::vec<4,T,Q>;
+		using value_type = glm::vec<C,T,Q>;
 		glm::mat<C,R,T,Q> A;
 		constexpr inline explicit Affinity(const glm::mat<C,R,T,Q>& A) : 
 			A(A)

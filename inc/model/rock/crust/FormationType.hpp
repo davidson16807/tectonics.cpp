@@ -2,7 +2,9 @@
 
 namespace rock
 {
+
 	namespace formations {
+
 		enum FormationType
 		{
 	        sediment,
@@ -23,6 +25,5 @@ namespace rock
 		};
 
 	}
-
 
 }

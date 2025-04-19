@@ -19,16 +19,22 @@ namespace rock
     template<int M, typename StratumDensity>
     class StratumSummarization
     {
+
         static constexpr float oo = std::numeric_limits<float>::max();
 
         const StratumDensity  density_for_stratum;
         const si::mass<float> mass_threshold;
 
     public:
-        StratumSummarization(const StratumDensity& density_for_stratum, const si::mass<float> mass_threshold):
+
+        StratumSummarization(
+            const StratumDensity& density_for_stratum, 
+            const si::mass<float> mass_threshold
+        ):
             density_for_stratum(density_for_stratum),
             mass_threshold(mass_threshold)
         {}
+
         StratumSummary operator() (const int plate_id, const si::area<float> area, const StratumStore<M>& stratum) const
         {
             auto mass = stratum.mass();
@@ -39,7 +45,10 @@ namespace rock
     };
 
     template<int M, typename StratumDensity>
-    auto stratum_summarization(const StratumDensity& density_for_stratum, const si::mass<float> mass_threshold){
+    auto stratum_summarization(
+        const StratumDensity& density_for_stratum, 
+        const si::mass<float> mass_threshold
+    ){
         return StratumSummarization<M,StratumDensity>(density_for_stratum, mass_threshold);
     }
 

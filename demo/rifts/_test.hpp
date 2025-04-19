@@ -62,25 +62,30 @@
 #include <raster/unlayered/Morphology.hpp>          // unlayered::Morphology
 
 #include <model/rock/formation/estimated/EarthlikeIgneousFormationGeneration.hpp>
-#include <model/rock/column/ColumnSummaryProperties.hpp>  // ColumnProperties
-#include <model/rock/stratum/StratumProperties.hpp>  // StratumProperties
-#include <model/rock/stratum/StratumSummarization.hpp>  // StratumSummarization
-#include <model/rock/stratum/StratumSummaryProperties.hpp>  // StratumSummaryIsostaticDisplacement
-#include <model/rock/formation/Formation.hpp>       // Formation
-#include <model/rock/formation/FormationSummarization.hpp>  // FormationSummarization
-#include <model/rock/crust/Crust.hpp>  // Crust
-#include <model/rock/crust/CrustSummarization.hpp>  // CrustSummarization
-#include <model/rock/crust/CrustSummaryOps.hpp>  // CrustSummaryOps
-#include <model/rock/crust/CrustSummaryProperties.hpp>  // CrustProperties
-#include <model/rock/crust/CrustMotion.hpp>         // CrustMotion
-#include <model/rock/crust/CrustFracturing.hpp>     // CrustFracturing
+#include <model/rock/column/ColumnSummaryProperties.hpp>
+#include <model/rock/stratum/StratumProperties.hpp>
+#include <model/rock/stratum/StratumSummarization.hpp>
+#include <model/rock/stratum/StratumSummaryProperties.hpp>
+#include <model/rock/formation/Formation.hpp>
+#include <model/rock/formation/FormationSummarization.hpp>
+#include <model/rock/crust/Crust.hpp>
+#include <model/rock/crust/CrustSummarization.hpp>
+#include <model/rock/crust/CrustSummaryOps.hpp>
+#include <model/rock/crust/CrustSummaryProperties.hpp>
+#include <model/rock/crust/CrustMotion.hpp>
+#include <model/rock/crust/CrustFracturing.hpp>
+#include <model/rock/crust/CrustSummaryPredicates.hpp>
+#include <model/rock/lithosphere/Lithosphere.hpp>
+#include <model/rock/lithosphere/LithosphereSummary.hpp>
+#include <model/rock/lithosphere/LithosphereSummarization.hpp>
+#include <model/rock/lithosphere/LithosphereReferenceFrames.hpp>
 
-#include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
-#include <update/OrbitalControlUpdater.hpp>         // update::OrbitalControlUpdater
+#include <update/OrbitalControlState.hpp>           
+#include <update/OrbitalControlUpdater.hpp>         
 
-#include <view/ColorscaleSurfaceShaderProgram.hpp>  // view::ColorscaleSurfaceShaderProgram
-#include <view/IndicatorSwarmShaderProgram.hpp>     // view::IndicatorSwarmShaderProgram
-#include <view/MultichannelSurfaceShaderProgram.hpp>// view::MultichannelSurfaceShaderProgram
+#include <view/ColorscaleSurfaceShaderProgram.hpp>  
+#include <view/IndicatorSwarmShaderProgram.hpp>     
+#include <view/MultichannelSurfaceShaderProgram.hpp>
 
 int main() {
   // initialize GLFW
@@ -95,7 +100,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // we don't want the old OpenGL
 
   // open a window
-  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Plate Motion", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Collision", NULL, NULL);
   if (!window) {
     std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
@@ -135,6 +140,8 @@ int main() {
   using mat3 = glm::mat3;
   using mat4 = glm::mat4;
 
+  using bools = std::vector<bool>;
+
   length meter(si::meter);
 
   length world_radius(6.371e6 * si::meter);
@@ -168,7 +175,6 @@ int main() {
 
   rock::CrustSummaryOps crust_summary_ops{
     rock::ColumnSummaryOps{
-      rock::StratumSummaryOps{}, 
       length(si::centimeter)
     }
   };
@@ -182,11 +188,9 @@ int main() {
     world_radius
   );
 
+  auto crust_summarize = rock::crust_summarization<M,F>(formation_summarize, crust_summary_ops);
+
   // SUMMARIZE THE CRUST
-  auto crust_summarize = rock::crust_summarization<M,F>(
-    formation_summarize, 
-    crust_summary_ops
-  );
   rock::CrustSummary crust_summary(fine.vertex_count());
   rock::FormationSummary formation_summary(fine.vertex_count());
   int plate_id(1);
@@ -223,11 +227,24 @@ int main() {
   calculus.gradient(coarse, coarse_buoyancy_pressure_in_pascals, vertex_gradient);
 
   // FRACTURE
-  const int plate_count = 8;
+  const int P = 8; // plate count
   rock::CrustFracturing<int,float> fracturing;
-  std::vector<unlayered::FloodFillState<int,float>> fractures(plate_count, 
+  std::vector<unlayered::FloodFillState<int,float>> fractures(P, 
       unlayered::FloodFillState<int,float>(0, coarse.vertex_count()));
   fracturing.fracture(coarse, vertex_gradient, fractures);
+  auto plates = rock::Lithosphere<M,F>(P, crust);
+  auto locals = rock::LithosphereSummary(P, crust_summary);
+  auto globals = rock::LithosphereSummary(P, crust_summary);
+  rock::FormationSummary scratch(fine.vertex_count());
+  rock::CrustSummary master(fine.vertex_count());
+  std::vector<rock::CrustSummary> summaries(P, crust_summary); // the global CrustSummary localized into each plate
+  bools alone(fine.vertex_count());
+  bools top(fine.vertex_count());
+  bools exists(fine.vertex_count());
+  bools rifting(fine.vertex_count());
+  // bools foundering(fine.vertex_count());
+  // bools detaching(fine.vertex_count());
+  bools bools_scratch(fine.vertex_count());
 
   // GENERATE PLATE MAP FROM FRACTURE STATES
   std::vector<int> coarse_plate_map(coarse.vertex_count());
@@ -238,6 +255,7 @@ int main() {
   std::vector<int> fine_plate_map(fine.vertex_count());
   index(coarse_plate_map, vertex_downsampling_ids, fine_plate_map);
 
+  // print plate map and buoyancy field
   auto id_strings = spheroidal::Strings(
     adapted::IdStrings<float>(adapted::dotshades), 
     aggregated::Order<adapted::SymbolicOrder>()
@@ -260,9 +278,9 @@ int main() {
   std::vector<bool> fine_plate_existance(fine.vertex_count());
   std::vector<vec3> fine_slab_pull(fine.vertex_count());
   std::vector<bool> fine_slab_existance(fine.vertex_count());
-  std::vector<vec3> angular_velocities_in_seconds(plate_count);
-  std::vector<mat3> orientations(plate_count, mat3(1));
-  for (int i = 0; i < plate_count; ++i)
+  std::vector<vec3> angular_velocities_in_seconds(P);
+  std::vector<mat3> orientations(P, mat3(1));
+  for (int i = 0; i < P; ++i)
   {
       fracturing.exists(fine_plate_map, i, fine_plate_existance);
       motion.slab_pull(fine_buoyancy_pressure, fine_plate_existance, si::force<float>(si::newton), fine_slab_pull);
@@ -292,7 +310,6 @@ int main() {
   std::cout << "vertex count:        " << fine.vertex_count() << std::endl;
   std::cout << "vertices per meridian" << fine.vertices_per_meridian() << std::endl;
   // copy(vertex_colored_scalars, buffer_color_values);
-  std::vector<float> scratch(fine.vertex_count());
   std::vector<bool> mask1(fine.vertex_count());
   std::vector<bool> mask2(fine.vertex_count());
   std::vector<bool> mask3(fine.vertex_count());
@@ -312,7 +329,7 @@ int main() {
       (world_radius+procedural_terrain_far_distance)/meter, // min_zoom_distance
       23.0f // log2_height
   );
-  
+
   // initialize view state
   view::ViewState view_state;
   view_state.projection_matrix = glm::perspective(
@@ -345,6 +362,14 @@ int main() {
     }
   );
 
+  rock::LithosphereReferenceFrames<int,float,mat3> frames(fine);
+  auto summarization = rock::lithosphere_summarization<M,F>(crust_summarize, crust_summary_ops);
+  iterated::Bitset<adapted::BooleanBitset> bitset;
+  rock::CrustSummaryPredicates predicates{
+    unlayered::Morphology{bitset},
+    bitset
+  };
+
   const float pi(3.1415926535);
   while(!glfwWindowShouldClose(window)) {
 
@@ -360,7 +385,8 @@ int main() {
       colorscale_state.max_color_value = order.min(fine_buoyancy_pressure)/pressure(si::pascal);
       colorscale_state.min_color_value = order.max(fine_buoyancy_pressure)/pressure(si::pascal);
 
-      for (std::size_t i(0); i < plate_count; ++i)
+      // motion
+      for (std::size_t i(0); i < P; ++i)
       {
         orientations[i] = 
           glm::rotate(
@@ -369,13 +395,35 @@ int main() {
             glm::normalize(angular_velocities_in_seconds[i]));
       }
 
-      for (std::size_t i(0); i < plate_count; ++i)
+      // summarize
+      std::cout << "summarize" << std::endl;
+      summarization .summarize (plates,       locals, scratch);   // summarize each plate into a (e.g.) CrustSummary raster
+      std::cout << "globalize" << std::endl;
+      frames        .globalize (orientations, locals, globals);   // resample plate-specific rasters onto a global grid
+      std::cout << "flatten" << std::endl;
+      summarization .flatten   (globals,      master);            // condense globalized rasters into e.g. LithosphereSummary
+      std::cout << "localize" << std::endl;
+      frames        .localize  (orientations, master, summaries); // resample global raster to a plate-specific for each plate
+      std::cout << "draw" << std::endl;
+      /*
+      Q: Why don't we determine rifting on master, then localize the result to each plate?
+      A: We are trying to minimize the number of out-of-order traversals through memory,
+         since that is the limiting factor to the performance of the application.
+         Each localization is an out-of-order operation. Calculating rifting is in-order.
+         We're building an application that doesn't just calculate rifting, but many things, almost always in-order.
+         If all those things were localized to each plate, it would significantly affect performance.
+         However since those things are almost always calculated strictly from density and thickness,
+         we can localize density and thickness and then calculate things on the localization for a performance gain.
+      */
+
+      // draw
+      for (std::size_t i(0); i < P; ++i)
       {
-        fracturing.exists(fine_plate_map, i, buffer_culling);
-        displacement_for_formation_summary(formation_summary, displacements);
-        // arithmetic.divide(displacements, procedural::uniform(length(si::kilometer)), buffer_scalars2);
-        arithmetic.divide(fine_buoyancy_pressure, procedural::uniform(pressure(si::pascal)), buffer_scalars2);
-        // copy(fine_plate_map, buffer_scalars2);
+        predicates.alone(locals[i], alone);
+        predicates.top(i, locals[i], top);
+        predicates.exists(i, locals[i], exists);
+        predicates.rifting(fine, alone, top, exists, rifting, bools_scratch);
+        copy(rifting, buffer_scalars2);
 
         /*
         This demo shows the buoyancy field for each plate 

@@ -18,7 +18,7 @@ namespace rock {
     that are intended as inputs for the methods of `CrustSimulation`.
     */
 
-    template<typename Morphology, typename Bitset>
+    template<typename Morphology, typename Bitsets>
     class CrustSummaryPredicates
     {
         using mass      = si::mass<float>;
@@ -60,7 +60,7 @@ namespace rock {
             const CrustSummary& crust,
             bools& out
         ) const {
-            for (int i = 0; i < crust.size(); ++i)
+            for (std::size_t i = 0; i < crust.size(); ++i)
             {
                 out[i] = crust[i].plate_count() <= 1;
             }
@@ -74,7 +74,7 @@ namespace rock {
             const CrustSummary& crust,
             bools& out
         ) const {
-            for (int i = 0; i < crust.size(); ++i)
+            for (std::size_t i = 0; i < crust.size(); ++i)
             {
                 out[i] = crust[i].includes(plate_id);
             }
@@ -88,7 +88,7 @@ namespace rock {
             const CrustSummary& crust,
             bools& out
         ) const {
-            for (int i = 0; i < crust.size(); ++i)
+            for (std::size_t i = 0; i < crust.size(); ++i)
             {
                 out[i] = crust[i].is_top(plate_id);
             }
@@ -102,7 +102,7 @@ namespace rock {
             const CrustSummary& crust,
             bools& out
         ) const {
-            for (int i = 0; i < crust.size(); ++i)
+            for (std::size_t i = 0; i < crust.size(); ++i)
             {
                 out[i] = crust[i].density() > mantle_density;
             }
@@ -112,7 +112,9 @@ namespace rock {
         /*
         `rifting` returns a scalar raster indicating where gaps in the plates should be filled by a given plate
         */
+        template<typename Grid>
         void rifting(
+            const Grid& grid,
             const bools& alone,
             const bools& top,
             const bools& exists,
@@ -126,16 +128,18 @@ namespace rock {
             bools* riftable           = &out;
             bools* will_stay_riftable = &scratch;
             bools* just_outside       = &out;
-            bitsets.intersect    (alone, top,         riftable);
-            morphology.erode   (riftable,           will_stay_riftable);
-            morphology.outshell(exists,             just_outside);
-            bitsets.intersect    (will_stay_riftable, just_outside, out);
+            bitsets.intersect  (alone, top,      *riftable);
+            morphology.erode   (grid, *riftable, *will_stay_riftable);
+            morphology.outshell(grid, exists,   *just_outside);
+            bitsets.intersect  (*will_stay_riftable, *just_outside, out);
         }
 
         /*
         `detaching` returns a scalar raster indicating where cells of a plate should be destroyed
         */
+        template<typename Grid>
         void detaching(
+            const Grid& grid,
             const bools& alone,
             const bools& top,
             const bools& exists,
@@ -147,24 +151,22 @@ namespace rock {
             The implementation below is equivalent to the following set logic:
                 detaching = erode(!alone ∩ !top) ∩ padding(exists) ∩ foundering
             */
-            bools* not_alone            = &out;
-            bools* not_top              = &scratch;
-            bools* subducting           = &out;
+            bools* not_alone   = &out;
+            bools* not_top     = &scratch;
+            bools* subducting  = &out;
             // bools* will_stay_subducting = &scratch;
-            bools* just_inside          = &out;
-            bools* detachable           = &out;
-            bitsets.negate      (alone,                not_alone);
-            bitsets.negate      (top,                  not_top);
-            bitsets.intersect   (not_alone, not_top,   subducting);
-            // morphology.erode  (subducting, will_stay_subducting); // NOTE: this was in the js implementation but it is suspected to be wrong
-            morphology.inshell(exists,               just_inside);
-            bitsets.intersect   (subducting, just_inside, detachable);
-            bitsets.intersect   (detachable, foundering, out);
+            bools* just_inside = &out;
+            bools* detachable  = &out;
+            bitsets.negate      (alone,                *not_alone);
+            bitsets.negate      (top,                  *not_top);
+            bitsets.intersect   (*not_alone, *not_top,   *subducting);
+            // morphology.erode  (grid, *subducting, will_stay_subducting); // NOTE: this was in the js implementation but it is suspected to be wrong
+            morphology.inshell  (grid, exists, *just_inside);
+            bitsets.intersect   (*subducting, *just_inside, *detachable);
+            bitsets.intersect   (*detachable, foundering, out);
         }
 
     };
 
 }
-
-
 

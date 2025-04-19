@@ -134,7 +134,7 @@ TEST_CASE( "CrustOps::flatten()/CrustSummarization() mass conservation", "[rock]
     rock::CrustOps<M> crust_ops;
     rock::CrustSummaryOps crust_summary_ops{
       rock::ColumnSummaryOps{
-        rock::StratumSummaryOps{density(3300.0*si::kilogram/si::meter3)}, 
+        rock::StratumSummaryOps{}, 
         length(si::centimeter)
       }
     };

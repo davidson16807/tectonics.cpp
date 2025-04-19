@@ -61,13 +61,13 @@ namespace iterated
 		}
 	};
 
-	template <typename Op>
+	template <typename F>
 	class Unary
 	{
-		const Op op;
+		const F f;
 	public:
-		Unary(const Op& op): op(op) {}
-		Unary(): op() {}
+		Unary(const F& f): f(f) {}
+		Unary(): f() {}
 		template <typename In1, typename Out>
 		void operator() (const In1& a, Out& out) const
 		{
@@ -75,18 +75,18 @@ namespace iterated
 			auto size = out.size();
 			for (auto i = 0*size; i < size; ++i)
 			{
-				out[i] = op(a[i]);
+				out[i] = f(a[i]);
 			}
 		}
 	};
 
-	template <typename Op>
+	template <typename F>
 	class Binary
 	{
-		const Op op;
+		const F f;
 	public:
-		Binary(const Op& op): op(op) {}
-		Binary(): op() {}
+		Binary(const F& f): f(f) {}
+		Binary(): f() {}
 		template <typename In1, typename In2, typename Out>
 		void operator() (const In1& a, const In2& b, Out& out) const
 		{
@@ -94,18 +94,18 @@ namespace iterated
 			auto size = out.size();
 			for (auto i = 0*size; i < size; ++i)
 			{
-				out[i] = op(a[i], b[i]);
+				out[i] = f(a[i], b[i]);
 			}
 		}
 	};
 
-	template <typename Op>
+	template <typename F>
 	class Trinary
 	{
-		const Op op;
+		const F f;
 	public:
-		Trinary(const Op& op): op(op) {}
-		Trinary(): op() {}
+		Trinary(const F& f): f(f) {}
+		Trinary(): f() {}
 		template <typename In1, typename In2, typename In3, typename Out>
 		void operator() (const In1& a, const In2& b, const In3& c, Out& out) const
 		{
@@ -113,7 +113,7 @@ namespace iterated
 			auto size = out.size();
 			for (auto i = 0*size; i < size; ++i)
 			{
-				out[i] = op(a[i], b[i], c[i]);
+				out[i] = f(a[i], b[i], c[i]);
 			}
 		}
 	};

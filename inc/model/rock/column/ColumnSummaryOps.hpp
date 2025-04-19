@@ -15,14 +15,14 @@ namespace rock{
 
     public:
 
-        ColumnSummaryOps(const StratumSummaryOps ops, const length threshold): 
-            ops(ops),
+        ColumnSummaryOps(const length threshold): 
+            ops(),
             threshold(threshold)
         {}
 
         ColumnSummary absorb (const ColumnSummary& column, const StratumSummary& stratum) const
         {
-            // NOTE: we'll need to add a `bottom` attribute as well if we plan to model the melting of crust
+            // TODO: we'll need to add a `bottom` attribute as well if we plan to model the melting of crust
             return stratum.density() < column.top.density() && stratum.thickness() > threshold?
                 ColumnSummary(stratum, ops.combine(column.top, column.rest))
               : ColumnSummary(column.top, ops.combine(stratum, column.rest));

@@ -16,13 +16,16 @@ namespace rock
     template<typename Grid, typename StratumSummarization>
     class FormationSummarization
     {
+
         using area = si::area<float>;
         using length = si::length<float>;
 
         const StratumSummarization summarization;
         const Grid grid;
         const length radius_units;
+
     public:
+
         FormationSummarization(
             const StratumSummarization& summarization, 
             const Grid& grid, 
@@ -32,6 +35,7 @@ namespace rock
             grid(grid),
             radius_units(world_radius/grid.voronoi.radius)
         {}
+
         template<typename Formation>
         void operator() (const int plate_id, const Formation& formation, FormationSummary& out) const
         {
@@ -44,13 +48,14 @@ namespace rock
                     formation[i]);
             }
         }
+
     };
 
     template<int M, typename Grid, typename StratumSummarization>
     auto formation_summarization(
-            const StratumSummarization& summarization, 
-            const Grid& grid, 
-            const si::length<float> world_radius
+        const StratumSummarization& summarization, 
+        const Grid& grid, 
+        const si::length<float> world_radius
     ){
         return FormationSummarization<Grid,StratumSummarization>(summarization, grid, world_radius);
     }

@@ -80,7 +80,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // we don't want the old OpenGL
 
   // open a window
-  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Terrain", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Crust", NULL, NULL);
   if (!window) {
     std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
@@ -148,7 +148,7 @@ int main() {
 
   rock::CrustSummaryOps crust_summary_ops{
     rock::ColumnSummaryOps{
-      rock::StratumSummaryOps{density(3300.0*si::kilogram/si::meter3)}, 
+      rock::StratumSummaryOps{}, 
       length(si::centimeter)
     }
   };
