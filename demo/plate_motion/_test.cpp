@@ -192,7 +192,7 @@ int main() {
   int plate_id(1);
   crust_summarize(plate_id, crust, crust_summary, formation_summary);
   crust_summary_ops.flatten(crust_summary, formation_summary);
-  formation_summarize(plate_id, igneous_formation, formation_summary);
+  // formation_summarize(plate_id, igneous_formation, formation_summary);
 
   // CALCULATE BUOYANCY
   iterated::Unary buoyancy_pressure_for_formation_summary(
@@ -354,8 +354,11 @@ int main() {
       // colorscale_state.max_color_value = -10.0;
       // colorscale_state.min_color_value = 16.0;
 
-      colorscale_state.max_color_value = 0.0;
-      colorscale_state.min_color_value = 8.0;
+      // colorscale_state.max_color_value = 0.0;
+      // colorscale_state.min_color_value = 8.0;
+
+      colorscale_state.max_color_value = order.min(fine_buoyancy_pressure)/pressure(si::pascal);
+      colorscale_state.min_color_value = order.max(fine_buoyancy_pressure)/pressure(si::pascal);
 
       for (std::size_t i(0); i < plate_count; ++i)
       {
