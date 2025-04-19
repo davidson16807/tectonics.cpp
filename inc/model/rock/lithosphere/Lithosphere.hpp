@@ -1,7 +1,5 @@
 #pragma once
 
-// in house libraries
-
 namespace rock{
 
     template <int mineral_count,int formation_count>
