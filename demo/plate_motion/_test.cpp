@@ -132,6 +132,7 @@ int main() {
   using acceleration = si::acceleration<float>;
 
   using vec3 = glm::vec3;
+  using mat3 = glm::mat3;
   using mat4 = glm::mat4;
 
   length meter(si::meter);
@@ -260,7 +261,7 @@ int main() {
   std::vector<vec3> fine_slab_pull(fine.vertex_count());
   std::vector<bool> fine_slab_existance(fine.vertex_count());
   std::vector<vec3> angular_velocities_in_seconds(plate_count);
-  std::vector<mat4> orientations(plate_count, mat4(1));
+  std::vector<mat3> orientations(plate_count, mat3(1));
   for (int i = 0; i < plate_count; ++i)
   {
       fracturing.exists(fine_plate_map, i, fine_plate_existance);
@@ -356,11 +357,11 @@ int main() {
       colorscale_state.max_color_value = 0.0;
       colorscale_state.min_color_value = 8.0;
 
-      for (std::size_t i(1); i < plate_count; ++i)
+      for (std::size_t i(0); i < plate_count; ++i)
       {
         orientations[i] = 
           glm::rotate(
-            orientations[i],
+            mat4(orientations[i]),
             float(si::kiloyear/si::second) * 2.0f*pi * glm::length(angular_velocities_in_seconds[i]), 
             glm::normalize(angular_velocities_in_seconds[i]));
       }
@@ -389,7 +390,7 @@ int main() {
           buffer_culling,   // culling
           buffer_element_vertex_ids,
           colorscale_state,
-          orientations[i],
+          mat4(orientations[i]),
           view_state,
           GL_TRIANGLE_STRIP
         );
