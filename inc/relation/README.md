@@ -1,0 +1,1 @@
+`relation/` expresses mathematical functions where input and/or output is a quantity of known dimension that can be expressed e.g. using SI units. It can be considered a wrapper over functions of the `analytic::` namespace where template arguments can be used to work with units of the `si::` namespace or some other unit library.

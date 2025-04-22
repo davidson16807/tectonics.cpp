@@ -8,3 +8,12 @@
 
 * `rock::` for storing the state of a planet's crust within a real time simulation that runs on consumer hardware
 
+The following namespaces are planned, or at the very least, are currently very underdeveloped:
+
+* `air` for modeling the composition and properties of gaseous mass pools on a world
+
+* `sea` for modeling the composition and properties of liquid mass pools on a world
+
+* `star` for modeling the composition and properties of bodies that fuse ordinary hydrogen through gravity
+
+* `orbit` for modeling trajectories of gravitationally bound bodies

@@ -1,0 +1,1 @@
+`raster/` contains namespaces for operations on data structures that discretize mathematical "fields". These include spatially aware operations like those seen in binary morphology or vector calculus.

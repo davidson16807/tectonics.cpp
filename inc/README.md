@@ -6,7 +6,7 @@ Maturity is defined by the following criteria:
 Code within `inc/` is typically less subject to change, however this is not a strict requirement for inclusion.
 
 `inc/` includes the following subfolders:
-* `test/` for simplifying the writing of unit tests that adhere to our test philosophy, see `doc/basic-unit-tests.md`
+* `test/` for simplifying the writing of unit tests that adhere to our test philosophy, see `doc/basic-unit-tests.md` and `test/README.md`
 * `math/` for functions and structures/classes with `operator()` methods that map ℝ→𝕋 (`glm` is optional)
 * `index/` for structures/classes with `operator[]` methods that map ℕ→𝕋 (`glm` is optional)
 * `field/` for functions and structures/classes with `operator()` methods that map ℝ²→𝕋 and ℝ³→𝕋, usually representing a function over a physical space (`glm` is required)
@@ -20,4 +20,4 @@ Code within `inc/` is typically less subject to change, however this is not a st
 the following shorthands are used above:
 * ℝ indicates floating point values
 * ℕ indicates positive integers
-* 𝕋 indicates some arbitrary type
+* 𝕋 indicates an arbitrary type known at compile-time
