@@ -75,10 +75,10 @@
 #include <model/rock/crust/CrustMotion.hpp>
 #include <model/rock/crust/CrustFracturing.hpp>
 #include <model/rock/crust/CrustSummaryPredicates.hpp>
+#include <model/rock/crust/CrustReferenceFrames.hpp>
 #include <model/rock/lithosphere/Lithosphere.hpp>
 #include <model/rock/lithosphere/LithosphereSummary.hpp>
 #include <model/rock/lithosphere/LithosphereSummarization.hpp>
-#include <model/rock/lithosphere/LithosphereReferenceFrames.hpp>
 
 #include <update/OrbitalControlState.hpp>           
 #include <update/OrbitalControlUpdater.hpp>         
@@ -235,7 +235,9 @@ int main() {
   auto plates = rock::Lithosphere<M,F>(P, crust);
   auto locals = rock::LithosphereSummary(P, crust_summary);
   auto globals = rock::LithosphereSummary(P, crust_summary);
-  rock::FormationSummary scratch(fine.vertex_count());
+  rock::FormationSummary formation_scratch(fine.vertex_count());
+  rock::CrustSummary local_scratch(fine.vertex_count());
+  rock::CrustSummary global_scratch(fine.vertex_count());
   rock::CrustSummary master(fine.vertex_count());
   std::vector<rock::CrustSummary> summaries(P, crust_summary); // the global CrustSummary localized into each plate
   bools alone(fine.vertex_count());
@@ -362,8 +364,8 @@ int main() {
     }
   );
 
-  rock::LithosphereReferenceFrames<int,float,mat3> frames(fine);
-  auto summarization = rock::lithosphere_summarization<M,F>(crust_summarize, crust_summary_ops);
+  rock::CrustReferenceFrames<int,float,mat3> frames(fine);
+  auto summarization = rock::lithosphere_summarization<M,F,mat3>(crust_summarize, frames, crust_summary_ops);
   iterated::Bitset<adapted::BooleanBitset> bitset;
   rock::CrustSummaryPredicates predicates{
     unlayered::Morphology{bitset},
@@ -397,14 +399,12 @@ int main() {
 
       // summarize
       std::cout << "summarize" << std::endl;
-      summarization .summarize (plates,       locals, scratch);   // summarize each plate into a (e.g.) CrustSummary raster
-      std::cout << "globalize" << std::endl;
-      frames        .globalize (orientations, locals, globals);   // resample plate-specific rasters onto a global grid
-      std::cout << "flatten" << std::endl;
-      summarization .flatten   (globals,      master);            // condense globalized rasters into e.g. LithosphereSummary
+      // summarize each plate into a single global CrustSummary
+      summarization .globalize (orientations, plates, master, local_scratch, global_scratch, formation_scratch);
       std::cout << "localize" << std::endl;
-      frames        .localize  (orientations, master, summaries); // resample global raster to a plate-specific for each plate
+      summarization .localize  (orientations, master, summaries); // resample global raster to a plate-specific for each plate
       std::cout << "draw" << std::endl;
+
       /*
       Q: Why don't we determine rifting on master, then localize the result to each plate?
       A: We are trying to minimize the number of out-of-order traversals through memory,
@@ -419,9 +419,9 @@ int main() {
       // draw
       for (std::size_t i(0); i < P; ++i)
       {
-        predicates.alone(locals[i], alone);
-        predicates.top(i, locals[i], top);
-        predicates.exists(i, locals[i], exists);
+        predicates.alone(summaries[i], alone);
+        predicates.top(i, summaries[i], top);
+        predicates.exists(i, summaries[i], exists);
         predicates.rifting(fine, alone, top, exists, rifting, bools_scratch);
         copy(rifting, buffer_scalars2);
 

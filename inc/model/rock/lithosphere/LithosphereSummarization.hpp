@@ -35,53 +35,62 @@ namespace rock{
     */
 
     // NOTE: `M` is mineral count, `F` is formation count
-    template <int M, int F, typename CrustSummarization>
+    template <int M, int F, typename mat, typename CrustSummarization, typename CrustReferenceFrames>
     class LithosphereSummarization
     {
 
         const CrustSummarization summarization;
+        const CrustReferenceFrames frames;
         const CrustSummaryOps ops;
 
     public:
 
         LithosphereSummarization(
             const CrustSummarization& summarization,
+            const CrustReferenceFrames& frames,
             const CrustSummaryOps& ops
         ):
             summarization(summarization),
+            frames(frames),
             ops(ops)
         {}
 
-        void summarize(
+        void globalize(
+            const std::vector<mat>& locals_to_globals,
             const Lithosphere<M,F>& plates,
-            LithosphereSummary& out,
+            CrustSummary& out,
+            CrustSummary& scratch_local,
+            CrustSummary& scratch_global,
             FormationSummary& scratch_formation
         ) const {
             for (std::size_t i = 0; i < plates.size(); ++i)
             {
-                summarization(i, plates[i], out[i], scratch_formation);
+                summarization(i, plates[i], scratch_local, scratch_formation);
+                frames.globalize(locals_to_globals[i], scratch_local, scratch_global);
+                ops.absorb(out, scratch_global, out);
             }
         }
 
-        void flatten (
-            const LithosphereSummary& formations,
-            CrustSummary& out
+        void localize(
+            const std::vector<mat>& locals_to_globals,
+            const CrustSummary& global,
+            std::vector<CrustSummary>& locals
         ) const {
-            std::fill(out.begin(), out.end(), StratumSummary{});
-            for (std::size_t i = 0; i < formations.size(); ++i)
+            for (std::size_t i = 0; i < locals.size(); ++i)
             {
-                ops.absorb(out, formations[i], out);
+                frames.localize(glm::inverse(locals_to_globals[i]), global, locals[i]);
             }
         }
 
     };
 
-    template <int M, int F, typename CrustSummarization>
+    template <int M, int F, typename mat, typename CrustSummarization, typename CrustReferenceFrames>
     auto lithosphere_summarization(
         const CrustSummarization& summarization, 
+        const CrustReferenceFrames& frames, 
         const CrustSummaryOps& ops
     ){
-        return LithosphereSummarization<M,F,CrustSummarization>(summarization, ops);
+        return LithosphereSummarization<M,F,mat,CrustSummarization,CrustReferenceFrames>(summarization, frames, ops);
     }
 
 }
