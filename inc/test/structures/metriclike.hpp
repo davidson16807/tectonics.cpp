@@ -97,7 +97,7 @@ namespace test {
         const std::string f_name;    const F f; 
         /* 
         NOTE: a metric by definition maps 𝕏→ℝ, so `add` and `leq` do not need to be passed in
-        we define `add` and `leq` as returning doubles since this allows any other numeric primitic 
+        we define `add` and `leq` as returning doubles since this allows any other numeric primitives 
         to be automatically cast without loss of precision
         */
         MetaMetric(
@@ -195,7 +195,7 @@ namespace test {
         const std::string f_name;    const F f; 
         /* 
         NOTE: a metric by definition maps 𝕏→ℝ, so `add` and `leq` do not need to be passed in
-        we define `add` and `leq` as returning doubles since this allows any other numeric primitic 
+        we define `add` and `leq` as returning doubles since this allows any other numeric primitives 
         to be automatically cast without loss of precision
         */
         Metric(

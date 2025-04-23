@@ -30,7 +30,7 @@ namespace geometric
     }
 
     template<glm::qualifier quality=glm::defaultp>
-    scalar nearest_offset_to_point_for_samples(
+    scalar nearest_offset_to_point(
       const glm::vec<N,scalar,quality> ray_reference, 
       const glm::vec<N,scalar,quality> ray_direction, 
       const glm::vec<N,scalar,quality> point
@@ -41,7 +41,7 @@ namespace geometric
     }
 
     template<glm::qualifier quality=glm::defaultp>
-    inline scalar nearest_distance_to_point_for_samples(
+    inline scalar nearest_distance_to_point(
       const glm::vec<N,scalar,quality> ray_reference, 
       const glm::vec<N,scalar,quality> ray_offset, 
       const glm::vec<N,scalar,quality> point

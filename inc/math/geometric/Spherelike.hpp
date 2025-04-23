@@ -30,7 +30,7 @@ namespace geometric
         return scalar(4)/scalar(3)*pi*radius*radius*radius;
     }
     template<glm::qualifier quality=glm::defaultp>
-    scalar surface_distance_from_sphere_to_point(
+    scalar surface_distance_to_point(
       const glm::vec<L,scalar,quality> point, 
       const glm::vec<L,scalar,quality> origin, 
       const scalar radius
@@ -38,7 +38,7 @@ namespace geometric
       return glm::length(point-origin) - radius;
     }
     template<glm::qualifier quality=glm::defaultp>
-    scalar surface_normal_for_sphere_at_point(
+    scalar surface_normal_at_point(
       const glm::vec<L,scalar,quality> point, 
       const glm::vec<L,scalar,quality> origin, 
       const scalar radius
@@ -46,7 +46,7 @@ namespace geometric
       return glm::normalize(point-origin);
     }
     template<glm::qualifier quality=glm::defaultp>
-    bool is_point_in_sphere(
+    bool is_point_inside(
       const glm::vec<L,scalar,quality> point, 
       const glm::vec<L,scalar,quality> origin, 
       const scalar radius
@@ -79,7 +79,7 @@ namespace geometric
   };
 
   template<int L, typename scalar>
-  Spherelike<L,scalar> points_and_spheres(const scalar pi)
+  Spherelike<L,scalar> spherelike(const scalar pi)
   {
     return Spherelike<L,scalar>(pi);
   }
