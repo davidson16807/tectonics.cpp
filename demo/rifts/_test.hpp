@@ -51,6 +51,7 @@
 #include <buffer/PyramidBuffers.hpp>                // buffer::PyramidBuffers
 
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
+#include <grid/dymaxion/GridCache.hpp>              // dymaxion::GridCache
 #include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
 #include <grid/dymaxion/VertexDownsamplingIds.hpp>  // dymaxion::VertexDownsamplingIds
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
@@ -149,8 +150,8 @@ int main() {
   viscosity mantle_viscosity(1.57e20*si::pascal*si::second);
   int vertices_per_fine_square_side(30);
   int vertices_per_coarse_square_side(vertices_per_fine_square_side/2);
-  dymaxion::Grid fine(world_radius/meter, vertices_per_fine_square_side);
-  dymaxion::Grid coarse(world_radius/meter, vertices_per_coarse_square_side);
+  dymaxion::GridCache fine(dymaxion::Grid(world_radius/meter, vertices_per_fine_square_side));
+  dymaxion::GridCache coarse(dymaxion::Grid(world_radius/meter, vertices_per_coarse_square_side));
 
   iterated::Identity copy;
 
@@ -184,8 +185,9 @@ int main() {
       rock::AgedStratumDensity{densities_for_age, age_of_world},
       mass(si::tonne)
     ), 
-    fine,
-    world_radius
+    // fine,
+    // world_radius
+    world_radius/fine.radius()
   );
 
   auto crust_summarize = rock::crust_summarization<M,F>(formation_summarize, crust_summary_ops);
@@ -194,9 +196,9 @@ int main() {
   rock::CrustSummary crust_summary(fine.vertex_count());
   rock::FormationSummary formation_summary(fine.vertex_count());
   int plate_id(1);
-  crust_summarize(plate_id, crust, crust_summary, formation_summary);
+  crust_summarize(fine, plate_id, crust, crust_summary, formation_summary);
   crust_summary_ops.flatten(crust_summary, formation_summary);
-  // formation_summarize(plate_id, igneous_formation, formation_summary);
+  // formation_summarize(grid, plate_id, igneous_formation, formation_summary);
 
   // CALCULATE BUOYANCY
   iterated::Unary buoyancy_pressure_for_formation_summary(
@@ -213,7 +215,7 @@ int main() {
   iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic{}};
   aggregated::Order order{adapted::SymbolicOrder{}};
   grouped::Statistics stats{adapted::TypedSymbolicArithmetic<float>(0.0f, 1.0f)};
-  dymaxion::VertexDownsamplingIds vertex_downsampling_ids(fine.memory, coarse.memory);
+  dymaxion::VertexDownsamplingIds vertex_downsampling_ids(fine.grid.memory, coarse.grid.memory);
   stats.sum(vertex_downsampling_ids, fine_buoyancy_pressure, coarse_buoyancy_pressure);
   arithmetic.divide(coarse_buoyancy_pressure, procedural::uniform(std::pow(float(vertex_downsampling_ids.factor), 2.0f)), coarse_buoyancy_pressure);
 
@@ -298,7 +300,7 @@ int main() {
 
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<int,float> grids(vertices_per_fine_square_side);
-  dymaxion::VertexPositions fine_vertex_positions(fine);
+  dymaxion::VertexPositions fine_vertex_positions(fine.grid);
   std::vector<length> displacements(fine.vertex_count());
   std::vector<float> buffer_color_values(fine.vertex_count());
   std::vector<std::byte> buffer_culling(fine.vertex_count());
@@ -362,7 +364,10 @@ int main() {
     }
   );
 
-  rock::LithosphereReferenceFrames<int,float,mat3> frames(fine);
+  auto frames = rock::lithosphere_reference_frames<int,float,mat3>(
+    dymaxion::NearestVertexId<int,float>(fine.grid),
+    dymaxion::VertexPositions<int,float>(fine.grid)
+  );
   auto summarization = rock::lithosphere_summarization<M,F>(crust_summarize, crust_summary_ops);
   iterated::Bitset<adapted::BooleanBitset> bitset;
   rock::CrustSummaryPredicates predicates{
@@ -397,7 +402,7 @@ int main() {
 
       // summarize
       std::cout << "summarize" << std::endl;
-      summarization .summarize (plates,       locals, scratch);   // summarize each plate into a (e.g.) CrustSummary raster
+      summarization .summarize (fine, plates, locals, scratch);   // summarize each plate into a (e.g.) CrustSummary raster
       std::cout << "globalize" << std::endl;
       frames        .globalize (orientations, locals, globals);   // resample plate-specific rasters onto a global grid
       std::cout << "flatten" << std::endl;
@@ -405,6 +410,7 @@ int main() {
       std::cout << "localize" << std::endl;
       frames        .localize  (orientations, master, summaries); // resample global raster to a plate-specific for each plate
       std::cout << "draw" << std::endl;
+
       /*
       Q: Why don't we determine rifting on master, then localize the result to each plate?
       A: We are trying to minimize the number of out-of-order traversals through memory,

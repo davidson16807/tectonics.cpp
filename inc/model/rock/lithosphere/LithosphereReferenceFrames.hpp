@@ -19,19 +19,20 @@ namespace rock{
     the rasters of multiple plates must be resampled onto a single global grid system
     so that they can interact with one another.
     */
-    template<typename id, typename scalar, typename mat>
+    template<typename id, typename scalar, typename mat, 
+        typename NearestVertexId, typename VertexPositions>
     class LithosphereReferenceFrames
     {
 
-        const dymaxion::NearestVertexId<id,scalar> nearest;
-        const dymaxion::VertexPositions<id,scalar> positions;
+        const NearestVertexId nearest;
+        const VertexPositions positions;
         const iterated::Index index;
 
     public:
 
-        LithosphereReferenceFrames(const dymaxion::Grid<id,scalar>& grid):
-            nearest(grid),
-            positions(grid),
+        LithosphereReferenceFrames(NearestVertexId nearest, VertexPositions positions):
+            nearest(nearest),
+            positions(positions),
             index()
         {}
 
@@ -86,6 +87,14 @@ namespace rock{
     summarization.flatten   (globals,   master)              // flatten globalized rasters into (e.g.) a LithosphereSummary
     frames       .localize  (rotations, master, derivatives) // resample global raster to a plate-specific for each plate
     */
+
+    template<typename id, typename scalar, typename mat, 
+        typename NearestVertexId, typename VertexPositions>
+    auto lithosphere_reference_frames(NearestVertexId nearest, VertexPositions positions) {
+        return LithosphereReferenceFrames<id,scalar,mat,NearestVertexId,VertexPositions>(
+            nearest, positions
+        );
+    }
 
 }
 

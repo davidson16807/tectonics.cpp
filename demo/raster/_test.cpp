@@ -1,4 +1,9 @@
 
+/*
+raster/ showcases rendering a scalar raster, 
+but frankly it's just an all-around useful tool for debugging raster functionality using a nice 3d display
+*/
+
 // std libraries
 #include <iostream>
 #include <string>
@@ -90,7 +95,7 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
   float radius(3.0f);
-  int vertices_per_square_side(4);
+  int vertices_per_square_side(30);
   dymaxion::Grid grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
   // auto vertex_square_ids = dymaxion::square_ids(grid);
@@ -98,10 +103,7 @@ int main() {
   std::vector<float> vertex_colored_scalars(grid.vertex_count());
   for (int i = 0; i < grid.vertex_count(); ++i)
   {
-    vertex_colored_scalars[i] = i;
-    // vertex_colored_scalars[i] = grid.memory.memory_id(grid.memory.grid_id(i));
-    // vertex_colored_scalars[i] = grid.memory.memory_id(grid.memory.grid_id(i)+glm::ivec2(10,10));
-    // vertex_colored_scalars[i] = (grid.vertex_position(i).z);
+    vertex_colored_scalars[i] = grid.vertex_dual_area(i);
   }
 
   iterated::Identity copy;

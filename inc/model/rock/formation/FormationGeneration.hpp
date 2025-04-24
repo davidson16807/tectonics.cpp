@@ -43,7 +43,7 @@ namespace rock {
             grid(grid),
             elevation_for_position(elevation_for_position),
             stratum_for_area_elevation(stratum_for_area_elevation),
-            radius_units(world_radius/grid.voronoi.radius)
+            radius_units(world_radius/grid.radius())
         {}
 
         using size_type = std::size_t; 

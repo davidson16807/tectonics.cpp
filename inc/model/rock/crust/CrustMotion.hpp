@@ -75,7 +75,7 @@ namespace rock {
             gravity(gravity),
             mantle_density(mantle_density),
             mantle_viscosity(mantle_viscosity),
-            radius_units(world_radius/grid.voronoi.radius)
+            radius_units(world_radius/grid.radius())
         {}
 
 

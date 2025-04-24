@@ -52,14 +52,16 @@ namespace rock{
             ops(ops)
         {}
 
+        template<typename Grid>
         void summarize(
+            const Grid& grid, 
             const Lithosphere<M,F>& plates,
             LithosphereSummary& out,
             FormationSummary& scratch_formation
         ) const {
             for (std::size_t i = 0; i < plates.size(); ++i)
             {
-                summarization(i, plates[i], out[i], scratch_formation);
+                summarization(grid, i, plates[i], out[i], scratch_formation);
             }
         }
 

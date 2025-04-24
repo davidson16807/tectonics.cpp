@@ -23,7 +23,9 @@ namespace rock{
             ops(ops)
         {}
 
+        template<typename Grid>
         void operator() (
+            const Grid& grid, 
             const int plate_id, 
             const Crust<M,F>& crust, 
             CrustSummary& out, 
@@ -32,7 +34,8 @@ namespace rock{
             ops.empty(out);
             for (std::size_t i = 0; i < crust.size(); ++i)
             {
-                summarize(plate_id, crust[i], scratch);
+                // summarize(plate_id, crust[i], scratch);
+                summarize(grid, plate_id, crust[i], scratch);
                 ops.absorb(out, scratch, out);
             }
         }
