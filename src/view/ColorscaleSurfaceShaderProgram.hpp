@@ -107,7 +107,7 @@ namespace view
 			        void main(){
 			            fragment_color_value = vertex_color_value;
 			            fragment_darken = vertex_darken;
-			            fragment_culling = vertex_culling == 0u? 1.0 : 0.0;
+			            fragment_culling = vertex_culling == 0u? 0.0 : 1.0;
 			            /* 
 			            NOTES: 
 			            * For a heads up display, set all `*_matrix` parameters to identity.
