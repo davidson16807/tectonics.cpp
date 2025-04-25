@@ -376,7 +376,7 @@ int main() {
   };
 
   const float pi(3.1415926535);
-  while(!glfwWindowShouldClose(window)) {
+  for(int i=0; i<10; i++) {
 
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
