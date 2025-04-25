@@ -422,14 +422,13 @@ int main() {
          we can localize density and thickness and then calculate things on the localization for a performance gain.
       */
 
-      // draw
       for (std::size_t i(0); i < P; ++i)
       {
-        predicates.alone(locals[i], alone);
-        predicates.top(i, locals[i], top);
-        predicates.exists(i, locals[i], exists);
-        predicates.rifting(fine, alone, top, exists, rifting, bools_scratch);
-        copy(rifting, buffer_scalars2);
+        fracturing.exists(fine_plate_map, i, buffer_culling);
+        displacement_for_formation_summary(formation_summary, displacements);
+        // arithmetic.divide(displacements, procedural::uniform(length(si::kilometer)), buffer_scalars2);
+        arithmetic.divide(fine_buoyancy_pressure, procedural::uniform(pressure(si::pascal)), buffer_scalars2);
+        // copy(fine_plate_map, buffer_scalars2);
 
         /*
         This demo shows the buoyancy field for each plate 
