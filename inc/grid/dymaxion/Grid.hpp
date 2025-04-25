@@ -57,7 +57,7 @@ namespace dymaxion
         	memory (vertices_per_square_side)
     	{}
 
-		inline constexpr id radius() const
+		inline constexpr scalar radius() const
 		{
 			return voronoi.radius;
 		}

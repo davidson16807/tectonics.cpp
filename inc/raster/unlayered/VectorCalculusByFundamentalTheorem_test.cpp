@@ -43,7 +43,7 @@
 #include <field/VectorZip.hpp>
 
 #include <grid/dymaxion/Grid.hpp>
-#include <grid/dymaxion/series.hpp>
+#include <grid/dymaxion/GridSeries.hpp>
 
 #include "VectorCalculusByFundamentalTheorem.hpp"
 #include "VectorCalculusByFundamentalTheorem_test.hpp"

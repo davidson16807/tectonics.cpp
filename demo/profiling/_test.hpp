@@ -52,7 +52,7 @@
 
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
 #include <grid/dymaxion/GridCache.hpp>              // dymaxion::GridCache
-#include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
+#include <grid/dymaxion/GridSeries.hpp>                 // dymaxion::BufferVertexIds
 #include <grid/dymaxion/VertexDownsamplingIds.hpp>  // dymaxion::VertexDownsamplingIds
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
@@ -366,8 +366,9 @@ int main() {
 
   auto frames = rock::lithosphere_reference_frames<int,float,mat3>(
     dymaxion::NearestVertexId<int,float>(fine.grid),
-    dymaxion::VertexPositions<int,float>(fine.grid)
+    fine.vertex_positions
   );
+
   auto summarization = rock::lithosphere_summarization<M,F>(crust_summarize, crust_summary_ops);
   iterated::Bitset<adapted::BooleanBitset> bitset;
   rock::CrustSummaryPredicates predicates{

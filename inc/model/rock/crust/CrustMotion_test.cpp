@@ -30,7 +30,7 @@
 #include <raster/spheroidal/Strings.hpp> // spheroidal::Strings
 
 #include <grid/dymaxion/Grid.hpp>   // dymaxion::Grid
-#include <grid/dymaxion/series.hpp> // dymaxion::BufferVertexIds
+#include <grid/dymaxion/GridSeries.hpp> // dymaxion::BufferVertexIds
 #include <grid/dymaxion/VertexDownsamplingIds.hpp> // dymaxion::VertexDownsamplingIds
 
 #include <model/rock/stratum/StratumStore.hpp>

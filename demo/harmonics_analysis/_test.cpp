@@ -43,7 +43,7 @@
 #include <buffer/PyramidBuffers.hpp>                // buffer::PyramidBuffers
 
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
-#include <grid/dymaxion/series.hpp>                 // dymaxion::BufferVertexIds
+#include <grid/dymaxion/GridSeries.hpp>                 // dymaxion::BufferVertexIds
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings

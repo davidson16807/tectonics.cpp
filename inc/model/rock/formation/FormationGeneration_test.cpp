@@ -64,7 +64,7 @@ It does so by testing that this diagram commutes:
 #include <grid/cartesian/UnboundedIndexing.hpp>     // field::UnboundedIndexing
 #include <grid/dymaxion/Indexing.hpp>               // dymaxion::Indexing
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
-#include <grid/dymaxion/series.hpp>                 // dymaxion::VertexPositions
+#include <grid/dymaxion/GridSeries.hpp>                 // dymaxion::VertexPositions
 
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 

@@ -30,7 +30,7 @@ this file tests an assortment of functionality within rock::, namely:
 #include <index/iterated/Nary.hpp>
 
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
-#include <grid/dymaxion/series.hpp>                 // dymaxion::VertexPositions
+#include <grid/dymaxion/GridSeries.hpp>                 // dymaxion::VertexPositions
 
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 

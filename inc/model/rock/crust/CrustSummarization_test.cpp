@@ -43,7 +43,7 @@ It does so by testing that mass properties are commutative as the limit of this 
 #include <index/iterated/Nary.hpp>
 
 #include <grid/dymaxion/Grid.hpp>                   // dymaxion::Grid
-#include <grid/dymaxion/series.hpp>                 // dymaxion::VertexPositions
+#include <grid/dymaxion/GridSeries.hpp>                 // dymaxion::VertexPositions
 
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 

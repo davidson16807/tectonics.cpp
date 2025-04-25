@@ -1,26 +1,65 @@
 #pragma once
 
-// 3rd party libraries
-#include <glm/vec3.hpp>
-#include <glm/mat3x3.hpp>
-#include <glm/geometric.hpp>
+// C libraries
+#include <cmath>     /* std::floor */
 
-// in-house libraries
-#include "Voronoi.hpp"
-#include "Indexing.hpp"
+// std libraries
 
-namespace dymaxion 
+namespace dymaxion
 {
 
+	/*
+	GridSeries.hpp contains classes of indexible objects that wrap the methods of a dymaxion::Grid.
+	with the intent of participating in functions that require out-of-order memory access
+	(such as those under vector_calculus.hpp or morphology.hpp),
+	while still leveraging the procedural functionality within dymaxion::Grid
+	*/
+
+	#define DYMAXION_SERIES(TYPE, SIZE, TITLE, LOWER, METHOD) \
+	template<typename id, typename scalar> \
+	struct TITLE \
+	{ \
+		Grid<id,scalar> grid; \
+		constexpr inline explicit TITLE(const Grid<id,scalar> grid): grid(grid) {} \
+	    using ivec3 = glm::vec<3,id,glm::defaultp>; \
+	    using vec3 = glm::vec<3,scalar,glm::defaultp>; \
+	    using mat3 = glm::mat<3,3,scalar,glm::defaultp>; \
+        using ipoint = Point<id,id>;\
+        using point = Point<id,scalar>;\
+	    using size_type = std::size_t; \
+		using value_type = TYPE; \
+		constexpr inline size_type size() const { return SIZE(); } \
+		constexpr inline value_type operator()(const size_type memory_id ) const { return METHOD(memory_id); } \
+		constexpr inline value_type operator[](const size_type memory_id ) const { return METHOD(memory_id); } \
+	};\
+	template<typename id, typename scalar>\
+	constexpr inline TITLE<id,scalar> LOWER(const Grid<id,scalar> grid)\
+	{\
+		return TITLE<id,scalar>(grid);\
+	}
+
+	DYMAXION_SERIES(id,     grid.vertex_count,  SquareId,           square_ids,           grid.square_id)
+	DYMAXION_SERIES(vec3,   grid.vertex_count,  VertexPositions,    vertex_positions,     grid.vertex_position)
+	DYMAXION_SERIES(vec3,   grid.vertex_count,  VertexNormals,      vertex_normals,       grid.vertex_normal)
+	DYMAXION_SERIES(vec3,   grid.vertex_count,  VertexEast,         vertex_east,          grid.vertex_east)
+	DYMAXION_SERIES(vec3,   grid.vertex_count,  VertexNorth,        vertex_north,         grid.vertex_north)
+	DYMAXION_SERIES(mat3,   grid.vertex_count,  VertexFrame,        vertex_frame,         grid.vertex_frame)
+	DYMAXION_SERIES(scalar, grid.vertex_count,  VertexDualAreas,    vertex_dual_areas,    grid.vertex_dual_area)
+	DYMAXION_SERIES(ipoint, grid.vertex_count,  VertexGridIds,      vertex_grid_ids,      grid.voronoi.grid_id)
+	#undef DYMAXION_SERIES
+
     /*
-    `dymaxion::GridCache` is a wrapper for `dymaxion::Grid`
-    that caches calculations in Grid to memory
-    where doing so results in a performance gain on large grids.
-    Care should be taken if using `GridCache` as a class attribute
-    since its memory footprint is not trivial as with `Grid`.
+    `dymaxion::GridSeries` is a wrapper for `dymaxion::Grid` that is polymorphic to `dymaxion::GridCache`.
+    Whereas `GridCache` provides options between cached std::vector attributes and procedural methods 
+    `GridSeries` forces usage of procedural methods by providing indexible attributes that are wrappers to procedural methods.
+	This can be used either to quickly test performance using procedural methods,
+	or to force the use of procedural methods on functions that otherwise prefer cached std::vectors when the developer thinks they know better.
+	To illustrate, some functions might prefer cached std::vectors because they use an in-order traversal and want to optimize for that,
+	but a developer might need to coopt those functions to run in a parallel scenario where shared memory resources are discouraged.
+	They would pass that function a `dymaxion::GridSeries`.
     */
     template<typename id, typename scalar, glm::qualifier Q=glm::defaultp>
-	class GridCache{
+	class GridSeries{
 
         using ivec2 = glm::vec<2,id,Q>;
         using vec3 = glm::vec<3,scalar,Q>;
@@ -30,34 +69,21 @@ namespace dymaxion
 	public:
 
 		const Grid<id,scalar,Q> grid;
-		std::vector<scalar> vertex_dual_areas;
-		std::vector<vec3> vertex_positions;
-		std::vector<vec3> vertex_normals;
+		VertexDualAreas<id,scalar> vertex_dual_areas;
+		VertexPositions<id,scalar> vertex_positions;
+		VertexNormals<id,scalar> vertex_normals;
 
 		using size_type = id;
 		using value_type = scalar;
 
 		static constexpr id arrows_per_vertex = 4;
 
-        inline constexpr explicit GridCache(const Grid<id,scalar,Q> grid):
+        inline constexpr explicit GridSeries(const Grid<id,scalar,Q> grid):
         	grid(grid),
-        	vertex_dual_areas(grid.vertex_count()),
-        	vertex_positions(grid.vertex_count()),
-        	vertex_normals(grid.vertex_count())
-    	{
-    		for (int i = 0; i < grid.vertex_count(); ++i)
-    		{
-    			vertex_dual_areas[i] = grid.vertex_dual_area(i);
-    		}
-    		for (int i = 0; i < grid.vertex_count(); ++i)
-    		{
-    			vertex_normals[i] = grid.vertex_normal(i);
-    		}
-    		for (int i = 0; i < grid.vertex_count(); ++i)
-    		{
-    			vertex_positions[i] = grid.vertex_position(i);
-    		}
-    	}
+        	vertex_dual_areas(grid),
+        	vertex_positions(grid),
+        	vertex_normals(grid)
+    	{}
 
 		inline constexpr id radius() const
 		{
