@@ -1,0 +1,10 @@
+TODO:
+* introduce GridSeries with analogous interface to GridCache (e.g. `verted_dual_areas`) so that individual function implementations can choose procedural or cached implementation based on e.g. whether they are in-order
+* what happens to tradeoffs between GridSeries and GridCache when working at a higher resolution (e.g. 60x60 grids?)
+* what happens to performance when running with optimizations turned on?
+* what happens to performance when using grids of a different class?
+	collignon::Grid
+	tectonics.py style fibonacci::Grid
+	tectonics.js style icosahedron with massive octahedron grid for cached nearest_vertex_id lookups
+* what happens to performance when LithosphereReferenceFrames operates on rasters of individual properties (e.g. density, thickness) and not `ColumnSummary`s as is done at present?
+	probably need to use contents of ColumnSummaryProperties to first map individual `CrustSummary`s in LithosphereSummary to scalar rasters
