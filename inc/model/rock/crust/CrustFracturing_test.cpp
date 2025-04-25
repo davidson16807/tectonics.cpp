@@ -75,12 +75,11 @@ TEST_CASE( "CrustFracturing", "[rock]" ) {
           rock::AgedStratumDensity{densities_for_age, age_of_world},
           mass(si::tonne)
         ), 
-        fine,
         world_radius
     );
     int plate_id(1);
     rock::FormationSummary formation_summary(fine.vertex_count());
-    formation_summarize(plate_id, igneous_formation, formation_summary);
+    formation_summarize(fine, plate_id, igneous_formation, formation_summary);
 
     // CALCULATE BUOYANCY
     iterated::Unary buoyancy_pressure_for_formation_summary(

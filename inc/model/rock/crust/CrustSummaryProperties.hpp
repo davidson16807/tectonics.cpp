@@ -43,7 +43,6 @@ namespace rock {
     /*
     `CrustSummaryMass`
     */
-    template<typename Grid>
     class CrustSummaryMass
     {
 
@@ -54,15 +53,13 @@ namespace rock {
 
         static constexpr length meter = length(si::meter);
 
-        const Grid grid;
-
     public:
 
-        CrustSummaryMass(const Grid& grid):
-            grid(grid)
+        CrustSummaryMass()
         {}
 
-        void operator()(const CrustSummary& summary, masses& out) const
+        template<typename Grid>
+        void operator()(const Grid& grid, const CrustSummary& summary, masses& out) const
         {
             for (auto i = 0*summary.size(); i < summary.size(); ++i)
             {
@@ -70,7 +67,8 @@ namespace rock {
             }
         }
 
-        mass operator()(const CrustSummary& summary) const
+        template<typename Grid>
+        mass operator()(const Grid& grid, const CrustSummary& summary) const
         {
             mass out(0);
             for (auto i = 0*summary.size(); i < summary.size(); ++i)

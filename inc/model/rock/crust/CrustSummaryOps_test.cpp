@@ -34,7 +34,6 @@ TEST_CASE( "CrustSummary absorb() commutative monoid", "[rock]" ) {
 
     rock::CrustSummaryOps ops(
         rock::ColumnSummaryOps(
-            rock::StratumSummaryOps(density(3075.0*si::kilogram/si::meter3)), 
             length(si::centimeter)));
     rock::CrustSummaryAdapter inexact;
 
@@ -123,7 +122,6 @@ TEST_CASE( "CrustSummary absorb() mass conservation", "[rock]" ) {
 
     rock::CrustSummaryOps ops(
         rock::ColumnSummaryOps(
-            rock::StratumSummaryOps(density(3075.0*si::kilogram/si::meter3)), 
             length(si::centimeter)));
     rock::CrustSummaryAdapter inexact;
 

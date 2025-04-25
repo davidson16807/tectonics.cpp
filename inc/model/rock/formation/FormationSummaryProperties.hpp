@@ -10,7 +10,6 @@ namespace rock{
     /*
     `FormationSummaryMass`
     */
-    template<typename Grid>
     class FormationSummaryMass
     {
 
@@ -21,15 +20,13 @@ namespace rock{
 
         static constexpr length meter = length(si::meter);
 
-        const Grid grid;
-
     public:
 
-        FormationSummaryMass(const Grid& grid):
-            grid(grid)
+        FormationSummaryMass()
         {}
 
-        void operator()(const FormationSummary& summary, masses& out) const
+        template<typename Grid>
+        void operator()(const Grid& grid, const FormationSummary& summary, masses& out) const
         {
             for (auto i = 0*summary.size(); i < summary.size(); ++i)
             {
@@ -37,7 +34,8 @@ namespace rock{
             }
         }
 
-        mass operator()(const FormationSummary& summary) const
+        template<typename Grid>
+        mass operator()(const Grid& grid, const FormationSummary& summary) const
         {
             mass out(0);
             for (auto i = 0*summary.size(); i < summary.size(); ++i)

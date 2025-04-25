@@ -84,7 +84,6 @@ TEST_CASE( "CrustOps::flatten()/CrustSummarization() mass conservation", "[rock]
 
     using mass = si::mass<float>;
     using length = si::length<float>;
-    using density = si::density<float>;
     length meter(si::meter);
     length radius(6.371e6f * meter);
 
@@ -134,7 +133,6 @@ TEST_CASE( "CrustOps::flatten()/CrustSummarization() mass conservation", "[rock]
     rock::CrustOps<M> crust_ops;
     rock::CrustSummaryOps crust_summary_ops{
       rock::ColumnSummaryOps{
-        rock::StratumSummaryOps{}, 
         length(si::centimeter)
       }
     };
@@ -143,7 +141,6 @@ TEST_CASE( "CrustOps::flatten()/CrustSummarization() mass conservation", "[rock]
         rock::AgedStratumDensity{densities_for_age, age_of_world},
         mass(si::tonne)
       ), 
-      grid,
       radius
     );
     auto crust_summarize = rock::crust_summarization<M,F>(
@@ -152,8 +149,8 @@ TEST_CASE( "CrustOps::flatten()/CrustSummarization() mass conservation", "[rock]
     );
     rock::CrustMass<M,F> crust_mass;
     rock::FormationMass<M> formation_mass;
-    rock::CrustSummaryMass crust_summary_mass{grid};
-    rock::FormationSummaryMass formation_summary_mass{grid};
+    rock::CrustSummaryMass crust_summary_mass;
+    rock::FormationSummaryMass formation_summary_mass;
     si::UnitAdapter testing(1e-3f);
     // rock::CrustSummaryAdapter testing2;
 
@@ -166,12 +163,12 @@ TEST_CASE( "CrustOps::flatten()/CrustSummarization() mass conservation", "[rock]
         mass starting_mass = crust_mass(crusts[i]);
         crust_ops.flatten(crusts[i], formation);
         REQUIRE(testing.equal(starting_mass, formation_mass(formation)));
-        formation_summarize(plate_id, formation, formation_summary);
-        REQUIRE(testing.equal(starting_mass, formation_summary_mass(formation_summary)));
-        crust_summarize(plate_id, crusts[i], crust_summary, formation_summary);
-        REQUIRE(testing.equal(starting_mass, crust_summary_mass(crust_summary)));
+        formation_summarize(grid, plate_id, formation, formation_summary);
+        REQUIRE(testing.equal(starting_mass, formation_summary_mass(grid, formation_summary)));
+        crust_summarize(grid, plate_id, crusts[i], crust_summary, formation_summary);
+        REQUIRE(testing.equal(starting_mass, crust_summary_mass(grid, crust_summary)));
         crust_summary_ops.flatten(crust_summary, formation_summary);
-        REQUIRE(testing.equal(starting_mass, formation_summary_mass(formation_summary)));
+        REQUIRE(testing.equal(starting_mass, formation_summary_mass(grid, formation_summary)));
     }
 
     /*
