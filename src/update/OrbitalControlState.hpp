@@ -40,7 +40,8 @@ namespace update
 			angular_position(angular_position),
 			angular_direction(angular_direction),
 			min_zoom_distance(min_zoom_distance),
-			log2_height(log2_height)
+			log2_height(log2_height),
+			drag_state(released)
 		{}
 
 		// DERIVED ATTRIBUTES, functions of the form: OrbitalControlState → T

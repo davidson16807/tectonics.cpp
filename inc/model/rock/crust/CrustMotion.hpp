@@ -167,12 +167,12 @@ namespace rock {
 		int slab_cell_count(
 			const bools& is_slab
 		) const {
-		    int slab_cell_count;
+		    int result(0);
 		    for (std::size_t i = 0; i < is_slab.size(); ++i)
 		    {
-		    	slab_cell_count += is_slab[i];
+		    	result += is_slab[i];
 		    }
-		    return slab_cell_count;
+		    return result;
 		}
 
 		inline length slab_thickness(

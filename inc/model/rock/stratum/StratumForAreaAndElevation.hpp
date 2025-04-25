@@ -54,8 +54,8 @@ namespace rock {
             auto age = age_for_elevation(elevation);
             auto mafic_extrusive_fraction_ = mafic_extrusive_fraction (elevation);
             auto felsic_extrusive_fraction_ = felsic_extrusive_fraction (elevation);
-            Mineral mafic (mafic_area_density_for_elevation (elevation) * area);
-            Mineral felsic(felsic_area_density_for_elevation(elevation) * area);
+            Mineral mafic (mafic_area_density_for_elevation (elevation) * area, 0);
+            Mineral felsic(felsic_area_density_for_elevation(elevation) * area, 0);
             mafic .grain_type_relative_volume[int(GrainType::unweathered_extrusive)] =              mafic_extrusive_fraction_;
             felsic.grain_type_relative_volume[int(GrainType::unweathered_extrusive)] =             felsic_extrusive_fraction_;
             mafic .grain_type_relative_volume[int(GrainType::unweathered_intrusive)] = double(1) -  mafic_extrusive_fraction_;

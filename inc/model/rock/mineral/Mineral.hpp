@@ -51,12 +51,17 @@ namespace rock
 		min and max grain sizes are undefined.
 		*/
 		Mineral():
-			mass(0)
+			mass(0),
+			phase_id(0)
 		{
 			grain_type_relative_volume.fill(1e-4);
 		}
-		Mineral(const si::mass<double> mass):
-			mass(mass)
+		Mineral(
+			const si::mass<double> mass, 
+			const unsigned int phase_id
+		):
+			mass(mass),
+			phase_id(phase_id)
 		{
 			grain_type_relative_volume.fill(1e-4);
 		}
