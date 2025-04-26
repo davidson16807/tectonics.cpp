@@ -32,8 +32,8 @@ Each sample counts as 0.01 seconds.
   0.03     14.91     0.01        1     5.00    23.02  CrustFracturing::fractureconst
   0.00     14.91     0.00 10692000     0.00     0.00  std::floor(float)
   0.00     14.91     0.00  2951228     0.00     0.00  glm::abs(float)
-  0.00     14.91     0.00  1152000     0.00     0.00  std::_Bit_const_iterator::operator[](long) 
-  0.00     14.91     0.00   576000     0.00     0.00  std::_Bit_iterator::operator[](long) 
+  0.00     14.91     0.00  1152000     0.00     0.00  std::_Bit_const_iterator[](long) 
+  0.00     14.91     0.00   576000     0.00     0.00  std::_Bit_iterator[](long) 
   0.00     14.91     0.00   324800     0.00     0.00  glm::length(vec3)
   0.00     14.91     0.00   324000     0.00     0.00  Indexing::grid_id 
   0.00     14.91     0.00   288000     0.00     0.00  glm::cross(vec3)
@@ -43,7 +43,7 @@ Each sample counts as 0.01 seconds.
   0.00     14.91     0.00    72000     0.00     0.00  rock::MineralStore::pack(rock::Mineral &)
   0.00     14.91     0.00    45000     0.00     0.00  Grid::vertex_dual_area 
   0.00     14.91     0.00    36000     0.00     0.00  rock::StratumSummaryOps::combine(rock::StratumSummary &, rock::StratumSummary &) 
-  0.00     14.91     0.00    36000     0.00     0.00  rock::StratumForAreaAndElevation<relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<0, 0, 1, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<-2, 1, 0, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, double, 0, 1> >::operator()(si::units<2, 0, 0, 0, 0, 0, 0, double>, si::units<1, 0, 0, 0, 0, 0, 0, double>) 
+  0.00     14.91     0.00    36000     0.00     0.00  rock::StratumForAreaAndElevation<relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<0, 0, 1, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<-2, 1, 0, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, double, 0, 1> >()(si::units<2, 0, 0, 0, 0, 0, 0, double>, si::units<1, 0, 0, 0, 0, 0, 0, double>) 
   0.00     14.91     0.00     8583     0.00     0.00  void std::__adjust_heap<__gnu_cxx::__normal_iterator<std::pair<int, float>*, std::vector<std::pair<int, float>, std::allocator<std::pair<int, float> > > >, long, std::pair<int, float>, __gnu_cxx::__ops::_Iter_comp_iter<unlayered::FloodFillCandidateComparison<int, float> > >(__gnu_cxx::__normal_iterator<std::pair<int, float>*, std::vector<std::pair<int, float>, std::allocator<std::pair<int, float> > > >, long, long, std::pair<int, float>, __gnu_cxx::__ops::_Iter_comp_iter<unlayered::FloodFillCandidateComparison<int, float> >)
   0.00     14.91     0.00     2020     0.00     0.00  vec4 glm::operator*<float, (glm::qualifier)0>(vec4 &, float &)
   0.00     14.91     0.00     1606     0.00     0.00  std::_Vector_base<vec3, std::allocator<vec3 > >::~_Vector_base()
@@ -214,8 +214,8 @@ index % time    self  children    called     name
                 0.00    0.00       1/1           SiStrings::format  
                 0.00    0.00       2/2           PoleBuffers::storeTriangleStrips  
                 0.00    0.00       2/2           Grid::vertex_position  
-                0.00    0.00 1152000/1152000     std::_Bit_const_iterator::operator[](long)  
-                0.00    0.00  576000/576000      std::_Bit_iterator::operator[](long)  
+                0.00    0.00 1152000/1152000     std::_Bit_const_iterator[](long)  
+                0.00    0.00  576000/576000      std::_Bit_iterator[](long)  
                 0.00    0.00  324800/324800      glm::length(vec3) 
                 0.00    0.00  324000/324000      Indexing::grid_id  
                 0.00    0.00  288000/288000      std::_Bit_reference::operator=(bool) 
@@ -347,7 +347,7 @@ index % time    self  children    called     name
       1.4    0.06    0.16       1         FormationGeneration 
                 0.13    0.02  396000/396000      ValueNoise 
                 0.00    0.00   36000/6692896     Projection::sphere_position  
-                0.00    0.00   36000/36000       rock::StratumForAreaAndElevation<relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<0, 0, 1, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<-2, 1, 0, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, double, 0, 1> >::operator()(si::units<2, 0, 0, 0, 0, 0, 0, double>, si::units<1, 0, 0, 0, 0, 0, 0, double>)  
+                0.00    0.00   36000/36000       rock::StratumForAreaAndElevation<relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<0, 0, 1, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<-2, 1, 0, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, double, 0, 1> >()(si::units<2, 0, 0, 0, 0, 0, 0, double>, si::units<1, 0, 0, 0, 0, 0, 0, double>)  
 -----------------------------------------------
                 0.13    0.02  396000/396000      FormationGeneration 
      1.0    0.13    0.02  396000         ValueNoise 
@@ -526,10 +526,10 @@ index % time    self  children    called     name
      0.0    0.00    0.00 2951228         glm::abs(float) 
 -----------------------------------------------
                 0.00    0.00 1152000/1152000     main 
-     0.0    0.00    0.00 1152000         std::_Bit_const_iterator::operator[](long)  
+     0.0    0.00    0.00 1152000         std::_Bit_const_iterator[](long)  
 -----------------------------------------------
                 0.00    0.00  576000/576000      main 
-     0.0    0.00    0.00  576000         std::_Bit_iterator::operator[](long)  
+     0.0    0.00    0.00  576000         std::_Bit_iterator[](long)  
 -----------------------------------------------
                 0.00    0.00  324800/324800      main 
      0.0    0.00    0.00  324800         glm::length(vec3) 
@@ -543,14 +543,14 @@ index % time    self  children    called     name
                 0.00    0.00  288000/288000      main 
      0.0    0.00    0.00  288000         std::_Bit_reference::operator=(bool) 
 -----------------------------------------------
-                0.00    0.00   72000/72000       rock::StratumForAreaAndElevation<relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<0, 0, 1, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<-2, 1, 0, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, double, 0, 1> >::operator()(si::units<2, 0, 0, 0, 0, 0, 0, double>, si::units<1, 0, 0, 0, 0, 0, 0, double>)  
+                0.00    0.00   72000/72000       rock::StratumForAreaAndElevation<relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<0, 0, 1, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<-2, 1, 0, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, double, 0, 1> >()(si::units<2, 0, 0, 0, 0, 0, 0, double>, si::units<1, 0, 0, 0, 0, 0, 0, double>)  
      0.0    0.00    0.00   72000         rock::MineralStore::pack(rock::Mineral &) 
 -----------------------------------------------
                 0.00    0.00   36000/36000       main 
      0.0    0.00    0.00   36000         rock::StratumSummaryOps::combine(rock::StratumSummary &, rock::StratumSummary &)  
 -----------------------------------------------
                 0.00    0.00   36000/36000       FormationGeneration 
-     0.0    0.00    0.00   36000         rock::StratumForAreaAndElevation<relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<0, 0, 1, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<-2, 1, 0, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, double, 0, 1> >::operator()(si::units<2, 0, 0, 0, 0, 0, 0, double>, si::units<1, 0, 0, 0, 0, 0, 0, double>)  
+     0.0    0.00    0.00   36000         rock::StratumForAreaAndElevation<relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<0, 0, 1, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<-2, 1, 0, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, double, 0, 1> >()(si::units<2, 0, 0, 0, 0, 0, 0, double>, si::units<1, 0, 0, 0, 0, 0, 0, double>)  
                 0.00    0.00   72000/72000       rock::MineralStore::pack(rock::Mineral &) 
 -----------------------------------------------
                 0.00    0.00    8583/8583        void unlayered::NeighborBasedFloodFilling<int, float, rock::CrustIsUnfractured<float, (glm::qualifier)0>, rock::CrustDistancePriority<float, (glm::qualifier)0> >::advance<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<vec3, std::allocator<vec3 > >, std::vector<bool, std::allocator<bool> > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<vec3, std::allocator<vec3 > > &, std::vector<bool, std::allocator<bool> >&, unlayered::FloodFillState<int, float>&)  
@@ -1008,7 +1008,7 @@ Index by function name
    glm::length(vec3)  CrustFracturing::fracture std::deque<std::variant<messages::MouseMotionMessage, messages::MouseClickMessage, messages::ScrollMessage>, std::allocator<std::variant<messages::MouseMotionMessage, messages::MouseClickMessage, messages::ScrollMessage> > >::~deque()
     glm::normalize(vec3)  rock::StratumSummaryOps::combine(rock::StratumSummary &, rock::StratumSummary &)   std::queue<std::variant<messages::MouseMotionMessage, messages::MouseClickMessage, messages::ScrollMessage>, std::deque<std::variant<messages::MouseMotionMessage, messages::MouseClickMessage, messages::ScrollMessage>, std::allocator<std::variant<messages::MouseMotionMessage, messages::MouseClickMessage, messages::ScrollMessage> > > >::queue<std::deque<std::variant<messages::MouseMotionMessage, messages::MouseClickMessage, messages::ScrollMessage>, std::allocator<std::variant<messages::MouseMotionMessage, messages::MouseClickMessage, messages::ScrollMessage> > >, void>()
    glm::rotate  CrustSummarization  std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >::vector(unsigned long, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > &)
-   mat3 multiplication  rock::StratumForAreaAndElevation<relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<0, 0, 1, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<-2, 1, 0, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, double, 0, 1> >::operator()(si::units<2, 0, 0, 0, 0, 0, 0, double>, si::units<1, 0, 0, 0, 0, 0, 0, double>)   std::vector<mat3, std::allocator<mat3 > >::~vector()
+   mat3 multiplication  rock::StratumForAreaAndElevation<relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<0, 0, 1, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<-2, 1, 0, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, double, 0, 1> >()(si::units<2, 0, 0, 0, 0, 0, 0, double>, si::units<1, 0, 0, 0, 0, 0, 0, double>)   std::vector<mat3, std::allocator<mat3 > >::~vector()
    mat4 glm::operator*<float, (glm::qualifier)0>(mat4 &, mat4 &)  EarthlikeIgneousFormationGeneration  std::vector<vec3, std::allocator<vec3 > >::vector(unsigned long, std::allocator<vec3 > &)
    vec4 glm::operator*<float, (glm::qualifier)0>(vec4 &, float &)  ValueNoise  std::vector<vec3, std::allocator<vec3 > >::vector(std::vector<vec3, std::allocator<vec3 > > &)
    rock::MineralStore::pack(rock::Mineral &)  Projection::standardize  Crust constructor 1
@@ -1029,9 +1029,9 @@ Index by function name
    OrbitalControlState::get_view_matrix  void unlayered::NeighborBasedFloodFilling<int, float, rock::CrustIsUnfractured<float, (glm::qualifier)0>, rock::CrustDistancePriority<float, (glm::qualifier)0> >::advance<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<vec3, std::allocator<vec3 > >, std::vector<bool, std::allocator<bool> > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<vec3, std::allocator<vec3 > > &, std::vector<bool, std::allocator<bool> >&, unlayered::FloodFillState<int, float>&)   std::vector<double, std::allocator<double> >::~vector()
   analytic::Sum<float, analytic::Gaussian<float> >::Sum(std::initializer_list<analytic::Gaussian<float> >)  VectorCalculusByFundamentalTheorem::gradient(bools)  std::vector<float, std::allocator<float> >::vector(unsigned long, std::allocator<float> &)
    analytic::Railyard<double, analytic::Polynomial<double, 0, 1> > analytic::spline::linear_spline<double, double>(std::vector<double, std::allocator<double> >, std::vector<double, std::allocator<double> >)  VectorCalculusByFundamentalTheorem::gradient(floats)   std::vector<int, std::allocator<int> >::vector(std::vector<int, std::allocator<int> > &)
-   analytic::Railyard<float, analytic::Polynomial<float, 0, 1> >::Railyard<double, analytic::Polynomial<double, 0, 1> >(analytic::Railyard<double, analytic::Polynomial<double, 0, 1> > &)  std::_Bit_iterator::operator[](long)   std::vector<int, std::allocator<int> >::vector(unsigned long, std::allocator<int> &)
+   analytic::Railyard<float, analytic::Polynomial<float, 0, 1> >::Railyard<double, analytic::Polynomial<double, 0, 1> >(analytic::Railyard<double, analytic::Polynomial<double, 0, 1> > &)  std::_Bit_iterator[](long)   std::vector<int, std::allocator<int> >::vector(unsigned long, std::allocator<int> &)
   auto analytic::integral<float>(analytic::Sum<float, analytic::Gaussian<float> > &)  std::bad_variant_access::what()   std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_dispose()
-    cartesian_from_zlon  std::_Bit_const_iterator::operator[](long)   std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::append(char *)
+    cartesian_from_zlon  std::_Bit_const_iterator[](long)   std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::append(char *)
    GridCache constructor  std::_Deque_base<std::variant<messages::MouseMotionMessage, messages::MouseClickMessage, messages::ScrollMessage>, std::allocator<std::variant<messages::MouseMotionMessage, messages::MouseClickMessage, messages::ScrollMessage> > >::_M_initialize_map(unsigned long)  std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::append(char *, unsigned long)
   dymaxion::GridCache<int, float, (glm::qualifier)0>::~GridCache()  std::_Vector_base<si::units<1, 0, 0, 0, 0, 0, 0, float>, std::allocator<si::units<1, 0, 0, 0, 0, 0, 0, float> > >::~_Vector_base()  std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_mutate(unsigned long, unsigned long, char *, unsigned long)
    bool iterated::compatible<procedural::Map<field::Compose<dymaxion::NearestVertexId<int, float>, field::Affinity<3, 3, float, (glm::qualifier)0> >, std::vector<vec3, std::allocator<vec3 > > >, std::vector<rock::ColumnSummary, std::allocator<rock::ColumnSummary> > >(procedural::Map<field::Compose<dymaxion::NearestVertexId<int, float>, field::Affinity<3, 3, float, (glm::qualifier)0> >, std::vector<vec3, std::allocator<vec3 > > > &, std::vector<rock::ColumnSummary, std::allocator<rock::ColumnSummary> >&)  std::_Vector_base<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >::~_Vector_base()  std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > &)

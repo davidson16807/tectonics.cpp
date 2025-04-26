@@ -377,7 +377,7 @@ int main() {
   };
 
   const float pi(3.1415926535);
-  const int frame_count(1000);
+  const int frame_count(100);
   for(int i=0; i<frame_count; i++) {
 
       // wipe drawing surface clear

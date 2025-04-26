@@ -29,5 +29,6 @@ for target_file in target_files:
                         replaced = replacement[0]
                         replacement = replacement[1]
                         text = text.replace(replaced, replacement)
+        text = text.replace('∅','')
         with open(target_file, 'w') as file:
                 file.write(text)
