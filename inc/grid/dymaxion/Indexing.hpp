@@ -56,6 +56,19 @@ namespace dymaxion
         {
         }
 
+        /*
+        `memory_id_when_standard` is the faster pragmatic alternative to `memory_id` that does not call standardize.
+        Undefined behavior results when the standardized_grid_id is not already in a standardized form.
+        Use this only if you are certain that a grid_id will always be standardized!
+        */
+        constexpr id memory_id_when_standard(const ipoint standardized_grid_id) const {
+            const ipoint clamped(clamp(standardized_grid_id, 0, vertices_per_square_side-1));
+            return square_interleave.interleaved_id(
+                    clamped.square_id, 
+                    row_interleave.interleaved_id(clamped.square_position.y, clamped.square_position.x)
+                );
+        }
+
         constexpr ipoint standardize(const ipoint grid_id) const {
             point standardized =(
                 projection.standardize((point(grid_id)+vec2(0.5)) / vertices_per_square_side_scalar)
@@ -64,12 +77,7 @@ namespace dymaxion
         }
 
         constexpr id memory_id(const ipoint grid_id) const {
-            const ipoint standardized(standardize(grid_id));
-            const ipoint clamped(clamp(standardized, 0, vertices_per_square_side-1));
-            return square_interleave.interleaved_id(
-                    clamped.square_id, 
-                    row_interleave.interleaved_id(clamped.square_position.y, clamped.square_position.x)
-                );
+            return memory_id_when_standard(standardize(grid_id));
         }
 
         inline constexpr ipoint grid_id(const id memory_id) const {

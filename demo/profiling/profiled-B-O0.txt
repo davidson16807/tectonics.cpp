@@ -281,7 +281,7 @@ Each sample counts as 0.01 seconds.
   0.03     33.46     0.01   159163     0.00     0.00  std::_Bit_iterator::_Bit_iterator(unsigned long*, unsigned int)
   0.03     33.47     0.01   159139     0.00     0.00  std::operator+(std::_Bit_iterator &, long)
   0.03     33.48     0.01   155421     0.00     0.00  std::vector<rock::StratumSummary, std::allocator<rock::StratumSummary> >::size() 
-  0.03     33.49     0.01    99000     0.00     0.00  float field::ValueNoise<3, float, field::MosaicNoise<procedural::GaussianNoise<procedural::UnitIntervalNoise<float> >, cartesian::UnboundedIndexing<int, (glm::qualifier)0> >, field::VectorMosaicOps<3, int, float, (glm::qualifier)0>, (glm::qualifier)0>::operator()<vec3 >(vec3) 
+  0.03     33.49     0.01    99000     0.00     0.00  ValueNoise
   0.03     33.50     0.01    45003     0.00     0.00  si::units<0, 1, 0, 0, 0, 0, 0, float>::units(float)
   0.03     33.51     0.01    42143     0.00     0.00  __gnu_cxx::__normal_iterator<std::pair<int, float>*, std::vector<std::pair<int, float>, std::allocator<std::pair<int, float> > > >::operator+(long) 
   0.03     33.52     0.01    26998     0.00     0.00  dymaxion::GridCache<int, float, (glm::qualifier)0>::vertex_position(int) 
@@ -392,7 +392,7 @@ Each sample counts as 0.01 seconds.
   0.00     33.74     0.00   540014     0.00     0.00  __gnu_cxx::__normal_iterator<analytic::Gaussian<float> *, std::vector<analytic::Gaussian<float>, std::allocator<analytic::Gaussian<float> > > >::operator++()
   0.00     33.74     0.00   540000     0.00     0.00  analytic::Gaussian<float>::operator()(float) 
   0.00     33.74     0.00   432048     0.00     0.00  __gnu_cxx::__normal_iterator<rock::ColumnSummary *, std::vector<rock::ColumnSummary, std::allocator<rock::ColumnSummary> > >::base() 
-  0.00     33.74     0.00   430741     0.00     0.00  glm::detail::compute_length<3, float, (glm::qualifier)0, false>::call(vec3 &)
+  0.00     33.74     0.00   430741     0.00     0.00  glm::length(vec3)
   0.00     33.74     0.00   430741     0.00     0.00  float glm::length<3, float, (glm::qualifier)0>(vec3 &)
   0.00     33.74     0.00   423000     0.00     0.00  rock::StratumStore<2>* std::__addressof<rock::StratumStore<2> >(rock::StratumStore<2>&)
   0.00     33.74     0.00   414000     0.00     0.00  void std::_Construct<rock::StratumStore<2>, rock::StratumStore<2> &>(rock::StratumStore<2>*, rock::StratumStore<2> &)
@@ -1856,10 +1856,10 @@ Each sample counts as 0.01 seconds.
   0.00     33.74     0.00        1     0.00    14.47  IdStrings::format 
   0.00     33.74     0.00        1     0.00    14.42  std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::IdStrings<float>, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<int, std::allocator<int> >, int, float, int, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<int, std::allocator<int> > &, int, int, int, vec3) 
   0.00     33.74     0.00        1     0.00    14.66  SiStrings::format 
-  0.00     33.74     0.00        1     0.00    14.46  std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::SiStrings, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >, int, float, si::units<-1, 1, -2, 0, 0, 0, 0, float>, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > &, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, int, vec3) 
+  0.00     33.74     0.00        1     0.00    14.46  SiStrings::format 
   0.00     33.74     0.00        1     0.00     0.00  si::units<1, 0, 0, 0, 0, 0, 0, double>::operator/(double) 
   0.00     33.74     0.00        1     0.00     1.23  void rock::CrustFracturing<int, float, (glm::qualifier)0>::map<std::vector<unlayered::FloodFillState<int, float>, std::allocator<unlayered::FloodFillState<int, float> > > >(std::vector<unlayered::FloodFillState<int, float>, std::allocator<unlayered::FloodFillState<int, float> > > &, std::vector<int, std::allocator<int> >&) 
-  0.00     33.74     0.00        1     0.00    53.67  void rock::CrustFracturing<int, float, (glm::qualifier)0>::fracture<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<vec3, std::allocator<vec3 > > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<vec3, std::allocator<vec3 > > &, std::vector<unlayered::FloodFillState<int, float>, std::allocator<unlayered::FloodFillState<int, float> > >&) 
+  0.00     33.74     0.00        1     0.00    53.67  CrustFracturing::fractureconst
   0.00     33.74     0.00        1     0.00     1.16  rock::CrustSummaryOps::flatten(std::vector<rock::ColumnSummary, std::allocator<rock::ColumnSummary> > &, std::vector<rock::StratumSummary, std::allocator<rock::StratumSummary> >&) 
   0.00     33.74     0.00        1     0.00    50.15  EarthlikeIgneousFormationGeneration
   0.00     33.74     0.00        1     0.00     0.00  adapted::IdStrings<float>::legend[abi:cxx11](float, float, float) 
@@ -1876,7 +1876,7 @@ Each sample counts as 0.01 seconds.
   0.00     33.74     0.00        1     0.00     0.04  void iterated::Metric<adapted::GlmMetric>::length<std::vector<vec3, std::allocator<vec3 > >, std::vector<float, std::allocator<float> > >(std::vector<vec3, std::allocator<vec3 > > &, std::vector<float, std::allocator<float> >&) 
   0.00     33.74     0.00        1     0.00   462.77  FormationGeneration
   0.00     33.74     0.00        1     0.00     8.00  void iterated::Identity::operator()<dymaxion::VertexPositions<int, float>, std::vector<vec3, std::allocator<vec3 > > >(dymaxion::VertexPositions<int, float> &, std::vector<vec3, std::allocator<vec3 > >&) 
-  0.00     33.74     0.00        1     0.00    23.42  void unlayered::VectorCalculusByFundamentalTheorem::gradient<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<float, std::allocator<float> >, std::vector<vec3, std::allocator<vec3 > > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<float, std::allocator<float> > &, std::vector<vec3, std::allocator<vec3 > >&) 
+  0.00     33.74     0.00        1     0.00    23.42  VectorCalculusByFundamentalTheorem::gradient(floats) 
   0.00     33.74     0.00        1     0.00     0.00  std::_Vector_base<float, std::allocator<float> >::_M_get_Tp_allocator() 
   0.00     33.74     0.00        1     0.00     0.00  std::initializer_list<analytic::Gaussian<float> >::end() 
   0.00     33.74     0.00        1     0.00     0.00  std::initializer_list<analytic::Gaussian<float> >::size() 
@@ -2117,7 +2117,7 @@ index % time    self  children    called     name
                 0.00    0.05       2/2           GridCache constructor 
                 0.00    0.05       1/1           EarthlikeIgneousFormationGeneration 
                 0.00    0.02       8/8           rock::CrustMotion<2, unlayered::VectorCalculusByFundamentalTheorem, dymaxion::GridCache<int, float, (glm::qualifier)0> >::rigid_body_torque(std::vector<vec3, std::allocator<vec3 > > &, si::units<1, 1, -2, 0, 0, 0, 0, double>, si::units<2, 1, -2, 0, 0, 0, 0, double>)  
-                0.00    0.02       1/1           void unlayered::VectorCalculusByFundamentalTheorem::gradient<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<float, std::allocator<float> >, std::vector<vec3, std::allocator<vec3 > > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<float, std::allocator<float> > &, std::vector<vec3, std::allocator<vec3 > >&)  
+                0.00    0.02       1/1           VectorCalculusByFundamentalTheorem::gradient(floats)  
                 0.00    0.02       1/1           void grouped::Statistics<adapted::TypedSymbolicArithmetic<float> >::sum<dymaxion::VertexDownsamplingIds<int, float>, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > >(dymaxion::VertexDownsamplingIds<int, float> &, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > &, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >&) 
                 0.00    0.02       1/1           std::vector<std::array<std::vector<rock::StratumStore<2>, std::allocator<rock::StratumStore<2> > >, 5ul>, std::allocator<std::array<std::vector<rock::StratumStore<2>, std::allocator<rock::StratumStore<2> > >, 5ul> > >::vector(unsigned long, std::array<std::vector<rock::StratumStore<2>, std::allocator<rock::StratumStore<2> > >, 5ul> &, std::allocator<std::array<std::vector<rock::StratumStore<2>, std::allocator<rock::StratumStore<2> > >, 5ul> > &) 
                 0.00    0.02       1/1           WholeGridBuffers::storeTriangleStrips 
@@ -2590,7 +2590,7 @@ index % time    self  children    called     name
                 0.08    1.38 14400000/50445000     rock::ColumnSummaryOps::absorb(rock::ColumnSummary &, rock::StratumSummary &)  
 -----------------------------------------------
                 0.00    0.00    5042/89516886     rock::CrustIsUnfractured<float, (glm::qualifier)0>::operator()(vec3, vec3, vec3, vec3, vec3)  
-                0.00    0.01  430741/89516886     glm::detail::compute_length<3, float, (glm::qualifier)0, false>::call(vec3 &) 
+                0.00    0.01  430741/89516886     glm::length(vec3) 
                 0.02    0.21 14407200/89516886     dymaxion::Triangles<int, float, (glm::qualifier)0>::is_eastern_sphere_position(vec3, vec3, vec3)  
                 0.02    0.21 14407200/89516886     dymaxion::Triangles<int, float, (glm::qualifier)0>::is_polar_sphere_position(float, vec3, vec3, vec3)  
                 0.04    0.42 28814400/89516886     Triangles::plane_project 
@@ -2950,7 +2950,7 @@ index % time    self  children    called     name
                 0.26    0.06 32172300/36778512     vec3 glm::operator-<float, (glm::qualifier)0>(vec3 &, vec3 &) 
                 0.01    0.00 16086150/16093350     mat3::mat(vec3 &, vec3 &, vec3 &) 
 -----------------------------------------------
-                0.00    0.01    9000/297000      void unlayered::VectorCalculusByFundamentalTheorem::gradient<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<float, std::allocator<float> >, std::vector<vec3, std::allocator<vec3 > > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<float, std::allocator<float> > &, std::vector<vec3, std::allocator<vec3 > >&)  
+                0.00    0.01    9000/297000      VectorCalculusByFundamentalTheorem::gradient(floats)  
                 0.01    0.35  288000/297000      VectorCalculusByFundamentalTheorem::gradient(bools) 
      1.1    0.01    0.36  297000         dymaxion::GridCache<int, float, (glm::qualifier)0>::arrow_dual_length(int, int)  
                 0.00    0.36  297000/297000      Grid::arrow_dual_length  
@@ -3016,12 +3016,12 @@ index % time    self  children    called     name
 -----------------------------------------------
                 0.00    0.34    9000/9000        auto field::Compose<analytic::Error<float>, field::FractalBrownianNoise<int, float, field::ValueNoise<3, float, field::MosaicNoise<procedural::GaussianNoise<procedural::UnitIntervalNoise<float> >, cartesian::UnboundedIndexing<int, (glm::qualifier)0> >, field::VectorMosaicOps<3, int, float, (glm::qualifier)0>, (glm::qualifier)0> > >::operator()<3, float, (glm::qualifier)0>(vec3)  
      1.0    0.00    0.34    9000         auto field::FractalBrownianNoise<int, float, field::ValueNoise<3, float, field::MosaicNoise<procedural::GaussianNoise<procedural::UnitIntervalNoise<float> >, cartesian::UnboundedIndexing<int, (glm::qualifier)0> >, field::VectorMosaicOps<3, int, float, (glm::qualifier)0>, (glm::qualifier)0> >::operator()<vec3 >(vec3)  
-                0.01    0.33   99000/99000       float field::ValueNoise<3, float, field::MosaicNoise<procedural::GaussianNoise<procedural::UnitIntervalNoise<float> >, cartesian::UnboundedIndexing<int, (glm::qualifier)0> >, field::VectorMosaicOps<3, int, float, (glm::qualifier)0>, (glm::qualifier)0>::operator()<vec3 >(vec3)  
+                0.01    0.33   99000/99000       ValueNoise 
                 0.00    0.00    9000/1103232     vec3 glm::operator*<float, (glm::qualifier)0>(float, vec3 &) 
                 0.00    0.00   90000/90000       vec3& vec3::operator*=<float>(float) 
 -----------------------------------------------
                 0.01    0.33   99000/99000       auto field::FractalBrownianNoise<int, float, field::ValueNoise<3, float, field::MosaicNoise<procedural::GaussianNoise<procedural::UnitIntervalNoise<float> >, cartesian::UnboundedIndexing<int, (glm::qualifier)0> >, field::VectorMosaicOps<3, int, float, (glm::qualifier)0>, (glm::qualifier)0> >::operator()<vec3 >(vec3)  
-     1.0    0.01    0.33   99000         float field::ValueNoise<3, float, field::MosaicNoise<procedural::GaussianNoise<procedural::UnitIntervalNoise<float> >, cartesian::UnboundedIndexing<int, (glm::qualifier)0> >, field::VectorMosaicOps<3, int, float, (glm::qualifier)0>, (glm::qualifier)0>::operator()<vec3 >(vec3)  
+     1.0    0.01    0.33   99000         ValueNoise 
                 0.00    0.19  792000/792000      float field::VectorMosaicOps<3, int, float, (glm::qualifier)0>::weight<float>(vec3, ivec3, ivec3)  
                 0.00    0.09  792000/792000      auto field::MosaicNoise<procedural::GaussianNoise<procedural::UnitIntervalNoise<float> >, cartesian::UnboundedIndexing<int, (glm::qualifier)0> >::operator()<ivec3 >(ivec3)  
                 0.02    0.02  792000/792000      field::VectorMosaicOps<3, int, float, (glm::qualifier)0>::add(ivec3, ivec3)  
@@ -3149,7 +3149,7 @@ index % time    self  children    called     name
                 0.00    0.21  297000/297000      dymaxion::Grid<int, float, (glm::qualifier)0>::arrow_offset(int, int)  
                 0.00    0.01  297000/31452303     vec3 glm::normalize<3, float, (glm::qualifier)0>(vec3 &) 
 -----------------------------------------------
-                0.00    0.01    9000/297000      void unlayered::VectorCalculusByFundamentalTheorem::gradient<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<float, std::allocator<float> >, std::vector<vec3, std::allocator<vec3 > > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<float, std::allocator<float> > &, std::vector<vec3, std::allocator<vec3 > >&)  
+                0.00    0.01    9000/297000      VectorCalculusByFundamentalTheorem::gradient(floats)  
                 0.00    0.21  288000/297000      VectorCalculusByFundamentalTheorem::gradient(bools) 
     0.6    0.00    0.22  297000         dymaxion::GridCache<int, float, (glm::qualifier)0>::arrow_normal(int, int)  
                 0.00    0.22  297000/297000      dymaxion::Grid<int, float, (glm::qualifier)0>::arrow_normal(int, int)  
@@ -3206,7 +3206,7 @@ index % time    self  children    called     name
     0.6    0.14    0.05 50454001         si::units<1, 0, 0, 0, 0, 0, 0, float>::operator+(si::units<1, 0, 0, 0, 0, 0, 0, float>)  
                 0.05    0.00 50454001/282058329     si::units<1, 0, 0, 0, 0, 0, 0, float>::units(float) 
 -----------------------------------------------
-                0.00    0.19  792000/792000      float field::ValueNoise<3, float, field::MosaicNoise<procedural::GaussianNoise<procedural::UnitIntervalNoise<float> >, cartesian::UnboundedIndexing<int, (glm::qualifier)0> >, field::VectorMosaicOps<3, int, float, (glm::qualifier)0>, (glm::qualifier)0>::operator()<vec3 >(vec3)  
+                0.00    0.19  792000/792000      ValueNoise 
     0.6    0.00    0.19  792000         float field::VectorMosaicOps<3, int, float, (glm::qualifier)0>::weight<float>(vec3, ivec3, ivec3)  
                 0.00    0.11  792000/792000      vec3 glm::smoothstep<3, float, (glm::qualifier)0>(vec3 &, vec3 &, vec3 &) 
                 0.00    0.04  792000/792000      vec3 glm::mix<3, float, float, (glm::qualifier)0>(vec3 &, vec3 &, vec3 &) 
@@ -3334,7 +3334,7 @@ index % time    self  children    called     name
                 0.00    0.00     800/2400        std::vector<si::units<1, 0, 0, 0, 0, 0, 0, float>, std::allocator<si::units<1, 0, 0, 0, 0, 0, 0, float> > >::size()  
 -----------------------------------------------
                 0.00    0.00    8616/305616      void unlayered::NeighborBasedFloodFilling<int, float, rock::CrustIsUnfractured<float, (glm::qualifier)0>, rock::CrustDistancePriority<float, (glm::qualifier)0> >::advance<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<vec3, std::allocator<vec3 > >, std::vector<bool, std::allocator<bool> > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<vec3, std::allocator<vec3 > > &, std::vector<bool, std::allocator<bool> >&, unlayered::FloodFillState<int, float>&)  
-                0.00    0.00    9000/305616      void unlayered::VectorCalculusByFundamentalTheorem::gradient<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<float, std::allocator<float> >, std::vector<vec3, std::allocator<vec3 > > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<float, std::allocator<float> > &, std::vector<vec3, std::allocator<vec3 > >&)  
+                0.00    0.00    9000/305616      VectorCalculusByFundamentalTheorem::gradient(floats)  
                 0.00    0.13  288000/305616      VectorCalculusByFundamentalTheorem::gradient(bools) 
     0.4    0.01    0.14  305616         dymaxion::GridCache<int, float, (glm::qualifier)0>::arrow_target_id(int, int)  
                 0.00    0.14  305616/305616      Grid::arrow_target_id  
@@ -3505,7 +3505,7 @@ index % time    self  children    called     name
                 0.00    0.00     401/36130559     rock::CrustMotion<2, unlayered::VectorCalculusByFundamentalTheorem, dymaxion::GridCache<int, float, (glm::qualifier)0> >::slab_volume(std::vector<rock::StratumSummary, std::allocator<rock::StratumSummary> > &, std::vector<bool, std::allocator<bool> > &)  
                 0.00    0.00     401/36130559     rock::CrustMotion<2, unlayered::VectorCalculusByFundamentalTheorem, dymaxion::GridCache<int, float, (glm::qualifier)0> >::slab_area(std::vector<rock::StratumSummary, std::allocator<rock::StratumSummary> > &, std::vector<bool, std::allocator<bool> > &)  
                 0.00    0.00    1507/36130559     CrustMotion::slab_pull 
-                0.00    0.00    2250/36130559     void unlayered::VectorCalculusByFundamentalTheorem::gradient<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<float, std::allocator<float> >, std::vector<vec3, std::allocator<vec3 > > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<float, std::allocator<float> > &, std::vector<vec3, std::allocator<vec3 > >&)  
+                0.00    0.00    2250/36130559     VectorCalculusByFundamentalTheorem::gradient(floats)  
                 0.00    0.00    9000/36130559     FormationGenerationconst 
                 0.00    0.00   72000/36130559     VectorCalculusByFundamentalTheorem::gradient(bools) 
                 0.09    0.00 36045000/36130559     void rock::FormationSummarization<rock::StratumSummarization<2, rock::AgedStratumDensity<std::array<relation::PolynomialRailyardRelation<si::units<0, 0, 1, 0, 0, 0, 0, double>, si::units<-3, 1, 0, 0, 0, 0, 0, double>, 0, 1>, 2ul> > > >::operator()<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<rock::StratumStore<2>, std::allocator<rock::StratumStore<2> > > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, int, std::vector<rock::StratumStore<2>, std::allocator<rock::StratumStore<2> > > &, std::vector<rock::StratumSummary, std::allocator<rock::StratumSummary> >&)  
@@ -3516,7 +3516,7 @@ index % time    self  children    called     name
     0.3    0.06    0.03 14418000         si::units<0, 0, 1, 0, 0, 0, 0, double>::operator-(si::units<0, 0, 1, 0, 0, 0, 0, double>)  
                 0.03    0.00 14418000/28845000     si::units<0, 0, 1, 0, 0, 0, 0, double>::units(double) 
 -----------------------------------------------
-                0.00    0.09  792000/792000      float field::ValueNoise<3, float, field::MosaicNoise<procedural::GaussianNoise<procedural::UnitIntervalNoise<float> >, cartesian::UnboundedIndexing<int, (glm::qualifier)0> >, field::VectorMosaicOps<3, int, float, (glm::qualifier)0>, (glm::qualifier)0>::operator()<vec3 >(vec3)  
+                0.00    0.09  792000/792000      ValueNoise 
     0.3    0.00    0.09  792000         auto field::MosaicNoise<procedural::GaussianNoise<procedural::UnitIntervalNoise<float> >, cartesian::UnboundedIndexing<int, (glm::qualifier)0> >::operator()<ivec3 >(ivec3)  
                 0.02    0.03  792000/792000      int cartesian::UnboundedIndexing<int, (glm::qualifier)0>::memory_id<3, int>(ivec3)  
                 0.00    0.04  792000/792000      procedural::GaussianNoise<procedural::UnitIntervalNoise<float> >::operator()(unsigned long)  
@@ -3922,7 +3922,7 @@ index % time    self  children    called     name
                 0.04    0.00 14418000/14418000     si::units<(0)-(-3), (1)-(1), (0)-(0), (0)-(0), (0)-(0), (0)-(0), (0)-(0), float> si::units<0, 1, 0, 0, 0, 0, 0, float>::operator/<-3, 1, 0, 0, 0, 0, 0>(si::units<-3, 1, 0, 0, 0, 0, 0, float>)  
     0.1    0.04    0.00 14418000         si::units<3, 0, 0, 0, 0, 0, 0, float>::units(float) 
 -----------------------------------------------
-                0.02    0.02  792000/792000      float field::ValueNoise<3, float, field::MosaicNoise<procedural::GaussianNoise<procedural::UnitIntervalNoise<float> >, cartesian::UnboundedIndexing<int, (glm::qualifier)0> >, field::VectorMosaicOps<3, int, float, (glm::qualifier)0>, (glm::qualifier)0>::operator()<vec3 >(vec3)  
+                0.02    0.02  792000/792000      ValueNoise 
     0.1    0.02    0.02  792000         field::VectorMosaicOps<3, int, float, (glm::qualifier)0>::add(ivec3, ivec3)  
                 0.02    0.00  792000/792000      ivec3 glm::operator+<int, (glm::qualifier)0>(ivec3 &, ivec3 &) 
 -----------------------------------------------
@@ -3942,7 +3942,7 @@ index % time    self  children    called     name
                 0.00    0.00   74250/14924926     Point::clamp 
                 0.00    0.00   74250/1446816     Indexing::grid_id  
 -----------------------------------------------
-                0.00    0.00    2250/74250       void unlayered::VectorCalculusByFundamentalTheorem::gradient<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<float, std::allocator<float> >, std::vector<vec3, std::allocator<vec3 > > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<float, std::allocator<float> > &, std::vector<vec3, std::allocator<vec3 > >&)  
+                0.00    0.00    2250/74250       VectorCalculusByFundamentalTheorem::gradient(floats)  
                 0.00    0.04   72000/74250       VectorCalculusByFundamentalTheorem::gradient(bools) 
     0.1    0.00    0.04   74250         dymaxion::GridCache<int, float, (glm::qualifier)0>::vertex_representative(int)  
                 0.00    0.04   74250/74250       dymaxion::Grid<int, float, (glm::qualifier)0>::vertex_representative(int)  
@@ -3954,7 +3954,7 @@ index % time    self  children    called     name
                 0.00    0.00  792000/792000      auto math::probit<float>(float) 
 -----------------------------------------------
                 0.00    0.00       1/112429903     auto field::ranked_fractal_brownian_noise<3, int, float>(int, float, float, float, float) 
-                0.00    0.00  430741/112429903     glm::detail::compute_length<3, float, (glm::qualifier)0, false>::call(vec3 &) 
+                0.00    0.00  430741/112429903     glm::length(vec3) 
                 0.00    0.00  792000/112429903     auto math::probit<float>(float) 
                 0.00    0.00 1098008/112429903     analytic::Error<float>::operator()(float)  
                 0.00    0.00 1584000/112429903     float math::erfinv<float>(float) 
@@ -4093,7 +4093,7 @@ index % time    self  children    called     name
                 0.00    0.00       8/16          dvec3 glm::operator*<double, (glm::qualifier)0>(dvec3 &, double) 
 -----------------------------------------------
                 0.00    0.02       1/1           main 
-    0.1    0.00    0.02       1         void unlayered::VectorCalculusByFundamentalTheorem::gradient<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<float, std::allocator<float> >, std::vector<vec3, std::allocator<vec3 > > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<float, std::allocator<float> > &, std::vector<vec3, std::allocator<vec3 > >&)  
+    0.1    0.00    0.02       1         VectorCalculusByFundamentalTheorem::gradient(floats)  
                 0.00    0.01    9000/297000      dymaxion::GridCache<int, float, (glm::qualifier)0>::arrow_dual_length(int, int)  
                 0.00    0.01    9000/297000      dymaxion::GridCache<int, float, (glm::qualifier)0>::arrow_normal(int, int)  
                 0.00    0.00    9000/305616      dymaxion::GridCache<int, float, (glm::qualifier)0>::arrow_target_id(int, int)  
@@ -4115,7 +4115,7 @@ index % time    self  children    called     name
                 0.00    0.00    1507/1103232     CrustMotion::slab_pull 
                 0.00    0.00    2521/1103232     rock::CrustIsUnfractured<float, (glm::qualifier)0>::operator()(vec3, vec3, vec3, vec3, vec3)  
                 0.00    0.00    9000/1103232     auto field::FractalBrownianNoise<int, float, field::ValueNoise<3, float, field::MosaicNoise<procedural::GaussianNoise<procedural::UnitIntervalNoise<float> >, cartesian::UnboundedIndexing<int, (glm::qualifier)0> >, field::VectorMosaicOps<3, int, float, (glm::qualifier)0>, (glm::qualifier)0> >::operator()<vec3 >(vec3)  
-                0.00    0.00    9000/1103232     void unlayered::VectorCalculusByFundamentalTheorem::gradient<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<float, std::allocator<float> >, std::vector<vec3, std::allocator<vec3 > > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<float, std::allocator<float> > &, std::vector<vec3, std::allocator<vec3 > >&)  
+                0.00    0.00    9000/1103232     VectorCalculusByFundamentalTheorem::gradient(floats)  
                 0.01    0.00  288000/1103232     VectorCalculusByFundamentalTheorem::gradient(bools) 
                 0.01    0.00  792000/1103232     glm::detail::compute_smoothstep_vector<3, float, (glm::qualifier)0, false>::call(vec3 &, vec3 &, vec3 &) 
     0.1    0.02    0.00 1103232         vec3 glm::operator*<float, (glm::qualifier)0>(float, vec3 &) 
@@ -4191,7 +4191,7 @@ index % time    self  children    called     name
     0.1    0.02    0.00  792000         ivec3 glm::operator+<int, (glm::qualifier)0>(ivec3 &, ivec3 &) 
                 0.00    0.00  792000/1584000     ivec3::vec(int, int, int) 
 -----------------------------------------------
-                0.02    0.00  792000/792000      float field::ValueNoise<3, float, field::MosaicNoise<procedural::GaussianNoise<procedural::UnitIntervalNoise<float> >, cartesian::UnboundedIndexing<int, (glm::qualifier)0> >, field::VectorMosaicOps<3, int, float, (glm::qualifier)0>, (glm::qualifier)0>::operator()<vec3 >(vec3)  
+                0.02    0.00  792000/792000      ValueNoise 
     0.1    0.02    0.00  792000         cartesian::OrthantIndexing<3, int, (glm::qualifier)0>::grid_id(int)  
                 0.00    0.00 2376000/4752000     ivec3::operator[](int) 
 -----------------------------------------------
@@ -4217,7 +4217,7 @@ index % time    self  children    called     name
 -----------------------------------------------
                 0.00    0.00       1/4104746     view::ViewState::ViewState() 
                 0.00    0.00       2/4104746     view::ColorscaleSurfacesViewState::ColorscaleSurfacesViewState() 
-                0.00    0.00    2250/4104746     void unlayered::VectorCalculusByFundamentalTheorem::gradient<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<float, std::allocator<float> >, std::vector<vec3, std::allocator<vec3 > > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<float, std::allocator<float> > &, std::vector<vec3, std::allocator<vec3 > >&)  
+                0.00    0.00    2250/4104746     VectorCalculusByFundamentalTheorem::gradient(floats)  
                 0.00    0.00   70493/4104746     CrustMotion::slab_pull 
                 0.00    0.00   72000/4104746     VectorCalculusByFundamentalTheorem::gradient(bools) 
                 0.01    0.00 1584000/4104746     vec3 glm::clamp<3, float, (glm::qualifier)0>(vec3 &, float, float) 
@@ -4265,7 +4265,7 @@ index % time    self  children    called     name
                 0.00    0.00    7200/16093350     mat3::mat(vec3 &, vec3 &, vec3 &) 
 -----------------------------------------------
                 0.00    0.01    3600/7200        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::IdStrings<float>, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<int, std::allocator<int> >, int, float, int, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<int, std::allocator<int> > &, int, int, int, vec3)  
-                0.00    0.01    3600/7200        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::SiStrings, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >, int, float, si::units<-1, 1, -2, 0, 0, 0, 0, float>, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > &, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, int, vec3)  
+                0.00    0.01    3600/7200        SiStrings::format  
     0.1    0.00    0.02    7200         dymaxion::GridCache<int, float, (glm::qualifier)0>::vertex_frame(int, vec3)  
                 0.00    0.02    7200/7200        dymaxion::Grid<int, float, (glm::qualifier)0>::vertex_frame(int, vec3)  
 -----------------------------------------------
@@ -4443,7 +4443,7 @@ index % time    self  children    called     name
 -----------------------------------------------
                 0.00    0.00    1507/9036608     CrustMotion::slab_pull 
                 0.00    0.00    2250/9036608     void iterated::Arithmetic<adapted::SymbolicArithmetic>::divide<std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >, procedural::Uniform<float>, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > >(std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > &, procedural::Uniform<float> &, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >&)  
-                0.00    0.00    3601/9036608     std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::SiStrings, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >, int, float, si::units<-1, 1, -2, 0, 0, 0, 0, float>, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > &, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, int, vec3)  
+                0.00    0.00    3601/9036608     SiStrings::format  
                 0.00    0.00    9000/9036608     void grouped::Statistics<adapted::TypedSymbolicArithmetic<float> >::sum<dymaxion::VertexDownsamplingIds<int, float>, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > >(dymaxion::VertexDownsamplingIds<int, float> &, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > &, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >&) 
                 0.00    0.00  909000/9036608     auto aggregated::Order<adapted::SymbolicOrder>::min<std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > >(std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > &)  
                 0.00    0.00  909000/9036608     aggregated::Order max 
@@ -4486,7 +4486,7 @@ index % time    self  children    called     name
 -----------------------------------------------
                 0.00    0.01       1/1           main 
     0.0    0.00    0.01       1         SiStrings::format  
-                0.00    0.01       1/1           std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::SiStrings, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >, int, float, si::units<-1, 1, -2, 0, 0, 0, 0, float>, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > &, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, int, vec3)  
+                0.00    0.01       1/1           SiStrings::format  
                 0.00    0.00       1/101         auto aggregated::Order<adapted::SymbolicOrder>::min<std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > >(std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > &)  
                 0.00    0.00       1/101         aggregated::Order max 
                 0.00    0.00       1/406         vec3::vec<int, int, int>(int, int, int) 
@@ -4499,7 +4499,7 @@ index % time    self  children    called     name
                 0.00    0.00       1/1           auto aggregated::Order<adapted::SymbolicOrder>::min<std::vector<int, std::allocator<int> > >(std::vector<int, std::allocator<int> > &)  
 -----------------------------------------------
                 0.00    0.01       1/1           SiStrings::format  
-    0.0    0.00    0.01       1         std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::SiStrings, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >, int, float, si::units<-1, 1, -2, 0, 0, 0, 0, float>, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > &, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, int, vec3)  
+    0.0    0.00    0.01       1         SiStrings::format  
                 0.00    0.01    3600/7200        dymaxion::GridCache<int, float, (glm::qualifier)0>::vertex_frame(int, vec3)  
                 0.00    0.01    3600/7200        dymaxion::GridCache<int, float, (glm::qualifier)0>::nearest_vertex_id(vec3)  
                 0.00    0.00    3600/3600        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::SiStrings, aggregated::Order<adapted::SymbolicOrder> >::character<si::units<-1, 1, -2, 0, 0, 0, 0, float>, float, (glm::qualifier)0>(mat3, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>)  
@@ -4679,7 +4679,7 @@ index % time    self  children    called     name
                 0.01    0.00 16529626/31380302     vec2::vec<int, (glm::qualifier)0>(ivec2 &) 
 -----------------------------------------------
                 0.00    0.01    3600/7200        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::IdStrings<float>, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<int, std::allocator<int> >, int, float, int, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<int, std::allocator<int> > &, int, int, int, vec3)  
-                0.00    0.01    3600/7200        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::SiStrings, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >, int, float, si::units<-1, 1, -2, 0, 0, 0, 0, float>, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > &, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, int, vec3)  
+                0.00    0.01    3600/7200        SiStrings::format  
     0.0    0.00    0.01    7200         dymaxion::GridCache<int, float, (glm::qualifier)0>::nearest_vertex_id(vec3)  
                 0.00    0.01    7200/14407200     dymaxion::Grid<int, float, (glm::qualifier)0>::nearest_vertex_id(vec3)  
 -----------------------------------------------
@@ -5154,7 +5154,7 @@ index % time    self  children    called     name
                 0.00    0.00       2/282058329     si::units<1, 0, 0, 0, 0, 0, 0, float>::units(float) 
 -----------------------------------------------
                 0.00    0.01  430741/430741      float glm::length<3, float, (glm::qualifier)0>(vec3 &) 
-    0.0    0.00    0.01  430741         glm::detail::compute_length<3, float, (glm::qualifier)0, false>::call(vec3 &) 
+    0.0    0.00    0.01  430741         glm::length(vec3) 
                 0.00    0.01  430741/89516886     float glm::dot<3, float, (glm::qualifier)0>(vec3 &, vec3 &) 
                 0.00    0.00  430741/112429903     std::sqrt(float) 
 -----------------------------------------------
@@ -5166,7 +5166,7 @@ index % time    self  children    called     name
                 0.00    0.00   72000/430741      rock::CrustMotion<2, unlayered::VectorCalculusByFundamentalTheorem, dymaxion::GridCache<int, float, (glm::qualifier)0> >::is_slab(std::vector<vec3, std::allocator<vec3 > > &, std::vector<bool, std::allocator<bool> >&)  
                 0.00    0.00  299170/430741      glm::detail::compute_distance<3, float, (glm::qualifier)0, false>::call(vec3 &, vec3 &) 
     0.0    0.00    0.01  430741         float glm::length<3, float, (glm::qualifier)0>(vec3 &) 
-                0.00    0.01  430741/430741      glm::detail::compute_length<3, float, (glm::qualifier)0, false>::call(vec3 &) 
+                0.00    0.01  430741/430741      glm::length(vec3) 
 -----------------------------------------------
                 0.00    0.01       1/1           main 
     0.0    0.00    0.01       1         std::vector<unlayered::FloodFillState<int, float>, std::allocator<unlayered::FloodFillState<int, float> > >::vector(unsigned long, unlayered::FloodFillState<int, float> &, std::allocator<unlayered::FloodFillState<int, float> > &) 
@@ -5342,7 +5342,7 @@ index % time    self  children    called     name
 -----------------------------------------------
                 0.00    0.00    6751/36189537     std::vector<float, std::allocator<float> >::value_type whole::min<std::vector<float, std::allocator<float> > >(std::vector<float, std::allocator<float> > &, bool, bool) 
                 0.00    0.00    6759/36189537     std::vector<float, std::allocator<float> >::value_type whole::max<std::vector<float, std::allocator<float> > >(std::vector<float, std::allocator<float> > &, bool, bool) 
-                0.00    0.00   11250/36189537     void unlayered::VectorCalculusByFundamentalTheorem::gradient<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<float, std::allocator<float> >, std::vector<vec3, std::allocator<vec3 > > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<float, std::allocator<float> > &, std::vector<vec3, std::allocator<vec3 > >&)  
+                0.00    0.00   11250/36189537     VectorCalculusByFundamentalTheorem::gradient(floats)  
                 0.00    0.00   16210/36189537     void iterated::Ternary::operator()<std::vector<float, std::allocator<float> >, procedural::Uniform<int>, std::vector<bool, std::allocator<bool> >, std::vector<float, std::allocator<float> > >(std::vector<bool, std::allocator<bool> > &, std::vector<float, std::allocator<float> > &, procedural::Uniform<int> &, std::vector<float, std::allocator<float> >&)  
                 0.00    0.00   18008/36189537     std::vector<float, std::allocator<float> >::size_type aggregated::Order<adapted::SymbolicOrder>::max_id<std::vector<float, std::allocator<float> > >(std::vector<float, std::allocator<float> > &)  
                 0.00    0.00 36130559/36189537     dymaxion::GridCache<int, float, (glm::qualifier)0>::vertex_dual_area(int)  
@@ -5779,7 +5779,7 @@ index % time    self  children    called     name
                 0.00    0.00    9000/9000        si::units<(1)+(-3), (0)+(1), (-2)+(0), (0)+(0), (0)+(0), (0)+(0), (0)+(0), double> si::units<1, 0, -2, 0, 0, 0, 0, double>::operator*<-3, 1, 0, 0, 0, 0, 0>(si::units<-3, 1, 0, 0, 0, 0, 0, double>)  
                 0.00    0.00    9000/9000        si::units<(-2)+(1), (1)+(0), (-2)+(0), (0)+(0), (0)+(0), (0)+(0), (0)+(0), double> si::units<-2, 1, -2, 0, 0, 0, 0, double>::operator*<1, 0, 0, 0, 0, 0, 0>(si::units<1, 0, 0, 0, 0, 0, 0, double>)  
 -----------------------------------------------
-                0.00    0.00   99000/99000       float field::ValueNoise<3, float, field::MosaicNoise<procedural::GaussianNoise<procedural::UnitIntervalNoise<float> >, cartesian::UnboundedIndexing<int, (glm::qualifier)0> >, field::VectorMosaicOps<3, int, float, (glm::qualifier)0>, (glm::qualifier)0>::operator()<vec3 >(vec3)  
+                0.00    0.00   99000/99000       ValueNoise 
     0.0    0.00    0.00   99000         field::VectorMosaicOps<3, int, float, (glm::qualifier)0>::floor(vec3)  
                 0.00    0.00   99000/891000      vec3 glm::floor<3, float, (glm::qualifier)0>(vec3 &) 
                 0.00    0.00   99000/99000       ivec3::vec<float, (glm::qualifier)0>(vec3 &) 
@@ -5845,7 +5845,7 @@ index % time    self  children    called     name
     0.0    0.00    0.00   18000         rock::ColumnSummary::ColumnSummary() 
                 0.00    0.00   36000/954100      rock::StratumSummary::StratumSummary() 
 -----------------------------------------------
-                0.00    0.00    3600/3600        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::SiStrings, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >, int, float, si::units<-1, 1, -2, 0, 0, 0, 0, float>, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > &, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, int, vec3)  
+                0.00    0.00    3600/3600        SiStrings::format  
     0.0    0.00    0.00    3600         std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::SiStrings, aggregated::Order<adapted::SymbolicOrder> >::character<si::units<-1, 1, -2, 0, 0, 0, 0, float>, float, (glm::qualifier)0>(mat3, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>)  
                 0.00    0.00    3600/3600        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > adapted::SiStrings::character<-1, 1, -2, 0, 0, 0, 0, float>(si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>)  
 -----------------------------------------------
@@ -5928,7 +5928,7 @@ index % time    self  children    called     name
                 0.00    0.00      20/7332        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > adapted::SiStrings::legend<-1, 1, -2, 0, 0, 0, 0, float>(si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>)  
                 0.00    0.00      90/7332        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > si::to_string<-1, 1, -2, 0, 0, 0, 0, float>(si::units<-1, 1, -2, 0, 0, 0, 0, float>) 
                 0.00    0.00    3601/7332        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::IdStrings<float>, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<int, std::allocator<int> >, int, float, int, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<int, std::allocator<int> > &, int, int, int, vec3)  
-                0.00    0.00    3601/7332        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::SiStrings, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >, int, float, si::units<-1, 1, -2, 0, 0, 0, 0, float>, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > &, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, int, vec3)  
+                0.00    0.00    3601/7332        SiStrings::format  
     0.0    0.00    0.00    7332         std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::operator+=(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > &) 
                 0.00    0.00    7332/7342        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::append(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > &) 
 -----------------------------------------------
@@ -6126,7 +6126,7 @@ index % time    self  children    called     name
                 0.00    0.00    9002/7291703     std::vector<int, std::allocator<int> >::size()  
                 0.00    0.00    8999/8999        auto adapted::SymbolicOrder::less_than<int, int>(int, int)  
 -----------------------------------------------
-                0.00    0.00       1/1           std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::SiStrings, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >, int, float, si::units<-1, 1, -2, 0, 0, 0, 0, float>, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > &, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, int, vec3)  
+                0.00    0.00       1/1           SiStrings::format  
     0.0    0.00    0.00       1         std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > adapted::SiStrings::legend<-1, 1, -2, 0, 0, 0, 0, float>(si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>)  
                 0.00    0.00      10/10          std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > si::to_string<-1, 1, -2, 0, 0, 0, 0, float>(si::units<-1, 1, -2, 0, 0, 0, 0, float>) 
                 0.00    0.00      20/112         std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::operator+=(char *) 
@@ -6143,7 +6143,7 @@ index % time    self  children    called     name
                 0.00    0.00    4800/4800        vec4::vec<float, int, (glm::qualifier)0>(vec3 &, int) 
 -----------------------------------------------
                 0.00    0.00       1/597         std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::IdStrings<float>, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<int, std::allocator<int> >, int, float, int, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<int, std::allocator<int> > &, int, int, int, vec3)  
-                0.00    0.00       1/597         std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::SiStrings, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >, int, float, si::units<-1, 1, -2, 0, 0, 0, 0, float>, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > &, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, int, vec3)  
+                0.00    0.00       1/597         SiStrings::format  
                 0.00    0.00       1/597         adapted::IdStrings<float>::legend[abi:cxx11](float, float, float)  
                 0.00    0.00       1/597         std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > adapted::SiStrings::legend<-1, 1, -2, 0, 0, 0, 0, float>(si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>)  
                 0.00    0.00       2/597         view::ColorscaleSurfaceShaderProgram::ColorscaleSurfaceShaderProgram() 
@@ -6427,7 +6427,7 @@ index % time    self  children    called     name
                 0.00    0.00      20/112         adapted::IdStrings<float>::legend[abi:cxx11](float, float, float)  
                 0.00    0.00      20/112         std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > adapted::SiStrings::legend<-1, 1, -2, 0, 0, 0, 0, float>(si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>)  
                 0.00    0.00      31/112         std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::IdStrings<float>, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<int, std::allocator<int> >, int, float, int, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<int, std::allocator<int> > &, int, int, int, vec3)  
-                0.00    0.00      31/112         std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::SiStrings, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >, int, float, si::units<-1, 1, -2, 0, 0, 0, 0, float>, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > &, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, int, vec3)  
+                0.00    0.00      31/112         SiStrings::format  
     0.0    0.00    0.00     112         std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::operator+=(char *) 
                 0.00    0.00     112/112         std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::append(char *) 
 -----------------------------------------------
@@ -7269,7 +7269,7 @@ index % time    self  children    called     name
                 0.00    0.00     220/8219        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > si::to_string<-1, 1, -2, 0, 0, 0, 0, float>(si::units<-1, 1, -2, 0, 0, 0, 0, float>) 
                 0.00    0.00     257/8219        void std::destroy_at<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*) 
                 0.00    0.00    3601/8219        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::IdStrings<float>, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<int, std::allocator<int> >, int, float, int, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<int, std::allocator<int> > &, int, int, int, vec3)  
-                0.00    0.00    3601/8219        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::SiStrings, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >, int, float, si::units<-1, 1, -2, 0, 0, 0, 0, float>, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > &, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, int, vec3)  
+                0.00    0.00    3601/8219        SiStrings::format  
     0.0    0.00    0.00    8219         std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string() 
                 0.00    0.00    8219/8245        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_dispose() 
                 0.00    0.00    8219/8219        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_Alloc_hider::~_Alloc_hider() 
@@ -8682,7 +8682,7 @@ index % time    self  children    called     name
 -----------------------------------------------
                 0.00    0.00    1608/561115      main 
                 0.00    0.00    9000/561115      void iterated::Identity::operator()<dymaxion::VertexPositions<int, float>, std::vector<vec3, std::allocator<vec3 > > >(dymaxion::VertexPositions<int, float> &, std::vector<vec3, std::allocator<vec3 > >&)  
-                0.00    0.00   13500/561115      void unlayered::VectorCalculusByFundamentalTheorem::gradient<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<float, std::allocator<float> >, std::vector<vec3, std::allocator<vec3 > > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<float, std::allocator<float> > &, std::vector<vec3, std::allocator<vec3 > >&)  
+                0.00    0.00   13500/561115      VectorCalculusByFundamentalTheorem::gradient(floats)  
                 0.00    0.00   22500/561115      GridCache constructor 
                 0.00    0.00   82507/561115      CrustMotion::slab_pull 
                 0.00    0.00  432000/561115      VectorCalculusByFundamentalTheorem::gradient(bools) 
@@ -8733,7 +8733,7 @@ index % time    self  children    called     name
                 0.00    0.00  405000/405000      rock::StratumStore<2>* std::__do_uninit_copy<__gnu_cxx::__normal_iterator<rock::StratumStore<2> *, std::vector<rock::StratumStore<2>, std::allocator<rock::StratumStore<2> > > >, rock::StratumStore<2>*>(__gnu_cxx::__normal_iterator<rock::StratumStore<2> *, std::vector<rock::StratumStore<2>, std::allocator<rock::StratumStore<2> > > >, __gnu_cxx::__normal_iterator<rock::StratumStore<2> *, std::vector<rock::StratumStore<2>, std::allocator<rock::StratumStore<2> > > >, rock::StratumStore<2>*) 
    0.0    0.00    0.00  405000         __gnu_cxx::__normal_iterator<rock::StratumStore<2> *, std::vector<rock::StratumStore<2>, std::allocator<rock::StratumStore<2> > > >::operator*()  
 -----------------------------------------------
-                0.00    0.00    9000/297000      void unlayered::VectorCalculusByFundamentalTheorem::gradient<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<float, std::allocator<float> >, std::vector<vec3, std::allocator<vec3 > > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<float, std::allocator<float> > &, std::vector<vec3, std::allocator<vec3 > >&)  
+                0.00    0.00    9000/297000      VectorCalculusByFundamentalTheorem::gradient(floats)  
                 0.00    0.00  288000/297000      VectorCalculusByFundamentalTheorem::gradient(bools) 
    0.0    0.00    0.00  297000         vec3& vec3::operator+=<float>(vec3 &) 
 -----------------------------------------------
@@ -8821,12 +8821,12 @@ index % time    self  children    called     name
 -----------------------------------------------
                 0.00    0.00       3/74295       rock::FormationGeneration<dymaxion::GridCache<int, float, (glm::qualifier)0>, field::Compose<relation::ScalarRelation<float, si::units<1, 0, 0, 0, 0, 0, 0, float>, inspected::InverseByNewtonsMethod<float, analytic::Sum<float, analytic::Error<float> >, analytic::Sum<float, analytic::Gaussian<float> > > >, field::Compose<analytic::Error<float>, field::FractalBrownianNoise<int, float, field::ValueNoise<3, float, field::MosaicNoise<procedural::GaussianNoise<procedural::UnitIntervalNoise<float> >, cartesian::UnboundedIndexing<int, (glm::qualifier)0> >, field::VectorMosaicOps<3, int, float, (glm::qualifier)0>, (glm::qualifier)0> > > >, rock::StratumForAreaAndElevation<relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<0, 0, 1, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, si::units<-2, 1, 0, 0, 0, 0, 0, double>, 0, 1>, relation::PolynomialRailyardRelation<si::units<1, 0, 0, 0, 0, 0, 0, double>, double, 0, 1> >, si::units<1, 0, 0, 0, 0, 0, 0, float> >::size()  
                 0.00    0.00      33/74295       main 
-                0.00    0.00    2251/74295       void unlayered::VectorCalculusByFundamentalTheorem::gradient<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<float, std::allocator<float> >, std::vector<vec3, std::allocator<vec3 > > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<float, std::allocator<float> > &, std::vector<vec3, std::allocator<vec3 > >&)  
+                0.00    0.00    2251/74295       VectorCalculusByFundamentalTheorem::gradient(floats)  
                 0.00    0.00   72008/74295       VectorCalculusByFundamentalTheorem::gradient(bools) 
    0.0    0.00    0.00   74295         dymaxion::GridCache<int, float, (glm::qualifier)0>::vertex_count()  
                 0.00    0.00   74295/108060      dymaxion::Grid<int, float, (glm::qualifier)0>::vertex_count()  
 -----------------------------------------------
-                0.00    0.00    2250/74250       void unlayered::VectorCalculusByFundamentalTheorem::gradient<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<float, std::allocator<float> >, std::vector<vec3, std::allocator<vec3 > > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<float, std::allocator<float> > &, std::vector<vec3, std::allocator<vec3 > >&)  
+                0.00    0.00    2250/74250       VectorCalculusByFundamentalTheorem::gradient(floats)  
                 0.00    0.00   72000/74250       VectorCalculusByFundamentalTheorem::gradient(bools) 
    0.0    0.00    0.00   74250         vec3& vec3::operator/=<float>(float) 
 -----------------------------------------------
@@ -9456,7 +9456,7 @@ index % time    self  children    called     name
    0.0    0.00    0.00    7220         std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::operator[](unsigned long)  
 -----------------------------------------------
                 0.00    0.00    3600/7200        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::IdStrings<float>, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<int, std::allocator<int> >, int, float, int, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<int, std::allocator<int> > &, int, int, int, vec3)  
-                0.00    0.00    3600/7200        std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::SiStrings, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >, int, float, si::units<-1, 1, -2, 0, 0, 0, 0, float>, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > &, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, int, vec3)  
+                0.00    0.00    3600/7200        SiStrings::format  
    0.0    0.00    0.00    7200         vec3::vec<double, double, double>(double, double, double) 
 -----------------------------------------------
                 0.00    0.00    7200/7200        auto si::linearstep<-1, 1, -2, 0, 0, 0, 0, float>(si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>) 
@@ -12938,7 +12938,7 @@ Index by function name
   procedural::Uniform<si::units<-1, 1, -2, 0, 0, 0, 0, float> > procedural::uniform<si::units<-1, 1, -2, 0, 0, 0, 0, float> >(si::units<-1, 1, -2, 0, 0, 0, 0, float> &)  rock::StratumSummaryBuoyancyPressure::operator()(rock::StratumSummary &)   si::units<1, 0, 0, 0, 0, 0, 0, float>* std::__uninitialized_default_n_1<false>::__uninit_default_n<si::units<1, 0, 0, 0, 0, 0, 0, float>*, unsigned long>(si::units<1, 0, 0, 0, 0, 0, 0, float>*, unsigned long)
   procedural::Uniform<float> procedural::uniform<float>(float &)  EarthlikeIgneousFormationGeneration  si::units<-1, 1, -2, 0, 0, 0, 0, float>* std::__uninitialized_default_n_1<false>::__uninit_default_n<si::units<-1, 1, -2, 0, 0, 0, 0, float>*, unsigned long>(si::units<-1, 1, -2, 0, 0, 0, 0, float>*, unsigned long)
   procedural::Uniform<int> procedural::uniform<int>(int &)  rock::StratumSummaryIsostaticDisplacement::operator()(rock::StratumSummary &)   rock::StratumStore<2>* std::__uninitialized_default_n_1<false>::__uninit_default_n<rock::StratumStore<2>*, unsigned long>(rock::StratumStore<2>*, unsigned long)
-  procedural::Uniform<unsigned long> procedural::uniform<unsigned long>(unsigned long &)  float field::ValueNoise<3, float, field::MosaicNoise<procedural::GaussianNoise<procedural::UnitIntervalNoise<float> >, cartesian::UnboundedIndexing<int, (glm::qualifier)0> >, field::VectorMosaicOps<3, int, float, (glm::qualifier)0>, (glm::qualifier)0>::operator()<vec3 >(vec3)   rock::ColumnSummary* std::__uninitialized_default_n_1<false>::__uninit_default_n<rock::ColumnSummary*, unsigned long>(rock::ColumnSummary*, unsigned long)
+  procedural::Uniform<unsigned long> procedural::uniform<unsigned long>(unsigned long &)  ValueNoise  rock::ColumnSummary* std::__uninitialized_default_n_1<false>::__uninit_default_n<rock::ColumnSummary*, unsigned long>(rock::ColumnSummary*, unsigned long)
   auto procedural::gaussian<procedural::UnitIntervalNoise<float> >(procedural::UnitIntervalNoise<float> &)  auto field::MosaicNoise<procedural::GaussianNoise<procedural::UnitIntervalNoise<float> >, cartesian::UnboundedIndexing<int, (glm::qualifier)0> >::operator()<ivec3 >(ivec3)   rock::StratumSummary* std::__uninitialized_default_n_1<false>::__uninit_default_n<rock::StratumSummary*, unsigned long>(rock::StratumSummary*, unsigned long)
   spheroidal::Strings<adapted::IdStrings<float>, aggregated::Order<adapted::SymbolicOrder> >::Strings(adapted::IdStrings<float> &, aggregated::Order<adapted::SymbolicOrder> &)  field::VectorMosaicOps<3, int, float, (glm::qualifier)0>::add(ivec3, ivec3)   vec3* std::__uninitialized_default_n_1<true>::__uninit_default_n<vec3*, unsigned long>(vec3*, unsigned long)
   spheroidal::Strings<adapted::IdStrings<float>, aggregated::Order<adapted::SymbolicOrder> >::~Strings()  field::VectorMosaicOps<3, int, float, (glm::qualifier)0>::floor(vec3)   std::byte* std::__uninitialized_default_n_1<true>::__uninit_default_n<std::byte*, unsigned long>(std::byte*, unsigned long)
@@ -13102,7 +13102,7 @@ Index by function name
   vec4::vec<int, int, int, float>(int, int, int, float)  unlayered::NeighborBasedFloodFilling<int, float, rock::CrustIsUnfractured<float, (glm::qualifier)0>, rock::CrustDistancePriority<float, (glm::qualifier)0> >::reset(int, unlayered::FloodFillState<int, float>&)   std::vector<std::byte, std::allocator<std::byte> >::~vector()
   vec4::operator[](int)  void unlayered::NeighborBasedFloodFilling<int, float, rock::CrustIsUnfractured<float, (glm::qualifier)0>, rock::CrustDistancePriority<float, (glm::qualifier)0> >::advance<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<vec3, std::allocator<vec3 > >, std::vector<bool, std::allocator<bool> > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<vec3, std::allocator<vec3 > > &, std::vector<bool, std::allocator<bool> >&, unlayered::FloodFillState<int, float>&)   std::vector<std::byte, std::allocator<std::byte> >::operator[](unsigned long)
   vec4& vec4::operator*=<float>(float)  VectorCalculusByFundamentalTheorem::gradient(bools)  std::vector<std::pair<int, float>, std::allocator<std::pair<int, float> > >::_S_max_size(std::allocator<std::pair<int, float> > &)
-  vec4& vec4::operator+=<float>(vec4 &)  void unlayered::VectorCalculusByFundamentalTheorem::gradient<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<float, std::allocator<float> >, std::vector<vec3, std::allocator<vec3 > > >(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<float, std::allocator<float> > &, std::vector<vec3, std::allocator<vec3 > >&)   std::vector<std::pair<int, float>, std::allocator<std::pair<int, float> > >::_S_relocate(std::pair<int, float>*, std::pair<int, float>*, std::pair<int, float>*, std::allocator<std::pair<int, float> >&)
+  vec4& vec4::operator+=<float>(vec4 &)  VectorCalculusByFundamentalTheorem::gradient(floats)   std::vector<std::pair<int, float>, std::allocator<std::pair<int, float> > >::_S_relocate(std::pair<int, float>*, std::pair<int, float>*, std::pair<int, float>*, std::allocator<std::pair<int, float> >&)
    vec2 glm::sign<2, float, (glm::qualifier)0>(vec2 &)  std::_Deque_base<std::variant<messages::MouseMotionMessage, messages::MouseClickMessage, messages::ScrollMessage>, std::allocator<std::variant<messages::MouseMotionMessage, messages::MouseClickMessage, messages::ScrollMessage> > >::_M_get_Tp_allocator()   std::pair<int, float>& std::vector<std::pair<int, float>, std::allocator<std::pair<int, float> > >::emplace_back<int &, float>(int &, float&&)
    vec2 glm::clamp<2, float, (glm::qualifier)0>(vec2 &, float, float)  std::_Deque_base<std::variant<messages::MouseMotionMessage, messages::MouseClickMessage, messages::ScrollMessage>, std::allocator<std::variant<messages::MouseMotionMessage, messages::MouseClickMessage, messages::ScrollMessage> > >::_M_get_map_allocator()   std::pair<int, float>& std::vector<std::pair<int, float>, std::allocator<std::pair<int, float> > >::emplace_back<int&, bool>(int&, bool&&)
    ivec2 glm::clamp<2, int, (glm::qualifier)0>(ivec2 &, int, int)  std::_Vector_base<mat3, std::allocator<mat3 > >::_M_get_Tp_allocator()   std::vector<std::pair<int, float>, std::allocator<std::pair<int, float> > >::_M_move_assign(std::vector<std::pair<int, float>, std::allocator<std::pair<int, float> > >&&, std::integral_constant<bool, true>)
@@ -13117,7 +13117,7 @@ Index by function name
    glm::cross(vec3)  std::_Vector_base<std::pair<int, float>, std::allocator<std::pair<int, float> > >::get_allocator()   std::vector<std::pair<int, float>, std::allocator<std::pair<int, float> > >::vector(std::vector<std::pair<int, float>, std::allocator<std::pair<int, float> > > &)
   glm::detail::compute_floor<3, float, (glm::qualifier)0, false>::call(vec3 &)  std::_Vector_base<std::pair<int, float>, std::allocator<std::pair<int, float> > >::_M_get_Tp_allocator()   std::vector<std::pair<int, float>, std::allocator<std::pair<int, float> > >::vector()
   glm::detail::compute_fract<3, float, (glm::qualifier)0, false>::call(vec3 &)  std::_Vector_base<double, std::allocator<double> >::_M_get_Tp_allocator()   std::vector<std::pair<int, float>, std::allocator<std::pair<int, float> > >::~vector()
-  glm::detail::compute_length<3, float, (glm::qualifier)0, false>::call(vec3 &)  std::_Vector_base<float, std::allocator<float> >::_M_get_Tp_allocator()   std::vector<std::pair<int, float>, std::allocator<std::pair<int, float> > >::operator=(std::vector<std::pair<int, float>, std::allocator<std::pair<int, float> > >&&)
+  glm::length(vec3)  std::_Vector_base<float, std::allocator<float> >::_M_get_Tp_allocator()   std::vector<std::pair<int, float>, std::allocator<std::pair<int, float> > >::operator=(std::vector<std::pair<int, float>, std::allocator<std::pair<int, float> > >&&)
    glm::inverse(mat3)  std::_Vector_base<int, std::allocator<int> >::_M_get_Tp_allocator()   std::vector<std::array<std::vector<rock::StratumStore<2>, std::allocator<rock::StratumStore<2> > >, 5ul>, std::allocator<std::array<std::vector<rock::StratumStore<2>, std::allocator<rock::StratumStore<2> > >, 5ul> > >::_S_max_size(std::allocator<std::array<std::vector<rock::StratumStore<2>, std::allocator<rock::StratumStore<2> > >, 5ul> > &)
   glm::detail::compute_distance<3, float, (glm::qualifier)0, false>::call(vec3 &, vec3 &)  std::_Bit_iterator::operator*()   std::vector<std::array<std::vector<rock::StratumStore<2>, std::allocator<rock::StratumStore<2> > >, 5ul>, std::allocator<std::array<std::vector<rock::StratumStore<2>, std::allocator<rock::StratumStore<2> > >, 5ul> > >::_S_check_init_len(unsigned long, std::allocator<std::array<std::vector<rock::StratumStore<2>, std::allocator<rock::StratumStore<2> > >, 5ul> > &)
   glm::detail::compute_vec4_add<float, (glm::qualifier)0, false>::call(vec4 &, vec4 &)  std::_Bit_iterator::operator[](long)   std::vector<std::array<std::vector<rock::StratumStore<2>, std::allocator<rock::StratumStore<2> > >, 5ul>, std::allocator<std::array<std::vector<rock::StratumStore<2>, std::allocator<rock::StratumStore<2> > >, 5ul> > >::_M_fill_initialize(unsigned long, std::array<std::vector<rock::StratumStore<2>, std::allocator<rock::StratumStore<2> > >, 5ul> &)
@@ -13498,7 +13498,7 @@ Index by function name
   std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::IdStrings<float>, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<int, std::allocator<int> >, int, float, int, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<int, std::allocator<int> > &, int, int, int, vec3)   std::_Vector_base<unsigned int, std::allocator<unsigned int> >::_Vector_impl::_Vector_impl(std::allocator<unsigned int> &)  std::isinf(float)
   std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::IdStrings<float>, aggregated::Order<adapted::SymbolicOrder> >::character<int, float, (glm::qualifier)0>(mat3, int, int, int)   std::_Vector_base<unsigned int, std::allocator<unsigned int> >::_Vector_impl::~_Vector_impl()  std::isnan(double)
   SiStrings::format   std::_Vector_base<unsigned int, std::allocator<unsigned int> >::_M_deallocate(unsigned int*, unsigned long)  std::isnan(float)
-  std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::SiStrings, aggregated::Order<adapted::SymbolicOrder> >::format<dymaxion::GridCache<int, float, (glm::qualifier)0>, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > >, int, float, si::units<-1, 1, -2, 0, 0, 0, 0, float>, (glm::qualifier)0>(dymaxion::GridCache<int, float, (glm::qualifier)0> &, std::vector<si::units<-1, 1, -2, 0, 0, 0, 0, float>, std::allocator<si::units<-1, 1, -2, 0, 0, 0, 0, float> > > &, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, int, vec3)   std::_Vector_base<unsigned int, std::allocator<unsigned int> >::_M_create_storage(unsigned long)  std::log10(float)
+  SiStrings::format   std::_Vector_base<unsigned int, std::allocator<unsigned int> >::_M_create_storage(unsigned long)  std::log10(float)
   std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > spheroidal::Strings<adapted::SiStrings, aggregated::Order<adapted::SymbolicOrder> >::character<si::units<-1, 1, -2, 0, 0, 0, 0, float>, float, (glm::qualifier)0>(mat3, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>, si::units<-1, 1, -2, 0, 0, 0, 0, float>)   std::_Vector_base<unsigned int, std::allocator<unsigned int> >::_Vector_impl_data::_Vector_impl_data()  std::round(float)
   si::units<0, 0, 1, 0, 0, 0, 0, double>::operator/(si::units<0, 0, 1, 0, 0, 0, 0, double>)   std::_Vector_base<unsigned int, std::allocator<unsigned int> >::_M_get_Tp_allocator()  mat3* std::fill_n<mat3*, unsigned long, mat3 >(mat3*, unsigned long, mat3 &)
   si::units<0, 0, 1, 0, 0, 0, 0, double>::operator-(si::units<0, 0, 1, 0, 0, 0, 0, double>)   std::_Vector_base<unsigned int, std::allocator<unsigned int> >::_Vector_base(unsigned long, std::allocator<unsigned int> &)  vec3* std::fill_n<vec3*, unsigned long, vec3 >(vec3*, unsigned long, vec3 &)
