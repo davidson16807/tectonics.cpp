@@ -148,7 +148,7 @@ int main() {
   length world_radius(6.371e6 * si::meter);
   density mantle_density(3000.0*si::kilogram/si::meter3);
   viscosity mantle_viscosity(1.57e20*si::pascal*si::second);
-  int vertices_per_fine_square_side(30);
+  int vertices_per_fine_square_side(60);
   int vertices_per_coarse_square_side(vertices_per_fine_square_side/2);
   dymaxion::GridCache fine(dymaxion::Grid(world_radius/meter, vertices_per_fine_square_side));
   dymaxion::GridCache coarse(dymaxion::Grid(world_radius/meter, vertices_per_coarse_square_side));
@@ -377,7 +377,7 @@ int main() {
   };
 
   const float pi(3.1415926535);
-  for(int i=0; i<10; i++) {
+  for(int i=0; i<100; i++) {
 
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -402,15 +402,10 @@ int main() {
       }
 
       // summarize
-      std::cout << "summarize" << std::endl;
       summarization .summarize (fine, plates, locals, scratch);   // summarize each plate into a (e.g.) CrustSummary raster
-      std::cout << "globalize" << std::endl;
       frames        .globalize (orientations, locals, globals);   // resample plate-specific rasters onto a global grid
-      std::cout << "flatten" << std::endl;
       summarization .flatten   (globals,      master);            // condense globalized rasters into e.g. LithosphereSummary
-      std::cout << "localize" << std::endl;
       frames        .localize  (orientations, master, summaries); // resample global raster to a plate-specific for each plate
-      std::cout << "draw" << std::endl;
 
       /*
       Q: Why don't we determine rifting on master, then localize the result to each plate?
