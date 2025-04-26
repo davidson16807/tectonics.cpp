@@ -17,9 +17,9 @@ all: $(TEST) ./Makefile
 	-lglfw -lGL -lGLEW && \
 	chmod a+x test.out && \
 	./test.out && \
-	gprof test.out gmon.out > profiled-$(TAG)-O$(O).txt && \
-	python3 replace.py beautify.tsv profiled-$(TAG)-O$(O).txt && \
-	sed -i s/\[[0-9]+\]//g profiled-$(TAG)-O$(O).txt
+	gprof test.out gmon.out > $(TAG)-O$(O).txt && \
+	python3 replace.py beautify.tsv $(TAG)-O$(O).txt && \
+	sed -i s/\[[0-9]+\]//g $(TAG)-O$(O).txt
 
 clean:
 	rm -f test.cpp test.out gmon.out

@@ -1,5 +1,4 @@
 TODO:
-* rename profiler output, e.g.: profiled-B-O1.txt → c1B-O1.txt
 * drop O0 as profiler test case, add "k" series where iteration_count=1000, e.g. k1B-O1.txt
 * do optimizers rely on constant-value seeds to cache rasters that they shouldn't?
 * investigate usages of GenericRelation (density calculation?)
