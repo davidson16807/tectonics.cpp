@@ -92,8 +92,7 @@ namespace dymaxion
 		    Therefore, we declare that standardize() is identity if `is_pole`.
 		    This has advantages in spatial transport and 3d rendering 
 		    since triangles and edges naturally degenerate if `is_pole` is true for any vertex.*/
-			Point standardized   (is_pole? grid_id : Point(math::modulus(i+di, square_count), flipped));
-			return standardized;
+			return Point(is_pole? grid_id : Point(math::modulus(i+di, square_count), flipped));
 		}
 
 		constexpr Point grid_id(const vec3 sphere_position) const 

@@ -18,7 +18,7 @@ all: $(TEST) ./Makefile
 	chmod a+x test.out && \
 	./test.out && \
 	gprof test.out gmon.out > profiled-$(TAG)-O$(O).txt && \
-	pythone3 replace.py beautify.tsv profiled-$(TAG)-O$(O).txt && \
+	python3 replace.py beautify.tsv profiled-$(TAG)-O$(O).txt && \
 	sed -i s/\[[0-9]+\]//g profiled-$(TAG)-O$(O).txt
 
 clean:

@@ -34,6 +34,7 @@ namespace dymaxion
 
     public:
         const id vertices_per_square_side;
+        const id vertices_per_square_side_1;
         const scalar vertices_per_square_side_scalar;
         const id vertices_per_square;
         const id vertex_count;
@@ -44,10 +45,12 @@ namespace dymaxion
 
     public:
         static constexpr id square_count = 10;
+        static constexpr scalar half2 = 0.5;
 
         constexpr Indexing(const id vertices_per_square_side) : 
             projection(Projection<id,scalar,Q>()),
             vertices_per_square_side(vertices_per_square_side),
+            vertices_per_square_side_1(vertices_per_square_side-1),
             vertices_per_square_side_scalar(vertices_per_square_side),
             vertices_per_square(vertices_per_square_side * vertices_per_square_side),
             vertex_count(square_count*vertices_per_square),
@@ -56,27 +59,31 @@ namespace dymaxion
         {
         }
 
-        constexpr ipoint standardize(const ipoint grid_id) const {
-            point standardized =(
-                projection.standardize((point(grid_id)+vec2(0.5)) / vertices_per_square_side_scalar)
-            ) * vertices_per_square_side_scalar;
-            return ipoint(standardized);
+        inline constexpr ipoint standardize(const ipoint grid_id) const {
+            return ipoint(
+                projection.standardize(
+                    point(grid_id.square_id, (vec2(grid_id.square_position)+half2) / vertices_per_square_side_scalar)
+                ) * vertices_per_square_side_scalar
+            );
         }
 
-        constexpr id memory_id(const ipoint grid_id) const {
+        inline constexpr id memory_id(const ipoint grid_id) const {
             const ipoint standardized(standardize(grid_id));
-            const ipoint clamped(clamp(standardized, 0, vertices_per_square_side-1));
-            return square_interleave.interleaved_id(
-                    clamped.square_id, 
-                    row_interleave.interleaved_id(clamped.square_position.y, clamped.square_position.x)
-                );
+            return  standardized.square_id * vertices_per_square + 
+                    std::min(standardized.square_position.y, vertices_per_square_side_1) * vertices_per_square_side + 
+                    std::min(standardized.square_position.x, vertices_per_square_side_1);
+            // const ipoint clamped(clamp(standardized, 0, vertices_per_square_side-1));
+            // return square_interleave.interleaved_id(
+            //         clamped.square_id, 
+            //         row_interleave.interleaved_id(clamped.square_position.y, clamped.square_position.x)
+            //     );
         }
 
         inline constexpr ipoint grid_id(const id memory_id) const {
             id square_element_id(square_interleave.element_id(memory_id));
             return ipoint(
                 square_interleave.block_id(memory_id), 
-                vec2(row_interleave.element_id(square_element_id), row_interleave.block_id(square_element_id))
+                ivec2(row_interleave.element_id(square_element_id), row_interleave.block_id(square_element_id))
             );
         }
 

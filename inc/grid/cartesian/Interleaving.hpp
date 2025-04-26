@@ -20,15 +20,15 @@ namespace cartesian
 
         }
 
-		Tid interleaved_id(const Tid block_id, const Tid element_id) const {
+		inline constexpr Tid interleaved_id(const Tid block_id, const Tid element_id) const {
 			return block_id * elements_per_block + element_id;
 		}
 
-		Tid block_id(const Tid interleaved_id) const {
+		inline constexpr Tid block_id(const Tid interleaved_id) const {
 			return interleaved_id / elements_per_block;
 		}
 
-		Tid element_id(const Tid interleaved_id) const {
+		inline constexpr Tid element_id(const Tid interleaved_id) const {
 			return interleaved_id % elements_per_block;
 		}
 
