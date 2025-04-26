@@ -1,8 +1,7 @@
 TODO:
-* introduce GridSeries with analogous interface to GridCache (e.g. `verted_dual_areas`) so that individual function implementations can choose procedural or cached implementation based on e.g. whether they are in-order
-* what happens to tradeoffs between GridSeries and GridCache when working at a higher resolution (e.g. 60x60 grids?)
-* what happens to performance when running with optimizations turned on?
 * what happens to performance when using grids of a different class?
+	dymaxion::Grid with cached coordinate bases
+	dymaxion::Grid where x,y is determined by atan2 for a chaced coordinate basis
 	collignon::Grid
 	tectonics.py style fibonacci::Grid
 	tectonics.js style icosahedron with massive octahedron grid for cached nearest_vertex_id lookups
