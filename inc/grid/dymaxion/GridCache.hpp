@@ -211,8 +211,8 @@ namespace dymaxion
 
 		inline constexpr scalar vertex_dual_area(const id vertex_id) const 
 		{
-			return grid.vertex_dual_area(vertex_id);
-			// return vertex_dual_areas[vertex_id];
+			// return grid.vertex_dual_area(vertex_id);
+			return vertex_dual_areas[vertex_id];
 		}
 
 		inline constexpr id nearest_vertex_id(const vec3 vertex_position) const
