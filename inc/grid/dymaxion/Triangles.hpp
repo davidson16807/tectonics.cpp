@@ -49,14 +49,12 @@ namespace dymaxion
 		{
 		}
 
-		inline constexpr vec3 origin(
+		/*`triangle_id` retrieves a id for the triangle that can be used to cache triangle properties*/
+		inline constexpr id triangle_id(
 			const id i, 
-			const scalar square_polarity, 
 			const bool is_polar
 		) const {
-			scalar z         (square_polarity*(is_polar? 1.0:-0.5));
-			scalar longitude (i*half_subgrid_longitude_arc_length);
-			return cartesian_from_zlon(z, longitude);
+			return i + id(is_polar)*subgrid_count;
 		}
 
 		inline constexpr bool is_inverted_square_id(
@@ -96,6 +94,16 @@ namespace dymaxion
 		) const {
 			// V3⋅(N×S)>0 indicates that V3 occupies an eastern triangle
 			return glm::dot(V3, glm::cross(N,S)) >= scalar(0);
+		}
+
+		inline constexpr vec3 origin(
+			const id i, 
+			const scalar square_polarity, 
+			const bool is_polar
+		) const {
+			scalar z         (square_polarity*(is_polar? 1.0:-0.5));
+			scalar longitude (i*half_subgrid_longitude_arc_length);
+			return cartesian_from_zlon(z, longitude);
 		}
 
 		inline constexpr mat3 basis(

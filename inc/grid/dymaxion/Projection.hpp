@@ -50,6 +50,7 @@ namespace dymaxion
 
 		static constexpr scalar pi = 3.141592652653589793f;
 		static constexpr id square_count = 10;
+		static constexpr id triangle_count = 20;
 		static constexpr scalar half_subgrid_longitude_arc_length = 2*pi/square_count;
 		static constexpr scalar epsilon = 1e-7;
 		static constexpr scalar s0 = 0;
@@ -59,13 +60,51 @@ namespace dymaxion
 		static constexpr id i1 = 1;
 		static constexpr id i2 = 2;
 
+		std::array<vec3,triangle_count> origins;
+		std::array<vec3,triangle_count> Nhats;
+		std::array<mat3,triangle_count> bases;
+		std::array<mat3,triangle_count> inverse_bases;
+
 		const Triangles<id,scalar,Q> triangles;
 		const Squares<id,scalar,Q> squares;
 
 	public:
 
-		explicit Projection()
+		explicit Projection():
+			origins(),
+			Nhats(),
+			bases(),
+			inverse_bases()
 		{
+			for (id i = 0; i < square_count; ++i)
+			{
+				for (id j = 0; j < 2; ++j)
+				{
+					bool is_polar(j==1);
+					id triangle_id(triangles.triangle_id(i,is_polar));
+					mat3 basis_(basis(i,is_polar));
+					origins[triangle_id]       = origin(i,is_polar);
+					bases[triangle_id]         = basis_;
+					inverse_bases[triangle_id] = glm::inverse(basis_);
+					Nhats[triangle_id]         = glm::normalize(glm::cross(basis_[1], basis_[0]));
+				}
+			}
+		}
+
+		constexpr vec3 origin(const id i, const bool is_polar) const 
+		{
+			id     Oid (i+i1);
+			scalar square_polarity(squares.polarity(i));
+			return triangles.origin(Oid, square_polarity, is_polar);
+		}
+
+		constexpr mat3 basis(const id i, const bool is_polar) const 
+		{
+			vec3   W   (squares.westmost(i));    // W: westernmost triangle vertex
+			vec3   E   (squares.westmost(i+i2)); // E: easternmost triangle vertex
+			vec3   O   (origin(i,is_polar));     // O: northernmost or southernmost triangle vertex that serves as origin
+			bool   is_inverted    (triangles.is_inverted_square_id   (i, is_polar));
+			return triangles.basis(is_inverted,W,E,O);
 		}
 
 		constexpr Point standardize(const Point grid_id) const 
@@ -109,20 +148,21 @@ namespace dymaxion
 						std::min(Nid,Sid)-i1 + id(triangles.is_eastern_sphere_position(V3,N,S)),  
 						square_count));
 			id     Wid (i);
-			id     Oid (i+i1);
 			id     Eid (i+i2);
 			vec3   W   (squares.westmost(Wid)); // W: westernmost triangle vertex
 			vec3   E   (squares.westmost(Eid)); // E: easternmost triangle vertex
 			scalar square_polarity(squares.polarity(i));
 			bool   is_polar       (triangles.is_polar_sphere_position(square_polarity, V3, W,E));
 			bool   is_inverted    (triangles.is_inverted_square_id   (i, is_polar));
-			vec3   O     (triangles.origin(Oid, square_polarity, is_polar));
-			mat3   basis (triangles.basis(is_inverted,W,E,O));
-			vec3   Nhat  (glm::normalize(glm::cross(basis[1], basis[0])));
-			vec3   triangle_position(glm::inverse(basis) * triangles.plane_project(V3,Nhat,O));
+			id     triangle_id    (triangles.triangle_id(i,is_polar));
+			vec3   triangle_position(
+				inverse_bases[triangle_id] * 
+				triangles.plane_project(V3,Nhats[triangle_id],origins[triangle_id])
+			);
 			vec2   V2    (is_inverted? 
 				vec2(0,1)+vec2(1,-1)*triangle_position.xy() : 
-				vec2(1,0)+vec2(-1,1)*triangle_position.xy());
+				vec2(1,0)+vec2(-1,1)*triangle_position.xy()
+			);
 			return Point(i,glm::clamp(V2.yx(),s0,s1));
 		}
 
@@ -142,8 +182,8 @@ namespace dymaxion
 			vec3 W (squares.westmost(Wid));
 			vec3 E (squares.westmost(Eid));
 			vec3 O (triangles.origin(Oid, squares.polarity(i), is_polar));
-			mat3 basis (triangles.basis(is_inverted, W,E,O));
-			return triangles.sphere_project(basis * vec3(triangle_position, s1));
+			id     triangle_id    (triangles.triangle_id(i,is_polar));
+			return triangles.sphere_project(bases[triangle_id] * vec3(triangle_position, s1));
 		}
 
 	};
