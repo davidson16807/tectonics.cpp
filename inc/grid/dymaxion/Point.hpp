@@ -150,37 +150,37 @@ namespace dymaxion
     }
 
     template<typename id, typename scalar, glm::qualifier precision>
-    constexpr Point<id,scalar,precision> round(const Point<id,scalar,precision>& p)
+    inline constexpr Point<id,scalar,precision> round(const Point<id,scalar,precision>& p)
     {
         return Point<id,scalar,precision>(p.square_id, glm::round(p.square_position));
     }
 
     template<typename id, typename scalar, glm::qualifier precision>
-    constexpr Point<id,scalar,precision> floor(const Point<id,scalar,precision>& p)
+    inline constexpr Point<id,scalar,precision> floor(const Point<id,scalar,precision>& p)
     {
         return Point<id,scalar,precision>(p.square_id, glm::floor(p.square_position));
     }
 
     template<typename id, typename scalar, glm::qualifier precision>
-    constexpr Point<id,scalar,precision> ceil(const Point<id,scalar,precision>& p)
+    inline constexpr Point<id,scalar,precision> ceil(const Point<id,scalar,precision>& p)
     {
         return Point<id,scalar,precision>(p.square_id, glm::ceil(p.square_position));
     }
 
     template<typename id, typename scalar, glm::qualifier precision>
-    constexpr Point<id,scalar,precision> min(const Point<id,scalar,precision>& p, const scalar k)
+    inline constexpr Point<id,scalar,precision> min(const Point<id,scalar,precision>& p, const scalar k)
     {
         return Point<id,scalar,precision>(p.square_id, glm::min(p.square_position, k));
     }
 
     template<typename id, typename scalar, glm::qualifier precision>
-    constexpr Point<id,scalar,precision> max(const Point<id,scalar,precision>& p, const scalar k)
+    inline constexpr Point<id,scalar,precision> max(const Point<id,scalar,precision>& p, const scalar k)
     {
         return Point<id,scalar,precision>(p.square_id, glm::max(p.square_position, k));
     }
 
     template<typename id, typename scalar, glm::qualifier precision>
-    constexpr Point<id,scalar,precision> clamp(const Point<id,scalar,precision>& p, const scalar lo, const scalar hi)
+    inline constexpr Point<id,scalar,precision> clamp(const Point<id,scalar,precision>& p, const scalar lo, const scalar hi)
     {
         return Point<id,scalar,precision>(p.square_id, glm::clamp(p.square_position, lo, hi));
     }
