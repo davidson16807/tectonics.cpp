@@ -11,7 +11,7 @@ c2Bb	100	60	cached	procedural	procedural	procedural	yes	111	13.0	10.8	8.87
 c2Bc	100	60	cached	procedural	procedural	cached	yes	82	12.2	8.96	7.55	
 k1B	1000	30	cached	procedural	procedural	procedural	no		16.4	14.6	12.9	
 k1Bb	1000	30	cached	procedural	procedural	procedural	yes					
-K1Bc	1000	30	cached	procedural	procedural	cached	yes					
+K1Bc	1000	30	cached	procedural	procedural	cached	yes		28.7	21.9	18.1	
 k2B	1000	60	cached	procedural	procedural	procedural	no		148	138	119	
 k2Bb	1000	60	cached	procedural	procedural	procedural	yes		122	97.5	118	
 k2Bc	1000	60	cached	procedural	procedural	cached	yes		114	84.8	71.0	
