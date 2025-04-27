@@ -34,9 +34,16 @@ class Square:
 		pass
 
 	def westmost(self, i):
-		z = 0.5-i%2
-		longitude = i*half_square_longitude_arc_length
-		return cartesian_from_zlon(z,longitude)
+		return cartesian_from_zlon(0.5-i%2, i*half_square_longitude_arc_length)
+
+	def eastmost(self, i):
+		return cartesian_from_zlon(0.5-i%2, (i+2)*half_square_longitude_arc_length)
+
+	def northmost(self, i):
+		return cartesian_from_zlon(1-0.5*(i%2), (i+1)*half_square_longitude_arc_length)
+
+	def southmost(self, i):
+		return cartesian_from_zlon(-1+0.5*((i+1)%2), (i+1)*half_square_longitude_arc_length)
 
 	def polarity(self, i):
 		return (-1)**i
@@ -111,40 +118,48 @@ class Projection:
 		Sid = 2*round((EWid-1)/2)+1 # Sid: southernmost edge vertex id
 		N = self.squares.westmost(Nid)
 		S = self.squares.westmost(Sid)
-		print(V3,N,S,Nid,Sid)
 		i = (min(Nid,Sid)-1 + self.triangles.is_eastern_sphere_position(V3,N,S)) % square_count
-		print(self.triangles.is_eastern_sphere_position(V3,N,S), min(Nid,Sid)-1, i)
-		Wid = i     # west   longitude id
-		Oid = i + 1 # origin longitude id
-		Eid = i + 2 # east   longitude id
-		W = self.squares.westmost(Wid) # W: westernmost triangle vertex
-		E = self.squares.westmost(Eid) # E: easternmost triangle vertex
-		square_polarity = self.squares.polarity(i)
-		is_polar = self.triangles.is_polar_sphere_position(square_polarity, V3, W,E)
-		is_inverted = self.triangles.is_inverted_square_id(i, is_polar)
-		O = self.triangles.origin(Oid, square_polarity, is_polar)
-		basis = self.triangles.basis(is_inverted,W,E, O)
-		Nhat = glm.cross(basis[0], basis[1])
-		triangle_position = glm.inverse(basis) * self.triangles.plane_project(V3,Nhat,O)
-		V2 = triangle_position.xy if is_inverted else 1-triangle_position.xy
-		return i, V2
+		# print(V3,N,S,Nid,Sid,i)
+		W = self.squares.westmost(i)
+		E = self.squares.eastmost(i)
+		S = self.squares.southmost(i)
+		N = self.squares.northmost(i)
+		Nx0 = glm.normalize(glm.cross(N,W))
+		Nx1 = glm.normalize(glm.cross(E,S))
+		Kx = glm.normalize(glm.cross(Nx0,Nx1))
+		Ix = glm.normalize(W-glm.dot(W,Kx)*W)
+		Jx = glm.normalize(glm.cross(Kx,Ix))
+		Ny0 = glm.normalize(glm.cross(W,S))
+		Ny1 = glm.normalize(glm.cross(N,E))
+		Ky = glm.normalize(glm.cross(Ny0,Ny1))
+		Iy = glm.normalize(W-glm.dot(W,Ky)*W)
+		Jy = glm.normalize(glm.cross(Ky,Iy))
+		V3x = V3-glm.dot(V3,Kx)*glm.normalize(V3)
+		V3y = V3-glm.dot(V3,Ky)*glm.normalize(V3)
+		x = math.atan2(glm.dot(Jx,V3x),glm.dot(Ix,V3x)) / math.acos(glm.dot(Nx0,Nx1))
+		y = math.atan2(glm.dot(Jy,V3y),glm.dot(Iy,V3y)) / math.acos(glm.dot(Ny0,Ny1))
+		return i, glm.vec2(x,y)
 
 	def position(self, grid_id):
 		i,V2 = (grid_id)
-		# i,V2 = self.standardize(grid_id)
-		is_inverted = self.triangles.is_inverted_grid_id(V2)
-		is_polar = self.triangles.is_polar_square_id(i, is_inverted)
-		triangle_position = V2 if is_inverted else 1-V2
-		Wid = i     # west   longitude id
-		Oid = i + 1 # origin longitude id
-		Eid = i + 2 # east   longitude id
-		W = self.squares.westmost(Wid) # W: westernmost triangle vertex
-		E = self.squares.westmost(Eid) # E: easternmost triangle vertex
-		O = self.triangles.origin(Oid, self.squares.polarity(i), is_polar)
-		basis = self.triangles.basis(is_inverted,W,E, O)
-		U2 = triangle_position
-		return self.triangles.sphere_project(basis * glm.vec3(U2.x,U2.y,1))
-
+		x,y = V2.x, V2.y
+		W = self.squares.westmost(i)
+		E = self.squares.eastmost(i)
+		S = self.squares.southmost(i)
+		N = self.squares.northmost(i)
+		Nx0 = glm.normalize(glm.cross(N,W))
+		Nx1 = glm.normalize(glm.cross(E,S))
+		Ix = Nx0
+		Kx = glm.normalize(glm.cross(Nx0,Nx1))
+		Jx = glm.normalize(glm.cross(Kx,Ix))
+		Ny0 = glm.normalize(glm.cross(W,S))
+		Ny1 = glm.normalize(glm.cross(N,E))
+		Iy = Ny0
+		Ky = glm.normalize(glm.cross(Ny0,Ny1))
+		Jy = glm.normalize(glm.cross(Ky,Iy))
+		V3 = glm.rotate(x * math.acos(glm.dot(Nx0,Nx1)), Kx) * W
+		V3 = glm.rotate(y * math.acos(glm.dot(Ny0,Ny1)), Ky) * V3
+		return V3
 
 projection = Projection(Square(), Triangle())
 
@@ -191,6 +206,8 @@ def vector_aoa(vector_aos):
 square_id = [i    for i,V2 in grid_id]
 square_x = [V2.x for i,V2 in grid_id]
 square_y = [V2.y for i,V2 in grid_id]
+print(min(square_x), max(square_x))
+print(min(square_y), max(square_y))
 
 standardize_i = [i    for i,V2 in standardize]
 standardize_x = [V2.x for i,V2 in standardize]
@@ -205,7 +222,7 @@ standardize_offset = [V-N for V,N in zip(standardize_sphere_position, position)]
 
 domain = dict(zip('xyz', vector_aoa(position)))
 
-px.scatter_3d(**domain,color=square_id).show()
+# px.scatter_3d(**domain,color=square_id).show()
 px.scatter_3d(**domain,color=square_x).show()
 px.scatter_3d(**domain,color=square_y).show()
 
