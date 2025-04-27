@@ -168,9 +168,8 @@ namespace dymaxion
 
 		constexpr vec3 sphere_position(const Point grid_id) const 
 		{
-			Point iV2(grid_id);
-			id   i  (iV2.square_id);
-			vec2 V2 (iV2.square_position.yx());
+			id   i  (grid_id.square_id);
+			vec2 V2 (grid_id.square_position.yx());
 			bool is_inverted (triangles.is_inverted_grid_position(V2));
 			bool is_polar    (triangles.is_polar_square_id(i, is_inverted));
 			vec2 triangle_position ((is_inverted? 

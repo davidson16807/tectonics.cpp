@@ -40,8 +40,8 @@ namespace dymaxion
         using mat3 = glm::mat<3,3,scalar,Q>;
 
 		static constexpr scalar pi = 3.141592652653589793f;
-		static constexpr id subgrid_count = 10;
-		static constexpr scalar half_subgrid_longitude_arc_length = 2*pi/subgrid_count;
+		static constexpr id square_count = 10;
+		static constexpr scalar half_subgrid_longitude_arc_length = 2*pi/square_count;
 
 	public:
 
@@ -54,7 +54,7 @@ namespace dymaxion
 			const id i, 
 			const bool is_polar
 		) const {
-			return i + id(is_polar)*subgrid_count;
+			return (i%square_count) + id(is_polar)*square_count;
 		}
 
 		inline constexpr bool is_inverted_square_id(
