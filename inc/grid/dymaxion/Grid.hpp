@@ -188,7 +188,7 @@ namespace dymaxion
 		// thereby providing an adequate representation for the vertex with irregular edges.
 		inline constexpr id vertex_representative(const id vertex_id) const 
 		{
-			return memory.memory_id_when_standard(clamp(memory.grid_id(vertex_id), 1, voronoi.vertices_per_square_side-2));
+			return memory.memory_id(clamp(memory.grid_id(vertex_id), 1, voronoi.vertices_per_square_side-2));
 		}
 
 		inline constexpr vec3 vertex_position(const id vertex_id) const 
