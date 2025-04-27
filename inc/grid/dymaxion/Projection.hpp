@@ -176,14 +176,7 @@ namespace dymaxion
 			vec2 triangle_position ((is_inverted? 
 				(V2-vec2(0,1))/vec2(1,-1) : 
 				(V2-vec2(1,0))/vec2(-1,1)));
-			id Wid (i     ); // west   longitude id
-			id Oid (i + i1); // origin longitude id
-			id Eid (i + i2); // east   longitude id
-			vec3 W (squares.westmost(Wid));
-			vec3 E (squares.westmost(Eid));
-			vec3 O (triangles.origin(Oid, squares.polarity(i), is_polar));
-			id     triangle_id    (triangles.triangle_id(i,is_polar));
-			return triangles.sphere_project(bases[triangle_id] * vec3(triangle_position, s1));
+			return triangles.sphere_project(bases[triangles.triangle_id(i,is_polar)] * vec3(triangle_position, s1));
 		}
 
 	};
