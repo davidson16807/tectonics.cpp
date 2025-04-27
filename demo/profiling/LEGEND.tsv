@@ -4,8 +4,8 @@ c1A	100	30	cached	cached	cached	memory_id	memory_id	clamped	procedural	31.8	3.93
 c1B	100	30	cached	procedural	procedural	memory_id	memory_id	clamped	procedural	33.5	3.97	3.69	3.14		for that optimization level
 c1Bb	100	30	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	procedural	27.4	3.16	2.6	2.17		all runs branch from commit ccf8ea
 c1Bc	100	30	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	cached	22.9	3.11	2.23	1.93		
-c2C	100	60	procedural	procedural	procedural	memory_id	memory_id	clamped	procedural	>1800	73.9	61.5	59.3	*	memory_id_when_standard causes a segfault in tests
-c2A	100	60	cached	cached	cached	memory_id	memory_id	clamped	procedural	138	17.4	14.8	13.0	*	when used in Grid.vertex_representative
+c2C	100	60	procedural	procedural	procedural	memory_id	memory_id	clamped	procedural	>1800	73.9	61.5	59.3	*	
+c2A	100	60	cached	cached	cached	memory_id	memory_id	clamped	procedural	138	17.4	14.8	13.0	*	
 c2B	100	60	cached	procedural	procedural	memory_id	memory_id	clamped	procedural	129	15.6	14.7	13.1	*	
 c2Bb	100	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	procedural	111	13.0	10.8	8.87	*	
 c2Bc	100	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	cached	82	12.2	8.96	7.55	*	
@@ -15,5 +15,5 @@ K1Bc	1000	30	cached	procedural	procedural	memory_id_when_standard	memory_id_when
 k2B	1000	60	cached	procedural	procedural	memory_id	memory_id	clamped	procedural		148	138	119	*	
 k2Bb	1000	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	procedural		122	97.5	118	*	
 k2Bc	1000	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	cached		114	84.8	71.0	*	
-k2Bd	1000	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	cached					*	
-k2Be	1000	60	cached	procedural	procedural	memory_id	memory_id_when_standard	unclamped	cached		103	85.5	84.7	*	
+k2Bd	1000	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	unclamped	cached				87.6	*	memory_id_when_standard causes a segfault in tests
+k2Be	1000	60	cached	procedural	procedural	memory_id	memory_id_when_standard	clamped	cached				72.7	*	when used in Grid.vertex_representative
