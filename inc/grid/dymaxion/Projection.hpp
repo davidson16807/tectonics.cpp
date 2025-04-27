@@ -160,10 +160,10 @@ namespace dymaxion
 				triangles.plane_project(V3,Nhats[triangle_id],origins[triangle_id])
 			);
 			vec2   V2    (is_inverted? 
-				vec2(0,1)+vec2(1,-1)*triangle_position.xy() : 
-				vec2(1,0)+vec2(-1,1)*triangle_position.xy()
+				vec2(1,0)+vec2(-1,1 )*triangle_position.yx() : 
+				vec2(0,1)+vec2( 1,-1)*triangle_position.yx()
 			);
-			return Point(i,glm::clamp(V2.yx(),s0,s1));
+			return Point(i,glm::clamp(V2,s0,s1));
 		}
 
 		constexpr vec3 sphere_position(const Point grid_id) const 
