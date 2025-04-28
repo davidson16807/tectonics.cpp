@@ -130,7 +130,7 @@ namespace dymaxion
 		constexpr Point standardize(const Point grid_id) const 
 		{
 			// return grid_id;
-			id    i  (math::modulus(grid_id.square_id, square_count));
+			id    i  (grid_id.square_id+square_count % square_count);
 			vec2  V2 (grid_id.square_position);
 			vec2  U2 (V2-scalar(0.5));
 			ivec2 square_polarity(squares.polarity(i));
@@ -151,7 +151,7 @@ namespace dymaxion
 		    Therefore, we declare that standardize() is identity if `is_pole`.
 		    This has advantages in spatial transport and 3d rendering 
 		    since triangles and edges naturally degenerate if `is_pole` is true for any vertex.*/
-			Point standardized   (is_pole? grid_id : Point(math::modulus(i+di, square_count), flipped));
+			Point standardized   (is_pole? grid_id : Point((i+di+square_count) % square_count, flipped));
 			return standardized;
 		}
 
@@ -164,16 +164,16 @@ namespace dymaxion
 			// V3⋅(W×E)>0 indicates whether V3 occupies a polar triangle
 			bool   is_polar     (squares.polarity(i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0);
 			id     triangle_id  (triangles.triangle_id(i,is_polar));
-			vec3   triangle_position(
+			vec3   triangle_position((
 				inverse_bases[triangle_id] * 
 				V3 * (normal_dot_origin[triangle_id]/glm::dot(normals[triangle_id],V3))
 				// V3 (N⋅O)/(N⋅V3) projects onto the plane (is this necessary?)
-			);
+			).yx());
 			return Point(i,
 				glm::clamp(
 					triangles.is_inverted_square_id(i,is_polar)? 
-						vec2(1,0)+vec2(-1,1 )*triangle_position.yx() : 
-						vec2(0,1)+vec2( 1,-1)*triangle_position.yx(),
+						vec2(1,0)+vec2(-1,1 )*triangle_position : 
+						vec2(0,1)+vec2( 1,-1)*triangle_position,
 					s0,s1)
 				);
 		}
@@ -184,9 +184,10 @@ namespace dymaxion
 			vec2 V2 (grid_id.square_position.yx());
 			bool is_inverted (triangles.is_inverted_grid_position(V2));
 			bool is_polar    (triangles.is_polar_square_id(i, is_inverted));
-			vec3 triangle_position ((is_inverted? 
-				(V2-vec2(0,1))/vec2(1,-1) : 
-				(V2-vec2(1,0))/vec2(-1,1)),
+			vec3 triangle_position (
+				triangles.is_inverted_grid_position(V2)? 
+					(V2-vec2(0,1))/vec2(1,-1) : 
+					(V2-vec2(1,0))/vec2(-1,1),
 				s1);
 			return triangles.sphere_project(bases[triangles.triangle_id(i,is_polar)] * triangle_position);
 		}
