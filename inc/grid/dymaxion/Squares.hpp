@@ -37,8 +37,9 @@ namespace dymaxion
         using vec3 = glm::vec<3,scalar,Q>;
 
 		static constexpr scalar pi = 3.141592652653589793f;
-		static constexpr id subgrid_count = 10;
-		static constexpr scalar half_subgrid_longitude_arc_length = 2*pi/subgrid_count;
+		static constexpr id i2 = 2;
+		static constexpr id square_count = 10;
+		static constexpr scalar half_subgrid_longitude_arc_length = 2*pi/square_count;
 
 	public:
 
@@ -50,6 +51,10 @@ namespace dymaxion
 			scalar z         (scalar(0.5) - scalar(math::modulus(i,id(2))));
 			scalar longitude (i*half_subgrid_longitude_arc_length);
 			return cartesian_from_zlon(z, longitude);
+		}
+
+		inline constexpr vec3 eastmost(const id i) const {
+			return westmost(i+i2);
 		}
 
 		inline constexpr scalar polarity(const id i) const {
