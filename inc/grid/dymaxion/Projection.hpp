@@ -53,6 +53,7 @@ namespace dymaxion
 		static constexpr id triangle_count = 20;
 		static constexpr scalar half_subgrid_longitude_arc_length = 2*pi/square_count;
 		static constexpr scalar epsilon = 1e-7;
+		static constexpr scalar half = 0.5;
 		static constexpr scalar s0 = 0;
 		static constexpr scalar s1 = 1;
 		static constexpr scalar s2 = 2;
@@ -63,8 +64,8 @@ namespace dymaxion
 		std::array<mat3,triangle_count> bases;
 		std::array<mat3,triangle_count> inverse_bases;
 		std::array<vec3,triangle_count> normals;
-		std::array<vec3,square_count> eastern_halfspace_normal;
-		std::array<vec3,square_count> polar_halfspace_normal;
+		std::array<vec3,square_count> eastern_halfspace_normals;
+		std::array<vec3,square_count> polar_halfspace_normals;
 		std::array<scalar,triangle_count> normal_dot_origin;
 
 		const Triangles<id,scalar,Q> triangles;
@@ -76,8 +77,8 @@ namespace dymaxion
 			bases(),
 			inverse_bases(),
 			normals(),
-			eastern_halfspace_normal(),
-			polar_halfspace_normal(),
+			eastern_halfspace_normals(),
+			polar_halfspace_normals(),
 			normal_dot_origin()
 		{
 			for (id i = 0; i < square_count; ++i)
@@ -92,9 +93,21 @@ namespace dymaxion
 					normals[triangle_id]         = glm::normalize(glm::cross(basis_[1], basis_[0]));
 					normal_dot_origin[triangle_id] = glm::dot(normals[triangle_id], origin(i,is_polar));
 				}
-				// eastern_halfspace_normal[i] = glm::normalize(glm::cross(N,S));
-				polar_halfspace_normal[i] = glm::normalize(glm::cross(squares.westmost(i), squares.eastmost(i)));
+				polar_halfspace_normals[i] = polar_halfspace_normal(i);
+				eastern_halfspace_normals[i] = eastern_halfspace_normal(i);
 			}
+		}
+
+		constexpr vec3 polar_halfspace_normal(const id i) const 
+		{
+			return glm::normalize(glm::cross(squares.westmost(i), squares.eastmost(i))); // W×E
+		}
+
+		constexpr vec3 eastern_halfspace_normal(const id i) const 
+		{
+			id     Nid (i2*std::round((i+half)/s2));
+			id     Sid (i2*std::round((i+half-s1)/s2)+i1);
+			return glm::normalize(glm::cross(squares.westmost(Nid), squares.westmost(Sid))); // |N×S|
 		}
 
 		constexpr vec3 origin(const id i, const bool is_polar) const 
@@ -148,14 +161,13 @@ namespace dymaxion
 			scalar EWid(longitude/half_subgrid_longitude_arc_length);
 			id     Nid (i2*std::round(EWid/s2));
 			id     Sid (i2*std::round((EWid-s1)/s2)+i1);
-			vec3   N   (squares.westmost(Nid));
-			vec3   S   (squares.westmost(Sid));
+			// V3⋅(N×S)>0 indicates whether V3 is in the easternmost of two squares that are possible for the longitude
 			id     i   (math::modulus(
-						std::min(Nid,Sid)-i1 + id(triangles.is_eastern_sphere_position(V3,N,S)),  
+						std::min(Nid,Sid)-i1 + id(triangles.is_eastern_sphere_position(V3,squares.westmost(Nid),squares.westmost(Sid))),  
+						// std::min(Nid,Sid)-i1 + id(glm::dot(V3,eastern_halfspace_normals[std::min(Nid,Sid)-i1]) >= s0),
 						square_count));
-			// bool   is_polar       (triangles.is_polar_sphere_position(squares.polarity(i), V3, W,E));
 			// V3⋅(W×E)>0 indicates whether V3 occupies a polar triangle
-			bool   is_polar       (squares.polarity(i) * glm::dot(V3, polar_halfspace_normal[i]) >= s0);
+			bool   is_polar       (squares.polarity(i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0);
 			id     triangle_id    (triangles.triangle_id(i,is_polar));
 			vec3   triangle_position(
 				inverse_bases[triangle_id] * 
