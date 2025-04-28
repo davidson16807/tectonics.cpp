@@ -48,15 +48,16 @@ namespace dymaxion
         using mat3  = glm::mat<3,3,scalar,Q>;
         using Point = dymaxion::Point<id,scalar>;
 
+		static constexpr scalar s0 = 0;
+		static constexpr scalar s1 = 1;
+		static constexpr scalar s2 = 2;
 		static constexpr scalar pi = 3.141592652653589793f;
+		static constexpr scalar turn = s2*pi;
 		static constexpr id square_count = 10;
 		static constexpr id triangle_count = 20;
 		static constexpr scalar half_subgrid_longitude_arc_length = 2*pi/square_count;
 		static constexpr scalar epsilon = 1e-7;
 		static constexpr scalar half = 0.5;
-		static constexpr scalar s0 = 0;
-		static constexpr scalar s1 = 1;
-		static constexpr scalar s2 = 2;
 		static constexpr id i0 = 0;
 		static constexpr id i1 = 1;
 		static constexpr id i2 = 2;
@@ -64,7 +65,7 @@ namespace dymaxion
 		std::array<mat3,triangle_count> bases;
 		std::array<mat3,triangle_count> inverse_bases;
 		std::array<vec3,triangle_count> normals;
-		std::array<vec3,square_count> eastern_halfspace_normals;
+		std::array<vec3,square_count> east_halfspace_normals;
 		std::array<vec3,square_count> polar_halfspace_normals;
 		std::array<scalar,triangle_count> normal_dot_origin;
 
@@ -77,7 +78,7 @@ namespace dymaxion
 			bases(),
 			inverse_bases(),
 			normals(),
-			eastern_halfspace_normals(),
+			east_halfspace_normals(),
 			polar_halfspace_normals(),
 			normal_dot_origin()
 		{
@@ -94,20 +95,20 @@ namespace dymaxion
 					normal_dot_origin[triangle_id] = glm::dot(normals[triangle_id], origin(i,is_polar));
 				}
 				polar_halfspace_normals[i] = polar_halfspace_normal(i);
-				eastern_halfspace_normals[i] = eastern_halfspace_normal(i);
+				east_halfspace_normals[i] = east_halfspace_normal(i);
 			}
+		}
+
+		constexpr vec3 east_halfspace_normal(const id EWid) const 
+		{
+			id     Nid (i2*std::round((EWid+half)/s2));
+			id     Sid (i2*std::round(((EWid+half)-s1)/s2)+i1);
+			return glm::cross(squares.westmost(Nid),squares.westmost(Sid)); // |N×S|
 		}
 
 		constexpr vec3 polar_halfspace_normal(const id i) const 
 		{
 			return glm::normalize(glm::cross(squares.westmost(i), squares.eastmost(i))); // W×E
-		}
-
-		constexpr vec3 eastern_halfspace_normal(const id i) const 
-		{
-			id     Nid (i2*std::round((i+half)/s2));
-			id     Sid (i2*std::round((i+half-s1)/s2)+i1);
-			return glm::normalize(glm::cross(squares.westmost(Nid), squares.westmost(Sid))); // |N×S|
 		}
 
 		constexpr vec3 origin(const id i, const bool is_polar) const 
@@ -156,23 +157,17 @@ namespace dymaxion
 
 		constexpr Point grid_id(const vec3 sphere_position) const 
 		{
-			vec3   V3        (sphere_position);
-			scalar longitude (std::atan2(V3.y,V3.x));
-			scalar EWid(longitude/half_subgrid_longitude_arc_length);
-			id     Nid (i2*std::round(EWid/s2));
-			id     Sid (i2*std::round((EWid-s1)/s2)+i1);
+			vec3   V3(sphere_position);
+			id     EWid(id((std::atan2(V3.y,V3.x)+turn)/half_subgrid_longitude_arc_length) % square_count);
 			// V3⋅(N×S)>0 indicates whether V3 is in the easternmost of two squares that are possible for the longitude
-			id     i   (math::modulus(
-						std::min(Nid,Sid)-i1 + id(triangles.is_eastern_sphere_position(V3,squares.westmost(Nid),squares.westmost(Sid))),  
-						// std::min(Nid,Sid)-i1 + id(glm::dot(V3,eastern_halfspace_normals[std::min(Nid,Sid)-i1]) >= s0),
-						square_count));
+			id     i ((EWid-i1 + id(glm::dot(V3,east_halfspace_normals[EWid])>=s0) + square_count) % square_count);
 			// V3⋅(W×E)>0 indicates whether V3 occupies a polar triangle
-			bool   is_polar       (squares.polarity(i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0);
-			id     triangle_id    (triangles.triangle_id(i,is_polar));
+			bool   is_polar     (squares.polarity(i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0);
+			id     triangle_id  (triangles.triangle_id(i,is_polar));
 			vec3   triangle_position(
 				inverse_bases[triangle_id] * 
 				V3 * (normal_dot_origin[triangle_id]/glm::dot(normals[triangle_id],V3))
-				// ^^^ accelerated version of triangles.plane_project()
+				// V3 (N⋅O)/(N⋅V3) projects onto the plane (is this necessary?)
 			);
 			return Point(i,
 				glm::clamp(

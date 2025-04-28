@@ -59,18 +59,31 @@ namespace math{
 	template <typename In1, typename In2> inline auto intersect(const In1 a, const In2 b){return a && b;}
 	template <typename In1, typename In2> inline auto differ(const In1 a, const In2 b){return a && !b;}
 
+	/*
+	`remainder` implements a common definition for the "remainder"
+	it is the amount that is left unaccounted for after dividing by the nearest whole number, 
+	regardless of whether that whole number is bigger or smaller.
+	*/
 	template<typename In1, typename In2>
 	inline constexpr auto remainder(const In1& a, const In2& b)
 	{
-	    return a - b * math::round(a / b);
+	    return a - b * std::round(a / b);
 	}
 
+	/*
+	`residue` implements what is known as the "residue" or "remainder" as understood by school children,
+	i.e. the amount that is left unaccounted for after dividing by the next smallest whole number
+	*/
 	template<typename In1, typename In2>
 	inline constexpr auto residue(const In1& a, const In2& b)
 	{
-	    return a - b * math::floor(a / b);
+	    return a - b * std::floor(a / b);
 	}
 
+	/*
+	`modulus` implements proper modulus as understood in modular arithmetic,
+	this is equivalent to the % operator in python
+	*/
 	template<typename In1, typename In2>
 	inline constexpr auto modulus(const In1& a, const In2& b)
 	{
@@ -80,7 +93,7 @@ namespace math{
 	template<typename T>
 	inline constexpr T maxabs(const T& a, const T& b)
 	{
-	    return math::max(-math::min(a,b), math::max(a,b));
+	    return std::max(-std::min(a,b), std::max(a,b));
 	}
 
 	template <typename T>
