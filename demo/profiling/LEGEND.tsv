@@ -1,22 +1,22 @@
-			Grid	Grid	Grid	Grid	Grid	Indexing	Projection	Projection	Projection						
-tag	frame_count	vertices_per_fine_square_side	vertex_dual_area	vertex_position	vertex_normal	vertex_representative	nearest_vertex_id	memory_id_when_standard	basis	polar_halfspace_normal	east_halfspace_normal	O0	O1	O2	O3		
-c1C	100	30	procedural	procedural	procedural	memory_id	memory_id	clamped	procedural	procedural	procedural	111	17.5	14.0	14.4		"""contents of """"O*"""" columns are"""
-c1A	100	30	cached	cached	cached	memory_id	memory_id	clamped	procedural	procedural	procedural	31.8	3.93	3.25	3.31		runtime reported in seconds
-c1B	100	30	cached	procedural	procedural	memory_id	memory_id	clamped	procedural	procedural	procedural	33.5	3.97	3.69	3.14		for that optimization level
-c1Bb	100	30	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	procedural	procedural	procedural	27.4	3.16	2.6	2.17		all runs branch from commit ccf8ea
-c1Bc	100	30	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	cached	procedural	procedural	22.9	3.11	2.23	1.93		
-c2C	100	60	procedural	procedural	procedural	memory_id	memory_id	clamped	procedural	procedural	procedural	>1800	73.9	61.5	59.3	*	
-c2A	100	60	cached	cached	cached	memory_id	memory_id	clamped	procedural	procedural	procedural	138	17.4	14.8	13.0	*	
-c2B	100	60	cached	procedural	procedural	memory_id	memory_id	clamped	procedural	procedural	procedural	129	15.6	14.7	13.1	*	
-c2Bb	100	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	procedural	procedural	procedural	111	13.0	10.8	8.87	*	
-c2Bc	100	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	cached	procedural	procedural	82	12.2	8.96	7.55	*	
-k1B	1000	30	cached	procedural	procedural	memory_id	memory_id	clamped	procedural	procedural	procedural		37.7	34.9	30.8		
-k1Bb	1000	30	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	procedural	procedural	procedural		30.2	25.9	20.6		
-K1Bc	1000	30	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	cached	procedural	procedural		28.7	21.9	18.1		
-k2B	1000	60	cached	procedural	procedural	memory_id	memory_id	clamped	procedural	procedural	procedural		148	138	119	*	
-k2Bb	1000	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	procedural	procedural	procedural		122	97.5	118	*	
-k2Bc	1000	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	cached	procedural	procedural		114	84.8	71.0	*	
-k2Bd	1000	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	unclamped	cached	procedural	procedural				87.6	*	memory_id_when_standard causes a segfault in tests
-k2Be	1000	60	cached	procedural	procedural	memory_id	memory_id_when_standard	clamped	cached	procedural	procedural		119	90.3	72.7	*	when used in Grid.vertex_representative
-k2Bf	1000	60	cached	procedural	procedural	memory_id	memory_id_when_standard	clamped	cached	cached	procedural				49.6	*	
-k2Bg	1000	60	cached	procedural	procedural	memory_id	memory_id_when_standard	clamped	cached	cached	cached				35.5	*	
+		Grid	Grid	Grid	Grid	Grid	Indexing	Projection	Projection	Projection							
+frame_count	vertices_per_fine_square_side	vertex_dual_area	vertex_position	vertex_normal	vertex_representative	nearest_vertex_id	memory_id_when_standard	basis	polar_halfspace_normal	east_halfspace_normal	tag	O0	O1	O2	O3		
+100	30	procedural	procedural	procedural	memory_id	memory_id	clamped	procedural	procedural	procedural	c1C	112	18.0	14.5	15.2		"""contents of """"O*"""" columns are"""
+100	30	cached	cached	cached	memory_id	memory_id	clamped	procedural	procedural	procedural	c1A	31.9	4.17	3.57	3.78		runtime reported in seconds
+100	30	cached	procedural	procedural	memory_id	memory_id	clamped	procedural	procedural	procedural	c1B	33.7	4.46	4.07	3.60		for that optimization level
+100	30	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	procedural	procedural	procedural	c1Bb	27.6	3.67	3.04	2.92		all runs branch from commit ccf8ea
+100	30	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	cached	procedural	procedural	c1Bc	23.0	3.21	2.58	2.66		
+100	60	procedural	procedural	procedural	memory_id	memory_id	clamped	procedural	procedural	procedural	c2C	>1800	75.9	63.8	62.0	*	
+100	60	cached	cached	cached	memory_id	memory_id	clamped	procedural	procedural	procedural	c2A	139	19.0	16.7	14.9	*	
+100	60	cached	procedural	procedural	memory_id	memory_id	clamped	procedural	procedural	procedural	c2B	129	18.0	16.0	14.9	*	
+100	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	procedural	procedural	procedural	c2Bb	111	14.9	12.4	12.4	*	
+100	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	cached	procedural	procedural	c2Bc	82.3	12.8	10.6	10.7	*	
+1000	30	cached	procedural	procedural	memory_id	memory_id	clamped	procedural	procedural	procedural	k1B		43.2	38.2	34.5		
+1000	30	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	procedural	procedural	procedural	k1Bb						
+1000	30	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	cached	procedural	procedural	K1Bc		30.0	26.2	25.7		
+1000	60	cached	procedural	procedural	memory_id	memory_id	clamped	procedural	procedural	procedural	k2B		174	154	138	*	
+1000	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	procedural	procedural	procedural	k2Bb		143	117	118	*	
+1000	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	cached	procedural	procedural	k2Bc		119	103	104	*	
+1000	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	unclamped	cached	procedural	procedural	k2Bd				107	*	memory_id_when_standard causes a segfault in tests
+1000	60	cached	procedural	procedural	memory_id	memory_id_when_standard	clamped	cached	procedural	procedural	k2Be		125	108	109	*	when used in Grid.vertex_representative
+1000	60	cached	procedural	procedural	memory_id	memory_id_when_standard	clamped	cached	cached	procedural	k2Bf				83.7	*	
+1000	60	cached	procedural	procedural	memory_id	memory_id_when_standard	clamped	cached	cached	cached	k2Bg				56.6	*	
