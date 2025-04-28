@@ -20,3 +20,4 @@ frame_count	vertices_per_fine_square_side	vertex_dual_area	vertex_position	verte
 1000	60	cached	procedural	procedural	memory_id	memory_id_when_standard	clamped	cached	procedural	procedural	k2Be		125	108	109	*	when used in Grid.vertex_representative
 1000	60	cached	procedural	procedural	memory_id	memory_id_when_standard	clamped	cached	cached	procedural	k2Bf				83.7	*	
 1000	60	cached	procedural	procedural	memory_id	memory_id_when_standard	clamped	cached	cached	cached	k2Bg		72.4	57.0	56.6	*	
+1000	60	cached	procedural	procedural	memory_id	memory_id_when_standard	clamped	cached	cached	cached	k2Bh				50.4		largely drops remaining math::modulus

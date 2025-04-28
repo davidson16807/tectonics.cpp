@@ -61,39 +61,20 @@ namespace dymaxion
 			const id i,
 			const bool is_polar
 		) const {
-			return is_polar == math::modulus(i,2);
+			return is_polar == i%2;
 		}
 
 		inline constexpr bool is_polar_square_id(
 			const id i,
 			const bool is_inverted
 		) const {
-			return is_inverted == math::modulus(i,2);
+			return is_inverted == i%2;
 		}
 
 		inline constexpr bool is_inverted_grid_position(
 			const vec2 V2
 		) const {
 			return V2.y > V2.x;;
-		}
-
-		inline constexpr bool is_polar_sphere_position(
-			const scalar square_polarity, 
-			const vec3 V3, 
-			const vec3 W, 
-			const vec3 E
-		) const {
-			// V3⋅(W×E)>0 indicates whether V3 occupies a polar triangle
-			return square_polarity * glm::dot(V3, glm::cross(W,E)) >= scalar(0);
-		}
-
-		inline constexpr bool is_eastern_sphere_position(
-			const vec3 V3, 
-			const vec3 N,
-			const vec3 S
-		) const {
-			// V3⋅(N×S)>0 indicates that V3 occupies an eastern triangle
-			return glm::dot(V3, glm::cross(N,S)) >= scalar(0);
 		}
 
 		inline constexpr vec3 origin(
