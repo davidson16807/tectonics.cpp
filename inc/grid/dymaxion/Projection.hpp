@@ -50,8 +50,6 @@ namespace dymaxion
 
 		static constexpr vec2 I = vec2(1,0);
 		static constexpr vec2 J = vec2(0,1);
-		static constexpr vec2 mirror = vec2(-1,1);
-		static constexpr vec2 flip = vec2(1,-1);
 		static constexpr ivec2 imirror = ivec2(-1,1);
 		static constexpr scalar s0 = 0;
 		static constexpr scalar s1 = 1;
@@ -62,12 +60,11 @@ namespace dymaxion
 		static constexpr id triangle_count = 20;
 		static constexpr scalar half_subgrid_longitude_arc_length = 2*pi/square_count;
 		static constexpr scalar half = 0.5;
-		static constexpr id i0 = 0;
 		static constexpr id i1 = 1;
 		static constexpr id i2 = 2;
 
 		std::array<mat3,triangle_count> B;
-		std::array<mat3,triangle_count> invB_NO;
+		std::array<mat3,triangle_count> Binv_NO;
 		std::array<vec3,triangle_count> N;
 		std::array<vec3,square_count> west_halfspace_normals;
 		std::array<vec3,square_count> polar_halfspace_normals;
@@ -79,7 +76,7 @@ namespace dymaxion
 
 		explicit Projection():
 			B(),
-			invB_NO(),
+			Binv_NO(),
 			N(),
 			west_halfspace_normals(),
 			polar_halfspace_normals()
@@ -93,7 +90,7 @@ namespace dymaxion
 					mat3 basis_(basis(i,is_polar));
 					B[triangle_id]       = basis_;
 					N[triangle_id]       = glm::normalize(glm::cross(basis_[1], basis_[0]));
-					invB_NO[triangle_id] = glm::inverse(basis_) * glm::dot(N[triangle_id], origin(i,is_polar));
+					Binv_NO[triangle_id] = glm::inverse(basis_) * glm::dot(N[triangle_id], origin(i,is_polar));
 					// V3 (N⋅O)/(N⋅V3) projects onto the plane, and 
 					// multiplying the result by B⁻¹ gives the coordinates, so we cache B⁻¹(N⋅O)
 				}
@@ -111,7 +108,7 @@ namespace dymaxion
 
 		constexpr vec3 polar_halfspace_normal(const id i) const 
 		{
-			return glm::normalize(glm::cross(squares.westmost(i), squares.eastmost(i))); // W×E
+			return scalar(std::pow(-i1,i)) * glm::normalize(glm::cross(squares.westmost(i), squares.eastmost(i))); // W×E
 		}
 
 		constexpr vec3 origin(const id i, const bool is_polar) const 
@@ -132,7 +129,6 @@ namespace dymaxion
 
 		constexpr Point standardize(const Point grid_id) const 
 		{
-			// return grid_id;
 			id    i  ((grid_id.square_id+square_count) % square_count);
 			vec2  V2 (grid_id.square_position);
 			vec2  U2 (V2-half);
@@ -165,21 +161,14 @@ namespace dymaxion
 
 		constexpr Point grid_id(const vec3 sphere_position) const 
 		{
-			vec3   V3(sphere_position);
-			id     EWid(id((std::atan2(V3.y,V3.x)+turn)/half_subgrid_longitude_arc_length) % square_count);
-			// V3⋅(N×S)>0 indicates whether V3 is in the easternmost of two squares that are possible for the longitude
-			id     i ((EWid - (glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
-			// V3⋅(W×E)>0 indicates whether V3 occupies a polar triangle
-			bool   is_polar     (std::pow(-i1,i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0);
-			id     triangle_id  ((i%square_count) + is_polar*square_count);
-			vec2   triangle_position((
-				invB_NO[triangle_id] * V3 / glm::dot(N[triangle_id],V3)
-			).yx());
-			return Point(i,
-					is_polar == (i&1)? 
-						I+triangle_position : 
-						J+triangle_position
-				);
+			vec3 V3(sphere_position);
+			id   EWid(id((std::atan2(V3.y,V3.x)+turn)/half_subgrid_longitude_arc_length) % square_count);
+			id   i ((EWid - (glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
+			bool is_polar    (glm::dot(V3,polar_halfspace_normals[i]) >= s0);
+			bool is_inverted (is_polar == (i&i1));
+			id   triangle_id ((i%square_count) + is_polar*square_count);
+			vec2 triangle_position(Binv_NO[triangle_id] * V3 / glm::dot(N[triangle_id],V3));
+			return Point(i, triangle_position.yx() + is_inverted?I:J);
 		}
 
 		constexpr vec3 sphere_position(const Point grid_id) const 
@@ -187,12 +176,8 @@ namespace dymaxion
 			id   i  (grid_id.square_id);
 			vec2 V2 (grid_id.square_position.yx());
 			bool is_inverted (V2.y > V2.x);
-			bool is_polar    (is_inverted == (i&1));
-			vec3 triangle_position (
-				is_inverted? 
-					V2-J : 
-					V2-I,
-				s1);
+			bool is_polar    (is_inverted == (i&i1));
+			vec3 triangle_position (V2 - (is_inverted?J:I), s1);
 			return glm::normalize(B[(i%square_count) + is_polar*square_count] * triangle_position);
 		}
 
