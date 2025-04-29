@@ -52,6 +52,7 @@ namespace dymaxion
 		static constexpr vec2 J = vec2(0,1);
 		static constexpr vec2 mirror = vec2(-1,1);
 		static constexpr vec2 flip = vec2(1,-1);
+		static constexpr ivec2 imirror = ivec2(-1,1);
 		static constexpr scalar s0 = 0;
 		static constexpr scalar s1 = 1;
 		static constexpr scalar s2 = 2;
@@ -65,12 +66,11 @@ namespace dymaxion
 		static constexpr id i1 = 1;
 		static constexpr id i2 = 2;
 
-		std::array<mat3,triangle_count> bases;
-		std::array<mat3,triangle_count> inverse_bases;
-		std::array<vec3,triangle_count> normals;
+		std::array<mat3,triangle_count> B;
+		std::array<mat3,triangle_count> invB_NO;
+		std::array<vec3,triangle_count> N;
 		std::array<vec3,square_count> west_halfspace_normals;
 		std::array<vec3,square_count> polar_halfspace_normals;
-		std::array<scalar,triangle_count> normal_dot_origin;
 
 		const Triangles<id,scalar,Q> triangles;
 		const Squares<id,scalar,Q> squares;
@@ -78,12 +78,11 @@ namespace dymaxion
 	public:
 
 		explicit Projection():
-			bases(),
-			inverse_bases(),
-			normals(),
+			B(),
+			invB_NO(),
+			N(),
 			west_halfspace_normals(),
-			polar_halfspace_normals(),
-			normal_dot_origin()
+			polar_halfspace_normals()
 		{
 			for (id i = 0; i < square_count; ++i)
 			{
@@ -92,10 +91,9 @@ namespace dymaxion
 					bool is_polar(j==1);
 					id triangle_id(triangles.triangle_id(i,is_polar));
 					mat3 basis_(basis(i,is_polar));
-					bases[triangle_id]         = basis_;
-					inverse_bases[triangle_id] = glm::inverse(basis_);
-					normals[triangle_id]         = glm::normalize(glm::cross(basis_[1], basis_[0]));
-					normal_dot_origin[triangle_id] = glm::dot(normals[triangle_id], origin(i,is_polar));
+					B[triangle_id]         = basis_;
+					N[triangle_id]         = glm::normalize(glm::cross(basis_[1], basis_[0]));
+					invB_NO[triangle_id] = glm::inverse(basis_) * glm::dot(N[triangle_id], origin(i,is_polar));
 				}
 				polar_halfspace_normals[i] = polar_halfspace_normal(i);
 				west_halfspace_normals[i] = west_halfspace_normal(i);
@@ -136,13 +134,13 @@ namespace dymaxion
 			id    i  ((grid_id.square_id+square_count) % square_count);
 			vec2  V2 (grid_id.square_position);
 			vec2  U2 (V2-half);
-			bvec2 are_nonlocal   (glm::greaterThan(glm::abs(U2), vec2(0.5)));
+			bvec2 are_nonlocal   (glm::greaterThan(glm::abs(U2), vec2(half)));
 			ivec2 nonlocal_sign  (glm::sign(U2) * vec2(are_nonlocal));
-			bvec2 are_polar      (glm::equal(nonlocal_sign, ivec2(-1,1) * id(std::pow(-i1,i))));
-			bvec2 are_nonpolar   (glm::notEqual(nonlocal_sign, ivec2(-1,1) * id(std::pow(-i1,i))));
-			bool  is_polar       (glm::any(are_polar));
-			bool  is_pole        (glm::all(are_polar));
-			bool  is_corner      (glm::all(are_nonlocal));
+			bvec2 are_polar      (glm::equal(nonlocal_sign, imirror * id(std::pow(-i1,i))));
+			bvec2 are_nonpolar   (glm::notEqual(nonlocal_sign, imirror * id(std::pow(-i1,i))));
+			bool  is_polar       (are_polar.x || are_polar.y);
+			bool  is_pole        (are_polar.x && are_polar.y);
+			bool  is_corner      (are_nonlocal.x && are_nonlocal.y);
 			vec2  modded         (V2-vec2(nonlocal_sign));
 			vec2  inverted       (!is_polar? modded : vec2(are_nonpolar)*(s1-modded) + vec2(are_polar)*(modded));
 			vec2  flipped        (is_corner? modded : is_polar? inverted.yx() : inverted);
@@ -171,14 +169,13 @@ namespace dymaxion
 			id     i ((EWid - id(glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
 			// V3⋅(W×E)>0 indicates whether V3 occupies a polar triangle
 			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0);
-			id     triangle_id  (triangles.triangle_id(i,is_polar));
+			id     triangle_id  ((i%square_count) + id(is_polar)*square_count);
 			vec2   triangle_position((
-				inverse_bases[triangle_id] * 
-				V3 * (normal_dot_origin[triangle_id]/glm::dot(normals[triangle_id],V3))
+				invB_NO[triangle_id] * V3 / glm::dot(N[triangle_id],V3)
 				// V3 (N⋅O)/(N⋅V3) projects onto the plane
 			).yx());
 			return Point(i,
-					triangles.is_inverted_square_id(i,is_polar)? 
+					is_polar == i%2? 
 						I+mirror*triangle_position : 
 						J+flip*triangle_position
 				);
@@ -188,14 +185,14 @@ namespace dymaxion
 		{
 			id   i  (grid_id.square_id);
 			vec2 V2 (grid_id.square_position.yx());
-			bool is_inverted (triangles.is_inverted_grid_position(V2));
-			bool is_polar    (triangles.is_polar_square_id(i, is_inverted));
+			bool is_inverted (V2.y > V2.x);
+			bool is_polar    (is_inverted == i%2);
 			vec3 triangle_position (
-				triangles.is_inverted_grid_position(V2)? 
+				is_inverted? 
 					(V2-J)/flip : 
 					(V2-I)/mirror,
 				s1);
-			return glm::normalize(bases[triangles.triangle_id(i,is_polar)] * triangle_position);
+			return glm::normalize(B[(i%square_count) + id(is_polar)*square_count] * triangle_position);
 		}
 
 	};

@@ -106,17 +106,28 @@ namespace math{
 	`compMaxAbs` returns the component of a vector whose maximum absolute value is largest.
 	It is meant to be similar in nature to other component-wise operations in glm, e.g. `compMax`, `compAdd`, etc.
 	*/
-	template<int L, typename T, glm::qualifier Q>
-	inline constexpr T compMaxAbs(const glm::vec<L,T,Q> V)
+	template<typename T, glm::qualifier Q>
+	inline constexpr T compMaxAbs(const glm::vec<2,T,Q> V)
 	{
-		T result(V[0]);
-		for (int i = 1; i < L; ++i)
-		{
-			result = std::abs(V[i]) > std::abs(result)? V[i] : result;
-		}
-	    return result;
+		return   std::abs(V[1]) > std::abs(V[0])? V[1] : V[0];
 	}
 
+	template<typename T, glm::qualifier Q>
+	inline constexpr T compMaxAbs(const glm::vec<3,T,Q> V)
+	{
+		T result(V[0]);
+		result = std::abs(V[1]) > std::abs(result)? V[1] : result;
+		return   std::abs(V[2]) > std::abs(result)? V[2] : result;
+	}
+
+	template<typename T, glm::qualifier Q>
+	inline constexpr T compMaxAbs(const glm::vec<4,T,Q> V)
+	{
+		T result(V[0]);
+		result = std::abs(V[1]) > std::abs(result)? V[1] : result;
+		result = std::abs(V[2]) > std::abs(result)? V[2] : result;
+		return   std::abs(V[3]) > std::abs(result)? V[3] : result;
+	}
 
 }
 
