@@ -154,6 +154,25 @@ namespace dymaxion
 		}
 
 		/*
+		`longitude_id` returns a unique id from [0,9] that uniquely identifies two squares that a point occupies.
+		This id is equivalent to θ=floor(atan2(y,x)*5/pi+10)%10, 
+		however `longitude_id` must be used in a hot path, `atan2` is expensive, and we do not need its accuracy, 
+		so we instead wrap a linear lagrange polynomial for the function θ(u)=atan2(y,x) where u=x².
+		*/
+		constexpr scalar longitude_id(const scalar y, const scalar x) const
+		{
+			const scalar ua(std::pow(std::cos(pi*2.0/5.0),2.0));
+			const scalar ub(std::pow(std::cos(pi*1.0/5.0),2.0));
+			// `f` is a scalar approximation that selects one of 3 longitude ids from a given quadrant.
+			// it is derived from a linear lagrange polynomial for the function θ(u)=atan2(y,x) where u=x².
+			const scalar f((ua-x*x)/(ub-ua)); 
+			// `g` is an integer approximation that selects one of 5 longitude ids from a given hemisphere, either where y>0 or y<0
+			const id g(id(std::floor(math::bitsign<id,scalar>(x)*f)) +(x<0) +3); 
+			// `longitude_id` returns an integer approximation that selects one of the 10 longitude ids on the sphere
+			return ((y>0?i1:-i1)*g -(y>0) +square_count) % square_count;
+		}
+
+		/*
 		Performance observations on gcc:
 		std::pow(-1,i) is faster than 1-2*(i%2) and even 1-2*(i&1)
 		% is faster than math::modulus
@@ -162,7 +181,7 @@ namespace dymaxion
 		constexpr Point grid_id(const vec3 sphere_position) const 
 		{
 			vec3 V3(sphere_position);
-			id   EWid(id((std::atan2(V3.y,V3.x)+turn)/half_subgrid_longitude_arc_length) % square_count);
+			id   EWid(longitude_id(V3.y, V3.x));
 			id   i ((EWid - (glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
 			bool is_polar    (glm::dot(V3,polar_halfspace_normals[i]) >= s0);
 			bool is_inverted (is_polar == (i&i1));

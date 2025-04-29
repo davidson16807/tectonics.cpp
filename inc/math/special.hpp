@@ -96,14 +96,14 @@ namespace math{
 	    return std::max(-std::min(a,b), std::max(a,b));
 	}
 
-	template <typename T>
-	inline constexpr T sign(const T x) {
-		return x==T(0)? T(0) : x>T(0)? T(1) : T(-1);
+	template <typename In, typename Out>
+	inline constexpr Out sign(const In x) {
+		return x==In(0)? Out(0) : x>In(0)? Out(1) : Out(-1);
 	}
 
-	template <typename T>
-	inline constexpr T bitsign(const T x) {
-		return std::signbit(x)? T(-1):T(1);
+	template <typename In, typename Out>
+	inline constexpr Out bitsign(const In x) {
+		return std::signbit(x)? Out(-1):Out(1);
 	}
 
 	template <typename In1, typename In2> 
@@ -151,7 +151,7 @@ namespace math{
 		T a(0.147);
 		T f(std::log(T(1)-x*x));
 		T g(T(2)/(pi*a) + f/T(2));
-		return sign(x) * std::sqrt( std::sqrt(g*g - f/a) - g );
+		return sign<T,T>(x) * std::sqrt( std::sqrt(g*g - f/a) - g );
 	}
 
 	/*
