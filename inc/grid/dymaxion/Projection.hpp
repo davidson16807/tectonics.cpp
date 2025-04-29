@@ -116,18 +116,18 @@ namespace dymaxion
 
 		constexpr vec3 origin(const id i, const bool is_polar) const 
 		{
-			id     Oid (i+i1);
-			scalar square_polarity(squares.polarity(i));
-			return triangles.origin(Oid, square_polarity, is_polar);
+			return triangles.origin(i+i1, squares.polarity(i), is_polar);
 		}
 
 		constexpr mat3 basis(const id i, const bool is_polar) const 
 		{
-			vec3   W   (squares.westmost(i));    // W: westernmost triangle vertex
-			vec3   E   (squares.eastmost(i)); // E: easternmost triangle vertex
-			vec3   O   (origin(i,is_polar));     // O: northernmost or southernmost triangle vertex that serves as origin
-			bool   is_inverted    (triangles.is_inverted_square_id   (i, is_polar));
-			return triangles.basis(is_inverted,W,E,O);
+			bool is_inverted(triangles.is_inverted_square_id(i, is_polar));
+			return triangles.basis(
+				is_inverted,
+				squares.westmost(i), // westmost vertex of square
+				squares.eastmost(i), // westmost vertex of square
+				origin(i,is_polar)   // northernmost or southernmost triangle vertex that serves as origin
+			);
 		}
 
 		constexpr Point standardize(const Point grid_id) const 
@@ -177,8 +177,8 @@ namespace dymaxion
 			).yx());
 			return Point(i,
 					is_polar == (i&1)? 
-						I+mirror*triangle_position : 
-						J+flip*triangle_position
+						I+triangle_position : 
+						J+triangle_position
 				);
 		}
 
@@ -190,8 +190,8 @@ namespace dymaxion
 			bool is_polar    (is_inverted == (i&1));
 			vec3 triangle_position (
 				is_inverted? 
-					(V2-J)/flip : 
-					(V2-I)/mirror,
+					V2-J : 
+					V2-I,
 				s1);
 			return glm::normalize(B[(i%square_count) + is_polar*square_count] * triangle_position);
 		}

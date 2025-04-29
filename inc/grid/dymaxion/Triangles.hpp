@@ -94,9 +94,9 @@ namespace dymaxion
 			const vec3 O
 		) const {
 			return is_inverted? 
-			mat3(E-O,W-O,O) 
-			: 
-			mat3(W-O,E-O,O)
+				mat3(E-O,O-W,O) 
+				: 
+				mat3(O-W,E-O,O)
 			;
 		}
 
