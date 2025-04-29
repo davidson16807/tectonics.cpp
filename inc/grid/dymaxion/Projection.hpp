@@ -91,8 +91,6 @@ namespace dymaxion
 					B[triangle_id]       = basis_;
 					N[triangle_id]       = glm::normalize(glm::cross(basis_[1], basis_[0]));
 					Binv_NO[triangle_id] = glm::inverse(basis_) * glm::dot(N[triangle_id], origin(i,is_polar));
-					// V3 (N⋅O)/(N⋅V3) projects onto the plane, and 
-					// multiplying the result by B⁻¹ gives the coordinates, so we cache B⁻¹(N⋅O)
 				}
 				polar_halfspace_normals[i] = polar_halfspace_normal(i);
 				west_halfspace_normals[i] = west_halfspace_normal(i);
@@ -168,7 +166,10 @@ namespace dymaxion
 			bool is_inverted (is_polar == (i&i1));
 			id   triangle_id ((i%square_count) + is_polar*square_count);
 			vec2 triangle_position(Binv_NO[triangle_id] * V3 / glm::dot(N[triangle_id],V3));
-			return Point(i, triangle_position.yx() + is_inverted?I:J);
+			// U3 = V3 (N⋅O)/(N⋅V3) projects onto the plane, and 
+			// and triangle_position = U2 = B⁻¹ V3 (N⋅O)/(N⋅V3), 
+			// so we cache B⁻¹(N⋅O) and N since they are the largest groupings of constants
+			return Point(i, triangle_position.yx() + (is_inverted?I:J));
 		}
 
 		constexpr vec3 sphere_position(const Point grid_id) const 
