@@ -91,9 +91,11 @@ namespace dymaxion
 					bool is_polar(j==1);
 					id triangle_id(triangles.triangle_id(i,is_polar));
 					mat3 basis_(basis(i,is_polar));
-					B[triangle_id]         = basis_;
-					N[triangle_id]         = glm::normalize(glm::cross(basis_[1], basis_[0]));
+					B[triangle_id]       = basis_;
+					N[triangle_id]       = glm::normalize(glm::cross(basis_[1], basis_[0]));
 					invB_NO[triangle_id] = glm::inverse(basis_) * glm::dot(N[triangle_id], origin(i,is_polar));
+					// V3 (N⋅O)/(N⋅V3) projects onto the plane, and 
+					// multiplying the result by B⁻¹ gives the coordinates, so we cache B⁻¹(N⋅O)
 				}
 				polar_halfspace_normals[i] = polar_halfspace_normal(i);
 				west_halfspace_normals[i] = west_halfspace_normal(i);
@@ -122,7 +124,7 @@ namespace dymaxion
 		constexpr mat3 basis(const id i, const bool is_polar) const 
 		{
 			vec3   W   (squares.westmost(i));    // W: westernmost triangle vertex
-			vec3   E   (squares.westmost(i+i2)); // E: easternmost triangle vertex
+			vec3   E   (squares.eastmost(i)); // E: easternmost triangle vertex
 			vec3   O   (origin(i,is_polar));     // O: northernmost or southernmost triangle vertex that serves as origin
 			bool   is_inverted    (triangles.is_inverted_square_id   (i, is_polar));
 			return triangles.basis(is_inverted,W,E,O);
@@ -144,7 +146,7 @@ namespace dymaxion
 			vec2  modded         (V2-vec2(nonlocal_sign));
 			vec2  inverted       (!is_polar? modded : vec2(are_nonpolar)*(s1-modded) + vec2(are_polar)*(modded));
 			vec2  flipped        (is_corner? modded : is_polar? inverted.yx() : inverted);
-			id    di             (math::compMaxAbs((i1+ivec2(are_polar)) * nonlocal_sign));
+			id    di             (math::compMax2((i1+ivec2(are_polar)) * nonlocal_sign));
 			/* NOTE: there is more than one possible solution if `is_pole`, 
 		    and these solutions do not represent the same point in space.
 		    However the case where `is_pole` is still valid and must be supported.
@@ -157,7 +159,7 @@ namespace dymaxion
 
 		/*
 		Performance observations on gcc:
-		std::pow(-1,i) is faster than 1-2*(i%2)
+		std::pow(-1,i) is faster than 1-2*(i%2) and even 1-2*(i&1)
 		% is faster than math::modulus
 		*/
 
@@ -166,16 +168,15 @@ namespace dymaxion
 			vec3   V3(sphere_position);
 			id     EWid(id((std::atan2(V3.y,V3.x)+turn)/half_subgrid_longitude_arc_length) % square_count);
 			// V3⋅(N×S)>0 indicates whether V3 is in the easternmost of two squares that are possible for the longitude
-			id     i ((EWid - id(glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
+			id     i ((EWid - (glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
 			// V3⋅(W×E)>0 indicates whether V3 occupies a polar triangle
-			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0);
-			id     triangle_id  ((i%square_count) + id(is_polar)*square_count);
+			bool   is_polar     (std::pow(-i1,i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0);
+			id     triangle_id  ((i%square_count) + is_polar*square_count);
 			vec2   triangle_position((
 				invB_NO[triangle_id] * V3 / glm::dot(N[triangle_id],V3)
-				// V3 (N⋅O)/(N⋅V3) projects onto the plane
 			).yx());
 			return Point(i,
-					is_polar == i%2? 
+					is_polar == (i&1)? 
 						I+mirror*triangle_position : 
 						J+flip*triangle_position
 				);
@@ -186,13 +187,13 @@ namespace dymaxion
 			id   i  (grid_id.square_id);
 			vec2 V2 (grid_id.square_position.yx());
 			bool is_inverted (V2.y > V2.x);
-			bool is_polar    (is_inverted == i%2);
+			bool is_polar    (is_inverted == (i&1));
 			vec3 triangle_position (
 				is_inverted? 
 					(V2-J)/flip : 
 					(V2-I)/mirror,
 				s1);
-			return glm::normalize(B[(i%square_count) + id(is_polar)*square_count] * triangle_position);
+			return glm::normalize(B[(i%square_count) + is_polar*square_count] * triangle_position);
 		}
 
 	};

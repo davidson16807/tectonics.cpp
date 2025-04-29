@@ -1,10 +1,5 @@
 TODO:
-* drop O0 as profiler test case, add "k" series where iteration_count=1000, e.g. k1B-O1.txt
-* do optimizers rely on constant-value seeds to cache rasters that they shouldn't?
-* investigate usages of GenericRelation (density calculation?)
 * what happens to performance when using grids of a different class?
-	dymaxion::Grid with cached coordinate bases
-	dymaxion::Grid where x,y is determined by atan2 for a chaced coordinate basis
 	collignon::Grid
 	tectonics.py style fibonacci::Grid
 	tectonics.js style icosahedron with massive octahedron grid for cached nearest_vertex_id lookups
