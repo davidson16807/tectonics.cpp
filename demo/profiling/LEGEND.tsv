@@ -21,4 +21,10 @@ frame_count	vertices_per_fine_square_side	vertex_dual_area	vertex_position	verte
 1000	60	cached	procedural	procedural	memory_id	memory_id_when_standard	clamped	cached	cached	procedural	no	k2Bf				83.7	*	
 1000	60	cached	procedural	procedural	memory_id	memory_id_when_standard	clamped	cached	cached	cached	no	k2Bg		72.4	57.0	56.6	*	
 1000	60	cached	procedural	procedural	memory_id	memory_id_when_standard	clamped	cached	cached	cached	yes	k2Bh		67.5	55.5	51.8		
-												k2Bi						
+												k2D		73.5	61.5	57.6		
+																		
+																		
+												root	A					
+													C					
+													B	a-h				
+														D				
