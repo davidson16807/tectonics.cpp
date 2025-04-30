@@ -171,14 +171,14 @@ namespace dymaxion
 			id     i ((EWid - id(glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
 			// V3⋅(W×E)>0 indicates whether V3 occupies a polar triangle
 			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0);
-			id     triangle_id  (triangles.triangle_id(i,is_polar));
+			id     triangle_id  (i + is_polar*square_count);
 			vec2   triangle_position((
 				inverse_bases[triangle_id] * 
 				V3 * (normal_dot_origin[triangle_id]/glm::dot(normals[triangle_id],V3))
 				// V3 (N⋅O)/(N⋅V3) projects onto the plane
 			).yx());
 			return Point(i,
-					triangles.is_inverted_square_id(i,is_polar)? 
+					is_polar == (i&i1)? 
 						I+mirror*triangle_position : 
 						J+flip*triangle_position
 				);
@@ -188,14 +188,14 @@ namespace dymaxion
 		{
 			id   i  (grid_id.square_id);
 			vec2 V2 (grid_id.square_position.yx());
-			bool is_inverted (triangles.is_inverted_grid_position(V2));
-			bool is_polar    (triangles.is_polar_square_id(i, is_inverted));
+			bool is_inverted (V2.y > V2.x);
+			bool is_polar    (is_inverted == (i&i1));
 			vec3 triangle_position (
 				triangles.is_inverted_grid_position(V2)? 
 					(V2-J)/flip : 
 					(V2-I)/mirror,
 				s1);
-			return glm::normalize(bases[triangles.triangle_id(i,is_polar)] * triangle_position);
+			return glm::normalize(bases[(i%square_count) + is_polar*square_count] * triangle_position);
 		}
 
 	};
