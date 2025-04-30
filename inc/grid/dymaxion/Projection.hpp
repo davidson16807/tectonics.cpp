@@ -46,6 +46,9 @@ namespace dymaxion
         using ivec2 = glm::vec<2,id,Q>;
         using bvec2 = glm::vec<2,bool,Q>;
         using mat3  = glm::mat<3,3,scalar,Q>;
+        using mat2  = glm::mat<2,2,scalar,Q>;
+        using mat2x3= glm::mat<2,3,scalar,Q>;
+        using mat3x2= glm::mat<3,2,scalar,Q>;
         using Point = dymaxion::Point<id,scalar>;
 
 		static constexpr vec2 I = vec2(1,0);
@@ -63,9 +66,10 @@ namespace dymaxion
 		static constexpr id i1 = 1;
 		static constexpr id i2 = 2;
 
-		std::array<mat3,triangle_count> B;
-		std::array<mat3,triangle_count> Binv_NO;
+		std::array<mat2x3,triangle_count> B;
+		std::array<mat3x2,triangle_count> Binv_NO;
 		std::array<vec3,triangle_count> N;
+		std::array<vec3,triangle_count> O;
 		std::array<vec3,square_count> west_halfspace_normals;
 		std::array<vec3,square_count> polar_halfspace_normals;
 
@@ -78,6 +82,7 @@ namespace dymaxion
 			B(),
 			Binv_NO(),
 			N(),
+			O(),
 			west_halfspace_normals(),
 			polar_halfspace_normals()
 		{
@@ -88,9 +93,11 @@ namespace dymaxion
 					bool is_polar(j==1);
 					id triangle_id(triangles.triangle_id(i,is_polar));
 					mat3 basis_(basis(i,is_polar));
-					B[triangle_id]       = basis_;
+					vec3 origin_(origin(i,is_polar));
+					B[triangle_id]       = mat2x3(basis_);
 					N[triangle_id]       = glm::normalize(glm::cross(basis_[1], basis_[0]));
-					Binv_NO[triangle_id] = glm::inverse(basis_) * glm::dot(N[triangle_id], origin(i,is_polar));
+					O[triangle_id]       = origin_;
+					Binv_NO[triangle_id] = mat3x2(glm::inverse(basis_)) * glm::dot(N[triangle_id], origin_);
 				}
 				polar_halfspace_normals[i] = polar_halfspace_normal(i);
 				west_halfspace_normals[i] = west_halfspace_normal(i);
@@ -147,8 +154,7 @@ namespace dymaxion
 		    Therefore, we declare that standardize() is identity if `is_pole`.
 		    This has advantages in spatial transport and 3d rendering 
 		    since triangles and edges naturally degenerate if `is_pole` is true for any vertex.*/
-			Point standardized   (is_pole? grid_id : Point((i+di+square_count) % square_count, flipped));
-			return standardized;
+			return Point(is_pole? grid_id : Point((i+di+square_count) % square_count, flipped));
 		}
 
 		/*
@@ -164,22 +170,23 @@ namespace dymaxion
 			id   i ((EWid - (glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
 			bool is_polar    (glm::dot(V3,polar_halfspace_normals[i]) >= s0);
 			bool is_inverted (is_polar == (i&i1));
-			id   triangle_id ((i%square_count) + is_polar*square_count);
-			vec2 triangle_position(Binv_NO[triangle_id] * V3 / glm::dot(N[triangle_id],V3));
+			id   triangle_id (i + is_polar*square_count);
+			vec2 U2(Binv_NO[triangle_id] * (V3 / glm::dot(N[triangle_id],V3)));
 			// U3 = V3 (N⋅O)/(N⋅V3) projects onto the plane, and 
-			// and triangle_position = U2 = B⁻¹ V3 (N⋅O)/(N⋅V3), 
+			// and U2 = B⁻¹ U3 = B⁻¹ V3 (N⋅O)/(N⋅V3), 
 			// so we cache B⁻¹(N⋅O) and N since they are the largest groupings of constants
-			return Point(i, triangle_position.yx() + (is_inverted?I:J));
+			return Point(i, U2.yx() + (is_inverted?I:J));
 		}
 
 		constexpr vec3 sphere_position(const Point grid_id) const 
 		{
 			id   i  (grid_id.square_id);
-			vec2 V2 (grid_id.square_position.yx());
-			bool is_inverted (V2.y > V2.x);
+			vec2 U2 (grid_id.square_position.yx());
+			bool is_inverted (U2.y > U2.x);
 			bool is_polar    (is_inverted == (i&i1));
-			vec3 triangle_position (V2 - (is_inverted?J:I), s1);
-			return glm::normalize(B[(i%square_count) + is_polar*square_count] * triangle_position);
+			vec2 V2 (U2 - (is_inverted?J:I));
+			id   triangle_id ((i%square_count) + is_polar*square_count);
+			return glm::normalize(B[triangle_id] * V2 + O[triangle_id]);
 		}
 
 	};
