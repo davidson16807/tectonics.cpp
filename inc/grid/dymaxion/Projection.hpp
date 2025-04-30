@@ -65,42 +65,16 @@ namespace dymaxion
 		static constexpr id i1 = 1;
 		static constexpr id i2 = 2;
 
-		std::array<mat3,triangle_count> bases;
 		std::array<mat3,triangle_count> inverse_bases;
 		std::array<vec3,triangle_count> normals;
+		std::array<scalar,16> padding;
 		std::array<vec3,square_count> west_halfspace_normals;
 		std::array<vec3,square_count> polar_halfspace_normals;
 		std::array<scalar,triangle_count> normal_dot_origin;
+		std::array<mat3,triangle_count> bases;
 
 		const Triangles<id,scalar,Q> triangles;
 		const Squares<id,scalar,Q> squares;
-
-	public:
-
-		explicit Projection():
-			bases(),
-			inverse_bases(),
-			normals(),
-			west_halfspace_normals(),
-			polar_halfspace_normals(),
-			normal_dot_origin()
-		{
-			for (id i = 0; i < square_count; ++i)
-			{
-				for (id j = 0; j < 2; ++j)
-				{
-					bool is_polar(j==1);
-					id triangle_id(triangles.triangle_id(i,is_polar));
-					mat3 basis_(basis(i,is_polar));
-					bases[triangle_id]         = basis_;
-					inverse_bases[triangle_id] = glm::inverse(basis_);
-					normals[triangle_id]         = glm::normalize(glm::cross(basis_[1], basis_[0]));
-					normal_dot_origin[triangle_id] = glm::dot(normals[triangle_id], origin(i,is_polar));
-				}
-				polar_halfspace_normals[i] = polar_halfspace_normal(i);
-				west_halfspace_normals[i] = west_halfspace_normal(i);
-			}
-		}
 
 		constexpr vec3 west_halfspace_normal(const id EWid) const 
 		{
@@ -130,6 +104,28 @@ namespace dymaxion
 			return triangles.basis(is_inverted,W,E,O);
 		}
 
+	public:
+
+		explicit Projection()
+		{
+			for (id i = 0; i < square_count; ++i)
+			{
+				for (id j = 0; j < 2; ++j)
+				{
+					bool is_polar(j==1);
+					id triangle_id(triangles.triangle_id(i,is_polar));
+					mat3 basis_(basis(i,is_polar));
+					bases[triangle_id]         = basis_;
+					inverse_bases[triangle_id] = glm::inverse(basis_);
+					normals[triangle_id]         = glm::normalize(glm::cross(basis_[1], basis_[0]));
+					normal_dot_origin[triangle_id] = glm::dot(normals[triangle_id], origin(i,is_polar));
+					// std::cout << std::to_string(normal_dot_origin[triangle_id]) << std::endl;
+				}
+				polar_halfspace_normals[i] = polar_halfspace_normal(i);
+				west_halfspace_normals[i] = west_halfspace_normal(i);
+			}
+		}
+
 		constexpr Point standardize(const Point grid_id) const 
 		{
 			// return grid_id;
@@ -139,7 +135,7 @@ namespace dymaxion
 			bvec2 are_nonlocal   (glm::greaterThan(glm::abs(U2), vec2(half)));
 			ivec2 nonlocal_sign  (glm::sign(U2) * vec2(are_nonlocal));
 			bvec2 are_polar      (glm::equal(nonlocal_sign, ivec2(-1,1) * id(std::pow(-i1,i))));
-			bvec2 are_nonpolar   (glm::not_(are_polar));
+			bvec2 are_nonpolar   (!are_polar.x, !are_polar.y);
 			bool  is_polar       (are_polar.x || are_polar.y);
 			bool  is_pole        (are_polar.x && are_polar.y);
 			bool  is_corner      (are_nonlocal.x && are_nonlocal.y);
@@ -153,8 +149,7 @@ namespace dymaxion
 		    Therefore, we declare that standardize() is identity if `is_pole`.
 		    This has advantages in spatial transport and 3d rendering 
 		    since triangles and edges naturally degenerate if `is_pole` is true for any vertex.*/
-			Point standardized   (is_pole? grid_id : Point((i+di+square_count) % square_count, flipped));
-			return standardized;
+			return is_pole? grid_id : Point((i+di+square_count) % square_count, flipped);
 		}
 
 		/*
