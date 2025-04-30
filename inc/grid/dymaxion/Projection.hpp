@@ -59,7 +59,7 @@ namespace dymaxion
 		static constexpr scalar turn = s2*pi;
 		static constexpr id square_count = 10;
 		static constexpr id triangle_count = 20;
-		static constexpr scalar half_subgrid_longitude_arc_length = 2*pi/square_count;
+		static constexpr scalar half_subgrid_fraction_of_turn = square_count/(2*pi);
 		static constexpr scalar half = 0.5;
 		static constexpr id i0 = 0;
 		static constexpr id i1 = 1;
@@ -166,10 +166,8 @@ namespace dymaxion
 		constexpr Point grid_id(const vec3 sphere_position) const 
 		{
 			vec3   V3(sphere_position);
-			id     EWid(id((std::atan2(V3.y,V3.x)+turn)/half_subgrid_longitude_arc_length) % square_count);
-			// V3⋅(N×S)>0 indicates whether V3 is in the easternmost of two squares that are possible for the longitude
+			id     EWid(id((std::atan2(V3.y,V3.x)+turn)*half_subgrid_fraction_of_turn) % square_count);
 			id     i ((EWid - id(glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
-			// V3⋅(W×E)>0 indicates whether V3 occupies a polar triangle
 			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0);
 			id     triangle_id  (i + is_polar*square_count);
 			vec2   triangle_position((
@@ -192,8 +190,8 @@ namespace dymaxion
 			bool is_polar    (is_inverted == (i&i1));
 			vec3 triangle_position (
 				triangles.is_inverted_grid_position(V2)? 
-					(V2-J)/flip : 
-					(V2-I)/mirror,
+					(V2-J)*flip : 
+					(V2-I)*mirror,
 				s1);
 			return glm::normalize(bases[(i%square_count) + is_polar*square_count] * triangle_position);
 		}
