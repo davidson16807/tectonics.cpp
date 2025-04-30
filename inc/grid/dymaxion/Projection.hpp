@@ -133,16 +133,16 @@ namespace dymaxion
 		constexpr Point standardize(const Point grid_id) const 
 		{
 			// return grid_id;
-			id    i  ((grid_id.square_id+square_count) % square_count);
+			id    i  (grid_id.square_id);
 			vec2  V2 (grid_id.square_position);
 			vec2  U2 (V2-half);
-			bvec2 are_nonlocal   (glm::greaterThan(glm::abs(U2), vec2(0.5)));
+			bvec2 are_nonlocal   (glm::greaterThan(glm::abs(U2), vec2(half)));
 			ivec2 nonlocal_sign  (glm::sign(U2) * vec2(are_nonlocal));
 			bvec2 are_polar      (glm::equal(nonlocal_sign, ivec2(-1,1) * id(std::pow(-i1,i))));
-			bvec2 are_nonpolar   (glm::notEqual(nonlocal_sign, ivec2(-1,1) * id(std::pow(-i1,i))));
-			bool  is_polar       (glm::any(are_polar));
-			bool  is_pole        (glm::all(are_polar));
-			bool  is_corner      (glm::all(are_nonlocal));
+			bvec2 are_nonpolar   (glm::not_(are_polar));
+			bool  is_polar       (are_polar.x || are_polar.y);
+			bool  is_pole        (are_polar.x && are_polar.y);
+			bool  is_corner      (are_nonlocal.x && are_nonlocal.y);
 			vec2  modded         (V2-vec2(nonlocal_sign));
 			vec2  inverted       (!is_polar? modded : vec2(are_nonpolar)*(s1-modded) + vec2(are_polar)*(modded));
 			vec2  flipped        (is_corner? modded : is_polar? inverted.yx() : inverted);
@@ -163,9 +163,8 @@ namespace dymaxion
 		% is faster than math::modulus
 		*/
 
-		constexpr Point grid_id(const vec3 sphere_position) const 
+		constexpr Point grid_id(const vec3 V3 /*position on the sphere*/) const 
 		{
-			vec3   V3(sphere_position);
 			id     EWid(id((std::atan2(V3.y,V3.x)+turn)*half_subgrid_fraction_of_turn) % square_count);
 			id     i ((EWid - id(glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
 			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0);
