@@ -122,113 +122,113 @@ namespace si{
 
     }
 
-    constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> operator+(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
+    inline constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> operator+(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
     {
       return units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(raw + other.raw);
     }
-    constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> operator-(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
+    inline constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> operator-(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
     {
       return units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(raw - other.raw);
     }
 
-    constexpr T1 operator*(const units<-M1,-KG1,-S1,-K1,-MOL1,-A1,-CD1,T1> other) const
+    inline constexpr T1 operator*(const units<-M1,-KG1,-S1,-K1,-MOL1,-A1,-CD1,T1> other) const
     {
       return raw * other.raw;
     }
-    constexpr T1 operator/(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
+    inline constexpr T1 operator/(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
     {
       return raw / other.raw;
     }
     template <int M2, int KG2, int S2, int K2, int MOL2, int A2, int CD2>
-    constexpr units<M1+M2,  KG1+KG2,  S1+S2,  K1+K2,  MOL1+MOL2,  A1+A2,  CD1+CD2,  T1> operator*(const units<M2,KG2,S2,K2,MOL2,A2,CD2,T1> other) const
+    inline constexpr units<M1+M2,  KG1+KG2,  S1+S2,  K1+K2,  MOL1+MOL2,  A1+A2,  CD1+CD2,  T1> operator*(const units<M2,KG2,S2,K2,MOL2,A2,CD2,T1> other) const
     {
       return units<M1+M2,  KG1+KG2,  S1+S2,  K1+K2,  MOL1+MOL2,  A1+A2,  CD1+CD2,  T1>(raw * other.raw);
     }
     template <int M2, int KG2, int S2, int K2, int MOL2, int A2, int CD2>
-    constexpr units<M1-M2,  KG1-KG2,  S1-S2,  K1-K2,  MOL1-MOL2,  A1-A2,  CD1-CD2,  T1> operator/(const units<M2,KG2,S2,K2,MOL2,A2,CD2,T1> other) const
+    inline constexpr units<M1-M2,  KG1-KG2,  S1-S2,  K1-K2,  MOL1-MOL2,  A1-A2,  CD1-CD2,  T1> operator/(const units<M2,KG2,S2,K2,MOL2,A2,CD2,T1> other) const
     {
       return units<M1-M2,  KG1-KG2,  S1-S2,  K1-K2,  MOL1-MOL2,  A1-A2,  CD1-CD2,  T1>(raw / other.raw);
     }
-    constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> operator*(const T1 scalar) const
+    inline constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> operator*(const T1 scalar) const
     {
       return units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(raw * scalar);
     }
-    constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> operator/(const T1 scalar) const
+    inline constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> operator/(const T1 scalar) const
     {
       return units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(raw / scalar);
     }
-    constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> operator-() const
+    inline constexpr units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> operator-() const
     {
       return units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(-raw);
     }
 
     template<int N>
-    constexpr units<M1*N,KG1*N,S1*N,K1*N,MOL1*N,A1*N,CD1*N,T1> pow() const
+    inline constexpr units<M1*N,KG1*N,S1*N,K1*N,MOL1*N,A1*N,CD1*N,T1> pow() const
     {
       return units<M1*N,KG1*N,S1*N,K1*N,MOL1*N,A1*N,CD1*N,T1>(std::pow(raw, N));
     }
     template<int N>
-    constexpr units<M1/N,KG1/N,S1/N,K1/N,MOL1/N,A1/N,CD1/N,T1> root() const
+    inline constexpr units<M1/N,KG1/N,S1/N,K1/N,MOL1/N,A1/N,CD1/N,T1> root() const
     {
       return units<M1/N,KG1/N,S1/N,K1/N,MOL1/N,A1/N,CD1/N,T1>(std::pow(raw,1.0/double(N)));
     }
 
-    constexpr bool isinf() const
+    inline constexpr bool isinf() const
     {
       return std::isinf(raw);
     }
 
-    constexpr bool isnan() const
+    inline constexpr bool isnan() const
     {
       return std::isnan(raw);
     }
 
-    constexpr bool operator==(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
+    inline constexpr bool operator==(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
     {
       return raw == other.raw;
     }
-    constexpr bool operator!=(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
+    inline constexpr bool operator!=(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
     {
       return raw != other.raw;
     }
 
-    constexpr bool operator>(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
+    inline constexpr bool operator>(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
     {
       return raw > other.raw;
     }
-    constexpr bool operator>=(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
+    inline constexpr bool operator>=(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
     {
       return raw >= other.raw;
     }
-    constexpr bool operator<(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
+    inline constexpr bool operator<(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
     {
       return raw < other.raw;
     }
-    constexpr bool operator<=(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
+    inline constexpr bool operator<=(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) const
     {
       return raw <= other.raw;
     }
 
 
-    units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>& operator+=(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) 
+    inline units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>& operator+=(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) 
     {
       raw += other.raw;
       return *this;
     }
-    units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>& operator-=(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) 
+    inline units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>& operator-=(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> other) 
     {
       raw -= other.raw;
       return *this;
     }
 
     template<typename T2>
-    units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>& operator*=(const T2 other) 
+    inline units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>& operator*=(const T2 other) 
     {
       raw *= T1(other);
       return *this;
     }
     template<typename T2>
-    units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>& operator/=(const T2 other) 
+    inline units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>& operator/=(const T2 other) 
     {
       raw /= T1(other);
       return *this;
@@ -240,80 +240,80 @@ namespace si{
 
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr auto sqrt(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+  inline constexpr auto sqrt(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
   {
     return a.template root<2>();
   }
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr auto cbrt(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+  inline constexpr auto cbrt(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
   {
     return a.template root<3>();
   }
   template <int N, int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr auto root(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+  inline constexpr auto root(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
   {
     return a.template root<N>();
   }
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr auto inversesqrt(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+  inline constexpr auto inversesqrt(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
   {
     return T1(1) / sqrt(a);
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2>
-  constexpr auto operator*(const T2 a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
+  inline constexpr auto operator*(const T2 a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
   {
     return b*T1(a);
   }
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2>
-  constexpr auto operator/(const T2 a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
+  inline constexpr auto operator/(const T2 a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
   {
     return b.template pow<-1>()*T1(a);
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2>
-  constexpr auto operator*(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const T2 b)
+  inline constexpr auto operator*(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const T2 b)
   {
     return a*T1(b);
   }
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2>
-  constexpr auto operator/(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const T2 b)
+  inline constexpr auto operator/(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const T2 b)
   {
     return a/T1(b);
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr auto abs(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+  inline constexpr auto abs(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
   {
     return a > units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(0)? a : -a;
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr auto sign(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+  inline constexpr auto sign(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
   {
     return a/abs(a);
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr auto distance(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
+  inline constexpr auto distance(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
   {
     return abs(a-b);
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr auto min(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
+  inline constexpr auto min(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
   {
     return a < b? a : b;
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr auto max(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
+  inline constexpr auto max(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
   {
     return a > b? a : b;
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr auto clamp(
+  inline constexpr auto clamp(
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a,
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> lo, 
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> hi
@@ -322,19 +322,19 @@ namespace si{
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr bool isinf(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+  inline constexpr bool isinf(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
   {
     return a.isinf();
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr bool isnan(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+  inline constexpr bool isnan(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
   {
     return a.isnan();
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2>
-  constexpr auto mix(
+  inline constexpr auto mix(
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> lo, 
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> hi, 
       const T2 a
@@ -343,7 +343,7 @@ namespace si{
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr auto step(
+  inline constexpr auto step(
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> edge, 
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> x
   ) {
@@ -351,7 +351,7 @@ namespace si{
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr auto linearstep(
+  inline constexpr auto linearstep(
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> lo, 
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> hi, 
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> x
@@ -361,7 +361,7 @@ namespace si{
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr auto smoothstep(
+  inline constexpr auto smoothstep(
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> lo, 
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> hi, 
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> x
