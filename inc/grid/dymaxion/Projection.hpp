@@ -189,7 +189,7 @@ namespace dymaxion
 			bool is_inverted (V2.y > V2.x);
 			bool is_polar    (is_inverted == (i&i1));
 			vec3 triangle_position (
-				triangles.is_inverted_grid_position(V2)? 
+				is_inverted? 
 					(V2-J)*flip : 
 					(V2-I)*mirror,
 				s1);
