@@ -21,47 +21,47 @@ namespace dymaxion {
 	See README.md for general discussion on design.
 	*/
 
-	template<typename id, typename scalar, glm::qualifier Q=glm::defaultp>
+	template<typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
 	class SquareBuffers
 	{
 
         using ivec2 = glm::vec<2,std::int8_t,Q>;
-        using ipoint = Point<id,std::int8_t>;
+        using ipoint = Point<id2,std::int8_t>;
 
-		static constexpr id vertices_per_triangle = 3;
-		static constexpr id triangles_per_quad  = 2;
-		static constexpr id vertices_per_quad = triangles_per_quad * vertices_per_triangle;
-		static constexpr id vertices_per_strip_quad = 4;
+		static constexpr id2 vertices_per_triangle = 3;
+		static constexpr id2 triangles_per_quad  = 2;
+		static constexpr id2 vertices_per_quad = triangles_per_quad * vertices_per_triangle;
+		static constexpr id2 vertices_per_strip_quad = 4;
 
-        const Indexing<id,scalar> vertices;
-        const id vertices_per_square_side;
-        const buffer::PrimitiveBuffers<id,Q> primitives;
+        const Indexing<id2,scalar> vertices;
+        const id2 vertices_per_square_side;
+        const buffer::PrimitiveBuffers<id2,Q> primitives;
 
 	public:
-		constexpr inline explicit SquareBuffers(const id vertices_per_square_side): 
+		constexpr inline explicit SquareBuffers(const id2 vertices_per_square_side): 
 			vertices(vertices_per_square_side),
 			vertices_per_square_side(vertices_per_square_side),
 			primitives()
 		{}
 
-		constexpr inline id quad_count() const
+		constexpr inline id2 quad_count() const
 		{
 			return vertices_per_square_side * vertices_per_square_side;
 		}
 
 		template<typename Series>
-		constexpr inline id triangles_size(const Series& input) const
+		constexpr inline id2 triangles_size(const Series& input) const
 		{
 			return quad_count() * vertices_per_quad * primitives.point_size(input[0]) +
 				vertices_per_square_side * vertices_per_quad * primitives.point_size(input[0]);
 		}
 
 		template<typename Series, typename Buffer>
-		constexpr id storeTriangles(const id square_id, const Series& input, Buffer& output, const id buffer_start_id=0) const 
+		constexpr id2 storeTriangles(const id2 square_id, const Series& input, Buffer& output, const id2 buffer_start_id=0) const 
 		{
 			using element = typename Series::value_type;
 			element N,S,E,W;
-			id buffer_id = buffer_start_id;
+			id2 buffer_id = buffer_start_id;
 			ivec2 grid_id;
 			for (int j = 0; j < vertices_per_square_side; ++j) {
 				for (int i = 0; i < vertices_per_square_side; ++i) {
@@ -78,7 +78,7 @@ namespace dymaxion {
 		}
 
 		template<typename Series>
-		constexpr inline id triangle_strips_size(const Series& input) const
+		constexpr inline id2 triangle_strips_size(const Series& input) const
 		{
 			/*
 			NOTE:
@@ -89,14 +89,14 @@ namespace dymaxion {
 		}
 
 		template<typename Series, typename Buffer>
-		constexpr id storeTriangleStrips(const id square_id, const Series& input, Buffer& output, const id buffer_start_id=0) const 
+		constexpr id2 storeTriangleStrips(const id2 square_id, const Series& input, Buffer& output, const id2 buffer_start_id=0) const 
 		{
 			/*
 			NOTE:
 			The first and the last entries in each strip are always repeated so that multiple strips can share the same buffer.
 			For illustration, see https://stackoverflow.com/questions/5775105/problem-with-degenerate-triangles-and-gl-triangle-strip
 			*/
-			id buffer_id = buffer_start_id;
+			id2 buffer_id = buffer_start_id;
 			ivec2 grid_id;
 			for (int i = 0; i < vertices_per_square_side; ++i) {
 				grid_id = ivec2(i,0);

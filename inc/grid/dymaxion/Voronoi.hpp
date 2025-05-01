@@ -21,35 +21,35 @@ namespace dymaxion
     From another point of view, a `dymaxion::Voronoi` is a wrapper around a `Projection` 
     that introduces the concepts of sphere radius, vertex count, and boundary alignment. That is all.
     */
-    template<typename id, typename scalar, glm::qualifier Q=glm::defaultp>
+    template<typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
     class Voronoi
     {
 
         using vec2  = glm::vec<2,scalar,glm::defaultp>;
         using vec3  = glm::vec<3,scalar,glm::defaultp>;
-        using ipoint = Point<id,std::int8_t>;
-        using point = Point<id,scalar>;
+        using ipoint = Point<id2,std::int8_t>;
+        using point = Point<id2,scalar>;
 
         static constexpr vec2 half_cell = vec2(0.5);
         static constexpr scalar s1 = 1;
         static constexpr scalar s2 = 2;
 
-        const Projection<id,scalar,Q> projection;
+        const Projection<id2,scalar,Q> projection;
 
     public:
 
-        const id vertices_per_square_side;
+        const id2 vertices_per_square_side;
         const scalar vertices_per_square_side_scalar;
         const scalar vertices_per_meridian;
-        const id vertices_per_square;
-        const id vertex_count;
+        const id2 vertices_per_square;
+        const id2 vertex_count;
         const scalar radius;
 
         static constexpr scalar square_side_to_meridian_vertex_ratio = s2*(s1+std::sqrt(s2));
-        static constexpr id square_count = 10;
+        static constexpr id2 square_count = 10;
 
-        constexpr Voronoi(const scalar radius, const id vertices_per_square_side) : 
-            projection(Projection<id,scalar,Q>()),
+        constexpr Voronoi(const scalar radius, const id2 vertices_per_square_side) : 
+            projection(Projection<id2,scalar,Q>()),
             vertices_per_square_side(vertices_per_square_side),
             vertices_per_square_side_scalar(vertices_per_square_side),
             vertices_per_meridian(vertices_per_square_side * square_side_to_meridian_vertex_ratio),
@@ -105,10 +105,10 @@ namespace dymaxion
 
     };
 
-    template<typename id, typename scalar, glm::qualifier Q=glm::defaultp>
-    Voronoi<id,scalar,Q> voronoi_from_vertices_per_meridian(const scalar radius, const id vertices_per_meridian)
+    template<typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
+    Voronoi<id2,scalar,Q> voronoi_from_vertices_per_meridian(const scalar radius, const id2 vertices_per_meridian)
     {
         // the boundary of two polar squares consists of cells for those boundaries plus the diagonal of a square, hence the 1+√2 factors
-        scalar vertices_per_square_side(vertices_per_meridian / Voronoi<id,scalar,Q>::square_side_to_meridian_vertex_ratio);
+        scalar vertices_per_square_side(vertices_per_meridian / Voronoi<id2,scalar,Q>::square_side_to_meridian_vertex_ratio);
     }
 }
