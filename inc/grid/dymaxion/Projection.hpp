@@ -71,10 +71,10 @@ namespace dymaxion
 		    vec3   padding;
 		};
 
+		std::array<TriangleCache,triangle_count> cache;
 		std::array<vec3,square_count> west_halfspace_normals;
 		std::array<vec3,square_count> polar_halfspace_normals;
 		std::array<scalar,4> padding;
-		std::array<TriangleCache,triangle_count> cache;
 		std::array<mat3,triangle_count> bases;
 
 		const Triangles<id,scalar,Q> triangles;
