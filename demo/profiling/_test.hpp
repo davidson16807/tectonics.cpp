@@ -160,6 +160,9 @@ int main() {
 
   // GENERATE THE CRUST
   rock::EarthlikeIgneousFormationGeneration earthlike(fine, world_radius/2.0f, 0.5f, 10, world_radius);
+  // earthlike is only used for an in-order traversal, below, so its faster to use GridCache
+  // it only uses vertex_positions and vertex_dual_areas, of which both are cached
+
   auto generation = earthlike(12.0f, 1.1e4f);
   rock::StratumStore<M> empty_stratum;
   rock::Formation<M> empty_formation(fine.vertex_count(), empty_stratum);
@@ -197,6 +200,7 @@ int main() {
   rock::FormationSummary formation_summary(fine.vertex_count());
   int plate_id(1);
   crust_summarize(fine, plate_id, crust, crust_summary, formation_summary);
+  // crust_summarize is in-order, so its faster to use a GridCache
   crust_summary_ops.flatten(crust_summary, formation_summary);
   // formation_summarize(grid, plate_id, igneous_formation, formation_summary);
 
@@ -226,7 +230,7 @@ int main() {
   // CALCULATE STRESS
   unlayered::VectorCalculusByFundamentalTheorem calculus;
   std::vector<vec3> vertex_gradient(coarse.vertex_count());
-  calculus.gradient(coarse, coarse_buoyancy_pressure_in_pascals, vertex_gradient);
+  calculus.gradient(coarse.grid, coarse_buoyancy_pressure_in_pascals, vertex_gradient);
 
   // FRACTURE
   const int P = 8; // plate count
@@ -366,7 +370,7 @@ int main() {
 
   auto frames = rock::lithosphere_reference_frames<int,float,mat3>(
     dymaxion::NearestVertexId<int,float>(fine.grid),
-    fine.vertex_positions
+    fine.vertex_positions // vertex_positions is traversed in-order so it's faster to use a cache
   );
 
   auto summarization = rock::lithosphere_summarization<M,F>(crust_summarize, crust_summary_ops);
@@ -407,6 +411,7 @@ int main() {
       frames        .globalize (orientations, locals, globals);   // resample plate-specific rasters onto a global grid
       summarization .flatten   (globals,      master);            // condense globalized rasters into e.g. LithosphereSummary
       frames        .localize  (orientations, master, summaries); // resample global raster to a plate-specific for each plate
+      // summarization uses fine only for vertex_dual_areas, so it's faster if fine is a GridCache
 
       /*
       Q: Why don't we determine rifting on master, then localize the result to each plate?

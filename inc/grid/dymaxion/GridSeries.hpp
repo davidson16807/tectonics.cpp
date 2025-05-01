@@ -210,14 +210,12 @@ namespace dymaxion
 
 		inline constexpr vec3 vertex_position(const id vertex_id) const 
 		{
-			// return grid.vertex_position(vertex_id);
-			return vertex_positions[vertex_id];
+			return grid.vertex_position(vertex_id);
 		}
 
 		inline constexpr vec3 vertex_normal(const id vertex_id) const 
 		{
-			// return grid.vertex_normal(vertex_id);
-			return vertex_normals[vertex_id];
+			return grid.vertex_normal(vertex_id);
 		}
 
 		inline constexpr vec3 vertex_east(const vec3 vertex_normal, const vec3 north_pole) const 
@@ -237,8 +235,7 @@ namespace dymaxion
 
 		inline constexpr scalar vertex_dual_area(const id vertex_id) const 
 		{
-			// return grid.vertex_dual_area(vertex_id);
-			return vertex_dual_areas[vertex_id];
+			return grid.vertex_dual_area(vertex_id);
 		}
 
 		inline constexpr id nearest_vertex_id(const vec3 vertex_position) const
