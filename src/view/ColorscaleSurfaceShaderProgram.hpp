@@ -333,7 +333,7 @@ namespace view
 			const std::vector<std::byte>& vertex_culling, 
 			const std::vector<unsigned int>& element_vertex_ids,
 			const ColorscaleSurfacesViewState& colorscale_state,
-			const glm::mat4 model_matrix,
+			const glm::mat4& model_matrix,
 			const ViewState& view_state,
 			const unsigned int gl_mode=GL_TRIANGLES
 		){

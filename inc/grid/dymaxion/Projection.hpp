@@ -167,8 +167,7 @@ namespace dymaxion
 			id     EWid(id((std::atan2(V3.y,V3.x)+turn)*half_subgrid_fraction_of_turn) % square_count);
 			id     i ((EWid - id(glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
 			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0);
-			id     triangle_id  (i + is_polar*square_count);
-			TriangleCache triangle(cache[triangle_id]);
+			TriangleCache triangle(cache[i + is_polar*square_count]);
 			vec2   triangle_position((
 				triangle.inverse_basis * 
 				V3 * (triangle.normal_dot_origin/glm::dot(triangle.normal,V3))

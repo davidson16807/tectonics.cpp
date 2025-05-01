@@ -89,9 +89,9 @@ namespace dymaxion
 
 		inline constexpr mat3 basis(
 			const bool is_inverted,
-			const vec3 W,
-			const vec3 E,
-			const vec3 O
+			const vec3& W,
+			const vec3& E,
+			const vec3& O
 		) const {
 			return is_inverted? 
 			mat3(E-O,W-O,O) 
@@ -107,9 +107,9 @@ namespace dymaxion
 		}
 
 		inline constexpr vec3 plane_project(
-			const vec3 V3,
-			const vec3 N,
-			const vec3 O
+			const vec3& V3,
+			const vec3& N,
+			const vec3& O
 		) const {
 			return V3 * glm::dot(N,O)/glm::dot(N,V3);
 		}
