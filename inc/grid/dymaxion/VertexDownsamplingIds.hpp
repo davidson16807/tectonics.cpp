@@ -19,7 +19,7 @@ namespace dymaxion
 	{ 
 		const Indexing<id,scalar> fine; 
 		const Indexing<id,scalar> coarse; 
-		const std::uint8_t factor;
+		const std::int8_t factor;
 		constexpr inline explicit VertexDownsamplingIds(
 			const Indexing<id,scalar> fine,
 			const Indexing<id,scalar> coarse

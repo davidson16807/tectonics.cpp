@@ -25,8 +25,8 @@ namespace dymaxion {
 	class PoleBuffers
 	{
 
-        using ivec2 = glm::vec<2,std::uint8_t,Q>;
-        using ipoint = Point<id,std::uint8_t>;
+        using ivec2 = glm::vec<2,std::int8_t,Q>;
+        using ipoint = Point<id,std::int8_t>;
 
 		static constexpr id vertices_per_triangle = 3;
 		static constexpr id triangle_count = 3;

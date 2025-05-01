@@ -43,7 +43,7 @@ namespace dymaxion
 
         using vec2  = glm::vec<2,scalar,Q>;
         using vec3  = glm::vec<3,scalar,Q>;
-        using ivec2 = glm::vec<2,std::uint8_t,Q>;
+        using ivec2 = glm::vec<2,std::int8_t,Q>;
         using bvec2 = glm::vec<2,bool,Q>;
         using mat3  = glm::mat<3,3,scalar,Q>;
         using point = dymaxion::Point<id,scalar>;
@@ -140,7 +140,7 @@ namespace dymaxion
 			vec2  U2 (V2-half);
 			bvec2 are_nonlocal   (glm::greaterThan(glm::abs(U2), vec2(half)));
 			ivec2 nonlocal_sign  (glm::sign(U2) * vec2(are_nonlocal));
-			bvec2 are_polar      (glm::equal(nonlocal_sign, imirror * std::uint8_t(std::pow(-i1,i))));
+			bvec2 are_polar      (glm::equal(nonlocal_sign, imirror * std::int8_t(std::pow(-i1,i))));
 			bvec2 are_nonpolar   (!are_polar.x, !are_polar.y);
 			bool  is_polar       (are_polar.x || are_polar.y);
 			bool  is_pole        (are_polar.x && are_polar.y);
@@ -148,7 +148,7 @@ namespace dymaxion
 			vec2  modded         (V2-vec2(nonlocal_sign));
 			vec2  inverted       (!is_polar? modded : vec2(are_nonpolar)*(s1-modded) + vec2(are_polar)*(modded));
 			vec2  flipped        (is_corner? modded : is_polar? inverted.yx() : inverted);
-			id    di             (math::compMaxAbs((std::uint8_t(i1)+ivec2(are_polar)) * nonlocal_sign));
+			id    di             (math::compMaxAbs((std::int8_t(i1)+ivec2(are_polar)) * nonlocal_sign));
 			/* NOTE: there is more than one possible solution if `is_pole`, 
 		    and these solutions do not represent the same point in space.
 		    However the case where `is_pole` is still valid and must be supported.

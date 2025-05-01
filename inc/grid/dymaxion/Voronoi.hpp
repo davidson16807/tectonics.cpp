@@ -27,7 +27,7 @@ namespace dymaxion
 
         using vec2  = glm::vec<2,scalar,glm::defaultp>;
         using vec3  = glm::vec<3,scalar,glm::defaultp>;
-        using ipoint = Point<id,std::uint8_t>;
+        using ipoint = Point<id,std::int8_t>;
         using point = Point<id,scalar>;
 
         static constexpr vec2 half_cell = vec2(0.5);
@@ -66,7 +66,7 @@ namespace dymaxion
         }
         inline constexpr ipoint grid_id(const vec3 sphere_position) const
         {
-            return min(ipoint(grid_position(sphere_position)), std::uint8_t(vertices_per_square_side-1));
+            return min(ipoint(grid_position(sphere_position)), std::int8_t(vertices_per_square_side-1));
         }
 
 

@@ -27,7 +27,7 @@ namespace dymaxion
 
         using ivec2 = glm::vec<2,id,glm::defaultp>;
         using vec2  = glm::vec<2,scalar,glm::defaultp>;
-        using ipoint = Point<id,std::uint8_t>;
+        using ipoint = Point<id,std::int8_t>;
         using point = Point<id,scalar>;
 
         const Projection<id,scalar,Q> projection;
