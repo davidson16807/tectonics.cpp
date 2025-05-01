@@ -61,7 +61,6 @@ namespace dymaxion
 		static constexpr id triangle_count = 20;
 		static constexpr scalar half_subgrid_fraction_of_turn = square_count/(2*pi);
 		static constexpr scalar half = 0.5;
-		static constexpr id i0 = 0;
 		static constexpr id i1 = 1;
 		static constexpr id i2 = 2;
 
@@ -72,9 +71,10 @@ namespace dymaxion
 		    vec3   padding;
 		};
 
-		std::array<TriangleCache,triangle_count> cache;
 		std::array<vec3,square_count> west_halfspace_normals;
 		std::array<vec3,square_count> polar_halfspace_normals;
+		std::array<scalar,4> padding;
+		std::array<TriangleCache,triangle_count> cache;
 		std::array<mat3,triangle_count> bases;
 
 		const Triangles<id,scalar,Q> triangles;
@@ -130,7 +130,7 @@ namespace dymaxion
 			}
 		}
 
-		constexpr Point standardize(const Point grid_id) const 
+		constexpr Point standardize(const Point& grid_id) const 
 		{
 			// return grid_id;
 			id    i  (grid_id.square_id);
@@ -168,9 +168,10 @@ namespace dymaxion
 			id     i ((EWid - id(glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
 			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0);
 			id     triangle_id  (i + is_polar*square_count);
+			TriangleCache triangle(cache[triangle_id]);
 			vec2   triangle_position((
-				cache[triangle_id].inverse_basis * 
-				V3 * (cache[triangle_id].normal_dot_origin/glm::dot(cache[triangle_id].normal,V3))
+				triangle.inverse_basis * 
+				V3 * (triangle.normal_dot_origin/glm::dot(triangle.normal,V3))
 				// V3 (N⋅O)/(N⋅V3) projects onto the plane
 			).yx());
 			return Point(i,
@@ -180,7 +181,7 @@ namespace dymaxion
 				);
 		}
 
-		constexpr vec3 sphere_position(const Point grid_id) const 
+		constexpr vec3 sphere_position(const Point& grid_id) const 
 		{
 			id   i  (grid_id.square_id);
 			vec2 V2 (grid_id.square_position.yx());
