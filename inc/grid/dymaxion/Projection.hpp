@@ -65,12 +65,16 @@ namespace dymaxion
 		static constexpr id i1 = 1;
 		static constexpr id i2 = 2;
 
-		std::array<mat3,triangle_count> inverse_bases;
-		std::array<vec3,triangle_count> normals;
-		std::array<scalar,16> padding;
+		struct TriangleCache {
+		    mat3   inverse_basis;
+		    vec3   normal;
+		    scalar normal_dot_origin;
+		    vec3   padding;
+		};
+
+		std::array<TriangleCache,triangle_count> cache;
 		std::array<vec3,square_count> west_halfspace_normals;
 		std::array<vec3,square_count> polar_halfspace_normals;
-		std::array<scalar,triangle_count> normal_dot_origin;
 		std::array<mat3,triangle_count> bases;
 
 		const Triangles<id,scalar,Q> triangles;
@@ -116,9 +120,9 @@ namespace dymaxion
 					id triangle_id(triangles.triangle_id(i,is_polar));
 					mat3 basis_(basis(i,is_polar));
 					bases[triangle_id]         = basis_;
-					inverse_bases[triangle_id] = glm::inverse(basis_);
-					normals[triangle_id]         = glm::normalize(glm::cross(basis_[1], basis_[0]));
-					normal_dot_origin[triangle_id] = glm::dot(normals[triangle_id], origin(i,is_polar));
+					cache[triangle_id].inverse_basis = glm::inverse(basis_);
+					cache[triangle_id].normal        = glm::normalize(glm::cross(basis_[1], basis_[0]));
+					cache[triangle_id].normal_dot_origin = glm::dot(cache[triangle_id].normal, origin(i,is_polar));
 					// std::cout << std::to_string(normal_dot_origin[triangle_id]) << std::endl;
 				}
 				polar_halfspace_normals[i] = polar_halfspace_normal(i);
@@ -165,8 +169,8 @@ namespace dymaxion
 			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0);
 			id     triangle_id  (i + is_polar*square_count);
 			vec2   triangle_position((
-				inverse_bases[triangle_id] * 
-				V3 * (normal_dot_origin[triangle_id]/glm::dot(normals[triangle_id],V3))
+				cache[triangle_id].inverse_basis * 
+				V3 * (cache[triangle_id].normal_dot_origin/glm::dot(cache[triangle_id].normal,V3))
 				// V3 (N⋅O)/(N⋅V3) projects onto the plane
 			).yx());
 			return Point(i,
