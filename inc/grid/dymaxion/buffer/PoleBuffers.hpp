@@ -21,18 +21,18 @@ namespace dymaxion {
 	See README.md for general discussion on design.
 	*/
 
-	template<typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
+	template<typename id, typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
 	class PoleBuffers
 	{
 
-        using ivec2 = glm::vec<2,std::int8_t,Q>;
-        using ipoint = Point<id2,std::int8_t>;
+        using ivec2 = glm::vec<2,id,Q>;
+        using ipoint = Point<id2,id>;
 
 		static constexpr id2 vertices_per_triangle = 3;
 		static constexpr id2 triangle_count = 3;
 
 	public:
-        const Indexing<id2,scalar> vertices;
+        const Indexing<id,id2,scalar> vertices;
         const int vertices_per_side;
         const buffer::PrimitiveBuffers<id2,Q> primitives;
 

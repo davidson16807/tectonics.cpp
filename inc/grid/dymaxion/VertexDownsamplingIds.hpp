@@ -14,15 +14,15 @@ namespace dymaxion
 	Unlike most other grids, downsampling for `dymaxion::Grid`s strictly uses in-order traversal!
 	*/
 
-	template<typename id2, typename scalar> 
+	template<typename id, typename id2, typename scalar> 
 	struct VertexDownsamplingIds
 	{ 
-		const Indexing<id2,scalar> fine; 
-		const Indexing<id2,scalar> coarse; 
-		const std::int8_t factor;
+		const Indexing<id,id2,scalar> fine; 
+		const Indexing<id,id2,scalar> coarse; 
+		const id factor;
 		constexpr inline explicit VertexDownsamplingIds(
-			const Indexing<id2,scalar> fine,
-			const Indexing<id2,scalar> coarse
+			const Indexing<id,id2,scalar> fine,
+			const Indexing<id,id2,scalar> coarse
 		): 
 			fine(fine),
 			coarse(coarse),
@@ -40,10 +40,10 @@ namespace dymaxion
 		constexpr inline value_type operator()(const size_type memory_id ) const { return call(memory_id); } 
 		constexpr inline value_type operator[](const size_type memory_id ) const { return call(memory_id); } 
 	};
-	template<typename id2, typename scalar>
-	constexpr inline VertexDownsamplingIds<id2,scalar> downsampling(const Indexing<id2,scalar> coarse)
+	template<typename id, typename id2, typename scalar>
+	constexpr inline VertexDownsamplingIds<id,id2,scalar> downsampling(const Indexing<id,id2,scalar> coarse)
 	{
-		return VertexDownsamplingIds<id2,scalar>(coarse);
+		return VertexDownsamplingIds<id,id2,scalar>(coarse);
 	}
 
 }

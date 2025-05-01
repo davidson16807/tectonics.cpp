@@ -21,20 +21,20 @@ namespace dymaxion
     From another point of view, a `dymaxion::Voronoi` is a wrapper around a `Projection` 
     that introduces the concepts of sphere radius, vertex count, and boundary alignment. That is all.
     */
-    template<typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
+    template<typename id, typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
     class Voronoi
     {
 
         using vec2  = glm::vec<2,scalar,glm::defaultp>;
         using vec3  = glm::vec<3,scalar,glm::defaultp>;
-        using ipoint = Point<id2,std::int8_t>;
+        using ipoint = Point<id2,id>;
         using point = Point<id2,scalar>;
 
         static constexpr vec2 half_cell = vec2(0.5);
         static constexpr scalar s1 = 1;
         static constexpr scalar s2 = 2;
 
-        const Projection<id2,scalar,Q> projection;
+        const Projection<id,id2,scalar,Q> projection;
 
     public:
 
@@ -49,7 +49,7 @@ namespace dymaxion
         static constexpr id2 square_count = 10;
 
         constexpr Voronoi(const scalar radius, const id2 vertices_per_square_side) : 
-            projection(Projection<id2,scalar,Q>()),
+            projection(Projection<id,id2,scalar,Q>()),
             vertices_per_square_side(vertices_per_square_side),
             vertices_per_square_side_scalar(vertices_per_square_side),
             vertices_per_meridian(vertices_per_square_side * square_side_to_meridian_vertex_ratio),
@@ -66,7 +66,7 @@ namespace dymaxion
         }
         inline constexpr ipoint grid_id(const vec3 sphere_position) const
         {
-            return min(ipoint(grid_position(sphere_position)), std::int8_t(vertices_per_square_side-1));
+            return min(ipoint(grid_position(sphere_position)), id(vertices_per_square_side-1));
         }
 
 
@@ -104,11 +104,4 @@ namespace dymaxion
         }
 
     };
-
-    template<typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
-    Voronoi<id2,scalar,Q> voronoi_from_vertices_per_meridian(const scalar radius, const id2 vertices_per_meridian)
-    {
-        // the boundary of two polar squares consists of cells for those boundaries plus the diagonal of a square, hence the 1+√2 factors
-        scalar vertices_per_square_side(vertices_per_meridian / Voronoi<id2,scalar,Q>::square_side_to_meridian_vertex_ratio);
-    }
 }

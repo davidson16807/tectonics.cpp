@@ -21,19 +21,19 @@ namespace dymaxion {
 	See README.md for general discussion on design.
 	*/
 
-	template<typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
+	template<typename id, typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
 	class SquareBuffers
 	{
 
-        using ivec2 = glm::vec<2,std::int8_t,Q>;
-        using ipoint = Point<id2,std::int8_t>;
+        using ivec2 = glm::vec<2,id,Q>;
+        using ipoint = Point<id2,id>;
 
 		static constexpr id2 vertices_per_triangle = 3;
 		static constexpr id2 triangles_per_quad  = 2;
 		static constexpr id2 vertices_per_quad = triangles_per_quad * vertices_per_triangle;
 		static constexpr id2 vertices_per_strip_quad = 4;
 
-        const Indexing<id2,scalar> vertices;
+        const Indexing<id,id2,scalar> vertices;
         const id2 vertices_per_square_side;
         const buffer::PrimitiveBuffers<id2,Q> primitives;
 

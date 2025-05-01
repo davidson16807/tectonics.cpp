@@ -21,16 +21,16 @@ namespace dymaxion
         point ↔ memory_id
 
     */
-    template<typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
+    template<typename id, typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
     class Indexing
     {
 
         using ivec2 = glm::vec<2,id2,glm::defaultp>;
         using vec2  = glm::vec<2,scalar,glm::defaultp>;
-        using ipoint = Point<id2,std::int8_t>;
+        using ipoint = Point<id2,id>;
         using point = Point<id2,scalar>;
 
-        const Projection<id2,scalar,Q> projection;
+        const Projection<id,id2,scalar,Q> projection;
 
     public:
         const id2 vertices_per_square_side;
@@ -46,7 +46,7 @@ namespace dymaxion
         static constexpr id2 square_count = 10;
 
         constexpr Indexing(const id2 vertices_per_square_side) : 
-            projection(Projection<id2,scalar,Q>()),
+            projection(Projection<id,id2,scalar,Q>()),
             vertices_per_square_side(vertices_per_square_side),
             vertices_per_square_side_scalar(vertices_per_square_side),
             vertices_per_square(vertices_per_square_side * vertices_per_square_side),
