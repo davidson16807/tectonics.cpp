@@ -25,8 +25,8 @@ namespace dymaxion {
 	class PoleBuffers
 	{
 
-        using ivec2 = glm::vec<2,id,Q>;
-        using IdPoint = Point<id,id>;
+        using ivec2 = glm::vec<2,std::uint8_t,Q>;
+        using ipoint = Point<id,std::uint8_t>;
 
 		static constexpr id vertices_per_triangle = 3;
 		static constexpr id triangle_count = 3;
@@ -55,11 +55,11 @@ namespace dymaxion {
 			id buffer_id(buffer_start_id);
 			bool is_southern(square_id%2);
 			ivec2 grid_id = is_southern? ivec2(vertices_per_side-1,0) : ivec2(0,vertices_per_side-1);
-			element W2 = input[vertices.memory_id(IdPoint(square_id-4, grid_id))];
-			element W1 = input[vertices.memory_id(IdPoint(square_id-2, grid_id))];
-			element O  = input[vertices.memory_id(IdPoint(square_id+0, grid_id))];
-			element E1 = input[vertices.memory_id(IdPoint(square_id+2, grid_id))];
-			element E2 = input[vertices.memory_id(IdPoint(square_id+4, grid_id))];
+			element W2 = input[vertices.memory_id(ipoint(square_id-4, grid_id))];
+			element W1 = input[vertices.memory_id(ipoint(square_id-2, grid_id))];
+			element O  = input[vertices.memory_id(ipoint(square_id+0, grid_id))];
+			element E1 = input[vertices.memory_id(ipoint(square_id+2, grid_id))];
+			element E2 = input[vertices.memory_id(ipoint(square_id+4, grid_id))];
 			if (is_southern)
 			{
 				buffer_id = primitives.storeTriangle(O, W1, W2, output, buffer_id);
@@ -86,11 +86,11 @@ namespace dymaxion {
 			id buffer_id(buffer_start_id);
 			bool is_southern(square_id%2);
 			ivec2 grid_id = is_southern? ivec2(vertices_per_side-1,0) : ivec2(0,vertices_per_side-1);
-			element W2 = input[vertices.memory_id(IdPoint(square_id-4, grid_id))];
-			element W1 = input[vertices.memory_id(IdPoint(square_id-2, grid_id))];
-			element O  = input[vertices.memory_id(IdPoint(square_id+0, grid_id))];
-			element E1 = input[vertices.memory_id(IdPoint(square_id+2, grid_id))];
-			element E2 = input[vertices.memory_id(IdPoint(square_id+4, grid_id))];
+			element W2 = input[vertices.memory_id(ipoint(square_id-4, grid_id))];
+			element W1 = input[vertices.memory_id(ipoint(square_id-2, grid_id))];
+			element O  = input[vertices.memory_id(ipoint(square_id+0, grid_id))];
+			element E1 = input[vertices.memory_id(ipoint(square_id+2, grid_id))];
+			element E2 = input[vertices.memory_id(ipoint(square_id+4, grid_id))];
 			buffer_id = primitives.storePoint(W1,  output, buffer_id);
 			buffer_id = primitives.storePoint(W1,  output, buffer_id);
 			buffer_id = primitives.storePoint(W2,  output, buffer_id);

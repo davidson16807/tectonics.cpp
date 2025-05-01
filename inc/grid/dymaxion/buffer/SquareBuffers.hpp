@@ -25,8 +25,8 @@ namespace dymaxion {
 	class SquareBuffers
 	{
 
-        using ivec2 = glm::vec<2,id,Q>;
-        using ipoint = Point<id,id>;
+        using ivec2 = glm::vec<2,std::uint8_t,Q>;
+        using ipoint = Point<id,std::uint8_t>;
 
 		static constexpr id vertices_per_triangle = 3;
 		static constexpr id triangles_per_quad  = 2;

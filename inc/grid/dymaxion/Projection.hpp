@@ -43,13 +43,14 @@ namespace dymaxion
 
         using vec2  = glm::vec<2,scalar,Q>;
         using vec3  = glm::vec<3,scalar,Q>;
-        using ivec2 = glm::vec<2,id,Q>;
+        using ivec2 = glm::vec<2,std::uint8_t,Q>;
         using bvec2 = glm::vec<2,bool,Q>;
         using mat3  = glm::mat<3,3,scalar,Q>;
-        using Point = dymaxion::Point<id,scalar>;
+        using point = dymaxion::Point<id,scalar>;
 
 		static constexpr vec2 I = vec2(1,0);
 		static constexpr vec2 J = vec2(0,1);
+		static constexpr ivec2 imirror = ivec2(-1,1);
 		static constexpr vec2 mirror = vec2(-1,1);
 		static constexpr vec2 flip = vec2(1,-1);
 		static constexpr scalar s0 = 0;
@@ -131,7 +132,7 @@ namespace dymaxion
 			}
 		}
 
-		constexpr Point standardize(const Point& grid_id) const 
+		constexpr point standardize(const point& grid_id) const 
 		{
 			// return grid_id;
 			id    i  (grid_id.square_id);
@@ -139,7 +140,7 @@ namespace dymaxion
 			vec2  U2 (V2-half);
 			bvec2 are_nonlocal   (glm::greaterThan(glm::abs(U2), vec2(half)));
 			ivec2 nonlocal_sign  (glm::sign(U2) * vec2(are_nonlocal));
-			bvec2 are_polar      (glm::equal(nonlocal_sign, ivec2(-1,1) * id(std::pow(-i1,i))));
+			bvec2 are_polar      (glm::equal(nonlocal_sign, imirror * std::uint8_t(std::pow(-i1,i))));
 			bvec2 are_nonpolar   (!are_polar.x, !are_polar.y);
 			bool  is_polar       (are_polar.x || are_polar.y);
 			bool  is_pole        (are_polar.x && are_polar.y);
@@ -147,14 +148,14 @@ namespace dymaxion
 			vec2  modded         (V2-vec2(nonlocal_sign));
 			vec2  inverted       (!is_polar? modded : vec2(are_nonpolar)*(s1-modded) + vec2(are_polar)*(modded));
 			vec2  flipped        (is_corner? modded : is_polar? inverted.yx() : inverted);
-			id    di             (math::compMaxAbs((i1+ivec2(are_polar)) * nonlocal_sign));
+			id    di             (math::compMaxAbs((std::uint8_t(i1)+ivec2(are_polar)) * nonlocal_sign));
 			/* NOTE: there is more than one possible solution if `is_pole`, 
 		    and these solutions do not represent the same point in space.
 		    However the case where `is_pole` is still valid and must be supported.
 		    Therefore, we declare that standardize() is identity if `is_pole`.
 		    This has advantages in spatial transport and 3d rendering 
 		    since triangles and edges naturally degenerate if `is_pole` is true for any vertex.*/
-			return is_pole? grid_id : Point((i+di+square_count) % square_count, flipped);
+			return is_pole? grid_id : point((i+di+square_count) % square_count, flipped);
 		}
 
 		/*
@@ -163,7 +164,7 @@ namespace dymaxion
 		% is faster than math::modulus
 		*/
 
-		constexpr Point grid_id(const vec3 V3 /*position on the sphere*/) const 
+		constexpr point grid_id(const vec3 V3 /*position on the sphere*/) const 
 		{
 			id     EWid(id((std::atan2(V3.y,V3.x)+turn)*half_subgrid_fraction_of_turn) % square_count);
 			id     i ((EWid - id(glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
@@ -174,14 +175,14 @@ namespace dymaxion
 				V3 * (triangle.normal_dot_origin/glm::dot(triangle.normal,V3))
 				// V3 (N⋅O)/(N⋅V3) projects onto the plane
 			).yx());
-			return Point(i,
+			return point(i,
 					is_polar == (i&i1)? 
 						I+mirror*triangle_position : 
 						J+flip*triangle_position
 				);
 		}
 
-		constexpr vec3 sphere_position(const Point& grid_id) const 
+		constexpr vec3 sphere_position(const point& grid_id) const 
 		{
 			id   i  (grid_id.square_id);
 			vec2 V2 (grid_id.square_position.yx());

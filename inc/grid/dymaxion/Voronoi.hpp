@@ -25,11 +25,10 @@ namespace dymaxion
     class Voronoi
     {
 
-        using ivec2 = glm::vec<2,id,glm::defaultp>;
         using vec2  = glm::vec<2,scalar,glm::defaultp>;
         using vec3  = glm::vec<3,scalar,glm::defaultp>;
-        using IdPoint = Point<id,id>;
-        using ScalarPoint = Point<id,scalar>;
+        using ipoint = Point<id,std::uint8_t>;
+        using point = Point<id,scalar>;
 
         static constexpr vec2 half_cell = vec2(0.5);
         static constexpr scalar s1 = 1;
@@ -61,45 +60,45 @@ namespace dymaxion
         }
 
 
-        inline constexpr IdPoint grid_id(const ScalarPoint& grid_position) const
+        inline constexpr ipoint grid_id(const point& grid_position) const
         {
-            return min(IdPoint(grid_position), vertices_per_square_side-1);
+            return min(ipoint(grid_position), vertices_per_square_side-1);
         }
-        inline constexpr IdPoint grid_id(const vec3 sphere_position) const
+        inline constexpr ipoint grid_id(const vec3 sphere_position) const
         {
-            return min(IdPoint(grid_position(sphere_position)), vertices_per_square_side-1);
+            return min(ipoint(grid_position(sphere_position)), std::uint8_t(vertices_per_square_side-1));
         }
 
 
 
-        inline constexpr ScalarPoint grid_position(const IdPoint& grid_id) const
+        inline constexpr point grid_position(const ipoint& grid_id) const
         {
             return grid_id;
         }
-        inline constexpr ScalarPoint grid_position(const vec3 sphere_position) const
+        inline constexpr point grid_position(const vec3 sphere_position) const
         {
-            return ScalarPoint(projection.grid_id(glm::normalize(sphere_position)) * vertices_per_square_side_scalar);
+            return point(projection.grid_id(glm::normalize(sphere_position)) * vertices_per_square_side_scalar);
         }
 
 
 
-        inline constexpr vec3 sphere_normal(const IdPoint& grid_id) const
+        inline constexpr vec3 sphere_normal(const ipoint& grid_id) const
         {
-            ScalarPoint scalable(grid_id);
+            point scalable(grid_id);
             return projection.sphere_position((scalable+half_cell)/vertices_per_square_side_scalar);
         }
-        inline constexpr vec3 sphere_normal(const ScalarPoint& grid_position) const
+        inline constexpr vec3 sphere_normal(const point& grid_position) const
         {
             return projection.sphere_position(grid_position/vertices_per_square_side_scalar);
         }
 
 
 
-        inline constexpr vec3 sphere_position(const IdPoint& grid_id) const
+        inline constexpr vec3 sphere_position(const ipoint& grid_id) const
         {
             return sphere_normal(grid_id) * radius;
         }
-        inline constexpr vec3 sphere_position(const ScalarPoint& grid_position) const
+        inline constexpr vec3 sphere_position(const point& grid_position) const
         {
             return sphere_normal(grid_position) * radius;
         }

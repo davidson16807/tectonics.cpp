@@ -31,16 +31,17 @@ namespace dymaxion
     template<typename id, typename scalar, glm::qualifier Q=glm::defaultp>
 	class Grid{
 
-        using ivec2 = glm::vec<2,id,Q>;
+        using ivec2 = glm::vec<2,std::uint8_t,Q>;
         using vec2 = glm::vec<2,scalar,Q>;
         using vec3 = glm::vec<3,scalar,Q>;
 
         using mat3 = glm::mat<3,3,scalar,Q>;
 
-        using ipoint = Point<id,id>;
-        using point = Point<id,scalar>;
-
 		static constexpr scalar pi = 3.141592652653589793;
+
+		static constexpr std::uint8_t i0 = (0);
+		static constexpr std::uint8_t i1 = (1);
+		static constexpr std::uint8_t i2 = (2);
 
 	public:
 
@@ -100,9 +101,9 @@ namespace dymaxion
 
 		constexpr ivec2 arrow_offset_grid_position(const id arrow_offset_id) const
 		{
-			return 	(-2*((arrow_offset_id&2)>0)+1)
-				* 	ivec2((arrow_offset_id & 1)==0,
-						  (arrow_offset_id & 1));
+			return 	std::uint8_t(-i2*((arrow_offset_id & i2) > i0)+i1)
+				* 	ivec2(std::uint8_t((arrow_offset_id & i1)== i0),
+						  std::uint8_t(arrow_offset_id & i1));
 		}
 
 		inline constexpr scalar total_radius() const 

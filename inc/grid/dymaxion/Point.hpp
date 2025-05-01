@@ -37,15 +37,15 @@ namespace dymaxion
 
 		explicit Point(id i, vec2 V2):
 			square_id(i),
-			square_position(V2)
+			square_position(id(V2.x), id(V2.y))
 		{}
 
-		// cast constructor
-    	template<typename id2, typename scalar2, glm::qualifier Q2>
-		explicit Point(Point<id2,scalar2,Q2> p):
-			square_id(p.square_id),
-			square_position(p.square_position)
-		{}
+        // cast constructor
+        template<typename id2, typename scalar2, glm::qualifier Q2>
+        explicit Point(Point<id2,scalar2,Q2> p):
+            square_id(p.square_id),
+            square_position(p.square_position)
+        {}
 
         constexpr Point<id,scalar,precision>& operator+=(const vec2 k)
         {
@@ -179,10 +179,10 @@ namespace dymaxion
         return Point<id,scalar,precision>(p.square_id, glm::max(p.square_position, k));
     }
 
-    template<typename id, typename scalar, glm::qualifier precision>
-    inline constexpr Point<id,scalar,precision> clamp(const Point<id,scalar,precision>& p, const scalar lo, const scalar hi)
+    template<typename id, typename scalar, typename scalar2, glm::qualifier precision>
+    inline constexpr Point<id,scalar,precision> clamp(const Point<id,scalar,precision>& p, const scalar2 lo, const scalar2 hi)
     {
-        return Point<id,scalar,precision>(p.square_id, glm::clamp(p.square_position, lo, hi));
+        return Point<id,scalar,precision>(p.square_id, glm::clamp(p.square_position, std::uint8_t(lo), std::uint8_t(hi)));
     }
 
 }
