@@ -34,6 +34,7 @@ namespace dymaxion
 		std::vector<vec3> vertex_positions;
 		std::vector<vec3> vertex_normals;
 
+		using dimension_type = id;
 		using size_type = id2;
 		using value_type = scalar;
 

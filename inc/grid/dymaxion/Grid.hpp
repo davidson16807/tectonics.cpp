@@ -48,12 +48,13 @@ namespace dymaxion
 		const Voronoi<id,id2,scalar> voronoi;
 		const Indexing<id,id2,scalar> memory;
 
+		using dimension_type = id;
 		using size_type = id2;
 		using value_type = scalar;
 
 		static constexpr id2 arrows_per_vertex = 4;
 
-        inline constexpr explicit Grid(const scalar radius, const id2 vertices_per_square_side) : 
+        inline constexpr explicit Grid(const scalar radius, const id vertices_per_square_side) : 
         	voronoi(radius, vertices_per_square_side),
         	memory (vertices_per_square_side)
     	{}
@@ -189,7 +190,7 @@ namespace dymaxion
 		// thereby providing an adequate representation for the vertex with irregular edges.
 		inline constexpr id2 vertex_representative(const id2 vertex_id) const 
 		{
-			return memory.memory_id(clamp(memory.grid_id(vertex_id), 1, voronoi.vertices_per_square_side-2));
+			return memory.memory_id(clamp(memory.grid_id(vertex_id), id(1), id(voronoi.vertices_per_square_side-2)));
 		}
 
 		inline constexpr vec3 vertex_position(const id2 vertex_id) const 

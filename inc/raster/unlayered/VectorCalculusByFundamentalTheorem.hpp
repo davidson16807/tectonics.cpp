@@ -26,8 +26,10 @@ namespace unlayered
 
         template<typename Grid, typename In, typename Out>
         void gradient(const Grid& grid, const In& field, Out& out) const {
-            using id = typename Grid::size_type;
-            id i, j, i2;
+            using id2 = typename Grid::size_type;
+            using id = typename Grid::dimension_type;
+            id2 i, i2;
+            id j;
             const id N = grid.arrows_per_vertex;
             typename In::value_type source_value;
             for (i = 0; i < grid.vertex_count(); ++i)
@@ -46,9 +48,11 @@ namespace unlayered
 
         template<typename Grid, typename In, typename Out>
         void divergence(const Grid& grid, const In& field, Out& out) const {
-            using id = typename Grid::size_type;
+            using id2 = typename Grid::size_type;
+            using id = typename Grid::dimension_type;
             // assert(grid.compatible(field));
-            id i, j, i2;
+            id2 i, i2;
+            id j;
             const id N = grid.arrows_per_vertex;
             typename In::value_type source_value;
             for (i = 0; i < grid.vertex_count(); ++i)
@@ -67,10 +71,12 @@ namespace unlayered
 
         template<typename Grid, typename In, typename Out>
         void curl(const Grid& grid, const In& field, Out& out) const {
-            using id = typename Grid::size_type;
+            using id2 = typename Grid::size_type;
+            using id = typename Grid::dimension_type;
             // assert(compatible(field, out));
             // assert(grid.compatible(field));
-            id i, j, i2;
+            id2 i, i2;
+            id j;
             const id N = grid.arrows_per_vertex;
             typename In::value_type source_value;
             for (i = 0; i < grid.vertex_count(); ++i)
@@ -90,8 +96,10 @@ namespace unlayered
 
         template<typename Grid, typename In, typename Out>
         void laplacian(const Grid& grid, const In& field, Out& out) const {
-            using id = typename Grid::size_type;
-            id i, j, i2;
+            using id2 = typename Grid::size_type;
+            using id = typename Grid::dimension_type;
+            id2 i, i2;
+            id j;
             const id N = grid.arrows_per_vertex;
             typename In::value_type source_value;
             for (i = 0; i < grid.vertex_count(); ++i)

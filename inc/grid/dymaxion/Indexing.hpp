@@ -33,10 +33,10 @@ namespace dymaxion
         const Projection<id,id2,scalar,Q> projection;
 
     public:
-        const id2 vertices_per_square_side;
         const scalar vertices_per_square_side_scalar;
         const id2 vertices_per_square;
         const id2 vertex_count;
+        const id vertices_per_square_side;
 
     private:
         const cartesian::Interleaving<id2> row_interleave;
@@ -45,12 +45,12 @@ namespace dymaxion
     public:
         static constexpr id2 square_count = 10;
 
-        constexpr Indexing(const id2 vertices_per_square_side) : 
+        constexpr Indexing(const id vertices_per_square_side) : 
             projection(Projection<id,id2,scalar,Q>()),
-            vertices_per_square_side(vertices_per_square_side),
             vertices_per_square_side_scalar(vertices_per_square_side),
             vertices_per_square(vertices_per_square_side * vertices_per_square_side),
             vertex_count(square_count*vertices_per_square),
+            vertices_per_square_side(vertices_per_square_side),
             row_interleave(vertices_per_square_side),
             square_interleave(vertices_per_square)
         {
@@ -62,7 +62,7 @@ namespace dymaxion
         Use this only if you are certain that a grid_id will always be standardized!
         */
         constexpr id2 memory_id_when_standard(const ipoint standardized_grid_id) const {
-            const ipoint clamped(clamp(standardized_grid_id, 0, vertices_per_square_side-1));
+            const ipoint clamped(clamp(standardized_grid_id, id(0), vertices_per_square_side-id(1)));
             return square_interleave.interleaved_id(
                     clamped.square_id, 
                     row_interleave.interleaved_id(clamped.square_position.y, clamped.square_position.x)

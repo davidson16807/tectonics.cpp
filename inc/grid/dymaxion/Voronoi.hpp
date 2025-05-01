@@ -38,24 +38,24 @@ namespace dymaxion
 
     public:
 
-        const id2 vertices_per_square_side;
+        const scalar radius;
         const scalar vertices_per_square_side_scalar;
         const scalar vertices_per_meridian;
         const id2 vertices_per_square;
         const id2 vertex_count;
-        const scalar radius;
+        const id vertices_per_square_side;
 
         static constexpr scalar square_side_to_meridian_vertex_ratio = s2*(s1+std::sqrt(s2));
         static constexpr id2 square_count = 10;
 
         constexpr Voronoi(const scalar radius, const id2 vertices_per_square_side) : 
             projection(Projection<id,id2,scalar,Q>()),
-            vertices_per_square_side(vertices_per_square_side),
+            radius(radius),
             vertices_per_square_side_scalar(vertices_per_square_side),
             vertices_per_meridian(vertices_per_square_side * square_side_to_meridian_vertex_ratio),
             vertices_per_square(vertices_per_square_side * vertices_per_square_side),
             vertex_count(square_count*vertices_per_square),
-            radius(radius)
+            vertices_per_square_side(vertices_per_square_side)
         {
         }
 

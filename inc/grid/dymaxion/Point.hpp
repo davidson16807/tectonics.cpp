@@ -179,13 +179,10 @@ namespace dymaxion
         return Point<id,scalar,precision>(p.square_id, glm::max(p.square_position, k));
     }
 
-    template<typename id, typename scalar, typename scalarB, glm::qualifier precision>
-    inline constexpr Point<id,scalar,precision> clamp(const Point<id,scalar,precision>& p, const scalarB lo, const scalarB hi)
+    template<typename id2, typename id, glm::qualifier precision>
+    inline constexpr Point<id2,id,precision> clamp(const Point<id2,id,precision>& p, const id lo, const id hi)
     {
-        return Point<id,scalar,precision>(p.square_id, 
-            glm::clamp(p.square_position, 
-                scalar(std::max(lo, scalarB(std::numeric_limits<scalar>::min()))), 
-                scalar(std::max(lo, scalarB(std::numeric_limits<scalar>::max())))));
+        return Point<id2,id,precision>(p.square_id, glm::clamp(p.square_position, lo, hi));
     }
 
 }
