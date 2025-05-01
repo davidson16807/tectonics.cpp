@@ -68,6 +68,7 @@ namespace dymaxion
 		    mat3   inverse_basis;
 		    vec3   normal;
 		    scalar normal_dot_origin;
+		  	private:
 		    vec3   padding;
 		};
 

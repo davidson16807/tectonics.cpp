@@ -42,7 +42,7 @@ namespace rock
         }
 
         // equal to a[i] if mask[i], otherwise empty
-        void mask(const Formation<M>& a, const bools mask, Formation<M>& out) const {
+        void mask(const Formation<M>& a, const bools& mask, Formation<M>& out) const {
             for (std::size_t i = 0; i < out.size(); ++i)
             {
                 out[i] = mask[i]? a[i] : StratumStore<M>();

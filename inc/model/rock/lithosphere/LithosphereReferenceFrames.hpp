@@ -38,7 +38,7 @@ namespace rock{
 
         template<typename Raster>
         void globalize(
-            const std::vector<mat>& locals_to_globals,
+            const std::vector<mat> locals_to_globals, // profiling suggests lack of & here is faster
             const std::vector<Raster>& locals,
             std::vector<Raster>& globals
         ) const {
@@ -59,7 +59,7 @@ namespace rock{
 
         template<typename Raster>
         void localize(
-            const std::vector<mat> global_to_locals,
+            const std::vector<mat> global_to_locals, // profiling suggests lack of & here is faster
             const Raster& global,
             std::vector<Raster>& locals
         ) const {

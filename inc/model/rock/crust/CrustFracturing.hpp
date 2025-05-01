@@ -222,7 +222,7 @@ namespace rock
 
         template<typename flags>
         void exists(
-            const ids plate_map,
+            const ids& plate_map,
             const id plate_id,
             flags& out
         ) const {

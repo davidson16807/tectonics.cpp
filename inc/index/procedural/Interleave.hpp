@@ -200,7 +200,7 @@ namespace procedural
 	*/
 
 	template<typename Series>
-	inline Interleave<Series> interleave(const Series series)
+	inline Interleave<Series> interleave(const Series& series)
 	{
 		return Interleave<Series>(series);
 	}

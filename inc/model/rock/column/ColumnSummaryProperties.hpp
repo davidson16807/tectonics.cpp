@@ -15,7 +15,7 @@ namespace rock{
 
     public:
 
-        ColumnSummaryProperty(const StratumProperty& property, const ColumnSummaryOps ops): 
+        ColumnSummaryProperty(const StratumProperty& property, const ColumnSummaryOps& ops): 
             property(property),
             ops(ops)
         {}
