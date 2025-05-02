@@ -22,7 +22,12 @@ namespace rock
     It would take ridiculous amounts of memory to store a `Stratum` 
     for every stratum within a raster, so we store each stratum in a raster
     as a `StratumStore`, then convert back to `Stratum` when
-    we want to perform some operation on it. 
+    we want to perform some heavy operation on it. 
+    There are also attributes available if you all you want to convert is a single attribute.
+    attributes are exposed via getters/setters in a proper OOP way
+    since we want to leave open the ability to experiment with different memory layouts
+    without changing downstream code or risk introducing bugs 
+    when compressing/decompressing memory efficient data types.
 
     The interpretation of attributes within `StratumStore` is error prone,
     so to prevent users from doing so we encapsulate the class.
@@ -33,12 +38,12 @@ namespace rock
     {
         std::array<rock::MineralStore, M> minerals;
         // Represent age of world from 1 to 65.535 billion years to the nearest megayear
-        si::time<float> age_of_world_when_first_deposited_in_megayears;
+        si::time<float> age_of_world_when_first_deposited_;
         // Represent age of world from 1 to 65.535 billion years to the nearest megayear
         // Also used for cache alignment
-        si::time<float> age_of_world_when_last_deposited_in_megayears;
+        si::time<float> age_of_world_when_last_deposited_;
 
-        static constexpr unsigned int oo = std::numeric_limits<float>::max();
+        static constexpr float oo = std::numeric_limits<float>::max();
 
     public:
 
@@ -47,8 +52,8 @@ namespace rock
             pack(output);
         }
         StratumStore():
-            age_of_world_when_first_deposited_in_megayears(oo),
-            age_of_world_when_last_deposited_in_megayears(0.0f)
+            age_of_world_when_first_deposited_(oo),
+            age_of_world_when_last_deposited_(0.0f)
         {
             minerals.fill(rock::MineralStore());
         }
@@ -59,8 +64,8 @@ namespace rock
             {
                 minerals[i].unpack(output.minerals[i]);
             }
-            output.age_of_world_when_first_deposited = age_of_world_when_first_deposited_in_megayears;
-            output.age_of_world_when_last_deposited = age_of_world_when_last_deposited_in_megayears;
+            output.age_of_world_when_first_deposited = age_of_world_when_first_deposited_;
+            output.age_of_world_when_last_deposited = age_of_world_when_last_deposited_;
         }
 
         void pack(const Stratum<M>& input)
@@ -69,28 +74,28 @@ namespace rock
             {
                 minerals[i].pack(input.minerals[i]);
             }
-            age_of_world_when_first_deposited_in_megayears = input.age_of_world_when_first_deposited;
-            age_of_world_when_last_deposited_in_megayears = input.age_of_world_when_last_deposited;
+            age_of_world_when_first_deposited_ = input.age_of_world_when_first_deposited;
+            age_of_world_when_last_deposited_ = input.age_of_world_when_last_deposited;
         }
 
         inline constexpr auto age_of_world_when_first_deposited () const 
         {
-            return age_of_world_when_first_deposited_in_megayears;
+            return age_of_world_when_first_deposited_;
         }
 
         inline constexpr auto age_of_world_when_last_deposited () const 
         {
-            return age_of_world_when_last_deposited_in_megayears;
+            return age_of_world_when_last_deposited_;
         }
 
         inline constexpr auto age_of_world_when_first_deposited (const si::time<double> value) 
         {
-            age_of_world_when_first_deposited_in_megayears = value;
+            age_of_world_when_first_deposited_ = value;
         }
 
         inline constexpr auto age_of_world_when_last_deposited (const si::time<double> value) 
         {
-            age_of_world_when_last_deposited_in_megayears = value;
+            age_of_world_when_last_deposited_ = value;
         }
 
         inline si::mass<float> mass () const 
