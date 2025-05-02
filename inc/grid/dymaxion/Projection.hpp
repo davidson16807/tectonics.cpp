@@ -61,6 +61,7 @@ namespace dymaxion
 		static constexpr id2 square_count = 10;
 		static constexpr id2 triangle_count = 20;
 		static constexpr scalar half_subgrid_fraction_of_turn = square_count/(2*pi);
+        static constexpr vec2 half_cell = vec2(0.5);
 		static constexpr scalar half = 0.5;
 
 		struct TriangleCache {
@@ -136,7 +137,7 @@ namespace dymaxion
 			id2    i  (grid_id.square_id);
 			vec2  V2 (grid_id.square_position);
 			vec2  U2 (V2-half);
-			bvec2 are_nonlocal   (glm::greaterThan(glm::abs(U2), vec2(half)));
+			bvec2 are_nonlocal   (glm::greaterThan(glm::abs(U2), half_cell));
 			ivec2 nonlocal_sign  (glm::sign(U2) * vec2(are_nonlocal));
 			bvec2 are_polar      (glm::equal(nonlocal_sign, imirror * id(std::pow(-1,i))));
 			bvec2 are_nonpolar   (!are_polar.x, !are_polar.y);
