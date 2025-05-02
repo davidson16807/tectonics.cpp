@@ -190,7 +190,7 @@ namespace dymaxion
 		// thereby providing an adequate representation for the vertex with irregular edges.
 		inline constexpr auto vertex_representative(const id2 vertex_id) const 
 		{
-			return memory.memory_id(clamp(memory.grid_id(vertex_id), id(1), voronoi.vertices_per_square_side-id(2)));
+			return memory.memory_id(clamp(memory.grid_id(vertex_id), i1, id(voronoi.vertices_per_square_side-i2)));
 		}
 
 		inline constexpr auto vertex_position(const id2 vertex_id) const 

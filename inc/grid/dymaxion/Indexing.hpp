@@ -30,6 +30,9 @@ namespace dymaxion
         using ipoint = Point<id,id>;
         using point = Point<id,scalar>;
 
+        static constexpr id i0 = 0;
+        static constexpr id i1 = 1;
+
         const Projection<id,scalar,Q> projection;
 
         const cartesian::Interleaving<id2> row_interleave;
@@ -61,7 +64,7 @@ namespace dymaxion
         Use this only if you are certain that a grid_id will always be standardized!
         */
         constexpr id2 memory_id_when_standard(const ipoint standardized_grid_id) const {
-            const ipoint clamped(clamp(standardized_grid_id, id(0), vertices_per_square_side-id(1)));
+            const ipoint clamped(clamp(standardized_grid_id, i0, id(vertices_per_square_side-i1)));
             return square_interleave.interleaved_id(
                     clamped.square_id, 
                     row_interleave.interleaved_id(clamped.square_position.y, clamped.square_position.x)

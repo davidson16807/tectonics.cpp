@@ -45,6 +45,8 @@ namespace dymaxion
         const id2 vertex_count;
         const id vertices_per_square_side;
 
+        static constexpr id i1 = 1;
+
         static constexpr scalar square_side_to_meridian_vertex_ratio = s2*(s1+std::sqrt(s2));
         static constexpr id square_count = 10;
 
@@ -62,11 +64,11 @@ namespace dymaxion
 
         inline constexpr ipoint grid_id(const point& grid_position) const
         {
-            return min(ipoint(grid_position), vertices_per_square_side-id(1));
+            return min(ipoint(grid_position), id(vertices_per_square_side-i1));
         }
         inline constexpr ipoint grid_id(const vec3 sphere_position) const
         {
-            return min(ipoint(grid_position(sphere_position)), vertices_per_square_side-id(1));
+            return min(ipoint(grid_position(sphere_position)), id(vertices_per_square_side-i1));
         }
 
 
