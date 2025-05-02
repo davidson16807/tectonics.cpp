@@ -25,12 +25,15 @@ namespace dymaxion
     class Indexing
     {
 
-        using ivec2 = glm::vec<2,id2,glm::defaultp>;
+        using ivec2  = glm::vec<2,id,glm::defaultp>;
         using vec2  = glm::vec<2,scalar,glm::defaultp>;
-        using ipoint = Point<id2,id>;
-        using point = Point<id2,scalar>;
+        using ipoint = Point<id,id>;
+        using point = Point<id,scalar>;
 
-        const Projection<id,id2,scalar,Q> projection;
+        const Projection<id,scalar,Q> projection;
+
+        const cartesian::Interleaving<id2> row_interleave;
+        const cartesian::Interleaving<id2> square_interleave;
 
     public:
         const scalar vertices_per_square_side_scalar;
@@ -38,21 +41,17 @@ namespace dymaxion
         const id2 vertex_count;
         const id vertices_per_square_side;
 
-    private:
-        const cartesian::Interleaving<id2> row_interleave;
-        const cartesian::Interleaving<id2> square_interleave;
-
     public:
-        static constexpr id2 square_count = 10;
+        static constexpr id square_count = 10;
 
-        constexpr Indexing(const id vertices_per_square_side) : 
-            projection(Projection<id,id2,scalar,Q>()),
-            vertices_per_square_side_scalar(vertices_per_square_side),
-            vertices_per_square(vertices_per_square_side * vertices_per_square_side),
-            vertex_count(square_count*vertices_per_square),
-            vertices_per_square_side(vertices_per_square_side),
-            row_interleave(vertices_per_square_side),
-            square_interleave(vertices_per_square)
+        explicit constexpr Indexing(const id vertices_per_square_side_):
+            projection(),
+            row_interleave(vertices_per_square_side_),
+            square_interleave(row_interleave.element_count(vertices_per_square_side_)),
+            vertices_per_square_side_scalar(vertices_per_square_side_),
+            vertices_per_square(row_interleave.element_count(vertices_per_square_side_)),
+            vertex_count(square_interleave.element_count(square_count)),
+            vertices_per_square_side(vertices_per_square_side_)
         {
         }
 
@@ -83,8 +82,8 @@ namespace dymaxion
         inline constexpr ipoint grid_id(const id2 memory_id) const {
             id2 square_element_id(square_interleave.element_id(memory_id));
             return ipoint(
-                square_interleave.block_id(memory_id), 
-                vec2(row_interleave.element_id(square_element_id), row_interleave.block_id(square_element_id))
+                id(square_interleave.block_id(memory_id)), 
+                ivec2(id(row_interleave.element_id(square_element_id)), id(row_interleave.block_id(square_element_id)))
             );
         }
 

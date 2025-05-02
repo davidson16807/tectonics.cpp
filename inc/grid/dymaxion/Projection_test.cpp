@@ -33,14 +33,14 @@ TEST_CASE( "Projection.sphere_position() / Projection.grid_id()", "[dymaxion]" )
     }}}
 
     std::vector<dymaxion::Point<int,double>> grid_ids {};
-    for(int    i = 0; i < 10; i++){
+    for(int i = 0; i < 10; i++){
     for(double x = 0.0; x <= 1.0; x+=0.1){
     for(double y = 0.0; y <= 1.0; y+=0.1){
         grid_ids.push_back(dymaxion::Point(i,glm::dvec2(x,y)));
     }}}
 
     std::vector<dymaxion::Point<int,double>> nonedge_grid_ids {};
-    for(int    i = 0; i < 10; i++){
+    for(int i = 0; i < 10; i++){
     for(double x = -0.05; x <= 1.05; x+=0.1){
     for(double y = -0.05; y <= 1.05; y+=0.1){
         grid_ids.push_back(dymaxion::Point(i,glm::dvec2(x,y)));

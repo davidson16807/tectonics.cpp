@@ -27,7 +27,7 @@ TEST_CASE( "Indexing grid_id() / memory_id()", "[dymaxion]" ) {
     DymaxionAdapter precise(1e-4);
     DymaxionAdapter imprecise(2*pi/double(vertices_per_meridian));
 
-    dymaxion::Indexing<int,double> indexing(vertices_per_meridian);
+    dymaxion::Indexing<int,int,double> indexing(vertices_per_meridian);
 
     std::vector<dymaxion::Point<int,int>> grid_ids {};
     for(int i = 0; i < 10; i++){

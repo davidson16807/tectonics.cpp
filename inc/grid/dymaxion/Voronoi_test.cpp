@@ -29,7 +29,7 @@ TEST_CASE( "Voronoi grid_position() / sphere_position()", "[dymaxion]" ) {
     DymaxionAdapter precise(1e-4);
     DymaxionAdapter imprecise(2*pi/double(vertices_per_meridian));
 
-    dymaxion::Voronoi voronoi(radius, vertices_per_meridian);
+    dymaxion::Voronoi<int,int,double> voronoi(radius, vertices_per_meridian);
 
     std::vector<glm::dvec3> sphere_positions{};
     std::vector<glm::dvec3> unit_sphere_positions{};

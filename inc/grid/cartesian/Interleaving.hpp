@@ -7,31 +7,34 @@ namespace cartesian
 	"Interleaving" reflects an invertible function between a tuple of integers and a 1d integer that represents them both.
 	It is useful for instance to condense 2d arrays down to 1d arrays.
 	*/
-    template<typename Tid=std::uint16_t>
+    template<typename id>
 	class Interleaving
 	{
-        const Tid elements_per_block;
+        const id elements_per_block;
 
 	public:
 
-		explicit Interleaving(const Tid elements_per_block):
+		explicit constexpr Interleaving(const id elements_per_block):
             elements_per_block(elements_per_block)
         {
 
         }
 
-		Tid interleaved_id(const Tid block_id, const Tid element_id) const {
+		inline constexpr id interleaved_id(const id block_id, const id element_id) const {
 			return block_id * elements_per_block + element_id;
 		}
 
-		Tid block_id(const Tid interleaved_id) const {
+		inline constexpr id block_id(const id interleaved_id) const {
 			return interleaved_id / elements_per_block;
 		}
 
-		Tid element_id(const Tid interleaved_id) const {
+		inline constexpr id element_id(const id interleaved_id) const {
 			return interleaved_id % elements_per_block;
 		}
 
+		inline constexpr id element_count(const id block_count) const {
+			return block_count * elements_per_block;
+		}
 
 	};
 }
