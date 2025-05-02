@@ -39,7 +39,7 @@ namespace dymaxion
     public:
 
         const id2 vertices_per_square_side;
-        const scalar vertices_per_square_side_scalar;
+        const scalar vertices_per_square_side_inverse;
         const scalar vertices_per_meridian;
         const id2 vertices_per_square;
         const id2 vertex_count;
@@ -51,7 +51,7 @@ namespace dymaxion
         constexpr Voronoi(const scalar radius, const id2 vertices_per_square_side) : 
             projection(Projection<id,id2,scalar,Q>()),
             vertices_per_square_side(vertices_per_square_side),
-            vertices_per_square_side_scalar(vertices_per_square_side),
+            vertices_per_square_side_inverse(1.0/vertices_per_square_side),
             vertices_per_meridian(vertices_per_square_side * square_side_to_meridian_vertex_ratio),
             vertices_per_square(vertices_per_square_side * vertices_per_square_side),
             vertex_count(square_count*vertices_per_square),
@@ -77,7 +77,7 @@ namespace dymaxion
         }
         inline constexpr point grid_position(const vec3 sphere_position) const
         {
-            return point(projection.grid_id(glm::normalize(sphere_position)) * vertices_per_square_side_scalar);
+            return point(projection.grid_id(glm::normalize(sphere_position)) * scalar(vertices_per_square_side));
         }
 
 
@@ -85,11 +85,11 @@ namespace dymaxion
         inline constexpr vec3 sphere_normal(const ipoint& grid_id) const
         {
             point scalable(grid_id);
-            return projection.sphere_position((scalable+half_cell)/vertices_per_square_side_scalar);
+            return projection.sphere_position((scalable+half_cell) * vertices_per_square_side_inverse);
         }
         inline constexpr vec3 sphere_normal(const point& grid_position) const
         {
-            return projection.sphere_position(grid_position/vertices_per_square_side_scalar);
+            return projection.sphere_position(grid_position * vertices_per_square_side_inverse);
         }
 
 
