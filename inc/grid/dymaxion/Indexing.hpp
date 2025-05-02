@@ -21,38 +21,37 @@ namespace dymaxion
         point ↔ memory_id
 
     */
-    template<typename id, typename scalar, glm::qualifier Q=glm::defaultp>
+    template<typename id, typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
     class Indexing
     {
 
-        using ivec2 = glm::vec<2,id,glm::defaultp>;
+        using ivec2  = glm::vec<2,id,glm::defaultp>;
         using vec2  = glm::vec<2,scalar,glm::defaultp>;
         using ipoint = Point<id,id>;
         using point = Point<id,scalar>;
 
         const Projection<id,scalar,Q> projection;
 
-    public:
-        const id vertices_per_square_side;
-        const scalar vertices_per_square_side_scalar;
-        const id vertices_per_square;
-        const id vertex_count;
+        const cartesian::Interleaving<id2> row_interleave;
+        const cartesian::Interleaving<id2> square_interleave;
 
-    private:
-        const cartesian::Interleaving<id> row_interleave;
-        const cartesian::Interleaving<id> square_interleave;
+    public:
+        const scalar vertices_per_square_side_scalar;
+        const id2 vertices_per_square;
+        const id2 vertex_count;
+        const id vertices_per_square_side;
 
     public:
         static constexpr id square_count = 10;
 
-        constexpr Indexing(const id vertices_per_square_side) : 
-            projection(Projection<id,scalar,Q>()),
-            vertices_per_square_side(vertices_per_square_side),
-            vertices_per_square_side_scalar(vertices_per_square_side),
-            vertices_per_square(vertices_per_square_side * vertices_per_square_side),
-            vertex_count(square_count*vertices_per_square),
-            row_interleave(vertices_per_square_side),
-            square_interleave(vertices_per_square)
+        explicit constexpr Indexing(const id vertices_per_square_side_):
+            projection(),
+            row_interleave(vertices_per_square_side_),
+            square_interleave(row_interleave.element_count(vertices_per_square_side_)),
+            vertices_per_square_side_scalar(vertices_per_square_side_),
+            vertices_per_square(row_interleave.element_count(vertices_per_square_side_)),
+            vertex_count(square_interleave.element_count(square_count)),
+            vertices_per_square_side(vertices_per_square_side_)
         {
         }
 
@@ -61,8 +60,8 @@ namespace dymaxion
         Undefined behavior results when the standardized_grid_id is not already in a standardized form.
         Use this only if you are certain that a grid_id will always be standardized!
         */
-        constexpr id memory_id_when_standard(const ipoint standardized_grid_id) const {
-            const ipoint clamped(clamp(standardized_grid_id, 0, vertices_per_square_side-1));
+        constexpr id2 memory_id_when_standard(const ipoint standardized_grid_id) const {
+            const ipoint clamped(clamp(standardized_grid_id, id(0), vertices_per_square_side-id(1)));
             return square_interleave.interleaved_id(
                     clamped.square_id, 
                     row_interleave.interleaved_id(clamped.square_position.y, clamped.square_position.x)
@@ -76,15 +75,15 @@ namespace dymaxion
             return ipoint(standardized);
         }
 
-        constexpr id memory_id(const ipoint grid_id) const {
+        constexpr id2 memory_id(const ipoint grid_id) const {
             return memory_id_when_standard(standardize(grid_id));
         }
 
-        inline constexpr ipoint grid_id(const id memory_id) const {
-            id square_element_id(square_interleave.element_id(memory_id));
+        inline constexpr ipoint grid_id(const id2 memory_id) const {
+            id2 square_element_id(square_interleave.element_id(memory_id));
             return ipoint(
-                square_interleave.block_id(memory_id), 
-                vec2(row_interleave.element_id(square_element_id), row_interleave.block_id(square_element_id))
+                id(square_interleave.block_id(memory_id)), 
+                ivec2(id(row_interleave.element_id(square_element_id)), id(row_interleave.block_id(square_element_id)))
             );
         }
 

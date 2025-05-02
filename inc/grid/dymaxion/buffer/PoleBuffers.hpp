@@ -21,20 +21,20 @@ namespace dymaxion {
 	See README.md for general discussion on design.
 	*/
 
-	template<typename id, typename scalar, glm::qualifier Q=glm::defaultp>
+	template<typename id, typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
 	class PoleBuffers
 	{
 
         using ivec2 = glm::vec<2,id,Q>;
-        using IdPoint = Point<id,id>;
+        using ipoint = Point<id,id>;
 
 		static constexpr id vertices_per_triangle = 3;
 		static constexpr id triangle_count = 3;
 
 	public:
-        const Indexing<id,scalar> vertices;
+        const Indexing<id,id2,scalar> vertices;
         const int vertices_per_side;
-        const buffer::PrimitiveBuffers<id,Q> primitives;
+        const buffer::PrimitiveBuffers<id2,Q> primitives;
 
 		constexpr inline explicit PoleBuffers(const id vertices_per_side): 
 			vertices(vertices_per_side),
@@ -43,23 +43,23 @@ namespace dymaxion {
 		{}
 
 		template<typename Series>
-		constexpr inline id triangles_size(const Series& input) const
+		constexpr inline id2 triangles_size(const Series& input) const
 		{
 			return vertices_per_triangle * triangle_count * primitives.point_size(input[0]);
 		}
 
 		template<typename Series, typename Buffer>
-		constexpr id storeTriangles(const id square_id, const Series& input, Buffer& output, const id buffer_start_id=0) const 
+		constexpr id2 storeTriangles(const id2 square_id, const Series& input, Buffer& output, const id2 buffer_start_id=0) const 
 		{
 			using element = typename Series::value_type;
-			id buffer_id(buffer_start_id);
+			id2 buffer_id(buffer_start_id);
 			bool is_southern(square_id%2);
 			ivec2 grid_id = is_southern? ivec2(vertices_per_side-1,0) : ivec2(0,vertices_per_side-1);
-			element W2 = input[vertices.memory_id(IdPoint(square_id-4, grid_id))];
-			element W1 = input[vertices.memory_id(IdPoint(square_id-2, grid_id))];
-			element O  = input[vertices.memory_id(IdPoint(square_id+0, grid_id))];
-			element E1 = input[vertices.memory_id(IdPoint(square_id+2, grid_id))];
-			element E2 = input[vertices.memory_id(IdPoint(square_id+4, grid_id))];
+			element W2 = input[vertices.memory_id(ipoint(square_id-4, grid_id))];
+			element W1 = input[vertices.memory_id(ipoint(square_id-2, grid_id))];
+			element O  = input[vertices.memory_id(ipoint(square_id+0, grid_id))];
+			element E1 = input[vertices.memory_id(ipoint(square_id+2, grid_id))];
+			element E2 = input[vertices.memory_id(ipoint(square_id+4, grid_id))];
 			if (is_southern)
 			{
 				buffer_id = primitives.storeTriangle(O, W1, W2, output, buffer_id);
@@ -74,23 +74,23 @@ namespace dymaxion {
 		}
 
 		template<typename Series>
-		constexpr inline id triangle_strips_size(const Series& input) const
+		constexpr inline id2 triangle_strips_size(const Series& input) const
 		{
 			return 7 * primitives.point_size(input[0]);
 		}
 
 		template<typename Series, typename Buffer>
-		constexpr id storeTriangleStrips(const id square_id, const Series& input, Buffer& output, const id buffer_start_id=0) const 
+		constexpr id2 storeTriangleStrips(const id2 square_id, const Series& input, Buffer& output, const id2 buffer_start_id=0) const 
 		{
 			using element = typename Series::value_type;
-			id buffer_id(buffer_start_id);
+			id2 buffer_id(buffer_start_id);
 			bool is_southern(square_id%2);
 			ivec2 grid_id = is_southern? ivec2(vertices_per_side-1,0) : ivec2(0,vertices_per_side-1);
-			element W2 = input[vertices.memory_id(IdPoint(square_id-4, grid_id))];
-			element W1 = input[vertices.memory_id(IdPoint(square_id-2, grid_id))];
-			element O  = input[vertices.memory_id(IdPoint(square_id+0, grid_id))];
-			element E1 = input[vertices.memory_id(IdPoint(square_id+2, grid_id))];
-			element E2 = input[vertices.memory_id(IdPoint(square_id+4, grid_id))];
+			element W2 = input[vertices.memory_id(ipoint(square_id-4, grid_id))];
+			element W1 = input[vertices.memory_id(ipoint(square_id-2, grid_id))];
+			element O  = input[vertices.memory_id(ipoint(square_id+0, grid_id))];
+			element E1 = input[vertices.memory_id(ipoint(square_id+2, grid_id))];
+			element E2 = input[vertices.memory_id(ipoint(square_id+4, grid_id))];
 			buffer_id = primitives.storePoint(W1,  output, buffer_id);
 			buffer_id = primitives.storePoint(W1,  output, buffer_id);
 			buffer_id = primitives.storePoint(W2,  output, buffer_id);

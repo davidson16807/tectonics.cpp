@@ -143,6 +143,8 @@ int main() {
 
   using bools = std::vector<bool>;
 
+  using Grid = dymaxion::Grid<int, int, float>;
+
   length meter(si::meter);
 
   length world_radius(6.371e6 * si::meter);
@@ -150,8 +152,8 @@ int main() {
   viscosity mantle_viscosity(1.57e20*si::pascal*si::second);
   int vertices_per_fine_square_side(60);
   int vertices_per_coarse_square_side(vertices_per_fine_square_side/2);
-  dymaxion::GridCache fine(dymaxion::Grid(world_radius/meter, vertices_per_fine_square_side));
-  dymaxion::GridCache coarse(dymaxion::Grid(world_radius/meter, vertices_per_coarse_square_side));
+  dymaxion::GridCache fine(Grid(world_radius/meter, vertices_per_fine_square_side));
+  dymaxion::GridCache coarse(Grid(world_radius/meter, vertices_per_coarse_square_side));
 
   iterated::Identity copy;
 
@@ -303,7 +305,7 @@ int main() {
   }
 
   // flatten raster for OpenGL
-  dymaxion::WholeGridBuffers<int,float> grids(vertices_per_fine_square_side);
+  dymaxion::WholeGridBuffers<int,int,float> grids(vertices_per_fine_square_side);
   dymaxion::VertexPositions fine_vertex_positions(fine.grid);
   std::vector<length> displacements(fine.vertex_count());
   std::vector<float> buffer_color_values(fine.vertex_count());
@@ -369,7 +371,7 @@ int main() {
   );
 
   auto frames = rock::lithosphere_reference_frames<int,float,mat3>(
-    dymaxion::NearestVertexId<int,float>(fine.grid),
+    dymaxion::NearestVertexId<int,int,float>(fine.grid),
     fine.vertex_positions // vertex_positions is traversed in-order so it's faster to use a cache
   );
 

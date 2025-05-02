@@ -21,15 +21,14 @@ namespace dymaxion
     From another point of view, a `dymaxion::Voronoi` is a wrapper around a `Projection` 
     that introduces the concepts of sphere radius, vertex count, and boundary alignment. That is all.
     */
-    template<typename id, typename scalar, glm::qualifier Q=glm::defaultp>
+    template<typename id, typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
     class Voronoi
     {
 
-        using ivec2 = glm::vec<2,id,glm::defaultp>;
         using vec2  = glm::vec<2,scalar,glm::defaultp>;
         using vec3  = glm::vec<3,scalar,glm::defaultp>;
-        using IdPoint = Point<id,id>;
-        using ScalarPoint = Point<id,scalar>;
+        using ipoint = Point<id,id>;
+        using point = Point<id,scalar>;
 
         static constexpr vec2 half_cell = vec2(0.5);
         static constexpr scalar s1 = 1;
@@ -39,77 +38,70 @@ namespace dymaxion
 
     public:
 
-        const id vertices_per_square_side;
+        const scalar radius;
         const scalar vertices_per_square_side_scalar;
         const scalar vertices_per_meridian;
-        const id vertices_per_square;
-        const id vertex_count;
-        const scalar radius;
+        const id2 vertices_per_square;
+        const id2 vertex_count;
+        const id vertices_per_square_side;
 
         static constexpr scalar square_side_to_meridian_vertex_ratio = s2*(s1+std::sqrt(s2));
         static constexpr id square_count = 10;
 
-        constexpr Voronoi(const scalar radius, const id vertices_per_square_side) : 
+        explicit constexpr Voronoi(const scalar radius, const id vertices_per_square_side) : 
             projection(Projection<id,scalar,Q>()),
-            vertices_per_square_side(vertices_per_square_side),
+            radius(radius),
             vertices_per_square_side_scalar(vertices_per_square_side),
             vertices_per_meridian(vertices_per_square_side * square_side_to_meridian_vertex_ratio),
-            vertices_per_square(vertices_per_square_side * vertices_per_square_side),
+            vertices_per_square(id2(vertices_per_square_side) * id2(vertices_per_square_side)),
             vertex_count(square_count*vertices_per_square),
-            radius(radius)
+            vertices_per_square_side(vertices_per_square_side)
         {
         }
 
 
-        inline constexpr IdPoint grid_id(const ScalarPoint& grid_position) const
+        inline constexpr ipoint grid_id(const point& grid_position) const
         {
-            return min(IdPoint(grid_position), vertices_per_square_side-1);
+            return min(ipoint(grid_position), vertices_per_square_side-id(1));
         }
-        inline constexpr IdPoint grid_id(const vec3 sphere_position) const
+        inline constexpr ipoint grid_id(const vec3 sphere_position) const
         {
-            return min(IdPoint(grid_position(sphere_position)), vertices_per_square_side-1);
+            return min(ipoint(grid_position(sphere_position)), vertices_per_square_side-id(1));
         }
 
 
 
-        inline constexpr ScalarPoint grid_position(const IdPoint& grid_id) const
+        inline constexpr point grid_position(const ipoint& grid_id) const
         {
             return grid_id;
         }
-        inline constexpr ScalarPoint grid_position(const vec3 sphere_position) const
+        inline constexpr point grid_position(const vec3 sphere_position) const
         {
-            return ScalarPoint(projection.grid_id(glm::normalize(sphere_position)) * vertices_per_square_side_scalar);
+            return point(projection.grid_id(glm::normalize(sphere_position)) * vertices_per_square_side_scalar);
         }
 
 
 
-        inline constexpr vec3 sphere_normal(const IdPoint& grid_id) const
+        inline constexpr vec3 sphere_normal(const ipoint& grid_id) const
         {
-            ScalarPoint scalable(grid_id);
+            point scalable(grid_id);
             return projection.sphere_position((scalable+half_cell)/vertices_per_square_side_scalar);
         }
-        inline constexpr vec3 sphere_normal(const ScalarPoint& grid_position) const
+        inline constexpr vec3 sphere_normal(const point& grid_position) const
         {
             return projection.sphere_position(grid_position/vertices_per_square_side_scalar);
         }
 
 
 
-        inline constexpr vec3 sphere_position(const IdPoint& grid_id) const
+        inline constexpr vec3 sphere_position(const ipoint& grid_id) const
         {
             return sphere_normal(grid_id) * radius;
         }
-        inline constexpr vec3 sphere_position(const ScalarPoint& grid_position) const
+        inline constexpr vec3 sphere_position(const point& grid_position) const
         {
             return sphere_normal(grid_position) * radius;
         }
 
     };
-
-    template<typename id, typename scalar, glm::qualifier Q=glm::defaultp>
-    Voronoi<id,scalar,Q> voronoi_from_vertices_per_meridian(const scalar radius, const id vertices_per_meridian)
-    {
-        // the boundary of two polar squares consists of cells for those boundaries plus the diagonal of a square, hence the 1+√2 factors
-        scalar vertices_per_square_side(vertices_per_meridian / Voronoi<id,scalar,Q>::square_side_to_meridian_vertex_ratio);
-    }
 }
