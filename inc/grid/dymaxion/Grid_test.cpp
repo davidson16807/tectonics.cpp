@@ -20,7 +20,7 @@ TEST_CASE( "Grid nearest_vertex_id() / vertex_position()", "[dymaxion]" ) {
 
     test::GlmAdapter<int,double> precise(1e-7);
 
-    dymaxion::Grid grid(radius, vertices_per_square_side);
+    dymaxion::Grid<int,int,double> grid(radius, vertices_per_square_side);
 
     procedural::Range vertex_ids(grid.vertex_count());
 
@@ -54,7 +54,7 @@ TEST_CASE( "Grid arrow_offset_id() / arrow_offset_grid_position()", "[dymaxion]"
 
     procedural::Range arrow_offset_ids(4);
 
-    dymaxion::Grid grid(radius, vertices_per_square_side);
+    dymaxion::Grid<int,int,double> grid(radius, vertices_per_square_side);
 
     REQUIRE(test::determinism(precise,
         "Grid.arrow_offset_id(…)", TEST_UNARY(grid.arrow_offset_id),
@@ -88,7 +88,7 @@ TEST_CASE( "Grid arrow properties", "[dymaxion]" ) {
     test::GlmAdapter<int,double> precise(1e-7);
     test::GlmAdapter<int,double> imprecise(1e-4);
 
-    dymaxion::Grid grid(radius, vertices_per_square_side);
+    dymaxion::Grid<int,int,double> grid(radius, vertices_per_square_side);
 
     procedural::Range vertex_ids(grid.vertex_count());
     procedural::Range arrow_offset_ids(4);

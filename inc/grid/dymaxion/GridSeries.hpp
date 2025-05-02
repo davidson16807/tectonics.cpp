@@ -73,6 +73,7 @@ namespace dymaxion
 		VertexPositions<id,id2,scalar> vertex_positions;
 		VertexNormals<id,id2,scalar> vertex_normals;
 
+		using coordinate_type = id;
 		using size_type = id2;
 		using value_type = scalar;
 
