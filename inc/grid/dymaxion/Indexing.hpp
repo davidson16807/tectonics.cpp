@@ -46,7 +46,7 @@ namespace dymaxion
     public:
         static constexpr id2 square_count = 10;
 
-        constexpr Indexing(const id2 vertices_per_square_side) : 
+        explicit constexpr Indexing(const id2 vertices_per_square_side) : 
             projection(Projection<id,id2,scalar,Q>()),
             vertices_per_square_side(vertices_per_square_side),
             vertices_per_square_side_scalar(vertices_per_square_side),
@@ -67,7 +67,7 @@ namespace dymaxion
             const ipoint clamped(clamp(standardized_grid_id, 0, vertices_per_square_side-1));
             return square_interleave.interleaved_id(
                     clamped.square_id, 
-                    row_interleave.interleaved_id(clamped.square_position.y, clamped.square_position.x)
+                    clamped.square_position.y * vertices_per_square_side + clamped.square_position.x
                 );
         }
 
@@ -86,7 +86,8 @@ namespace dymaxion
             id2 square_element_id(square_interleave.element_id(memory_id));
             return ipoint(
                 square_interleave.block_id(memory_id), 
-                vec2(row_interleave.element_id(square_element_id), row_interleave.block_id(square_element_id))
+                vec2(square_element_id % vertices_per_square_side,
+                    square_element_id * vertices_per_square_side_inverse)
             );
         }
 
