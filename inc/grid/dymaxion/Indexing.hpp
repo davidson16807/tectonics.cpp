@@ -35,6 +35,7 @@ namespace dymaxion
     public:
         const id2 vertices_per_square_side;
         const scalar vertices_per_square_side_scalar;
+        const scalar vertices_per_square_side_inverse;
         const id2 vertices_per_square;
         const id2 vertex_count;
 
@@ -49,6 +50,7 @@ namespace dymaxion
             projection(Projection<id,id2,scalar,Q>()),
             vertices_per_square_side(vertices_per_square_side),
             vertices_per_square_side_scalar(vertices_per_square_side),
+            vertices_per_square_side_inverse(1.0/vertices_per_square_side),
             vertices_per_square(vertices_per_square_side * vertices_per_square_side),
             vertex_count(square_count*vertices_per_square),
             row_interleave(vertices_per_square_side),
@@ -71,7 +73,7 @@ namespace dymaxion
 
         constexpr ipoint standardize(const ipoint grid_id) const {
             point standardized =(
-                projection.standardize((point(grid_id)+vec2(0.5)) / vertices_per_square_side_scalar)
+                projection.standardize((point(grid_id)+vec2(0.5)) * vertices_per_square_side_inverse)
             ) * vertices_per_square_side_scalar;
             return ipoint(standardized);
         }
