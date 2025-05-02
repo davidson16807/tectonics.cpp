@@ -19,16 +19,16 @@ namespace rock{
         static constexpr si::length<float> meter = si::length<float>(si::meter);
         static constexpr unsigned int max_density_in_kilograms_per_meter3 = (1<<24)-1;
 
-        std::bitset<8> plate_ids_bitset_; 
-        unsigned int density_in_kilograms_per_meter3 : 24;
         float thickness_in_meters;
+        unsigned int density_in_kilograms_per_meter3 : 24;
+        std::bitset<8> plate_ids_bitset_; 
     public:
 
         // identity under combination
         constexpr StratumSummary():
-            plate_ids_bitset_(0),
+            thickness_in_meters(0),
             density_in_kilograms_per_meter3(max_density_in_kilograms_per_meter3),
-            thickness_in_meters(0)
+            plate_ids_bitset_(0)
         {}
 
         constexpr StratumSummary(
@@ -36,17 +36,17 @@ namespace rock{
             const si::density<float> density,
             const si::length<float>  thickness
         ):
-            plate_ids_bitset_(plate_ids_bitset),
+            thickness_in_meters(thickness/meter),
             density_in_kilograms_per_meter3(std::min(max_density_in_kilograms_per_meter3, uint(density/kilogram_per_meter3))),
-            thickness_in_meters(thickness/meter)
+            plate_ids_bitset_(plate_ids_bitset)
         {}
 
         constexpr StratumSummary(
             const StratumSummary& summary
         ):
-            plate_ids_bitset_(summary.plate_ids_bitset_),
+            thickness_in_meters(summary.thickness_in_meters),
             density_in_kilograms_per_meter3(summary.density_in_kilograms_per_meter3),
-            thickness_in_meters(summary.thickness_in_meters)
+            plate_ids_bitset_(summary.plate_ids_bitset_)
         {}
 
         si::density<float> density() const
