@@ -30,6 +30,8 @@ namespace dymaxion
         using ipoint = Point<id2,id>;
         using point = Point<id2,scalar>;
 
+        static constexpr vec2 half_cell = vec2(0.5);
+
         const Projection<id,id2,scalar,Q> projection;
 
     public:
@@ -73,7 +75,7 @@ namespace dymaxion
 
         constexpr ipoint standardize(const ipoint grid_id) const {
             point standardized =(
-                projection.standardize((point(grid_id)+vec2(0.5)) * vertices_per_square_side_inverse)
+                projection.standardize((point(grid_id)+half_cell) * vertices_per_square_side_inverse)
             ) * vertices_per_square_side_scalar;
             return ipoint(standardized);
         }
