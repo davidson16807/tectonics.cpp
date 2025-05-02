@@ -27,7 +27,7 @@ namespace unlayered
         template<typename Grid, typename In, typename Out>
         void gradient(const Grid& grid, const In& field, Out& out) const {
             using id2 = typename Grid::size_type;
-            using id = typename Grid::dimension_type;
+            using id = typename Grid::coordinate_type;
             id2 i, i2;
             id j;
             const id N = grid.arrows_per_vertex;
@@ -49,7 +49,7 @@ namespace unlayered
         template<typename Grid, typename In, typename Out>
         void divergence(const Grid& grid, const In& field, Out& out) const {
             using id2 = typename Grid::size_type;
-            using id = typename Grid::dimension_type;
+            using id = typename Grid::coordinate_type;
             // assert(grid.compatible(field));
             id2 i, i2;
             id j;
@@ -72,7 +72,7 @@ namespace unlayered
         template<typename Grid, typename In, typename Out>
         void curl(const Grid& grid, const In& field, Out& out) const {
             using id2 = typename Grid::size_type;
-            using id = typename Grid::dimension_type;
+            using id = typename Grid::coordinate_type;
             // assert(compatible(field, out));
             // assert(grid.compatible(field));
             id2 i, i2;
@@ -97,7 +97,7 @@ namespace unlayered
         template<typename Grid, typename In, typename Out>
         void laplacian(const Grid& grid, const In& field, Out& out) const {
             using id2 = typename Grid::size_type;
-            using id = typename Grid::dimension_type;
+            using id = typename Grid::coordinate_type;
             id2 i, i2;
             id j;
             const id N = grid.arrows_per_vertex;

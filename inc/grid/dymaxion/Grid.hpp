@@ -39,16 +39,16 @@ namespace dymaxion
 
 		static constexpr scalar pi = 3.141592652653589793;
 
-		static constexpr id i0 = (0);
-		static constexpr id i1 = (1);
-		static constexpr id i2 = (2);
+		static constexpr id i0 = 0;
+		static constexpr id i1 = 1;
+		static constexpr id i2 = 2;
 
 	public:
 
 		const Voronoi<id,id2,scalar> voronoi;
 		const Indexing<id,id2,scalar> memory;
 
-		using dimension_type = id;
+		using coordinate_type = id;
 		using size_type = id2;
 		using value_type = scalar;
 

@@ -62,7 +62,7 @@ namespace dymaxion
         Use this only if you are certain that a grid_id will always be standardized!
         */
         constexpr id2 memory_id_when_standard(const ipoint standardized_grid_id) const {
-            const ipoint clamped(clamp(standardized_grid_id, id(0), vertices_per_square_side-id(1)));
+            const ipoint clamped(clamp(standardized_grid_id, id(0), id(vertices_per_square_side-1)));
             return square_interleave.interleaved_id(
                     clamped.square_id, 
                     row_interleave.interleaved_id(clamped.square_position.y, clamped.square_position.x)

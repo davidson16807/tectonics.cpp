@@ -20,7 +20,7 @@ TEST_CASE( "Projection.sphere_position() / Projection.grid_id()", "[dymaxion]" )
     DymaxionAdapter adapter;
 
     const float epsilon(1e-4f);
-    dymaxion::Projection<int,double> projection;
+    dymaxion::Projection<int,int,double> projection;
 
     std::vector<glm::dvec3> sphere_positions{};
     for(float x = -1.0f; x <= 1.0f; x+=0.5f){

@@ -18,7 +18,7 @@
 namespace dymaxion
 {
 
-    template<typename scalar=float>
+    template<typename scalar>
 	glm::vec<3,scalar,glm::defaultp> cartesian_from_zlon(const scalar z, const scalar longitude)
 	{
 		scalar r(std::sqrt(scalar(1)-z*z));
@@ -32,19 +32,19 @@ namespace dymaxion
 	struct Point
 	{
         using vec2 = glm::vec<2,scalar,precision>;
-		id square_id;
 		vec2 square_position;
+		id square_id;
 
 		explicit Point(id i, vec2 V2):
-			square_id(i),
-			square_position(id(V2.x), id(V2.y))
+			square_position(V2.x, V2.y),
+			square_id(i)
 		{}
 
         // cast constructor
         template<typename idB, typename scalarB, glm::qualifier Q2>
         explicit Point(Point<idB,scalarB,Q2> p):
-            square_id(p.square_id),
-            square_position(p.square_position)
+            square_position(p.square_position),
+            square_id(p.square_id)
         {}
 
         constexpr Point<id,scalar,precision>& operator+=(const vec2 k)
@@ -179,10 +179,10 @@ namespace dymaxion
         return Point<id,scalar,precision>(p.square_id, glm::max(p.square_position, k));
     }
 
-    template<typename id2, typename id, glm::qualifier precision>
-    inline constexpr Point<id2,id,precision> clamp(const Point<id2,id,precision>& p, const id lo, const id hi)
+    template<typename id, typename scalar, glm::qualifier precision>
+    inline constexpr Point<id,scalar,precision> clamp(const Point<id,scalar,precision>& p, const scalar lo, const scalar hi)
     {
-        return Point<id2,id,precision>(p.square_id, glm::clamp(p.square_position, lo, hi));
+        return Point<id,scalar,precision>(p.square_id, glm::clamp(p.square_position, lo, hi));
     }
 
 }
