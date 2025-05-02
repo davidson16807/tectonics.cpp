@@ -75,9 +75,9 @@ namespace dymaxion
         {
             return grid_id;
         }
-        inline constexpr point grid_position(const vec3 sphere_position) const
+        inline constexpr point grid_position(const vec3 normalized_sphere_position) const
         {
-            return point(projection.grid_id(glm::normalize(sphere_position)) * scalar(vertices_per_square_side));
+            return point(projection.grid_id(normalized_sphere_position) * scalar(vertices_per_square_side));
         }
 
 
