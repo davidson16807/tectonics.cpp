@@ -122,7 +122,7 @@ namespace dymaxion
 					bool is_polar(j==1);
 					id2 triangle_id(triangles.triangle_id(i,is_polar));
 					mat3 basis_(basis(i,is_polar));
-					bases[triangle_id]         = basis_;
+					bases[triangle_id]               = basis_;
 					cache[triangle_id].inverse_basis = glm::inverse(basis_);
 					cache[triangle_id].normal        = glm::normalize(glm::cross(basis_[1], basis_[0]));
 					cache[triangle_id].normal_dot_origin = glm::dot(cache[triangle_id].normal, origin(i,is_polar));

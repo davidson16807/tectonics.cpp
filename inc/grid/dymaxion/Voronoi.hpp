@@ -33,6 +33,7 @@ namespace dymaxion
         static constexpr vec2 half_cell = vec2(0.5);
         static constexpr scalar s1 = 1;
         static constexpr scalar s2 = 2;
+        static constexpr id2 i1 = 1;
 
         const Projection<id,id2,scalar,Q> projection;
 
@@ -62,11 +63,11 @@ namespace dymaxion
 
         inline constexpr ipoint grid_id(const point& grid_position) const
         {
-            return min(ipoint(grid_position), vertices_per_square_side-1);
+            return min(ipoint(grid_position), vertices_per_square_side-i1);
         }
         inline constexpr ipoint grid_id(const vec3 sphere_position) const
         {
-            return min(ipoint(grid_position(sphere_position)), id(vertices_per_square_side-1));
+            return min(ipoint(grid_position(sphere_position)), id(vertices_per_square_side-i1));
         }
 
 
