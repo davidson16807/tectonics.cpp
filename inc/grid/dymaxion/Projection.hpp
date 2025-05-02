@@ -188,13 +188,12 @@ namespace dymaxion
 			id2   i  (grid_id.square_id);
 			vec2 V2 (grid_id.square_position.yx());
 			bool is_inverted (V2.y > V2.x);
-			bool is_polar    (is_inverted == (i&i1));
 			vec3 triangle_position (
 				is_inverted? 
 					(V2-J)*flip : 
 					(V2-I)*mirror,
 				s1);
-			return glm::normalize(bases[(i%square_count) + is_polar*square_count] * triangle_position);
+			return glm::normalize(bases[(i%square_count) + (is_inverted == (i&i1))*square_count] * triangle_position);
 		}
 
 	};

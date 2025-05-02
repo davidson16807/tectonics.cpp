@@ -31,8 +31,8 @@ namespace dymaxion
         using point = Point<id2,scalar>;
 
         static constexpr vec2 half_cell = vec2(0.5);
-        static constexpr id2 i0 = 0;
-        static constexpr id2 i1 = 1;
+        static constexpr id i0 = 0;
+        static constexpr id i1 = 1;
 
         const Projection<id,id2,scalar,Q> projection;
 
@@ -44,7 +44,7 @@ namespace dymaxion
         const id2 vertex_count;
 
     private:
-        const cartesian::Interleaving<id2> row_interleave;
+        const cartesian::Interleaving<id2>  row_interleave;
         const cartesian::Interleaving<id2> square_interleave;
 
     public:
@@ -68,7 +68,7 @@ namespace dymaxion
         Use this only if you are certain that a grid_id will always be standardized!
         */
         constexpr id2 memory_id_when_standard(const ipoint standardized_grid_id) const {
-            const ipoint clamped(clamp(standardized_grid_id, i0, vertices_per_square_side-i1));
+            const ipoint clamped(clamp(standardized_grid_id, i0, id(vertices_per_square_side-i1)));
             return square_interleave.interleaved_id(
                     clamped.square_id, 
                     row_interleave.interleaved_id(clamped.square_position.y, clamped.square_position.x)
