@@ -46,7 +46,7 @@ namespace dymaxion
         using ivec2 = glm::vec<2,id,Q>;
         using bvec2 = glm::vec<2,bool,Q>;
         using mat3  = glm::mat<3,3,scalar,Q>;
-        using point = dymaxion::Point<id2,scalar>;
+        using point = dymaxion::Point<id,scalar>;
 
 		static constexpr vec2 I = vec2(1,0);
 		static constexpr vec2 J = vec2(0,1);

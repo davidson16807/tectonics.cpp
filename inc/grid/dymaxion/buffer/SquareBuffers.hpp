@@ -26,19 +26,19 @@ namespace dymaxion {
 	{
 
         using ivec2 = glm::vec<2,id,Q>;
-        using ipoint = Point<id2,id>;
+        using ipoint = Point<id,id>;
 
-		static constexpr id2 vertices_per_triangle = 3;
-		static constexpr id2 triangles_per_quad  = 2;
-		static constexpr id2 vertices_per_quad = triangles_per_quad * vertices_per_triangle;
-		static constexpr id2 vertices_per_strip_quad = 4;
+		static constexpr id vertices_per_triangle = 3;
+		static constexpr id triangles_per_quad  = 2;
+		static constexpr id vertices_per_quad = triangles_per_quad * vertices_per_triangle;
+		static constexpr id vertices_per_strip_quad = 4;
 
         const Indexing<id,id2,scalar> vertices;
-        const id2 vertices_per_square_side;
+        const id vertices_per_square_side;
         const buffer::PrimitiveBuffers<id2,Q> primitives;
 
 	public:
-		constexpr inline explicit SquareBuffers(const id2 vertices_per_square_side): 
+		constexpr inline explicit SquareBuffers(const id vertices_per_square_side): 
 			vertices(vertices_per_square_side),
 			vertices_per_square_side(vertices_per_square_side),
 			primitives()
@@ -46,7 +46,7 @@ namespace dymaxion {
 
 		constexpr inline id2 quad_count() const
 		{
-			return vertices_per_square_side * vertices_per_square_side;
+			return vertices.vertices_per_square;
 		}
 
 		template<typename Series>
@@ -57,7 +57,7 @@ namespace dymaxion {
 		}
 
 		template<typename Series, typename Buffer>
-		constexpr id2 storeTriangles(const id2 square_id, const Series& input, Buffer& output, const id2 buffer_start_id=0) const 
+		constexpr id2 storeTriangles(const id square_id, const Series& input, Buffer& output, const id2 buffer_start_id=0) const 
 		{
 			using element = typename Series::value_type;
 			element N,S,E,W;

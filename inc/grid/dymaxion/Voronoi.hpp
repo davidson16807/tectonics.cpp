@@ -27,8 +27,8 @@ namespace dymaxion
 
         using vec2  = glm::vec<2,scalar,glm::defaultp>;
         using vec3  = glm::vec<3,scalar,glm::defaultp>;
-        using ipoint = Point<id2,id>;
-        using point = Point<id2,scalar>;
+        using ipoint = Point<id,id>;
+        using point = Point<id,scalar>;
 
         static constexpr vec2 half_cell = vec2(0.5);
         static constexpr scalar s1 = 1;
@@ -45,15 +45,17 @@ namespace dymaxion
         const id2 vertex_count;
         const scalar radius;
 
-        static constexpr scalar square_side_to_meridian_vertex_ratio = s2*(s1+std::sqrt(s2));
-        static constexpr id2 square_count = 10;
+        static constexpr id i1 = 1;
 
-        constexpr Voronoi(const scalar radius, const id2 vertices_per_square_side) : 
-            projection(Projection<id,id2,scalar,Q>()),
-            vertices_per_square_side(vertices_per_square_side),
-            vertices_per_square_side_scalar(vertices_per_square_side),
-            vertices_per_meridian(vertices_per_square_side * square_side_to_meridian_vertex_ratio),
-            vertices_per_square(vertices_per_square_side * vertices_per_square_side),
+        static constexpr scalar square_side_to_meridian_vertex_ratio = s2*(s1+std::sqrt(s2));
+        static constexpr id square_count = 10;
+
+        explicit constexpr Voronoi(const scalar radius, const id vertices_per_square_side_) : 
+            projection(),
+            vertices_per_square_side(vertices_per_square_side_),
+            vertices_per_square_side_scalar(vertices_per_square_side_),
+            vertices_per_meridian(vertices_per_square_side_ * square_side_to_meridian_vertex_ratio),
+            vertices_per_square(vertices_per_square_side_ * vertices_per_square_side_),
             vertex_count(square_count*vertices_per_square),
             radius(radius)
         {
@@ -62,11 +64,11 @@ namespace dymaxion
 
         inline constexpr ipoint grid_id(const point& grid_position) const
         {
-            return min(ipoint(grid_position), vertices_per_square_side-1);
+            return min(ipoint(grid_position), id(vertices_per_square_side-i1));
         }
         inline constexpr ipoint grid_id(const vec3 sphere_position) const
         {
-            return min(ipoint(grid_position(sphere_position)), id(vertices_per_square_side-1));
+            return min(ipoint(grid_position(sphere_position)), id(vertices_per_square_side-i1));
         }
 
 

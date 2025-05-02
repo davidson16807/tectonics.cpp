@@ -23,14 +23,14 @@ namespace dymaxion {
 	class WholeGridBuffers
 	{
 
-		static constexpr id2 square_count = 10;
-		static constexpr id2 pole_count = 2;
+		static constexpr id square_count = 10;
+		static constexpr id pole_count = 2;
 
         const SquareBuffers<id,id2,scalar,Q> squares;
         const PoleBuffers<id,id2,scalar,Q> poles;
 
 	public:
-		constexpr inline explicit WholeGridBuffers(const id2 vertices_per_square_side):
+		constexpr inline explicit WholeGridBuffers(const id vertices_per_square_side):
 			squares(vertices_per_square_side),
 			poles(vertices_per_square_side)
 		{}
