@@ -52,14 +52,16 @@ namespace rock{
         auto operator() (const StratumStore<M>& stratum) const 
         {
             // return si::density<float>(1.0f);
+            si::mass<float> mass(0.0f);
             si::mass<float> total_mass(0.0f);
             si::volume<float> total_volume(0.0f);
             for (int i=0; i<M; i++)
             {
-                total_mass += stratum[i].mass();
+                mass = stratum[i].mass();
+                total_mass += mass;
                 // volume = specific volume * mass
                 // sum up to get total volume
-                total_volume += stratum[i].mass() / 
+                total_volume += mass / 
                     density(density_for_age[i](stratum.age_of_world_when_first_deposited()-age_of_world));
             }
             // volume = total volume * mass

@@ -66,7 +66,7 @@ namespace rock
         {
         }
 
-        si::mass<double> mass () const 
+        inline si::mass<double> mass () const 
         {
             si::mass<double> result;
             for (std::size_t i = 0; i < M; ++i)
