@@ -31,16 +31,14 @@ namespace rock
     template <int M>
     class StratumStore
     {
-        using uint16 = std::uint16_t;
-
         std::array<rock::MineralStore, M> minerals;
         // Represent age of world from 1 to 65.535 billion years to the nearest megayear
-        uint16 age_of_world_when_first_deposited_in_megayears;
+        si::time<float> age_of_world_when_first_deposited_in_megayears;
         // Represent age of world from 1 to 65.535 billion years to the nearest megayear
         // Also used for cache alignment
-        uint16 age_of_world_when_last_deposited_in_megayears;
+        si::time<float> age_of_world_when_last_deposited_in_megayears;
 
-        static constexpr uint16 oo = std::numeric_limits<uint16>::max()-1;
+        static constexpr unsigned int oo = std::numeric_limits<float>::max();
 
     public:
 
@@ -61,8 +59,8 @@ namespace rock
             {
                 minerals[i].unpack(output.minerals[i]);
             }
-            output.age_of_world_when_first_deposited = age_of_world_when_first_deposited_in_megayears * si::megayear;
-            output.age_of_world_when_last_deposited = age_of_world_when_last_deposited_in_megayears * si::megayear;
+            output.age_of_world_when_first_deposited = age_of_world_when_first_deposited_in_megayears;
+            output.age_of_world_when_last_deposited = age_of_world_when_last_deposited_in_megayears;
         }
 
         void pack(const Stratum<M>& input)
@@ -71,28 +69,28 @@ namespace rock
             {
                 minerals[i].pack(input.minerals[i]);
             }
-            age_of_world_when_first_deposited_in_megayears = input.age_of_world_when_first_deposited / si::megayear;
-            age_of_world_when_last_deposited_in_megayears = input.age_of_world_when_last_deposited / si::megayear;
+            age_of_world_when_first_deposited_in_megayears = input.age_of_world_when_first_deposited;
+            age_of_world_when_last_deposited_in_megayears = input.age_of_world_when_last_deposited;
         }
 
         inline constexpr auto age_of_world_when_first_deposited () const 
         {
-            return age_of_world_when_first_deposited_in_megayears * si::megayear;
+            return age_of_world_when_first_deposited_in_megayears;
         }
 
         inline constexpr auto age_of_world_when_last_deposited () const 
         {
-            return age_of_world_when_last_deposited_in_megayears * si::megayear;
+            return age_of_world_when_last_deposited_in_megayears;
         }
 
         inline constexpr auto age_of_world_when_first_deposited (const si::time<double> value) 
         {
-            age_of_world_when_first_deposited_in_megayears = std::max(0.0, value / si::megayear);
+            age_of_world_when_first_deposited_in_megayears = value;
         }
 
         inline constexpr auto age_of_world_when_last_deposited (const si::time<double> value) 
         {
-            age_of_world_when_last_deposited_in_megayears = std::min(double(oo), value / si::megayear);
+            age_of_world_when_last_deposited_in_megayears = value;
         }
 
         inline si::mass<float> mass () const 

@@ -17,7 +17,7 @@ namespace rock{
 
         static constexpr si::density<float> kilogram_per_meter3 = si::density<float>(si::kilogram/si::meter3);
         static constexpr si::length<float> meter = si::length<float>(si::meter);
-        static constexpr unsigned int max_density_in_kilograms_per_meter3 = (1<<32)-1;
+        static constexpr unsigned int max_density_in_kilograms_per_meter3 = (1<<30)-1;
 
         float thickness_in_meters;
         unsigned int density_in_kilograms_per_meter3;
