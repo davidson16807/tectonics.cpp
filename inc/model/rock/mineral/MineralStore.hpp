@@ -32,12 +32,12 @@ namespace rock
 
 	public:
 		// convenience constructor, equivalent to pack()
-		MineralStore(Mineral& output)
+		explicit MineralStore(Mineral& output)
 		{
 			pack(output);
 		}
 		// identity constructor
-		MineralStore():
+		constexpr MineralStore():
 			mass_(0),
 			unweathered_amorphous_part_count(1),           
 			unweathered_extrusive_part_count(1),           

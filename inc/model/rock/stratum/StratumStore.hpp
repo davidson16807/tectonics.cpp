@@ -44,7 +44,7 @@ namespace rock
 
     public:
 
-        StratumStore(const Stratum<M>& output)
+        constexpr StratumStore(const Stratum<M>& output)
         {
             pack(output);
         }
@@ -75,27 +75,27 @@ namespace rock
             age_of_world_when_last_deposited_in_megayears = input.age_of_world_when_last_deposited / si::megayear;
         }
 
-        inline auto age_of_world_when_first_deposited () const 
+        inline constexpr auto age_of_world_when_first_deposited () const 
         {
             return age_of_world_when_first_deposited_in_megayears * si::megayear;
         }
 
-        inline auto age_of_world_when_last_deposited () const 
+        inline constexpr auto age_of_world_when_last_deposited () const 
         {
             return age_of_world_when_last_deposited_in_megayears * si::megayear;
         }
 
-        inline auto age_of_world_when_first_deposited (const si::time<double> value) 
+        inline constexpr auto age_of_world_when_first_deposited (const si::time<double> value) 
         {
             age_of_world_when_first_deposited_in_megayears = std::max(0.0, value / si::megayear);
         }
 
-        inline auto age_of_world_when_last_deposited (const si::time<double> value) 
+        inline constexpr auto age_of_world_when_last_deposited (const si::time<double> value) 
         {
             age_of_world_when_last_deposited_in_megayears = std::min(double(oo), value / si::megayear);
         }
 
-        si::mass<float> mass () const 
+        inline si::mass<float> mass () const 
         {
             si::mass<float> result;
             for (int i = 0; i < M; ++i)
