@@ -65,6 +65,11 @@ namespace dymaxion
 		static constexpr scalar half = 0.5;
 		static constexpr id2 i1 = 1;
 		static constexpr id2 i2 = 2;
+		static constexpr id2 i3 = 3;
+		static constexpr id2 i4 = 4;
+		static constexpr scalar ua = (0.0954915028125); // cos(π 2/5)²
+		static constexpr scalar ub = (0.654508497187);  // cos(π 1/5)²
+		static constexpr scalar du = (ub-ua);
 
 		struct TriangleCache {
 		    mat3   inverse_basis;
@@ -165,9 +170,15 @@ namespace dymaxion
 		% is faster than math::modulus
 		*/
 
+		inline constexpr id2 longitude_id(const scalar y, const scalar x) const {
+			id2 f(std::floor((ua-x*x)/du));
+			id2 g((x<s0? -f : f)+i3);
+			return ((y<s0? -g : g-i1)+square_count) % square_count;
+		}
+
 		constexpr point grid_id(const vec3 V3 /*position on the sphere*/) const 
 		{
-			id2     EWid(id2((std::atan2(V3.y,V3.x)+turn)*half_subgrid_fraction_of_turn) % square_count);
+			id2     EWid(longitude_id(V3.y, V3.x));
 			id2     i ((EWid - id2(glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
 			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0);
 			TriangleCache triangle(cache[i + is_polar*square_count]);
