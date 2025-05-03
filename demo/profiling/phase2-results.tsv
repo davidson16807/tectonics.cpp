@@ -11,5 +11,5 @@ frame_count	vertices_per_fine_square_side	localize	scalar	flags	tag	O0	O1	O2	O3
 1000	60	multiple rasters	float		k2B		77.1	64.6	55.6	
 1000	60	multiple rasters	uint8		k2B8		77.5	64.9	56.1	
 1000	60	single CrustSummary	double		k2C		53.0	45.7	43.8	
-1000	60	single CrustSummary	double	-sse3	k2Cb					
-1000	60	single CrustSummary	double	-sse3 -march=native	k2Cc					
+1000	60	single CrustSummary	double	-sse3 -march=native	k2Cc		84.0	52.2	45.6	
+										
