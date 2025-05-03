@@ -1,9 +1,10 @@
-		frames						
-frame_count	vertices_per_fine_square_side	localize	tag	O0	O1	O2	O3	
-100	30	multiple rasters	c1A	15.2	1.66	1.34	1.11	"contents of ""O"" columns are"
-100	60	multiple rasters	c2A	63.0	6.43	5.45	4.66	runtime reported in seconds
-100	120	multiple rasters	c4A		25.5	21.0	18.7	for that optimization level
-1000	30	multiple rasters	k1A		14.2	12.1	11.0	all runs branch from commit 150ae9
-1000	30	single CrustSummary	k1B		19.4	15.8	13.9	
-1000	60	multiple rasters	k2A		60.8	49.4	44.0	
-1000	60	single CrustSummary	k2B		77.1	64.6	55.6	
+		frames							
+frame_count	vertices_per_fine_square_side	localize	si::unit<...T>	tag	O0	O1	O2	O3	
+100	30	single CrustSummary	float	c1A	15.2	1.66	1.34	1.11	"contents of ""O"" columns are"
+100	60	single CrustSummary	float	c2A	63.0	6.43	5.45	4.66	runtime reported in seconds
+100	120	single CrustSummary	float	c4A		25.5	21.0	18.7	for that optimization level
+1000	30	single CrustSummary	float	k1A		14.2	12.1	11.0	all runs branch from commit 150ae9
+1000	30	multiple rasters	float	k1B		19.4	15.8	13.9	
+1000	60	single CrustSummary	float	k2A		60.8	49.4	44.0	
+1000	60	multiple rasters	float	k2B		77.1	64.6	55.6	
+1000	60	single CrustSummary	uint8	k2Bb		77.5	64.9	56.1	

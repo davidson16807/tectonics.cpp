@@ -143,8 +143,8 @@ int main() {
 
   using bools = std::vector<bool>;
 
-  using lengths = std::vector<length>;
-  using densities = std::vector<density>;
+  using lengths = std::vector<si::length<std::uint8_t>>;
+  using densities = std::vector<si::density<std::uint8_t>>;
   using pressures = std::vector<pressure>;
 
   using Grid = dymaxion::Grid<std::int8_t, int, float>;
@@ -154,7 +154,7 @@ int main() {
   length world_radius(6.371e6 * si::meter);
   density mantle_density(3000.0*si::kilogram/si::meter3);
   viscosity mantle_viscosity(1.57e20*si::pascal*si::second);
-  int vertices_per_fine_square_side(30);
+  int vertices_per_fine_square_side(60);
   int vertices_per_coarse_square_side(vertices_per_fine_square_side/2);
   dymaxion::GridCache fine(Grid(world_radius/meter, vertices_per_fine_square_side));
   dymaxion::GridCache coarse(Grid(world_radius/meter, vertices_per_coarse_square_side));
