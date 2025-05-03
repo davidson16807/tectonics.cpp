@@ -1,0 +1,22 @@
+		Grid	Grid	Grid	Grid	Grid	Indexing	Projection	Projection	Projection	Projection						
+frame_count	vertices_per_fine_square_side	vertex_dual_area	vertex_position	vertex_normal	vertex_representative	nearest_vertex_id	memory_id_when_standard	basis	polar_halfspace_normal	east_halfspace_normal	math::modulus removed	O0	O1	O2	O3		
+100	30	procedural	procedural	procedural	memory_id	memory_id	clamped	procedural	procedural	procedural	no	112	18.0	14.5	15.2		"""contents of """"O*"""" columns are"""
+100	30	cached	cached	cached	memory_id	memory_id	clamped	procedural	procedural	procedural	no	31.9	4.17	3.57	3.78		runtime reported in seconds
+100	30	cached	procedural	procedural	memory_id	memory_id	clamped	procedural	procedural	procedural	no	33.7	4.46	4.07	3.60		for that optimization level
+100	30	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	procedural	procedural	procedural	no	27.6	3.67	3.04	2.92		all runs branch from commit ccf8ea
+100	30	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	cached	procedural	procedural	no	23.0	3.21	2.58	2.66		
+100	60	procedural	procedural	procedural	memory_id	memory_id	clamped	procedural	procedural	procedural	no	>1800	75.9	63.8	62.0	*	
+100	60	cached	cached	cached	memory_id	memory_id	clamped	procedural	procedural	procedural	no	139	19.0	16.7	14.9	*	
+100	60	cached	procedural	procedural	memory_id	memory_id	clamped	procedural	procedural	procedural	no	129	18.0	16.0	14.9	*	
+100	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	procedural	procedural	procedural	no	111	14.9	12.4	12.4	*	
+100	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	cached	procedural	procedural	no	82.3	12.8	10.6	10.7	*	
+1000	30	cached	procedural	procedural	memory_id	memory_id	clamped	procedural	procedural	procedural	no		43.2	38.2	34.5		
+1000	30	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	cached	procedural	procedural	no		30.0	26.2	25.7		
+1000	60	cached	procedural	procedural	memory_id	memory_id	clamped	procedural	procedural	procedural	no		174	154	138	*	
+1000	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	procedural	procedural	procedural	no		143	117	118	*	
+1000	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	clamped	cached	procedural	procedural	no		119	103	104	*	
+1000	60	cached	procedural	procedural	memory_id_when_standard	memory_id_when_standard	unclamped	cached	procedural	procedural	no				107	*	memory_id_when_standard causes a segfault in tests
+1000	60	cached	procedural	procedural	memory_id	memory_id_when_standard	clamped	cached	procedural	procedural	no		125	108	109	*	when used in Grid.vertex_representative
+1000	60	cached	procedural	procedural	memory_id	memory_id_when_standard	clamped	cached	cached	procedural	no				83.7	*	
+1000	60	cached	procedural	procedural	memory_id	memory_id_when_standard	clamped	cached	cached	cached	no		72.4	57.0	56.6	*	
+1000	60	cached	procedural	procedural	memory_id	memory_id_when_standard	clamped	cached	cached	cached	yes		67.5	55.5	51.8		
