@@ -130,6 +130,10 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
 
+  using vec3 = glm::vec3;
+  using mat3 = glm::mat3;
+  using mat4 = glm::mat4;
+
   using mass = si::mass<float>;
   using density = si::density<float>;
   using length = si::length<float>;
@@ -137,11 +141,11 @@ int main() {
   using viscosity = si::dynamic_viscosity<float>;
   using acceleration = si::acceleration<float>;
 
-  using vec3 = glm::vec3;
-  using mat3 = glm::mat3;
-  using mat4 = glm::mat4;
-
   using bools = std::vector<bool>;
+
+  using lengths = std::vector<length>;
+  using densities = std::vector<density>;
+  using pressures = std::vector<pressure>;
 
   using Grid = dymaxion::Grid<std::int8_t, int, float>;
 
@@ -150,7 +154,7 @@ int main() {
   length world_radius(6.371e6 * si::meter);
   density mantle_density(3000.0*si::kilogram/si::meter3);
   viscosity mantle_viscosity(1.57e20*si::pascal*si::second);
-  int vertices_per_fine_square_side(60);
+  int vertices_per_fine_square_side(30);
   int vertices_per_coarse_square_side(vertices_per_fine_square_side/2);
   dymaxion::GridCache fine(Grid(world_radius/meter, vertices_per_fine_square_side));
   dymaxion::GridCache coarse(Grid(world_radius/meter, vertices_per_coarse_square_side));
@@ -213,11 +217,11 @@ int main() {
           mantle_density, 
       }
   );
-  std::vector<pressure> fine_buoyancy_pressure(fine.vertex_count());
+  pressures fine_buoyancy_pressure(fine.vertex_count());
   buoyancy_pressure_for_formation_summary(formation_summary, fine_buoyancy_pressure);
 
   // DOWNSAMPLE
-  std::vector<pressure> coarse_buoyancy_pressure(coarse.vertex_count());
+  pressures coarse_buoyancy_pressure(coarse.vertex_count());
   iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic{}};
   aggregated::Order order{adapted::SymbolicOrder{}};
   grouped::Statistics stats{adapted::TypedSymbolicArithmetic<float>(0.0f, 1.0f)};
@@ -245,7 +249,10 @@ int main() {
   auto globals = rock::LithosphereSummary(P, crust_summary);
   rock::FormationSummary scratch(fine.vertex_count());
   rock::CrustSummary master(fine.vertex_count());
-  std::vector<rock::CrustSummary> summaries(P, crust_summary); // the global CrustSummary localized into each plate
+  densities global_density  (fine.vertex_count());
+  lengths  global_thickness(fine.vertex_count());
+  std::vector<densities> local_densities  (P, global_density);   // the global density localized into each plate
+  std::vector<lengths>  local_thicknesses(P, global_thickness); // the global thickness localized into each plate
   bools alone(fine.vertex_count());
   bools top(fine.vertex_count());
   bools exists(fine.vertex_count());
@@ -376,6 +383,19 @@ int main() {
   );
 
   auto summarization = rock::lithosphere_summarization<M,F>(crust_summarize, crust_summary_ops);
+
+  auto crust_summary_density = 
+    rock::CrustSummaryProperty(
+      rock::ColumnSummaryDensity(
+        // rock::StratumSummaryDensity()
+      ));
+
+  auto crust_summary_thickness = 
+    rock::CrustSummaryProperty(
+      rock::ColumnSummaryThickness(
+        // rock::StratumSummaryThickness()
+      ));
+
   iterated::Bitset<adapted::BooleanBitset> bitset;
   rock::CrustSummaryPredicates predicates{
     unlayered::Morphology{bitset},
@@ -412,7 +432,10 @@ int main() {
       summarization .summarize (fine, plates, locals, scratch);   // summarize each plate into a (e.g.) CrustSummary raster
       frames        .globalize (orientations, locals, globals);   // resample plate-specific rasters onto a global grid
       summarization .flatten   (globals,      master);            // condense globalized rasters into e.g. LithosphereSummary
-      frames        .localize  (orientations, master, summaries); // resample global raster to a plate-specific for each plate
+      crust_summary_density    (master, global_density);          // break master into rasters for individual properties
+      crust_summary_thickness  (master, global_thickness);        // break master into rasters for individual properties
+      frames        .localize  (orientations, global_density,   local_densities);   // resample global raster to a plate-specific for each plate
+      frames        .localize  (orientations, global_thickness, local_thicknesses); // resample global raster to a plate-specific for each plate
       // summarization uses fine only for vertex_dual_areas, so it's faster if fine is a GridCache
 
       /*

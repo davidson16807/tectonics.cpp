@@ -51,6 +51,16 @@ namespace rock{
         }
     };
 
+    struct StratumSummaryDensity
+    {
+        StratumSummaryDensity()
+        {}
+        auto operator()(const StratumSummary& summary) const
+        {
+            return summary.density();
+        }
+    };
+
     struct StratumSummaryThickness
     {
         StratumSummaryThickness()
