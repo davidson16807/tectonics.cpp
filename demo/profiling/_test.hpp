@@ -130,20 +130,21 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
 
-  using mass = si::mass<float>;
-  using density = si::density<float>;
-  using length = si::length<float>;
-  using pressure = si::pressure<float>;
-  using viscosity = si::dynamic_viscosity<float>;
-  using acceleration = si::acceleration<float>;
+  using mass = si::mass<double>;
+  using density = si::density<double>;
+  using length = si::length<double>;
+  using pressure = si::pressure<double>;
+  using viscosity = si::dynamic_viscosity<double>;
+  using acceleration = si::acceleration<double>;
 
-  using vec3 = glm::vec3;
-  using mat3 = glm::mat3;
-  using mat4 = glm::mat4;
+  using vec3 = glm::dvec3;
+  using vec2 = glm::dvec2;
+  using mat3 = glm::dmat3;
+  using mat4 = glm::dmat4;
 
   using bools = std::vector<bool>;
 
-  using Grid = dymaxion::Grid<std::int8_t, int, float>;
+  using Grid = dymaxion::Grid<std::int8_t, int, double>;
 
   length meter(si::meter);
 
@@ -161,11 +162,11 @@ int main() {
   const int F(5);
 
   // GENERATE THE CRUST
-  rock::EarthlikeIgneousFormationGeneration earthlike(fine, world_radius/2.0f, 0.5f, 10, world_radius);
+  rock::EarthlikeIgneousFormationGeneration earthlike(fine, world_radius/2.0, 0.5, 10, world_radius);
   // earthlike is only used for an in-order traversal, below, so its faster to use GridCache
   // it only uses vertex_positions and vertex_dual_areas, of which both are cached
 
-  auto generation = earthlike(12.0f, 1.1e4f);
+  auto generation = earthlike(12.0, 1.1e4);
   rock::StratumStore<M> empty_stratum;
   rock::Formation<M> empty_formation(fine.vertex_count(), empty_stratum);
   rock::Formation<M> igneous_formation(fine.vertex_count());
@@ -173,7 +174,7 @@ int main() {
   rock::Crust<M,F> crust{empty_formation, empty_formation, empty_formation, igneous_formation, empty_formation};
 
   // CALCULATE BUOYANCY
-  auto age_of_world = 0.0f*si::megayear;
+  auto age_of_world = 0.0*si::megayear;
   std::array<relation::PolynomialRailyardRelation<si::time<double>,si::density<double>,0,1>, 2> densities_for_age {
     relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2890.0, 3300.0}), // Carlson & Raskin 1984
     relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2600.0, 2600.0})
@@ -220,13 +221,13 @@ int main() {
   std::vector<pressure> coarse_buoyancy_pressure(coarse.vertex_count());
   iterated::Arithmetic arithmetic{adapted::SymbolicArithmetic{}};
   aggregated::Order order{adapted::SymbolicOrder{}};
-  grouped::Statistics stats{adapted::TypedSymbolicArithmetic<float>(0.0f, 1.0f)};
+  grouped::Statistics stats{adapted::TypedSymbolicArithmetic<double>(0.0, 1.0)};
   dymaxion::VertexDownsamplingIds vertex_downsampling_ids(fine.grid.memory, coarse.grid.memory);
   stats.sum(vertex_downsampling_ids, fine_buoyancy_pressure, coarse_buoyancy_pressure);
-  arithmetic.divide(coarse_buoyancy_pressure, procedural::uniform(std::pow(float(vertex_downsampling_ids.factor), 2.0f)), coarse_buoyancy_pressure);
+  arithmetic.divide(coarse_buoyancy_pressure, procedural::uniform(std::pow(double(vertex_downsampling_ids.factor), 2.0)), coarse_buoyancy_pressure);
 
   // STRIP UNITS TO CALCULATE GRADIENT
-  std::vector<float> coarse_buoyancy_pressure_in_pascals(coarse.vertex_count());
+  std::vector<double> coarse_buoyancy_pressure_in_pascals(coarse.vertex_count());
   arithmetic.divide(coarse_buoyancy_pressure, procedural::uniform(pressure(1)), coarse_buoyancy_pressure_in_pascals);
 
   // CALCULATE STRESS
@@ -236,9 +237,9 @@ int main() {
 
   // FRACTURE
   const int P = 8; // plate count
-  rock::CrustFracturing<int,float> fracturing;
-  std::vector<unlayered::FloodFillState<int,float>> fractures(P, 
-      unlayered::FloodFillState<int,float>(0, coarse.vertex_count()));
+  rock::CrustFracturing<int,double> fracturing;
+  std::vector<unlayered::FloodFillState<int,double>> fractures(P, 
+      unlayered::FloodFillState<int,double>(0, coarse.vertex_count()));
   fracturing.fracture(coarse, vertex_gradient, fractures);
   auto plates = rock::Lithosphere<M,F>(P, crust);
   auto locals = rock::LithosphereSummary(P, crust_summary);
@@ -265,7 +266,7 @@ int main() {
 
   // print plate map and buoyancy field
   auto id_strings = spheroidal::Strings(
-    adapted::IdStrings<float>(adapted::dotshades), 
+    adapted::IdStrings<double>(adapted::dotshades), 
     aggregated::Order<adapted::SymbolicOrder>()
   );
   auto si_strings = spheroidal::Strings(
@@ -276,7 +277,7 @@ int main() {
   std::cout << si_strings.format(fine, fine_buoyancy_pressure) << std::endl;
 
   // CALCULATE MOTION FOR EACH PLATE
-  auto motion = rock::crust_motion<M,float,double>(
+  auto motion = rock::crust_motion<M,double,double>(
       calculus, fine, 
       world_radius, 
       acceleration(si::standard_gravity), 
@@ -291,7 +292,7 @@ int main() {
   for (int i = 0; i < P; ++i)
   {
       fracturing.exists(fine_plate_map, i, fine_plate_existance);
-      motion.slab_pull(fine_buoyancy_pressure, fine_plate_existance, si::force<float>(si::newton), fine_slab_pull);
+      motion.slab_pull(fine_buoyancy_pressure, fine_plate_existance, si::force<double>(si::newton), fine_slab_pull);
       motion.is_slab(fine_slab_pull, fine_slab_existance);
       auto slab_volume = motion.slab_volume(formation_summary, fine_slab_existance);
       auto slab_area = motion.slab_area(formation_summary, fine_slab_existance);
@@ -305,14 +306,14 @@ int main() {
   }
 
   // flatten raster for OpenGL
-  dymaxion::WholeGridBuffers<std::int8_t,int,float> grids(vertices_per_fine_square_side);
+  dymaxion::WholeGridBuffers<std::int8_t,int,double> grids(vertices_per_fine_square_side);
   dymaxion::VertexPositions fine_vertex_positions(fine.grid);
   std::vector<length> displacements(fine.vertex_count());
   std::vector<float> buffer_color_values(fine.vertex_count());
   std::vector<std::byte> buffer_culling(fine.vertex_count());
   std::vector<float> buffer_scalars1(fine.vertex_count());
   std::vector<float> buffer_scalars2(fine.vertex_count());
-  std::vector<float> buffer_uniform(fine.vertex_count(), 1.0f);
+  std::vector<float> buffer_uniform(fine.vertex_count(), 1.0);
   std::vector<glm::vec3> buffer_positions(fine.vertex_count());
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(fine_vertex_positions));
   std::cout << "vertex count:        " << fine.vertex_count() << std::endl;
@@ -332,17 +333,17 @@ int main() {
 
   // initialize control state
   update::OrbitalControlState control_state(
-      glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f, // angular_position
-      glm::vec2(0), // angular_direction
+      vec2(45.0, 30.0) * 3.14159/180.0, // angular_position
+      vec2(0), // angular_direction
       (world_radius+procedural_terrain_far_distance)/meter, // min_zoom_distance
-      23.0f // log2_height
+      23.0 // log2_height
   );
 
   // initialize view state
   view::ViewState view_state;
   view_state.projection_matrix = glm::perspective(
-    3.14159f*45.0f/180.0f, 
-    850.0f/640.0f, 
+    3.14159*45.0/180.0, 
+    850.0/640.0, 
     procedural_terrain_far_distance/meter,      // near plane distance
     planet_billboard_near_distance/meter // far plane distance
   );
@@ -370,8 +371,8 @@ int main() {
     }
   );
 
-  auto frames = rock::lithosphere_reference_frames<int,float,mat3>(
-    dymaxion::NearestVertexId<std::int8_t,int,float>(fine.grid),
+  auto frames = rock::lithosphere_reference_frames<int,double,mat3>(
+    dymaxion::NearestVertexId<std::int8_t,int,double>(fine.grid),
     fine.vertex_positions // vertex_positions is traversed in-order so it's faster to use a cache
   );
 
@@ -382,7 +383,7 @@ int main() {
     bitset
   };
 
-  const float pi(3.1415926535);
+  const double pi(3.1415926535);
   const int frame_count(1000);
   for(int i=0; i<frame_count; i++) {
 
@@ -404,7 +405,7 @@ int main() {
         orientations[i] = 
           glm::rotate(
             mat4(orientations[i]),
-            float(si::kiloyear/si::second) * 2.0f*pi * glm::length(angular_velocities_in_seconds[i]), 
+            double(si::kiloyear/si::second) * 2.0*pi * glm::length(angular_velocities_in_seconds[i]), 
             glm::normalize(angular_velocities_in_seconds[i]));
       }
 

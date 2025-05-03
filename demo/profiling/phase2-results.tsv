@@ -7,4 +7,5 @@ frame_count	vertices_per_fine_square_side	localize	si::unit<...T>	tag	O0	O1	O2	O
 1000	30	multiple rasters	float	k1B		19.4	15.8	13.9	
 1000	60	single CrustSummary	float	k2A		60.8	49.4	44.0	
 1000	60	multiple rasters	float	k2B		77.1	64.6	55.6	
-1000	60	single CrustSummary	uint8	k2Bb		77.5	64.9	56.1	
+1000	60	multiple rasters	uint8	k2Bb		77.5	64.9	56.1	
+1000	60	single CrustSummary	double	k2C		53.0	45.7	43.8	
