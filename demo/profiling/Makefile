@@ -12,7 +12,7 @@ all: $(TEST) ./Makefile
 	rm -f test.cpp test.out gmon.out && \
 	find ./ -type f -name '*_specialization.*pp' -exec echo "#include \"{}\"" >> test.cpp \; && \
 	find ./ -type f -name '*_test.*pp' -exec echo "#include \"{}\"" >> test.cpp \; && \
-	$(CPP) -pg -O$(O) -std=c++20 -o test.out test.cpp  $(FLAGS) \
+	$(CPP) -march=native -msse3 -pg -O$(O) -std=c++20 -o test.out test.cpp  $(FLAGS) \
 	-I $(ROOT)/lib/ -I $(ROOT)/inc/ -I $(ROOT)/src/ -I $(ROOT)/sketch/ \
 	-lglfw -lGL -lGLEW && \
 	chmod a+x test.out && \
