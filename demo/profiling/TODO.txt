@@ -1,11 +1,6 @@
 TODO:
-* investigate usages of GenericRelation (density calculation?)
 * what happens when using grids of a different class?
-	dymaxion::Grid with cached coordinate bases
-	dymaxion::Grid where x,y is determined by atan2 for a chaced coordinate basis
 	collignon::Grid
 	tectonics.py style fibonacci::Grid
 	tectonics.js style icosahedron with massive octahedron grid for cached nearest_vertex_id lookups
-* what happens when LithosphereReferenceFrames operates on rasters of individual properties (e.g. density, thickness) and not `ColumnSummary`s as is done at present?
-	probably need to use contents of ColumnSummaryProperties to first map individual `CrustSummary`s in LithosphereSummary to scalar rasters
 * what happens when atan2 is approximated using a 2d lagrange polynomial?
