@@ -276,7 +276,7 @@ int main() {
   std::cout << si_strings.format(fine, fine_buoyancy_pressure) << std::endl;
 
   // CALCULATE MOTION FOR EACH PLATE
-  auto motion = rock::crust_motion<M>(
+  auto motion = rock::crust_motion<M,float,double>(
       calculus, fine, 
       world_radius, 
       acceleration(si::standard_gravity), 

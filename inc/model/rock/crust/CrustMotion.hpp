@@ -26,31 +26,31 @@ namespace rock {
 	*/
 
 	// NOTE: `M` is mineral count
-	template<int M, typename VectorCalculus, typename Grid>
+	template<int M, typename stored, typename handled, typename VectorCalculus, typename Grid, glm::qualifier quality=glm::defaultp>
     class CrustMotion
     {
 
-    	using vec3 = glm::vec3;
+    	using vec3 = glm::vec<3,stored,quality>;
 
-    	using length            = si::length<double>;
-    	using volume            = si::volume<double>;
-    	using area              = si::area<double>;
-    	using acceleration      = si::acceleration<double>;
-    	using density           = si::density<double>;
-    	using dynamic_viscosity = si::dynamic_viscosity<double>;
-    	using force             = si::force<double>;
-    	using pressure          = si::pressure<double>;
-    	using torque            = si::torque<double>;
-    	using angular_momentum  = si::angular_momentum<double>;
+    	using length            = si::length<handled>;
+    	using volume            = si::volume<handled>;
+    	using area              = si::area<handled>;
+    	using acceleration      = si::acceleration<handled>;
+    	using density           = si::density<handled>;
+    	using dynamic_viscosity = si::dynamic_viscosity<handled>;
+    	using force             = si::force<handled>;
+    	using pressure          = si::pressure<handled>;
+    	using torque            = si::torque<handled>;
+    	using angular_momentum  = si::angular_momentum<handled>;
 
     	using bools = std::vector<bool>;
-    	using vec3s = std::vector<vec3>;
+    	using vec3s = std::vector<glm::vec<3,stored,quality>>;
 
-    	using forces = std::vector<si::force<float>>;
-    	using pressures = std::vector<si::pressure<float>>;
+    	using forces = std::vector<si::force<stored>>;
+    	using pressures = std::vector<si::pressure<stored>>;
 
     	static constexpr int lambda_sample_count = 1000;
-    	static constexpr double pi = 3.1415926535897932384626433832795028841971;
+    	static constexpr handled pi = 3.1415926535897932384626433832795028841971;
 
         const VectorCalculus calculus;
 		const Grid& grid; 
@@ -118,7 +118,7 @@ namespace rock {
 		    	slab_pull[i] =
 		    		!exists[i]? vec3(0) :
 		    		glm::length(slab_pull[i]) == 0.0? vec3(0) :
-			    		float(force(buoyancy_pressure[i] * grid.vertex_dual_area(i) * si::area<float>(radius_units * radius_units))
+			    		stored(force(buoyancy_pressure[i] * grid.vertex_dual_area(i) * si::area<stored>(radius_units * radius_units))
 			    			/slab_pull_units) * glm::normalize(-slab_pull[i]); // n̂  boundary normal
 		    }
 		}
@@ -227,12 +227,12 @@ namespace rock {
 			*/
 			length max_dimension(si::max(10*si::kilometer, si::max(si::max(slab_length, slab_thickness), slab_width)));
 			area max_lambda(max_dimension*max_dimension); // clamp to a big number
-			area dlambda(max_lambda/double(lambda_sample_count));
+			area dlambda(max_lambda/handled(lambda_sample_count));
 			area lambda(0.0);
-			si::spatial_frequency<double> shape_factor;
+			si::spatial_frequency<handled> shape_factor;
 			for (std::size_t i = 0; i < lambda_sample_count; ++i)
 			{
-				lambda = max_lambda * double(i)/double(lambda_sample_count);
+				lambda = max_lambda * handled(i)/handled(lambda_sample_count);
 				shape_factor += dlambda
 					* (2.0 * slab_length*slab_length + lambda)
 					/ (      slab_length*slab_length + lambda)
@@ -246,16 +246,18 @@ namespace rock {
 		}
     };
 
-    template<int M, typename VectorCalculus, typename Grid>
-    CrustMotion<M, VectorCalculus, Grid> crust_motion(
+    template<
+    	int M, typename stored, typename handled, 
+    	typename VectorCalculus, typename Grid>
+    CrustMotion<M, stored, handled, VectorCalculus, Grid> crust_motion(
 		const VectorCalculus& calculus, 
 		const Grid& grid, 
-		const si::length<double> world_radius,
-		const si::acceleration<double> gravity,
-		const si::density<double> mantle_density,
-		const si::dynamic_viscosity<double> mantle_viscosity
+		const si::length<handled> world_radius,
+		const si::acceleration<handled> gravity,
+		const si::density<handled> mantle_density,
+		const si::dynamic_viscosity<handled> mantle_viscosity
     ) {
-    	return CrustMotion<M, VectorCalculus, Grid>(
+    	return CrustMotion<M, stored, handled, VectorCalculus, Grid>(
     		calculus, grid, world_radius, 
     		gravity, mantle_density, mantle_viscosity
 		);
