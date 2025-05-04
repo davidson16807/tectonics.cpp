@@ -6,19 +6,17 @@ CPP=g++
 ROOT = $(shell pwd | sed 's/tectonics.cpp.*/tectonics.cpp/')
 TEST = $(shell find ./ -type f -name '*_test.*pp')
 
-FLAGS= -march=native -Wall -Werror -pedantic-errors -rdynamic -g -D GLM_FORCE_SWIZZLE
+FLAGS= -fopenmp -march=native -Wall -Werror -pedantic-errors -rdynamic -g -D GLM_FORCE_SWIZZLE
 
 all: $(TEST) ./Makefile
-	rm -f test.cpp test.out gmon.out && \
+	rm -f test.cpp test.out && \
 	find ./ -type f -name '*_specialization.*pp' -exec echo "#include \"{}\"" >> test.cpp \; && \
 	find ./ -type f -name '*_test.*pp' -exec echo "#include \"{}\"" >> test.cpp \; && \
 	$(CPP) -O$(O) -std=c++20 -o test.out test.cpp  $(FLAGS) \
 	-I $(ROOT)/lib/ -I $(ROOT)/inc/ -I $(ROOT)/src/ -I $(ROOT)/sketch/ \
 	-lglfw -lGL -lGLEW && \
 	chmod a+x test.out && \
-	./test.out && \
-	gprof test.out gmon.out > $(TAG)-O$(O).txt && \
-	python3 replace.py beautify.tsv $(TAG)-O$(O).txt
+	./test.out
 
 clean:
 	rm -f test.cpp test.out gmon.out

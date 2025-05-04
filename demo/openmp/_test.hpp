@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include <chrono>
 
 // gl libraries
 #include <GL/glew.h>
@@ -272,8 +273,8 @@ int main() {
     adapted::SiStrings(adapted::dotshades), 
     aggregated::Order<adapted::SymbolicOrder>()
   );
-  std::cout << id_strings.format(fine, fine_plate_map) << std::endl;
-  std::cout << si_strings.format(fine, fine_buoyancy_pressure) << std::endl;
+  // std::cout << id_strings.format(fine, fine_plate_map) << std::endl;
+  // std::cout << si_strings.format(fine, fine_buoyancy_pressure) << std::endl;
 
   // CALCULATE MOTION FOR EACH PLATE
   auto motion = rock::crust_motion<M,float,double>(
@@ -384,6 +385,8 @@ int main() {
 
   const float pi(3.1415926535);
   const int frame_count(1000);
+
+  auto start = std::chrono::high_resolution_clock::now();
   for(int i=0; i<frame_count; i++) {
 
       // wipe drawing surface clear
@@ -468,6 +471,8 @@ int main() {
       // control_state.angular_position.x += 1.0f * 3.1415926f/180.0f;
       view_state.view_matrix = control_state.get_view_matrix();
   }
+  auto stop = std::chrono::high_resolution_clock::now();
+  std::cout << std::to_string(duration_cast<std::chrono::milliseconds>(stop-start).count()) << std::endl;
 
   // close GL context and any other GLFW resources
   message_queue.deactivate(window);
