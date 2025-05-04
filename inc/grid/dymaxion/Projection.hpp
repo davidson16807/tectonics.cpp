@@ -68,14 +68,14 @@ namespace dymaxion
 		static constexpr id2 i1 = 1;
 		static constexpr id2 i2 = 2;
 
-		struct TriangleCache {
-		    mat3   inverse_basis;
+		struct GridIdCache {
+		    mat3   Binv_NO;
 		    vec3   normal;
-		  	private:
-		    vec4   padding;
+		    vec2   direction2;
+		    vec2   origin2;
 		};
 
-		std::array<TriangleCache,triangle_count*i2> cache;
+		std::array<GridIdCache,triangle_count*i2> cache;
 		std::array<vec3,square_count*i2> west_halfspace_normals;
 		std::array<vec3,square_count*i2> polar_halfspace_normals;
 		std::array<scalar,4> padding;
@@ -120,12 +120,22 @@ namespace dymaxion
 			{
 				for (id2 j = 0; j < 2; ++j)
 				{
+					/*
+					for sphere_position:
+						we need only cache the coordinate basis for the triangle, B
+					for grid_id:
+						U3 = V3 (N⋅O)/(N⋅V3) projects V3 onto the plane of the triangle,
+						W3 = B⁻¹ U3 converts to the coordinate system for the triangle,
+						where N is the surface normal of the triangle and O is the origin in 3d space
+					*/
 					bool is_polar(j==1);
 					id2 triangle_id(triangles.triangle_id(i,is_polar));
 					mat3 basis_(basis(i%square_count,is_polar));
-					bases[triangle_id]               = basis_;
-					cache[triangle_id].normal        = glm::normalize(glm::cross(basis_[1], basis_[0]));
-					cache[triangle_id].inverse_basis = glm::inverse(basis_) * glm::dot(cache[triangle_id].normal, origin(i%square_count,is_polar));
+					bases[triangle_id]            = basis_;
+					cache[triangle_id].normal     = glm::normalize(glm::cross(basis_[1], basis_[0]));
+					cache[triangle_id].Binv_NO    = glm::inverse(basis_) * glm::dot(cache[triangle_id].normal, origin(i%square_count,is_polar));
+					cache[triangle_id].direction2 = is_polar == (i&i1)? mirror : flip;
+					cache[triangle_id].origin2    = is_polar == (i&i1)? I : J;
 					// std::cout << std::to_string(normal_dot_origin[triangle_id]) << std::endl;
 				}
 				polar_halfspace_normals[i] = polar_halfspace_normal(i%square_count);
@@ -170,17 +180,9 @@ namespace dymaxion
 			id2     EWid(id2((std::atan2(V3.y,V3.x)+turn)*half_subgrid_fraction_of_turn));
 			id2     i ((EWid - id2(glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
 			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0);
-			TriangleCache triangle(cache[i2*i + is_polar]);
-			vec2   triangle_position((
-				triangle.inverse_basis * 
-				V3 * (s1/glm::dot(triangle.normal,V3))
-				// V3 (N⋅O)/(N⋅V3) projects onto the plane
-			).yx());
-			return point(i,
-					is_polar == (i&i1)? 
-						I+mirror*triangle_position : 
-						J+flip*triangle_position
-				);
+			GridIdCache triangle(cache[i2*i + is_polar]);
+			vec2   triangle_position(triangle.Binv_NO * V3 / glm::dot(triangle.normal,V3));
+			return point(i, triangle.origin2 + triangle.direction2*triangle_position.yx());
 		}
 
 		constexpr vec3 sphere_position(const point& grid_id) const 
