@@ -75,11 +75,11 @@ namespace dymaxion
 		    vec3   padding;
 		};
 
-		std::array<TriangleCache,triangle_count> cache;
+		std::array<TriangleCache,triangle_count*i2> cache;
 		std::array<vec3,square_count*i2> west_halfspace_normals;
 		std::array<vec3,square_count*i2> polar_halfspace_normals;
 		std::array<scalar,4> padding;
-		std::array<mat3,triangle_count> bases;
+		std::array<mat3,triangle_count*i2> bases;
 
 		const Triangles<id2,scalar,Q> triangles;
 		const Squares<id2,scalar,Q> squares;
@@ -116,22 +116,19 @@ namespace dymaxion
 
 		explicit Projection()
 		{
-			for (id2 i = 0; i < square_count; ++i)
+			for (id2 i = 0; i < square_count*i2; ++i)
 			{
 				for (id2 j = 0; j < 2; ++j)
 				{
 					bool is_polar(j==1);
 					id2 triangle_id(triangles.triangle_id(i,is_polar));
-					mat3 basis_(basis(i,is_polar));
+					mat3 basis_(basis(i%square_count,is_polar));
 					bases[triangle_id]               = basis_;
 					cache[triangle_id].inverse_basis = glm::inverse(basis_);
 					cache[triangle_id].normal        = glm::normalize(glm::cross(basis_[1], basis_[0]));
-					cache[triangle_id].normal_dot_origin = glm::dot(cache[triangle_id].normal, origin(i,is_polar));
+					cache[triangle_id].normal_dot_origin = glm::dot(cache[triangle_id].normal, origin(i%square_count,is_polar));
 					// std::cout << std::to_string(normal_dot_origin[triangle_id]) << std::endl;
 				}
-			}
-			for (id2 i = 0; i < square_count*i2; ++i)
-			{
 				polar_halfspace_normals[i] = polar_halfspace_normal(i%square_count);
 				west_halfspace_normals[i] = west_halfspace_normal(i%square_count);
 			}
@@ -197,7 +194,7 @@ namespace dymaxion
 					(V2-J)*flip : 
 					(V2-I)*mirror,
 				s1);
-			return glm::normalize(bases[i2*(i%square_count) + (is_inverted == (i&i1))] * triangle_position);
+			return glm::normalize(bases[i2*i + (is_inverted == (i&i1))] * triangle_position);
 		}
 
 	};
