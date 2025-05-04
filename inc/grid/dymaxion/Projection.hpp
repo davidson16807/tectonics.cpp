@@ -126,7 +126,8 @@ namespace dymaxion
 					for grid_id:
 						U3 = V3 (N⋅O)/(N⋅V3) projects V3 onto the plane of the triangle,
 						W3 = B⁻¹ U3 converts to the coordinate system for the triangle,
-						where N is the surface normal of the triangle and O is the origin in 3d space
+						where N is the surface normal of the triangle and O is the origin in 3d space,
+						therefore we calculate B⁻¹ (N⋅O)/(N⋅V3) V3  and B⁻¹(N⋅O) can be cached (`Binv_NO`).
 					*/
 					bool is_polar(j==1);
 					id2 triangle_id(triangles.triangle_id(i,is_polar));
@@ -169,17 +170,12 @@ namespace dymaxion
 			return is_pole? grid_id : point((i+di+square_count) % square_count, flipped);
 		}
 
-		/*
-		Performance observations on gcc:
-		std::pow(-1,i) is faster than 1-2*(i%2)
-		% is faster than math::modulus
-		*/
-
 		constexpr point grid_id(const vec3 V3 /*position on the sphere*/) const 
 		{
-			id2     EWid(id2((std::atan2(V3.y,V3.x)+turn)*half_subgrid_fraction_of_turn));
+			id2     EWid((std::atan2(V3.y,V3.x)+turn)*half_subgrid_fraction_of_turn);
 			id2     i ((EWid - id2(glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
-			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0);
+			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0); 
+			// ^^^ counterintuitively, this code is faster when std::pow is uncached
 			GridIdCache triangle(cache[i2*i + is_polar]);
 			vec2   triangle_position(triangle.Binv_NO * V3 / glm::dot(triangle.normal,V3));
 			return point(i, triangle.origin2 + triangle.direction2*triangle_position.yx());
