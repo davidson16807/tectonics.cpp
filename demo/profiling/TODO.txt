@@ -3,4 +3,6 @@ TODO:
 	collignon::Grid
 	tectonics.py style fibonacci::Grid
 	tectonics.js style icosahedron with massive octahedron grid for cached nearest_vertex_id lookups
-* what happens when atan2 is approximated using a 2d lagrange polynomial?
+* what happens when using std::valarrays vs std::vectors?
+* what happens when using #pragma omp simd?
+* what happens when Index is contrained to power-of-2 resolutions with bit twiddling for modulus?
