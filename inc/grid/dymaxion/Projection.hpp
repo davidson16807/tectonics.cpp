@@ -63,6 +63,7 @@ namespace dymaxion
 		static constexpr scalar half_subgrid_fraction_of_turn = square_count/(2*pi);
         static constexpr vec2 half_cell = vec2(0.5);
 		static constexpr scalar half = 0.5;
+		static constexpr id2 i0 = 0;
 		static constexpr id2 i1 = 1;
 		static constexpr id2 i2 = 2;
 
@@ -75,8 +76,8 @@ namespace dymaxion
 		};
 
 		std::array<TriangleCache,triangle_count> cache;
-		std::array<vec3,square_count> west_halfspace_normals;
-		std::array<vec3,square_count> polar_halfspace_normals;
+		std::array<vec3,square_count*i2> west_halfspace_normals;
+		std::array<vec3,square_count*i2> polar_halfspace_normals;
 		std::array<scalar,4> padding;
 		std::array<mat3,triangle_count> bases;
 
@@ -128,8 +129,11 @@ namespace dymaxion
 					cache[triangle_id].normal_dot_origin = glm::dot(cache[triangle_id].normal, origin(i,is_polar));
 					// std::cout << std::to_string(normal_dot_origin[triangle_id]) << std::endl;
 				}
-				polar_halfspace_normals[i] = polar_halfspace_normal(i);
-				west_halfspace_normals[i] = west_halfspace_normal(i);
+			}
+			for (id2 i = 0; i < square_count*i2; ++i)
+			{
+				polar_halfspace_normals[i] = polar_halfspace_normal(i%square_count);
+				west_halfspace_normals[i] = west_halfspace_normal(i%square_count);
 			}
 		}
 
@@ -167,7 +171,7 @@ namespace dymaxion
 
 		constexpr point grid_id(const vec3 V3 /*position on the sphere*/) const 
 		{
-			id2     EWid(id2((std::atan2(V3.y,V3.x)+turn)*half_subgrid_fraction_of_turn) % square_count);
+			id2     EWid(id2((std::atan2(V3.y,V3.x)+turn)*half_subgrid_fraction_of_turn));
 			id2     i ((EWid - id2(glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
 			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0);
 			TriangleCache triangle(cache[i + is_polar*square_count]);

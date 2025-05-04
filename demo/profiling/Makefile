@@ -6,7 +6,7 @@ CPP=g++
 ROOT = $(shell pwd | sed 's/tectonics.cpp.*/tectonics.cpp/')
 TEST = $(shell find ./ -type f -name '*_test.*pp')
 
-FLAGS= -march=native -Wall -Werror -pedantic-errors -rdynamic -g -D GLM_FORCE_SWIZZLE
+FLAGS = -pg -march=native -Wall -Werror -pedantic-errors -rdynamic -g -D GLM_FORCE_SWIZZLE
 
 all: $(TEST) ./Makefile
 	rm -f test.cpp test.out gmon.out && \
