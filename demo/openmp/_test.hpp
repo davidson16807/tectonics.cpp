@@ -1,4 +1,8 @@
-#pragma GCC diagnostic ignored "-Wunknown-pragmas" // disable warnings about openmp pragmas since the code can run without them
+/*
+disable warnings about openmp pragmas - the code can run without them, 
+and gprof can't run on output using the -fopenmp flag and still provide accurate information
+*/
+#pragma GCC diagnostic ignored "-Wunknown-pragmas" 
 
 // std libraries
 #include <iostream>
@@ -152,7 +156,7 @@ int main() {
   length world_radius(6.371e6 * si::meter);
   density mantle_density(3000.0*si::kilogram/si::meter3);
   viscosity mantle_viscosity(1.57e20*si::pascal*si::second);
-  int vertices_per_fine_square_side(120);
+  int vertices_per_fine_square_side(60);
   int vertices_per_coarse_square_side(vertices_per_fine_square_side/2);
   dymaxion::GridCache fine(Grid(world_radius/meter, vertices_per_fine_square_side));
   dymaxion::GridCache coarse(Grid(world_radius/meter, vertices_per_coarse_square_side));
@@ -245,9 +249,10 @@ int main() {
   auto plates = rock::Lithosphere<M,F>(P, crust);
   auto locals = rock::LithosphereSummary(P, crust_summary);
   auto globals = rock::LithosphereSummary(P, crust_summary);
-  rock::FormationSummary scratch(fine.vertex_count());
   rock::CrustSummary master(fine.vertex_count());
   std::vector<rock::CrustSummary> summaries(P, crust_summary); // the global CrustSummary localized into each plate
+  rock::FormationSummary scratch_formation(fine.vertex_count());
+  std::vector<rock::FormationSummary> scratch(P, scratch_formation); // scratch memory for LithosphereSummarization
   bools alone(fine.vertex_count());
   bools top(fine.vertex_count());
   bools exists(fine.vertex_count());

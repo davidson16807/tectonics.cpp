@@ -1,11 +1,15 @@
-frame_count	vertices_per_fine_square_side	flags	globalize	localize	O1	O2	O3	
-1000	30				40.3	16.7	18.4	contents of O* columns are
-1000	30	-fopenmp	omp parallel for	omp parallel for	16.7	16.7	16.7	runtime reported in seconds
-1000	60				161	63.3	70.5	for that optimization level
-1000	60	-fopenmp	omp parallel for	omp parallel for	53.6	36.9	39.1	
-1000	120				647	256	291	all runs branch from commit 150ae9
-1000	120	-fopenmp	omp parallel for	omp parallel for	178	133	139	
-1000	60	-fopenmp			161	63.1	69.6	
-1000	60		omp parallel for	omp parallel for	161	63.6	69.8	
-1000	60	-fopenmp		omp parallel for	126	58.0	60.9	
-1000	60	-fopenmp	omp parallel for		125	54.7	59.1	
+frame_count	vertices_per_fine_square_side	flags	globalize	localize	summarize	O1	O2	O3	contents of O* columns are
+1000	30					40.3	16.7	18.4	runtime reported in seconds
+1000	30	-fopenmp	omp parallel for	omp parallel for	omp parallel for	16.7	16.7	16.7	for that optimization level
+1000	60					161	63.3	70.5	all runs branch from commit 150ae9
+1000	60	-fopenmp	omp parallel for	omp parallel for	omp parallel for	33.3	19.2	19.8	
+1000	120					647	256	291	
+1000	120	-fopenmp	omp parallel for	omp parallel for	omp parallel for	131	81.3	80.9	
+1000	30	-fopenmp	omp parallel for	omp parallel for		16.7	16.7	16.7	
+1000	60	-fopenmp	omp parallel for	omp parallel for		53.6	36.9	39.1	
+1000	120	-fopenmp	omp parallel for	omp parallel for		178	133	139	
+1000	60		omp parallel for	omp parallel for		161	63.6	69.8	
+1000	60	-fopenmp				161	63.1	69.6	
+1000	60	-fopenmp	omp parallel for			125	54.7	59.1	
+1000	60	-fopenmp		omp parallel for		126	58.0	60.9	
+1000	60	-fopenmp			omp parallel for	158	60.4	70.2	

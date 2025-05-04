@@ -59,9 +59,27 @@ namespace rock{
             LithosphereSummary& out,
             FormationSummary& scratch_formation
         ) const {
+            /* 
+            omp parallel for is not applicable for this method overload 
+            since threads would clobber the same scratch memory
+            */
             for (std::size_t i = 0; i < plates.size(); ++i)
             {
                 summarization(grid, i, plates[i], out[i], scratch_formation);
+            }
+        }
+
+        template<typename Grid>
+        void summarize(
+            const Grid& grid, 
+            const Lithosphere<M,F>& plates,
+            LithosphereSummary& out,
+            std::vector<FormationSummary>& scratch_crust
+        ) const {
+            #pragma omp parallel for
+            for (std::size_t i = 0; i < plates.size(); ++i)
+            {
+                summarization(grid, i, plates[i], out[i], scratch_crust[i]);
             }
         }
 
