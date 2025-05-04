@@ -43,6 +43,7 @@ namespace dymaxion
 
         using vec2  = glm::vec<2,scalar,Q>;
         using vec3  = glm::vec<3,scalar,Q>;
+        using vec4  = glm::vec<4,scalar,Q>;
         using ivec2 = glm::vec<2,id,Q>;
         using bvec2 = glm::vec<2,bool,Q>;
         using mat3  = glm::mat<3,3,scalar,Q>;
@@ -70,9 +71,8 @@ namespace dymaxion
 		struct TriangleCache {
 		    mat3   inverse_basis;
 		    vec3   normal;
-		    scalar normal_dot_origin;
 		  	private:
-		    vec3   padding;
+		    vec4   padding;
 		};
 
 		std::array<TriangleCache,triangle_count*i2> cache;
@@ -124,9 +124,8 @@ namespace dymaxion
 					id2 triangle_id(triangles.triangle_id(i,is_polar));
 					mat3 basis_(basis(i%square_count,is_polar));
 					bases[triangle_id]               = basis_;
-					cache[triangle_id].inverse_basis = glm::inverse(basis_);
 					cache[triangle_id].normal        = glm::normalize(glm::cross(basis_[1], basis_[0]));
-					cache[triangle_id].normal_dot_origin = glm::dot(cache[triangle_id].normal, origin(i%square_count,is_polar));
+					cache[triangle_id].inverse_basis = glm::inverse(basis_) * glm::dot(cache[triangle_id].normal, origin(i%square_count,is_polar));
 					// std::cout << std::to_string(normal_dot_origin[triangle_id]) << std::endl;
 				}
 				polar_halfspace_normals[i] = polar_halfspace_normal(i%square_count);
@@ -174,7 +173,7 @@ namespace dymaxion
 			TriangleCache triangle(cache[i2*i + is_polar]);
 			vec2   triangle_position((
 				triangle.inverse_basis * 
-				V3 * (triangle.normal_dot_origin/glm::dot(triangle.normal,V3))
+				V3 * (s1/glm::dot(triangle.normal,V3))
 				// V3 (N⋅O)/(N⋅V3) projects onto the plane
 			).yx());
 			return point(i,
