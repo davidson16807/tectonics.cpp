@@ -1,4 +1,5 @@
 #pragma once
+#pragma GCC diagnostic ignored "-Wunknown-pragmas"
 
 #include <index/procedural/Map.hpp>     // procedural::map
 
@@ -42,6 +43,7 @@ namespace rock{
             const std::vector<Raster>& locals,
             std::vector<Raster>& globals
         ) const {
+            #pragma omp parallel for
             for (std::size_t i = 0; i < locals_to_globals.size(); ++i)
             {
                 /*
@@ -63,6 +65,7 @@ namespace rock{
             const Raster& global,
             std::vector<Raster>& locals
         ) const {
+            #pragma omp parallel for
             for (std::size_t i = 0; i < global_to_locals.size(); ++i)
             {
                 /*
