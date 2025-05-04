@@ -75,11 +75,19 @@ namespace dymaxion
 		    vec2   origin2;
 		};
 
-		std::array<GridIdCache,triangle_count*i2> cache;
+		struct SpherePositionCache {
+		    mat3   basis;
+		    vec2   direction2;
+		    vec2   origin2;
+		private:
+		    vec3   padding;
+		};
+
+		std::array<GridIdCache,triangle_count*i2> grid_ids;
 		std::array<vec3,square_count*i2> west_halfspace_normals;
 		std::array<vec3,square_count*i2> polar_halfspace_normals;
 		std::array<scalar,4> padding;
-		std::array<mat3,triangle_count*i2> bases;
+		std::array<SpherePositionCache,triangle_count*i2> sphere_positions;
 
 		const Triangles<id2,scalar,Q> triangles;
 		const Squares<id2,scalar,Q> squares;
@@ -108,7 +116,7 @@ namespace dymaxion
 			vec3   W   (squares.westmost(i));    // W: westernmost triangle vertex
 			vec3   E   (squares.westmost(i+i2)); // E: easternmost triangle vertex
 			vec3   O   (origin(i,is_polar));     // O: northernmost or southernmost triangle vertex that serves as origin
-			bool   is_inverted    (triangles.is_inverted_square_id   (i, is_polar));
+			bool   is_inverted(triangles.is_inverted_square_id   (i, is_polar));
 			return triangles.basis(is_inverted,W,E,O);
 		}
 
@@ -130,13 +138,16 @@ namespace dymaxion
 						therefore we calculate B⁻¹ (N⋅O)/(N⋅V3) V3  and B⁻¹(N⋅O) can be cached (`Binv_NO`).
 					*/
 					bool is_polar(j==1);
+					bool is_inverted(triangles.is_inverted_square_id(i, is_polar));
 					id2 triangle_id(triangles.triangle_id(i,is_polar));
 					mat3 basis_(basis(i%square_count,is_polar));
-					bases[triangle_id]            = basis_;
-					cache[triangle_id].normal     = glm::normalize(glm::cross(basis_[1], basis_[0]));
-					cache[triangle_id].Binv_NO    = glm::inverse(basis_) * glm::dot(cache[triangle_id].normal, origin(i%square_count,is_polar));
-					cache[triangle_id].direction2 = is_polar == (i&i1)? mirror : flip;
-					cache[triangle_id].origin2    = is_polar == (i&i1)? I : J;
+					sphere_positions[triangle_id].basis      = basis_;
+					sphere_positions[triangle_id].direction2 = is_inverted? flip:mirror;
+					sphere_positions[triangle_id].origin2    = is_inverted? J:I;
+					grid_ids[triangle_id].normal     = glm::normalize(glm::cross(basis_[1], basis_[0]));
+					grid_ids[triangle_id].Binv_NO    = glm::inverse(basis_) * glm::dot(grid_ids[triangle_id].normal, origin(i%square_count,is_polar));
+					grid_ids[triangle_id].direction2 = is_polar == (i&i1)? mirror : flip;
+					grid_ids[triangle_id].origin2    = is_polar == (i&i1)? I : J;
 					// std::cout << std::to_string(normal_dot_origin[triangle_id]) << std::endl;
 				}
 				polar_halfspace_normals[i] = polar_halfspace_normal(i%square_count);
@@ -170,28 +181,25 @@ namespace dymaxion
 			return is_pole? grid_id : point((i+di+square_count) % square_count, flipped);
 		}
 
-		constexpr point grid_id(const vec3 V3 /*position on the sphere*/) const 
+		constexpr point grid_id(const vec3 V3 /*normalized position on a unit sphere*/) const 
 		{
-			id2     EWid((std::atan2(V3.y,V3.x)+turn)*half_subgrid_fraction_of_turn);
-			id2     i ((EWid - id2(glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
+			id2    EWid((std::atan2(V3.y,V3.x)+turn)*half_subgrid_fraction_of_turn);
+			id2    i ((EWid - id2(glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
 			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0); 
 			// ^^^ counterintuitively, this code is faster when std::pow is uncached
-			GridIdCache triangle(cache[i2*i + is_polar]);
+			GridIdCache triangle(grid_ids[i2*i + is_polar]);
 			vec2   triangle_position(triangle.Binv_NO * V3 / glm::dot(triangle.normal,V3));
 			return point(i, triangle.origin2 + triangle.direction2*triangle_position.yx());
 		}
 
 		constexpr vec3 sphere_position(const point& grid_id) const 
 		{
-			id2   i  (grid_id.square_id);
+			id2  i  (grid_id.square_id);
 			vec2 V2 (grid_id.square_position.yx());
 			bool is_inverted (V2.y > V2.x);
-			vec3 triangle_position (
-				is_inverted? 
-					(V2-J)*flip : 
-					(V2-I)*mirror,
-				s1);
-			return glm::normalize(bases[i2*i + (is_inverted == (i&i1))] * triangle_position);
+			SpherePositionCache triangle(sphere_positions[i2*i + (is_inverted == (i&i1))]);
+			vec3 triangle_position((V2-triangle.origin2)*triangle.direction2, s1);
+			return glm::normalize(triangle.basis * triangle_position);
 		}
 
 	};
