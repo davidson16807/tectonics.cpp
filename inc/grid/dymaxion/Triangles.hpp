@@ -42,6 +42,7 @@ namespace dymaxion
 		static constexpr scalar pi = 3.141592652653589793f;
 		static constexpr id square_count = 10;
 		static constexpr scalar half_subgrid_longitude_arc_length = 2*pi/square_count;
+		static constexpr id i2 = 2;
 
 	public:
 
@@ -54,7 +55,7 @@ namespace dymaxion
 			const id i, 
 			const bool is_polar
 		) const {
-			return (i%square_count) + id(is_polar)*square_count;
+			return (i*i2) + is_polar;
 		}
 
 		inline constexpr bool is_inverted_square_id(
