@@ -19,4 +19,4 @@ all: $(TEST) ./Makefile
 	./test.out
 
 clean:
-	rm -f test.cpp test.out gmon.out
+	rm -f test.cpp test.out

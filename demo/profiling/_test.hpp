@@ -1,3 +1,4 @@
+#pragma GCC diagnostic ignored "-Wunknown-pragmas" // disable warnings about openmp pragmas since the code can run without them
 
 // std libraries
 #include <iostream>

@@ -1,5 +1,4 @@
 #pragma once
-#pragma GCC diagnostic ignored "-Wunknown-pragmas"
 
 #include <index/procedural/Map.hpp>     // procedural::map
 

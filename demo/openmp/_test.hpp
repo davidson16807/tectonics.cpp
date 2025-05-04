@@ -1,3 +1,4 @@
+#pragma GCC diagnostic ignored "-Wunknown-pragmas" // disable warnings about openmp pragmas since the code can run without them
 
 // std libraries
 #include <iostream>
@@ -151,7 +152,7 @@ int main() {
   length world_radius(6.371e6 * si::meter);
   density mantle_density(3000.0*si::kilogram/si::meter3);
   viscosity mantle_viscosity(1.57e20*si::pascal*si::second);
-  int vertices_per_fine_square_side(60);
+  int vertices_per_fine_square_side(120);
   int vertices_per_coarse_square_side(vertices_per_fine_square_side/2);
   dymaxion::GridCache fine(Grid(world_radius/meter, vertices_per_fine_square_side));
   dymaxion::GridCache coarse(Grid(world_radius/meter, vertices_per_coarse_square_side));
