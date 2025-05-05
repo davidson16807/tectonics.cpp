@@ -43,11 +43,11 @@ namespace dymaxion {
 
     template<typename id, typename scalar>
     struct Adapter{
-        Grid<id,scalar> grid;
+        Grid<id,id,scalar> grid;
         scalar threshold;
         std::size_t test_size;
 
-        Adapter(const Grid<id, scalar>& grid, const scalar threshold, const std::size_t test_size):
+        Adapter(const Grid<id,id,scalar>& grid, const scalar threshold, const std::size_t test_size):
             grid(grid),
             threshold(threshold),
             test_size(test_size)

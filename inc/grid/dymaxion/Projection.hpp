@@ -188,7 +188,8 @@ namespace dymaxion
 			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0); 
 			// ^^^ counterintuitively, this code is faster when std::pow is uncached
 			GridIdCache triangle(grid_ids[i2*i + is_polar]);
-			vec2   triangle_position(triangle.Binv_NO * V3 / glm::dot(triangle.normal,V3));
+			// vec2   triangle_position(triangle.Binv_NO * V3 / glm::dot(triangle.normal,V3));
+			vec2   triangle_position(triangle.Binv_NO * V3 * (s1/ glm::dot(triangle.normal,V3)));
 			return point(i, triangle.origin2 + triangle.direction2*triangle_position.yx());
 		}
 

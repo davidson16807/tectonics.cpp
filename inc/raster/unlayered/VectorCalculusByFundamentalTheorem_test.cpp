@@ -66,8 +66,8 @@
 #define DYMAXION_TEST_TRINARY_OUT_PARAMETER(TYPE,GRID,F) \
     [=](auto x, auto y, auto z){ std::vector<TYPE> out(GRID.vertex_count()); (F(x,y,z,out)); return out; }
 
-dymaxion::Grid calculus_fine  (2.0, 64);
-dymaxion::Grid calculus_coarse(2.0, 16);
+dymaxion::Grid<int,int,double> calculus_fine  (2.0, 64);
+dymaxion::Grid<int,int,double> calculus_coarse(2.0, 16);
 
 // std::vector elias_scalar_rasters{
 //     known::store(

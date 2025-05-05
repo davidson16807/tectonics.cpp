@@ -83,8 +83,8 @@
         std::vector<TYPE> scratch2(GRID.vertex_count()); \
         (F(GRID,x,out,R,scratch1,scratch2)); return out; }
 
-dymaxion::Grid morphology_fine  (2.0, 32);
-dymaxion::Grid morphology_coarse(2.0, 16);
+dymaxion::Grid<int,int,double> morphology_fine  (2.0, 32);
+dymaxion::Grid<int,int,double> morphology_coarse(2.0, 16);
 
 std::vector boolean_rasters{
     known::greaterThan(procedural::uniform(0.5), 
