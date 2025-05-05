@@ -158,20 +158,20 @@ namespace dymaxion
 		constexpr point standardize(const point& grid_id) const 
 		{
 			// return grid_id;
-			id2    i  (grid_id.square_id);
+			id2   i  (grid_id.square_id);
 			vec2  V2 (grid_id.square_position);
 			vec2  U2 (V2-half);
-			bvec2 are_nonlocal   (glm::greaterThan(glm::abs(U2), half_cell));
+			bvec2 are_nonlocal   (std::abs(U2.x)>half, std::abs(U2.y)>half);
 			ivec2 nonlocal_sign  (glm::sign(U2) * vec2(are_nonlocal));
-			bvec2 are_polar      (glm::equal(nonlocal_sign, imirror * id(std::pow(-i1,i))));
-			bvec2 are_nonpolar   (!are_polar.x, !are_polar.y);
+			bvec2 are_polar      (glm::equal(nonlocal_sign, imirror * id(i1-i2*(i&i1))));
+			vec2  are_nonpolar   (!are_polar.x, !are_polar.y);
 			bool  is_polar       (are_polar.x || are_polar.y);
 			bool  is_pole        (are_polar.x && are_polar.y);
 			bool  is_corner      (are_nonlocal.x && are_nonlocal.y);
 			vec2  modded         (V2-vec2(nonlocal_sign));
-			vec2  inverted       (!is_polar? modded : vec2(are_nonpolar)*(s1-modded) + vec2(are_polar)*(modded));
+			vec2  inverted       (!is_polar? modded : are_nonpolar*(s1-modded) + vec2(are_polar)*(modded));
 			vec2  flipped        (is_corner? modded : is_polar? inverted.yx() : inverted);
-			id2    di             (math::compMaxAbs((id(i1)+ivec2(are_polar)) * nonlocal_sign));
+			id2   di             (math::compMaxAbs((id(i1)+ivec2(are_polar)) * nonlocal_sign));
 			/* NOTE: there is more than one possible solution if `is_pole`, 
 		    and these solutions do not represent the same point in space.
 		    However the case where `is_pole` is still valid and must be supported.
@@ -188,7 +188,6 @@ namespace dymaxion
 			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0); 
 			// ^^^ counterintuitively, this code is faster when std::pow is uncached
 			GridIdCache triangle(grid_ids[i2*i + is_polar]);
-			// vec2   triangle_position(triangle.Binv_NO * V3 / glm::dot(triangle.normal,V3));
 			vec2   triangle_position(triangle.Binv_NO * V3 * (s1/ glm::dot(triangle.normal,V3)));
 			return point(i, triangle.origin2 + triangle.direction2*triangle_position.yx());
 		}
@@ -197,8 +196,7 @@ namespace dymaxion
 		{
 			id2  i  (grid_id.square_id);
 			vec2 V2 (grid_id.square_position.yx());
-			bool is_inverted (V2.y > V2.x);
-			SpherePositionCache triangle(sphere_positions[i2*i + (is_inverted == (i&i1))]);
+			SpherePositionCache triangle(sphere_positions[i2*i + ((V2.y > V2.x) == (i&i1))]);
 			vec3 triangle_position((V2-triangle.origin2)*triangle.direction2, s1);
 			return glm::normalize(triangle.basis * triangle_position);
 		}
