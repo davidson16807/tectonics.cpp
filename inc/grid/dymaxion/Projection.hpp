@@ -86,7 +86,7 @@ namespace dymaxion
 		std::array<GridIdCache,triangle_count*i2> grid_ids;
 		std::array<vec3,square_count*i2> west_halfspace_normals;
 		std::array<vec3,square_count*i2> polar_halfspace_normals;
-		std::array<scalar,4> padding;
+		std::array<scalar,8> padding;
 		std::array<SpherePositionCache,triangle_count*i2> sphere_positions;
 
 		const Triangles<id2,scalar,Q> triangles;
@@ -183,10 +183,14 @@ namespace dymaxion
 
 		constexpr point grid_id(const vec3 V3 /*normalized position on a unit sphere*/) const 
 		{
+			/* 
+			counterintuitively, runtime is faster when std::pow is uncached
+			EWid can be approximated using a lagrange polynomial but this either produces
+			a slight speedup or a dramatic slowdown, and its unclear if this can be relied on across platforms.
+			*/
 			id2    EWid((std::atan2(V3.y,V3.x)+turn)*half_subgrid_fraction_of_turn);
 			id2    i ((EWid - id2(glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
 			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0); 
-			// ^^^ counterintuitively, this code is faster when std::pow is uncached
 			GridIdCache triangle(grid_ids[i2*i + is_polar]);
 			vec2   triangle_position(triangle.Binv_NO * V3 * (s1/ glm::dot(triangle.normal,V3)));
 			return point(i, triangle.origin2 + triangle.direction2*triangle_position.yx());
