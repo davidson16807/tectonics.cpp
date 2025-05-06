@@ -1,15 +1,30 @@
-frame_count	vertices_per_fine_square_side	flags	globalize	localize	summarize	O1	O2	O3	contents of O* columns are
-1000	30					40.3	16.7	18.4	runtime reported in seconds
-1000	30	-fopenmp	omp parallel for	omp parallel for	omp parallel for	16.7	16.7	16.7	for that optimization level
-1000	60					161	63.3	70.5	all runs branch from commit 150ae9
-1000	60	-fopenmp	omp parallel for	omp parallel for	omp parallel for	33.3	19.2	19.8	
-1000	120					647	256	291	
-1000	120	-fopenmp	omp parallel for	omp parallel for	omp parallel for	131	81.3	80.9	
-1000	30	-fopenmp	omp parallel for	omp parallel for		16.7	16.7	16.7	
-1000	60	-fopenmp	omp parallel for	omp parallel for		53.6	36.9	39.1	
-1000	120	-fopenmp	omp parallel for	omp parallel for		178	133	139	
-1000	60		omp parallel for	omp parallel for		161	63.6	69.8	
-1000	60	-fopenmp				161	63.1	69.6	
-1000	60	-fopenmp	omp parallel for			125	54.7	59.1	
-1000	60	-fopenmp		omp parallel for		126	58.0	60.9	
-1000	60	-fopenmp			omp parallel for	158	60.4	70.2	
+				Lithosphere...	Lithosphere...	Lithosphere...	iterated::	Crust...	Formation...				
+frame_count	vertices_per_fine_square_side	background	flags	globalize	localize	Summarization	Identity	Summarization	Summarization	O1	O2	O3	contents of O* columns are
+1000	30									40.3	16.7	18.4	runtime reported in seconds
+1000	30		-fopenmp	omp parallel for	omp parallel for	omp parallel for				16.7	16.7	16.7	for that optimization level
+1000	30		-fopenmp	omp parallel for	omp parallel for					16.7	16.7	16.7	
+1000	60									161	63.3	70.5	all runs branch from commit 150ae9
+1000	60		-fopenmp	omp parallel for	omp parallel for	omp parallel for				33.3	19.2	19.8	
+1000	60		-fopenmp	omp parallel for	omp parallel for					53.6	36.9	39.1	
+1000	120									647	256	291	
+1000	120		-fopenmp	omp parallel for	omp parallel for	omp parallel for				131	81.3	80.9	
+1000	120		-fopenmp	omp parallel for	omp parallel for					178	133	139	
+1000	60			omp parallel for	omp parallel for					161	63.6	69.8	
+1000	60		-fopenmp							161	63.1	69.6	
+1000	60		-fopenmp	omp parallel for						125	54.7	59.1	
+1000	60		-fopenmp		omp parallel for					126	58.0	60.9	
+1000	60		-fopenmp			omp parallel for				158	60.4	70.2	
+1000	60		-fopenmp				omp parallel for		omp parallel for	163	65.6	69.0	
+1000	60		-fopenmp				omp parallel for	omp parallel for		¹	76.1²	80.4²	
+1000	60		-fopenmp						omp parallel for	172	65.1	69.1	¹ segfaults occurred while testing
+1000	60		-fopenmp					omp parallel for		¹	75.3²	79.5²	² graphical artifacts appeared while testing
+													
+1000	60									161	63.3	70.5	
+1000	60	mpv music								164	63.1	68.1	
+1000	60	mpv video								167	62.8	67.7	
+1000	60	youtube								168	64.7	69.4	
+1000	60		-fopenmp	omp parallel for	omp parallel for	omp parallel for				33.3	19.2	19.8	
+1000	60	mpv music	-fopenmp	omp parallel for	omp parallel for	omp parallel for				33.3	19.6	19.8	
+1000	60	mpv video	-fopenmp	omp parallel for	omp parallel for	omp parallel for				33.6	19.2	20.2	
+1000	60	youtube	-fopenmp	omp parallel for	omp parallel for	omp parallel for				33.7	19.7	20.4	
+													
