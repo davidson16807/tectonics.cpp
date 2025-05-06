@@ -88,6 +88,7 @@ namespace rock{
             CrustSummary& out
         ) const {
             std::fill(out.begin(), out.end(), StratumSummary{});
+            #pragma omp parallel for
             for (std::size_t i = 0; i < formations.size(); ++i)
             {
                 ops.absorb(out, formations[i], out);

@@ -321,8 +321,8 @@ int main() {
   std::vector<std::vector<std::byte>> buffer_culling(P, buffer_culling_i);
   std::vector<float> buffer_scalars1(fine.vertex_count());
   std::vector<float> buffer_uniform(fine.vertex_count(), 1.0f);
-  std::vector<float> buffer_scalars2i(fine.vertex_count());
-  std::vector<std::vector<float>> buffer_scalars2(P, buffer_scalars2i);
+  std::vector<float> buffer_scalars2_i(fine.vertex_count());
+  std::vector<std::vector<float>> buffer_scalars2(P, buffer_scalars2_i);
   std::vector<glm::vec3> buffer_positions(fine.vertex_count());
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(fine_vertex_positions));
   std::cout << "vertex count:        " << fine.vertex_count() << std::endl;
@@ -438,18 +438,14 @@ int main() {
          we can localize density and thickness and then calculate things on the localization for a performance gain.
       */
 
-      #pragma omp parallel for
       for (std::size_t i = 0; i < P; ++i)
       {
-        fracturing.exists(fine_plate_map, i, buffer_culling[i]);
-        displacement_for_formation_summary(formation_summary, displacements[i]);
+        fracturing.exists(fine_plate_map, i, buffer_culling_i);
+        displacement_for_formation_summary(formation_summary, displacements_i);
         // arithmetic.divide(displacements, procedural::uniform(length(si::kilometer)), buffer_scalars2);
-        arithmetic.divide(fine_buoyancy_pressure, procedural::uniform(pressure(si::pascal)), buffer_scalars2[i]);
+        arithmetic.divide(fine_buoyancy_pressure, procedural::uniform(pressure(si::pascal)), buffer_scalars2_i);
         // copy(fine_plate_map, buffer_scalars2);
-      }
 
-      for (std::size_t i(0); i < P; ++i)
-      {
         /*
         This demo shows the buoyancy field for each plate 
         as plates rotate according to angular velocities
@@ -460,10 +456,10 @@ int main() {
 
         colorscale_program.draw(
           buffer_positions, // position
-          buffer_scalars2[i],  // color value
+          buffer_scalars2_i,  // color value
           buffer_uniform,   // displacement
           buffer_uniform,   // darken
-          buffer_culling[i],   // culling
+          buffer_culling_i,   // culling
           buffer_element_vertex_ids,
           colorscale_state,
           mat4(orientations[i]),
