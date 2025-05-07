@@ -438,14 +438,17 @@ int main() {
          we can localize density and thickness and then calculate things on the localization for a performance gain.
       */
 
+      #pragma omp parallel for
       for (std::size_t i = 0; i < P; ++i)
       {
-        fracturing.exists(fine_plate_map, i, buffer_culling_i);
-        displacement_for_formation_summary(formation_summary, displacements_i);
+        fracturing.exists(fine_plate_map, i, buffer_culling[i]);
+        displacement_for_formation_summary(formation_summary, displacements[i]);
         // arithmetic.divide(displacements, procedural::uniform(length(si::kilometer)), buffer_scalars2);
-        arithmetic.divide(fine_buoyancy_pressure, procedural::uniform(pressure(si::pascal)), buffer_scalars2_i);
+        arithmetic.divide(fine_buoyancy_pressure, procedural::uniform(pressure(si::pascal)), buffer_scalars2[i]);
+      }
         // copy(fine_plate_map, buffer_scalars2);
-
+      for (std::size_t i = 0; i < P; ++i)
+      {
         /*
         This demo shows the buoyancy field for each plate 
         as plates rotate according to angular velocities
@@ -456,10 +459,10 @@ int main() {
 
         colorscale_program.draw(
           buffer_positions, // position
-          buffer_scalars2_i,  // color value
+          buffer_scalars2[i],  // color value
           buffer_uniform,   // displacement
           buffer_uniform,   // darken
-          buffer_culling_i,   // culling
+          buffer_culling[i],   // culling
           buffer_element_vertex_ids,
           colorscale_state,
           mat4(orientations[i]),
