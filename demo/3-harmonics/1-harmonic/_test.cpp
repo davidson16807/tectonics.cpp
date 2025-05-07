@@ -27,14 +27,13 @@
 #include <index/procedural/noise/GaussianNoise.hpp>
 #include <index/adapted/symbolic/TypedSymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
-#include <index/adapted/si/SiStrings.hpp>
-#include <index/adapted/glm/GlmMetric.hpp>
+#include <index/adapted/scalar/ScalarStrings.hpp>
 #include <index/aggregated/Order.hpp>
 #include <index/iterated/Nary.hpp>
-#include <index/iterated/Metric.hpp>
+#include <index/iterated/Arithmetic.hpp>
 
 #include <field/Compose.hpp>                        // Compose
-#include <field/noise/RankedFractalBrownianNoise.hpp> // dymaxion::RankedFractalBrownianNoise
+#include <field/SphericalHarmonic.hpp>              // field::SphericalHarmonic
 
 #include <relation/ScalarRelation.hpp>
 
@@ -44,8 +43,7 @@
 #include <grid/dymaxion/GridSeries.hpp>                 // dymaxion::BufferVertexIds
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
-#include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
-#include <raster/unlayered/Voronoi.hpp>             // unlayered::Voronoi
+#include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 
 // #include <model/rock/stratum/StratumGenerator.hpp>  // StratumGenerator
 
@@ -69,7 +67,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // we don't want the old OpenGL
 
   // open a window
-  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Voronoi", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Harmonic", NULL, NULL);
   if (!window) {
     std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
@@ -97,38 +95,32 @@ int main() {
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
   /* OUR STUFF GOES HERE NEXT */
-  float radius(3.0f);
+  float radius(2.0f);
   int vertices_per_square_side(32);
-  dymaxion::Grid grid(radius, vertices_per_square_side);
+  dymaxion::Grid<int,int,float> grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
+  dymaxion::VertexNormals vertex_normals(grid);
+
+  auto harmonic = field::SphericalHarmonic<double,4,8>();
+  iterated::Identity copy;
+
+  auto vertex_scalars1 = procedural::map(harmonic, vertex_positions);
 
   // flatten raster for OpenGL
-  dymaxion::WholeGridBuffers<int,float> grids(vertices_per_square_side);
-  std::vector<float> buffer_color_values(grid.vertex_count());
+  dymaxion::WholeGridBuffers<int,int,float> grids(vertices_per_square_side);
+  std::vector<float> buffer_scalars1(grid.vertex_count());
   std::vector<float> buffer_uniform(grid.vertex_count(), 1.0f);
   std::vector<std::byte>  buffer_culling(grid.vertex_count(), std::byte(0));
   std::vector<glm::vec3> buffer_positions(grid.vertex_count());
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(vertex_positions));
+  std::cout << "vertex count:        " << grid.vertex_count() << std::endl;
+  std::cout << "vertices per meridian" << grid.vertices_per_meridian() << std::endl;
+  std::vector<float> scratch(grid.vertex_count());
+  std::vector<bool> mask1(grid.vertex_count());
+  std::vector<bool> mask2(grid.vertex_count());
+  std::vector<bool> mask3(grid.vertex_count());
 
-  auto metric = iterated::Metric{adapted::GlmMetric{}};
-  auto copy = iterated::Identity();
-  auto voronoi = unlayered::Voronoi{adapted::GlmMetric{}};
-  std::vector<std::uint8_t> nearest_plate_id(grid.vertex_count());
-  using vec3 = glm::vec3;
-  std::vector<vec3>plate_seeds{
-    vec3( 1, 1, 1),
-    vec3( 1, 1,-1),
-    vec3( 1,-1, 1),
-    vec3( 1,-1,-1),
-    vec3(-1, 1, 1),
-    vec3(-1, 1,-1),
-    vec3(-1,-1, 1),
-    vec3(-1,-1,-1)
-  };
-  metric.normalize(plate_seeds, plate_seeds);
-  voronoi(vertex_positions, plate_seeds, nearest_plate_id);
-
-  copy(nearest_plate_id, buffer_color_values);
+  copy(vertex_scalars1, buffer_scalars1);
   copy(vertex_positions, buffer_positions);
   grids.storeTriangleStrips(procedural::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
 
@@ -146,15 +138,29 @@ int main() {
     1e-3f, 1e16f
   );
   view_state.view_matrix = control_state.get_view_matrix();
+  // view_state.projection_type = view::ProjectionType::heads_up_display;
+  // view_state.projection_matrix = glm::mat4(1);
+  // view_state.view_matrix = glm::mat4(1);
   view::ColorscaleSurfacesViewState colorscale_state;
-  colorscale_state.max_color_value = whole::max(buffer_color_values);
+  colorscale_state.max_color_value = whole::max(vertex_scalars1);
+  colorscale_state.min_color_value = whole::min(vertex_scalars1);
 
   // initialize shader program
   view::ColorscaleSurfaceShaderProgram colorscale_program;  
+  view::MultichannelSurfaceShaderProgram debug_program;
 
   // initialize MessageQueue for MVU architecture
   messages::MessageQueue message_queue;
   message_queue.activate(window);
+
+  adapted::SymbolicOrder suborder;
+  adapted::ScalarStrings<float> substrings;
+  aggregated::Order ordered(suborder);
+  spheroidal::Strings strings(substrings, ordered);
+  std::cout << strings.format(grid, vertex_scalars1) << std::endl << std::endl;
+
+  std::cout << whole::min(buffer_scalars1) << std::endl;
+  std::cout << whole::max(buffer_scalars1) << std::endl;
 
   while(!glfwWindowShouldClose(window)) {
       // wipe drawing surface clear
@@ -162,7 +168,7 @@ int main() {
 
       colorscale_program.draw(
         buffer_positions,    // position
-        buffer_color_values, // color value
+        buffer_scalars1, // color value
         buffer_uniform,      // displacement
         buffer_uniform,      // darken
         buffer_culling,      // culling

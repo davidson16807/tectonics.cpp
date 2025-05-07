@@ -128,6 +128,7 @@ int main() {
   std::vector<float> instance_radii(instance_origins.size(),0.1);
   std::vector<vec3> instance_light_luminosity(instance_origins.size(),vec3(3));
   std::vector<vec3> instance_light_source(instance_origins.size(),vec3(0));
+  glm::mat4 model_matrix(1);
 
   // initialize control state
   update::OrbitalControlState control_state;
@@ -168,6 +169,7 @@ int main() {
         instance_light_source,
         instance_origins,
         instance_surface_emissions,
+        model_matrix,
         view_state
       );
 

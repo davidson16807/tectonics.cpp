@@ -1,1 +1,0 @@
-The fractures/ demo provides code that illustrates state for each iteration of the plate fracturing algorithm in inc/model/rock/crust/CrustFracturing.hpp. It can be used to demonstrate the existing algorithm or prototype new algorithms.

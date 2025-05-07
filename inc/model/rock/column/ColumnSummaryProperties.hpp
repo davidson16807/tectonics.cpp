@@ -27,6 +27,26 @@ namespace rock{
 
     };
 
+    /* 
+    this should be a faster version of ColumnSummaryProperty<StratumSummaryIsostaticDisplacement>
+    */
+    class ColumnSummaryIsostaticDisplacement
+    {
+        const si::density<float> mantle_density;
+
+    public:
+
+        ColumnSummaryIsostaticDisplacement(const si::density<float> mantle_density):
+            mantle_density(mantle_density)
+        {}
+
+        auto operator()(const ColumnSummary& summary) const
+        {
+            return summary.thickness() * (1.0f - summary.density()/mantle_density);
+        }
+
+    };
+
     struct ColumnSummaryAreaDensity
     {
         constexpr ColumnSummaryAreaDensity(){}

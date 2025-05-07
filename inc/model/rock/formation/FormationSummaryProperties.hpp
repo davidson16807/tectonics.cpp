@@ -7,6 +7,28 @@
 
 namespace rock{
 
+
+    /*
+    `FormationSummaryProperty` allows creation of a generic Unary FormationSummary callable given an arbitrary StratumSummaryProperty.
+    It provides a more generic alternative to other dedicated formation summary properties
+    */
+    template <typename StratumSummaryProperty>
+    class FormationSummaryProperty
+    {
+        const StratumSummaryProperty property;
+    public:
+        FormationSummaryProperty(const StratumSummaryProperty& property):
+            property(property)
+        {}
+        void operator()(const FormationSummary& summary, auto& out) const
+        {
+            for (auto i = 0*summary.size(); i < summary.size(); ++i)
+            {
+                out[i] = property(summary[i]);
+            }
+        }
+    };
+
     /*
     `FormationSummaryMass`
     */

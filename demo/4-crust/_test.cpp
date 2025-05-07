@@ -29,6 +29,7 @@
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/adapted/si/SiStrings.hpp>
 #include <index/aggregated/Order.hpp>
+#include <index/aggregated/Strings.hpp>
 #include <index/iterated/Nary.hpp>
 #include <index/iterated/Arithmetic.hpp>
 
@@ -46,7 +47,18 @@
 #include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 
-// #include <model/rock/stratum/StratumGenerator.hpp>  // StratumGenerator
+#include <model/rock/formation/estimated/EarthlikeIgneousFormationGeneration.hpp>
+#include <model/rock/column/ColumnSummaryProperties.hpp>  // ColumnProperties
+#include <model/rock/stratum/StratumProperties.hpp>  // StratumProperties
+#include <model/rock/stratum/StratumSummarization.hpp>  // StratumSummarization
+#include <model/rock/stratum/StratumSummaryProperties.hpp>  // StratumSummaryIsostaticDisplacement
+#include <model/rock/formation/Formation.hpp>       // Formation
+#include <model/rock/formation/FormationSummarization.hpp>  // FormationSummarization
+#include <model/rock/crust/Crust.hpp>  // Crust
+#include <model/rock/crust/CrustSummarization.hpp>  // CrustSummarization
+#include <model/rock/crust/CrustSummaryOps.hpp>  // CrustSummaryOps
+#include <model/rock/crust/CrustSummaryProperties.hpp>  // CrustProperties
+#include <model/rock/crust/CrustMotion.hpp>         // CrustMotion
 
 #include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
 #include <update/OrbitalControlUpdater.hpp>         // update::OrbitalControlUpdater
@@ -68,7 +80,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // we don't want the old OpenGL
 
   // open a window
-  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Terrain", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Crust", NULL, NULL);
   if (!window) {
     std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
@@ -96,61 +108,110 @@ int main() {
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
   /* OUR STUFF GOES HERE NEXT */
-  float radius(3.0f);
-  int vertices_per_square_side(32);
-  dymaxion::Grid grid(radius, vertices_per_square_side);
-  dymaxion::VertexPositions vertex_positions(grid);
-  dymaxion::VertexNormals vertex_normals(grid);
 
-  float min_elevation(-16000.0f);
-  float max_elevation( 16000.0f);
+  using mass = si::mass<float>;
+  using density = si::density<float>;
+  using length = si::length<float>;
+  // using force = si::force<float>;
+  using pressure = si::pressure<float>;
+  using viscosity = si::dynamic_viscosity<float>;
+  using acceleration = si::acceleration<float>;
+
+  length meter(si::meter);
+
+  length world_radius(6.371e6 * si::meter);
+  density mantle_density(3000.0*si::kilogram/si::meter3);
+  viscosity mantle_viscosity(1.57e20*si::pascal*si::second);
+  int vertices_per_square_side(32);
+  dymaxion::Grid<int,int,float> grid(world_radius/meter, vertices_per_square_side);
+  dymaxion::VertexPositions vertex_positions(grid);
 
   iterated::Identity copy;
-  analytic::Sum<float,analytic::Gaussian<float>> hypsometry_pdf_unscaled {
-    analytic::Gaussian(-4019.0f, 1113.0f, 0.232f),
-    analytic::Gaussian(  797.0f, 1169.0f, 0.209f)
+
+  const int M(2);
+  const int F(5);
+
+  rock::EarthlikeIgneousFormationGeneration earthlike(grid, world_radius/2.0f, 0.5f, 10, world_radius);
+  auto generation = earthlike(12.0f, 1.1e4f);
+
+  rock::StratumStore<M> empty_stratum;
+  rock::Formation<M> empty_formation(grid.vertex_count(), empty_stratum);
+  rock::Formation<M> igneous_formation(grid.vertex_count());
+  copy(generation, igneous_formation);
+  rock::Crust<M,F> crust{empty_formation, empty_formation, empty_formation, igneous_formation, empty_formation};
+
+  auto age_of_world = 0.0f*si::megayear;
+  std::array<relation::PolynomialRailyardRelation<si::time<double>,si::density<double>,0,1>, 2> densities_for_age {
+    relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2890.0, 3300.0}), // Carlson & Raskin 1984
+    relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2600.0, 2600.0})
   };
-  auto hypsometry_cdf_unscaled = analytic::integral(hypsometry_pdf_unscaled);
-  // auto hypsometry_pdf_ddx = analytic::derivative(hypsometry_pdf_unscaled);
-  auto hypsometry_cdf_unscaled_range = hypsometry_cdf_unscaled(max_elevation) - hypsometry_cdf_unscaled(min_elevation);
-  auto hypsometry_cdf = hypsometry_cdf_unscaled / hypsometry_cdf_unscaled_range;
-  auto hypsometry_pdf = hypsometry_pdf_unscaled / hypsometry_cdf_unscaled_range;
-  auto hypsometry_cdfi = inspected::inverse_by_newtons_method(hypsometry_cdf, hypsometry_pdf, 0.5f, 30);
 
-  auto rfbm = field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f/radius, 12.0f, 1.1e4f);
+  rock::CrustSummaryOps crust_summary_ops{
+    rock::ColumnSummaryOps{
+      length(si::centimeter)
+    }
+  };
 
-  auto elevation_meters_for_position = field::compose(hypsometry_cdfi, rfbm);
+  auto formation_summarize = rock::formation_summarization<2>(
+    rock::stratum_summarization<2>(
+      rock::AgedStratumDensity{densities_for_age, age_of_world},
+      mass(si::tonne)
+    ), 
+    world_radius
+  );
 
-  using length = si::length<float>;
-  auto min_earth_elevation = -10924.0 * si::meter;
+  auto crust_summarize = rock::crust_summarization<M,F>(
+    formation_summarize, 
+    crust_summary_ops
+  );
+  unlayered::VectorCalculusByFundamentalTheorem calculus;
+  auto motion = rock::crust_motion<M, float, double>(
+      calculus, 
+      grid, 
+      world_radius, 
+      acceleration(si::standard_gravity), 
+      mantle_density, 
+      mantle_viscosity
+  );
 
-  auto elevation_for_position = 
-      field::compose(
-          relation::ScalarRelation(1.0f, length(si::meter), hypsometry_cdfi),
-          rfbm);
+  iterated::Unary buoyancy_pressure_for_formation_summary(
+    rock::StratumSummaryBuoyancyPressure{
+      acceleration(si::standard_gravity), 
+      mantle_density, 
+    }
+    // rock::StratumSummaryThickness{}
+    // rock::StratumSummaryIsostaticDisplacement{
+    //   density(3300.0*si::kilogram/si::meter3)
+    // }
+  );
 
-  auto elevation_in_meters = procedural::map(elevation_meters_for_position, vertex_positions);
+  rock::CrustSummary crust_summary(grid.vertex_count());
+  rock::FormationSummary formation_summary(grid.vertex_count());
+  std::vector<pressure> buoyancy_pressure(grid.vertex_count());
+  std::vector<float> vertex_scalars1(grid.vertex_count());
 
-  iterated::Unary elevations_for_positions(elevation_for_position);
-  std::vector<length> elevation(grid.vertex_count());
-  elevations_for_positions(vertex_positions, elevation);
-
-  iterated::Arithmetic arithmetic(adapted::TypedSymbolicArithmetic(length(0),length(1)));
-  arithmetic.subtract(elevation, procedural::uniform(length(min_earth_elevation)), elevation);
+  int plate_id(1);
+  crust_summarize(plate_id, crust, crust_summary, formation_summary);
+  crust_summary_ops.flatten(crust_summary, formation_summary);
+  formation_summarize(plate_id, igneous_formation, formation_summary);
+  motion.buoyancy(formation_summary, buoyancy_pressure);
+  // buoyancy_pressure_for_formation_summary(formation_summary, buoyancy_pressure);
 
   adapted::SymbolicOrder suborder;
   adapted::SiStrings substrings;
   aggregated::Order ordered(suborder);
-  auto strings = spheroidal::Strings(substrings, ordered);
-  std::cout << strings.format(grid, elevation) << std::endl << std::endl;
+  auto ascii_art = spheroidal::Strings(substrings, ordered);
+  auto strings = aggregated::Strings(substrings, ordered, vertices_per_square_side);
+  std::cout << ascii_art.format(grid, buoyancy_pressure) << std::endl << std::endl;
+  std::cout << strings.format(buoyancy_pressure) << std::endl << std::endl;
 
-  auto vertex_scalars1 = elevation_in_meters;
+  iterated::Arithmetic arithmetic(adapted::TypedSymbolicArithmetic(pressure(0),pressure(1)));
+  arithmetic.divide(buoyancy_pressure, procedural::uniform(pressure(1)), vertex_scalars1);
 
   // flatten raster for OpenGL
-  dymaxion::WholeGridBuffers<int,float> grids(vertices_per_square_side);
+  dymaxion::WholeGridBuffers<int,int,float> grids(vertices_per_square_side);
   std::vector<float> buffer_color_values(grid.vertex_count());
   std::vector<float> buffer_scalars2(grid.vertex_count());
-  std::vector<float> buffer_scalars1(grid.vertex_count());
   std::vector<float> buffer_uniform(grid.vertex_count(), 1.0f);
   std::vector<std::byte>  buffer_culling(grid.vertex_count(), std::byte(0));
   std::vector<glm::vec3> buffer_positions(grid.vertex_count());
@@ -164,31 +225,36 @@ int main() {
   std::vector<bool> mask3(grid.vertex_count());
 
   // copy(vertex_colored_scalars, buffer_color_values);
-  copy(vertex_scalars1, buffer_scalars1);
   // copy(vertex_scalars2, buffer_scalars2);
   copy(vertex_positions, buffer_positions);
   grids.storeTriangleStrips(procedural::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
 
+  length procedural_terrain_far_distance(3e3*si::kilometer);
+  length planet_billboard_near_distance(1e7*si::kilometer); // ~10 * solar radius 
+
   // initialize control state
-  update::OrbitalControlState control_state;
-  control_state.min_zoom_distance = 1.0f;
-  control_state.log2_height = 2.5f;
-  control_state.angular_position = glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f;
+  update::OrbitalControlState control_state(
+      glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f, // angular_position
+      glm::vec2(0), // angular_direction
+      (world_radius+procedural_terrain_far_distance)/meter, // min_zoom_distance
+      20.0f // log2_height
+  );
   
   // initialize view state
   view::ViewState view_state;
   view_state.projection_matrix = glm::perspective(
     3.14159f*45.0f/180.0f, 
     850.0f/640.0f, 
-    1e-3f, 1e16f
+    procedural_terrain_far_distance/meter,      // near plane distance
+    planet_billboard_near_distance/meter // far plane distance
   );
   view_state.view_matrix = control_state.get_view_matrix();
   // view_state.projection_type = view::ProjectionType::heads_up_display;
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
   view::ColorscaleSurfacesViewState colorscale_state;
-  colorscale_state.max_color_value = whole::max(buffer_scalars1);
-  colorscale_state.min_color_value = whole::min(buffer_scalars1);
+  colorscale_state.min_color_value = whole::min(vertex_scalars1);
+  colorscale_state.max_color_value = whole::max(vertex_scalars1);
   colorscale_state.darken_threshold = whole::mean(buffer_scalars2);
 
   // initialize shader program
@@ -199,19 +265,19 @@ int main() {
   messages::MessageQueue message_queue;
   message_queue.activate(window);
 
-  std::cout << whole::min(buffer_scalars1) << std::endl;
-  std::cout << whole::max(buffer_scalars1) << std::endl;
+  std::cout << whole::min(vertex_scalars1) << std::endl;
+  std::cout << whole::max(vertex_scalars1) << std::endl;
 
   while(!glfwWindowShouldClose(window)) {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
       colorscale_program.draw(
-        buffer_positions,    // position
-        buffer_scalars1,    // color value
-        buffer_uniform,      // displacement
-        buffer_uniform,      // darken
-        buffer_culling,      // culling
+        buffer_positions, // position
+        vertex_scalars1,  // color value
+        buffer_uniform,   // displacement
+        buffer_uniform,   // darken
+        buffer_culling,   // culling
         buffer_element_vertex_ids,
         colorscale_state,
         glm::mat4(1),

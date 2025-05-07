@@ -176,7 +176,7 @@ int main() {
   auto atmosphere = air::properties(si::boltzmann_constant);
   auto point = orbit::properties(si::gravitational_constant);
   auto star = star::properties_on_main_sequence(
-    geometric::points_and_spheres<3,double>(3.14159265358979),
+    geometric::spherelike<3,double>(3.14159265358979),
     si::stephan_boltzmann_constant,
     0.6*si::dalton,
     si::solar_mass,
@@ -221,6 +221,9 @@ int main() {
   std::vector<vec3> instance_beta_mie_sun(instance_origins.size(), vec3(1e-6));
   std::vector<vec3> instance_beta_abs_sun(instance_origins.size(), vec3(1e-6));
   std::vector<vec3> instance_light_source(instance_origins.size(), vec3(0));
+  std::vector<float> instance_light_temperature(instance_origins.size(), float(0));
+  std::vector<float> instance_light_radius(instance_origins.size(), float(0));
+  glm::mat4 model_matrix(1);
 
   // initialize control state
   update::OrbitalControlState control_state;
@@ -270,11 +273,13 @@ int main() {
         instance_surface_temperature,
         instance_core_temperature,
         instance_atmosphere_scale_height,
+        instance_light_temperature,
+        instance_light_radius,
         instance_light_source,
-        instance_illumination_luminosity,
         instance_beta_ray_sun,
         instance_beta_mie_sun,
         instance_beta_abs_sun,
+        model_matrix,
         view_state
       );
 

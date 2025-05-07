@@ -1,9 +1,4 @@
 
-/*
-raster/ showcases rendering a scalar raster, 
-but frankly it's just an all-around useful tool for debugging raster functionality using a nice 3d display
-*/
-
 // std libraries
 #include <iostream>
 #include <string>
@@ -32,10 +27,15 @@ but frankly it's just an all-around useful tool for debugging raster functionali
 #include <index/procedural/noise/GaussianNoise.hpp>
 #include <index/adapted/symbolic/TypedSymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
-#include <index/adapted/si/SiStrings.hpp>
+#include <index/adapted/scalar/ScalarStrings.hpp>
 #include <index/aggregated/Order.hpp>
 #include <index/iterated/Nary.hpp>
 #include <index/iterated/Arithmetic.hpp>
+
+#include <field/Compose.hpp>                        // Compose
+#include <field/SphericalHarmonics.hpp>             // field::SphericalHarmonics
+
+#include <relation/ScalarRelation.hpp>
 
 #include <buffer/PyramidBuffers.hpp>                // buffer::PyramidBuffers
 
@@ -43,8 +43,9 @@ but frankly it's just an all-around useful tool for debugging raster functionali
 #include <grid/dymaxion/GridSeries.hpp>                 // dymaxion::BufferVertexIds
 #include <grid/dymaxion/buffer/WholeGridBuffers.hpp>// dymaxion::WholeGridBuffers
 
-#include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
+
+// #include <model/rock/stratum/StratumGenerator.hpp>  // StratumGenerator
 
 #include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
 #include <update/OrbitalControlUpdater.hpp>         // update::OrbitalControlUpdater
@@ -66,7 +67,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // we don't want the old OpenGL
 
   // open a window
-  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Grid", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Harmonics", NULL, NULL);
   if (!window) {
     std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
@@ -94,31 +95,42 @@ int main() {
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
   /* OUR STUFF GOES HERE NEXT */
-  float radius(3.0f);
-  int vertices_per_square_side(30);
-  dymaxion::Grid grid(radius, vertices_per_square_side);
+  float radius(2.0f);
+  int vertices_per_square_side(32);
+  dymaxion::Grid<int,int,float> grid(radius, vertices_per_square_side);
   dymaxion::VertexPositions vertex_positions(grid);
-  // auto vertex_square_ids = dymaxion::square_ids(grid);
+  dymaxion::VertexNormals vertex_normals(grid);
 
-  std::vector<float> vertex_colored_scalars(grid.vertex_count());
-  for (int i = 0; i < grid.vertex_count(); ++i)
-  {
-    vertex_colored_scalars[i] = grid.vertex_dual_area(i);
-  }
+  auto vertex_square_ids = dymaxion::square_ids(grid);
 
+  auto harmonics = field::SphericalHarmonics<float,3>({
+                0.0, 
+           0.0, 0.5, 0.0, 
+      0.0, 1.0, 0.0, 0.0, 1.0
+  });
   iterated::Identity copy;
 
+  auto vertex_scalars1 = procedural::map(harmonics, vertex_positions);
+
   // flatten raster for OpenGL
-  dymaxion::WholeGridBuffers<int,float> grids(vertices_per_square_side);
-  std::vector<float> buffer_color_values(grid.vertex_count());
+  dymaxion::WholeGridBuffers<int,int,float> grids(vertices_per_square_side);
+  std::vector<float> buffer_square_ids(grid.vertex_count());
+  std::vector<float> buffer_scalars2(grid.vertex_count());
+  std::vector<float> buffer_scalars1(grid.vertex_count());
   std::vector<float> buffer_uniform(grid.vertex_count(), 1.0f);
   std::vector<std::byte>  buffer_culling(grid.vertex_count(), std::byte(0));
   std::vector<glm::vec3> buffer_positions(grid.vertex_count());
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(vertex_positions));
   std::cout << "vertex count:        " << grid.vertex_count() << std::endl;
   std::cout << "vertices per meridian" << grid.vertices_per_meridian() << std::endl;
+  std::vector<float> scratch(grid.vertex_count());
+  std::vector<bool> mask1(grid.vertex_count());
+  std::vector<bool> mask2(grid.vertex_count());
+  std::vector<bool> mask3(grid.vertex_count());
 
-  copy(vertex_colored_scalars, buffer_color_values);
+  copy(vertex_square_ids, buffer_square_ids);
+  copy(vertex_scalars1, buffer_scalars1);
+  // copy(vertex_scalars2, buffer_scalars2);
   copy(vertex_positions, buffer_positions);
   grids.storeTriangleStrips(procedural::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
 
@@ -140,7 +152,8 @@ int main() {
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
   view::ColorscaleSurfacesViewState colorscale_state;
-  colorscale_state.max_color_value = whole::max(buffer_color_values);
+  colorscale_state.max_color_value = whole::max(vertex_scalars1);
+  colorscale_state.min_color_value = whole::min(vertex_scalars1);
 
   // initialize shader program
   view::ColorscaleSurfaceShaderProgram colorscale_program;  
@@ -150,8 +163,14 @@ int main() {
   messages::MessageQueue message_queue;
   message_queue.activate(window);
 
-  std::cout << whole::min(buffer_color_values) << std::endl;
-  std::cout << whole::max(buffer_color_values) << std::endl;
+  adapted::SymbolicOrder suborder;
+  adapted::ScalarStrings<float> substrings;
+  aggregated::Order ordered(suborder);
+  spheroidal::Strings strings(substrings, ordered);
+  std::cout << strings.format(grid, vertex_scalars1) << std::endl << std::endl;
+
+  std::cout << whole::min(buffer_scalars1) << std::endl;
+  std::cout << whole::max(buffer_scalars1) << std::endl;
 
   while(!glfwWindowShouldClose(window)) {
       // wipe drawing surface clear
@@ -159,7 +178,7 @@ int main() {
 
       colorscale_program.draw(
         buffer_positions,    // position
-        buffer_color_values, // color value
+        buffer_scalars1, // color value
         buffer_uniform,      // displacement
         buffer_uniform,      // darken
         buffer_culling,      // culling
