@@ -138,8 +138,8 @@ int main() {
   viscosity mantle_viscosity(1.57e20*si::pascal*si::second);
   int vertices_per_fine_square_side(30);
   int vertices_per_coarse_square_side(vertices_per_fine_square_side/2);
-  dymaxion::Grid fine(world_radius/meter, vertices_per_fine_square_side);
-  dymaxion::Grid coarse(world_radius/meter, vertices_per_coarse_square_side);
+  dymaxion::Grid<int,int,float> fine(world_radius/meter, vertices_per_fine_square_side);
+  dymaxion::Grid<int,int,float> coarse(world_radius/meter, vertices_per_coarse_square_side);
   dymaxion::VertexPositions fine_vertex_positions(fine);
   dymaxion::VertexPositions coarse_vertex_positions(coarse);
   dymaxion::VertexNormals coarse_vertex_normals(coarse);
@@ -167,7 +167,6 @@ int main() {
 
   rock::CrustSummaryOps crust_summary_ops{
     rock::ColumnSummaryOps{
-      rock::StratumSummaryOps{}, 
       length(si::centimeter)
     }
   };
@@ -177,7 +176,6 @@ int main() {
       rock::AgedStratumDensity{densities_for_age, age_of_world},
       mass(si::tonne)
     ), 
-    fine,
     world_radius
   );
 
@@ -216,9 +214,9 @@ int main() {
   std::vector<float> vertex_scalars1(coarse.vertex_count());
 
   int plate_id(1);
-  crust_summarize(plate_id, crust, crust_summary, formation_summary);
+  crust_summarize(fine, plate_id, crust, crust_summary, formation_summary);
   crust_summary_ops.flatten(crust_summary, formation_summary);
-  formation_summarize(plate_id, igneous_formation, formation_summary);
+  formation_summarize(fine, plate_id, igneous_formation, formation_summary);
   // motion.buoyancy(formation_summary, coarse_buoyancy_pressure);
   buoyancy_pressure_for_formation_summary(formation_summary, fine_buoyancy_pressure);
 
@@ -317,7 +315,7 @@ int main() {
 
 
   // flatten raster for OpenGL
-  dymaxion::WholeGridBuffers<int,float> grids(vertices_per_coarse_square_side);
+  dymaxion::WholeGridBuffers<int,int,float> grids(vertices_per_coarse_square_side);
   std::vector<float> buffer_color_values(coarse.vertex_count());
   std::vector<float> buffer_scalars1(coarse.vertex_count());
   std::vector<float> buffer_scalars2(coarse.vertex_count());

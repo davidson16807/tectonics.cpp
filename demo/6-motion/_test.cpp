@@ -142,8 +142,8 @@ int main() {
   viscosity mantle_viscosity(1.57e20*si::pascal*si::second);
   int vertices_per_fine_square_side(30);
   int vertices_per_coarse_square_side(vertices_per_fine_square_side/2);
-  dymaxion::Grid fine(world_radius/meter, vertices_per_fine_square_side);
-  dymaxion::Grid coarse(world_radius/meter, vertices_per_coarse_square_side);
+  dymaxion::Grid<int,int,float> fine(world_radius/meter, vertices_per_fine_square_side);
+  dymaxion::Grid<int,int,float> coarse(world_radius/meter, vertices_per_coarse_square_side);
 
   iterated::Identity copy;
 
@@ -168,7 +168,6 @@ int main() {
 
   rock::CrustSummaryOps crust_summary_ops{
     rock::ColumnSummaryOps{
-      rock::StratumSummaryOps{}, 
       length(si::centimeter)
     }
   };
@@ -178,7 +177,6 @@ int main() {
       rock::AgedStratumDensity{densities_for_age, age_of_world},
       mass(si::tonne)
     ), 
-    fine,
     world_radius
   );
 
@@ -190,9 +188,9 @@ int main() {
   rock::CrustSummary crust_summary(fine.vertex_count());
   rock::FormationSummary formation_summary(fine.vertex_count());
   int plate_id(1);
-  crust_summarize(plate_id, crust, crust_summary, formation_summary);
+  crust_summarize(fine, plate_id, crust, crust_summary, formation_summary);
   crust_summary_ops.flatten(crust_summary, formation_summary);
-  // formation_summarize(plate_id, igneous_formation, formation_summary);
+  // formation_summarize(fine, plate_id, igneous_formation, formation_summary);
 
   // CALCULATE BUOYANCY
   iterated::Unary buoyancy_pressure_for_formation_summary(
@@ -250,8 +248,9 @@ int main() {
   std::cout << si_strings.format(fine, fine_buoyancy_pressure) << std::endl;
 
   // CALCULATE MOTION FOR EACH PLATE
-  auto motion = rock::crust_motion<M>(
-      calculus, fine, 
+  auto motion = rock::crust_motion<M,float,double>(
+      calculus, 
+      fine, 
       world_radius, 
       acceleration(si::standard_gravity), 
       mantle_density, 
@@ -279,7 +278,7 @@ int main() {
   }
 
   // flatten raster for OpenGL
-  dymaxion::WholeGridBuffers<int,float> grids(vertices_per_fine_square_side);
+  dymaxion::WholeGridBuffers<int,int,float> grids(vertices_per_fine_square_side);
   dymaxion::VertexPositions fine_vertex_positions(fine);
   std::vector<length> displacements(fine.vertex_count());
   std::vector<float> buffer_color_values(fine.vertex_count());

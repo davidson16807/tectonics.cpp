@@ -191,9 +191,9 @@ int main() {
   std::vector<float> vertex_scalars1(grid.vertex_count());
 
   int plate_id(1);
-  crust_summarize(plate_id, crust, crust_summary, formation_summary);
+  crust_summarize(grid, plate_id, crust, crust_summary, formation_summary);
   crust_summary_ops.flatten(crust_summary, formation_summary);
-  formation_summarize(plate_id, igneous_formation, formation_summary);
+  formation_summarize(grid, plate_id, igneous_formation, formation_summary);
   motion.buoyancy(formation_summary, buoyancy_pressure);
   // buoyancy_pressure_for_formation_summary(formation_summary, buoyancy_pressure);
 
