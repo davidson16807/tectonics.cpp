@@ -324,7 +324,7 @@ int main() {
   std::vector<float> buffer_scalars2_i(fine.vertex_count());
   std::vector<std::vector<float>> buffer_scalars2(P, buffer_scalars2_i);
   std::vector<glm::vec3> buffer_positions(fine.vertex_count());
-  std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(fine_vertex_positions));
+  std::vector<unsigned int> buffer_element_vertex_ids(grids.triangles_size(fine_vertex_positions));
   std::cout << "vertex count:        " << fine.vertex_count() << std::endl;
   std::cout << "vertices per meridian" << fine.vertices_per_meridian() << std::endl;
   // copy(vertex_colored_scalars, buffer_color_values);
@@ -335,7 +335,7 @@ int main() {
   // copy(vertex_colored_scalars, buffer_color_values);
   // copy(vertex_scalars2, buffer_scalars2);
   copy(fine_vertex_positions, buffer_positions);
-  grids.storeTriangleStrips(procedural::range<unsigned int>(coarse.vertex_count()), buffer_element_vertex_ids);
+  grids.storeTriangles(procedural::range<unsigned int>(coarse.vertex_count()), buffer_element_vertex_ids);
 
   length procedural_terrain_far_distance(3e3*si::kilometer);
   length planet_billboard_near_distance(1e7*si::kilometer); // ~10 * solar radius 
@@ -493,7 +493,7 @@ int main() {
           colorscale_state,
           mat4(orientations[i]),
           view_state,
-          GL_TRIANGLE_STRIP
+          GL_TRIANGLES
         );
       }
 
