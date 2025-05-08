@@ -47,6 +47,12 @@ namespace rock{
 
     };
 
+    struct ColumnSummaryExists
+    {
+        constexpr ColumnSummaryExists(){}
+        inline auto operator()(const ColumnSummary& summary) const { return summary.exists(); }
+    };
+
     struct ColumnSummaryAreaDensity
     {
         constexpr ColumnSummaryAreaDensity(){}
