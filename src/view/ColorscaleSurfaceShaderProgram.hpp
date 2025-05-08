@@ -62,7 +62,7 @@ namespace view
 		GLuint colorValueBufferId;
 		GLuint displacementBufferId;
 		GLuint darkenBufferId;
-		GLuint cullingBufferId;
+		GLuint existsBufferId;
 		GLuint elementVertexBufferId;
 
 		// attributes
@@ -70,13 +70,13 @@ namespace view
 	    GLuint colorValueLocation;
 	    GLuint displacementLocation;
 	    GLuint darkenLocation;
-	    GLuint cullingLocation;
+	    GLuint existsLocation;
 
 		// uniforms
 	    GLint viewMatrixLocation;
 		GLint modelMatrixLocation;
 		GLint projectionMatrixLocation;
-		GLint cullingThresholdLocation;
+		GLint existsThresholdLocation;
 		GLint colorscaleTypeLocation;
 		GLint minColorLocation;
 		GLint maxColorLocation;
@@ -100,22 +100,22 @@ namespace view
 			        in        float vertex_color_value;
 			        in        float vertex_displacement;
 			        in        float vertex_darken;
-			        in        uint  vertex_culling;
+			        in        uint  vertex_exists;
 			        out       float fragment_color_value;
 			        out       float fragment_darken;
-			        out       float fragment_culling;
+			        out       float fragment_exists;
 			        void main(){
 			            fragment_color_value = vertex_color_value;
 			            fragment_darken = vertex_darken;
-			            fragment_culling = vertex_culling == 0u? 0.0 : 1.0;
+			            fragment_exists = vertex_exists == 0u? 0.0 : 1.0;
 			            /* 
 			            NOTES: 
 			            * For a heads up display, set all `*_matrix` parameters to identity.
-			            * To disable a vertex, set vertex_culling to 0.0.
+			            * To disable a vertex, set vertex_exists to 0.0.
 			            Alpha blending is disabled since it conflicts with other optimizations,
 			            and it doesn't display well anyway on most grids we use,
-			            To provide at least some method of culling, 
-			            we set vertex position outside clipspace if vertex_culling is toggled off.
+			            To provide at least some method of exists, 
+			            we set vertex position outside clipspace if vertex_exists is toggled off.
 			            */
 		            	gl_Position = projection_matrix * view_matrix * model_matrix * vertex_position;
 			        };
@@ -132,12 +132,11 @@ namespace view
 			        uniform float darken_threshold;
 			        in      float fragment_color_value;
 			        in      float fragment_darken;
-			        in      float fragment_culling;
+			        in      float fragment_exists;
 			        out     vec4  fragment_color;
 
 			        /*
-			        converts float from 0-1 to a heat map visualization
-			        credit goes to Gaëtan Renaudeau: http://greweb.me/glsl.js/examples/heatmap/
+			        converts float from 0-1 to a heat map visualization, adapted from Gaëtan Renaudeau
 			        */
 			        vec3 get_rgb_signal_of_fraction_for_heatmap (float v) {
 			            float value = 1.0-v;
@@ -173,14 +172,14 @@ namespace view
 			              colorscale_type == 0? get_rgb_signal_of_fraction_for_heatmap(color_value_fraction) 
 			            : colorscale_type == 1? get_rgb_signal_of_fraction_for_topomap(color_value_fraction)
 			            :                       mix( min_color, max_color, color_value_fraction );
-			            if(fragment_culling>0.5){discard;}
+			            if(fragment_exists<0.5){discard;}
 			            fragment_color = vec4(
 				            mix(
 				                vec3(0.), 
 				                color_without_ocean, 
 				                fragment_darken < darken_threshold? 0.5 : 1.0
 				            ), 
-				            fragment_culling
+				            fragment_exists
 				        );
 			        }
 				)"
@@ -275,9 +274,9 @@ namespace view
 		    glEnableVertexAttribArray(darkenLocation);
 
 			// create a new vertex array buffer, VBO
-			glGenBuffers(1, &cullingBufferId);
-			cullingLocation = glGetAttribLocation(shaderProgramId, "vertex_culling");
-		    glEnableVertexAttribArray(cullingLocation);
+			glGenBuffers(1, &existsBufferId);
+			existsLocation = glGetAttribLocation(shaderProgramId, "vertex_exists");
+		    glEnableVertexAttribArray(existsLocation);
 
 			glGenBuffers(1, &elementVertexBufferId);
 		}
@@ -291,7 +290,7 @@ namespace view
 		        glDeleteBuffers(1, &positionBufferId);
 		        glDeleteBuffers(1, &displacementBufferId);
 		        glDeleteBuffers(1, &darkenBufferId);
-		        glDeleteBuffers(1, &cullingBufferId);
+		        glDeleteBuffers(1, &existsBufferId);
 		        glDeleteProgram(shaderProgramId);
         	}
 		}
@@ -330,7 +329,7 @@ namespace view
 			const std::vector<T>& vertex_color_value, 
 			const std::vector<float>& vertex_displacement, 
 			const std::vector<float>& vertex_darken, 
-			const std::vector<std::byte>& vertex_culling, 
+			const std::vector<std::uint8_t>& vertex_exists, 
 			const std::vector<unsigned int>& element_vertex_ids,
 			const ColorscaleSurfacesViewState& colorscale_state,
 			const glm::mat4& model_matrix,
@@ -377,10 +376,10 @@ namespace view
 		    glEnableVertexAttribArray(darkenLocation);
             glVertexAttribPointer(darkenLocation, 1, GL_FLOAT, normalize, stride, offset);
 
-			glBindBuffer(GL_ARRAY_BUFFER, cullingBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(std::byte)*vertex_culling.size(), &vertex_culling.front(), GL_DYNAMIC_DRAW);
-		    glEnableVertexAttribArray(cullingLocation);
-            glVertexAttribIPointer(cullingLocation, 1, GL_UNSIGNED_BYTE, stride, offset);
+			glBindBuffer(GL_ARRAY_BUFFER, existsBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(std::byte)*vertex_exists.size(), &vertex_exists.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(existsLocation);
+            glVertexAttribIPointer(existsLocation, 1, GL_UNSIGNED_BYTE, stride, offset);
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementVertexBufferId);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*element_vertex_ids.size(), &element_vertex_ids.front(), GL_DYNAMIC_DRAW);

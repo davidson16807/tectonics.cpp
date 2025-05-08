@@ -317,8 +317,8 @@ int main() {
   std::vector<length> displacements_i(fine.vertex_count());
   std::vector<std::vector<length>> displacements(P, displacements_i);
   std::vector<float> buffer_color_values(fine.vertex_count());
-  std::vector<std::byte> buffer_culling_i(fine.vertex_count());
-  std::vector<std::vector<std::byte>> buffer_culling(P, buffer_culling_i);
+  std::vector<std::uint8_t> buffer_exists_i(fine.vertex_count(), std::uint8_t(1));
+  std::vector<std::vector<std::uint8_t>> buffer_exists(P, buffer_exists_i);
   std::vector<float> buffer_scalars1(fine.vertex_count());
   std::vector<float> buffer_uniform(fine.vertex_count(), 1.0f);
   std::vector<float> buffer_scalars2_i(fine.vertex_count());
@@ -428,30 +428,29 @@ int main() {
       // summarization uses fine only for vertex_dual_areas, so it's faster if fine is a GridCache
 
       // rifting and subduction
-      #pragma omp parallel for
       for (std::size_t i(0); i < P; ++i)
       {
         // find rifting and subduction zones
-        predicates.alone(locals[i], alone);
-        predicates.top(i, locals[i], top);
-        predicates.exists(i, locals[i], exists);
-        predicates.rifting(alone, top, exists, rifting, bools_scratch);
-        predicates.foundering(mantle_density, locals[i], foundering);
-        predicates.detaching(alone, top, exists, foundering, bools_scratch);
+        // predicates.alone(locals[i], alone);
+        // predicates.top(i, locals[i], top);
+        // predicates.exists(i, locals[i], exists);
+        // predicates.rifting(alone, top, exists, rifting, bools_scratch);
+        // predicates.foundering(mantle_density, locals[i], foundering);
+        // predicates.detaching(alone, top, exists, foundering, bools_scratch);
 
-        // apply rifting and subduction
-        ternary(rifting, procedural::uniform(empty_stratum), lithosphere[i][formations::sediment], lithosphere[i][formations::sediment]);
-        ternary(rifting, procedural::uniform(empty_stratum), lithosphere[i][formations::sedimentary], lithosphere[i][formations::sedimentary]);
-        ternary(rifting, procedural::uniform(empty_stratum), lithosphere[i][formations::metasedimentary], lithosphere[i][formations::metasedimentary]);
-        ternary(rifting, procedural::uniform(fresh_igneous), lithosphere[i][formations::igneous], lithosphere[i][formations::igneous]);
-        ternary(rifting, procedural::uniform(fresh_metaigneous), lithosphere[i][formations::metaigneous], lithosphere[i][formations::metaigneous]);
+        // // apply rifting and subduction
+        // ternary(rifting, procedural::uniform(empty_stratum), lithosphere[i][formations::sediment], lithosphere[i][formations::sediment]);
+        // ternary(rifting, procedural::uniform(empty_stratum), lithosphere[i][formations::sedimentary], lithosphere[i][formations::sedimentary]);
+        // ternary(rifting, procedural::uniform(empty_stratum), lithosphere[i][formations::metasedimentary], lithosphere[i][formations::metasedimentary]);
+        // ternary(rifting, procedural::uniform(fresh_igneous), lithosphere[i][formations::igneous], lithosphere[i][formations::igneous]);
+        // ternary(rifting, procedural::uniform(fresh_metaigneous), lithosphere[i][formations::metaigneous], lithosphere[i][formations::metaigneous]);
 
-        // apply rifting and subduction
-        ternary(detaching, procedural::uniform(empty_stratum), lithosphere[i][formations::sediment], lithosphere[i][formations::sediment]);
-        ternary(detaching, procedural::uniform(empty_stratum), lithosphere[i][formations::sedimentary], lithosphere[i][formations::sedimentary]);
-        ternary(detaching, procedural::uniform(empty_stratum), lithosphere[i][formations::metasedimentary], lithosphere[i][formations::metasedimentary]);
-        ternary(detaching, procedural::uniform(empty_stratum), lithosphere[i][formations::igneous], lithosphere[i][formations::igneous]);
-        ternary(detaching, procedural::uniform(empty_stratum), lithosphere[i][formations::metaigneous], lithosphere[i][formations::metaigneous]);
+        // // apply rifting and subduction
+        // ternary(detaching, procedural::uniform(empty_stratum), lithosphere[i][formations::sediment], lithosphere[i][formations::sediment]);
+        // ternary(detaching, procedural::uniform(empty_stratum), lithosphere[i][formations::sedimentary], lithosphere[i][formations::sedimentary]);
+        // ternary(detaching, procedural::uniform(empty_stratum), lithosphere[i][formations::metasedimentary], lithosphere[i][formations::metasedimentary]);
+        // ternary(detaching, procedural::uniform(empty_stratum), lithosphere[i][formations::igneous], lithosphere[i][formations::igneous]);
+        // ternary(detaching, procedural::uniform(empty_stratum), lithosphere[i][formations::metaigneous], lithosphere[i][formations::metaigneous]);
 
       }
 
@@ -466,10 +465,9 @@ int main() {
          we can localize density and thickness and then calculate things on the localization for a performance gain.
       */
 
-      #pragma omp parallel for
       for (std::size_t i = 0; i < P; ++i)
       {
-        fracturing.exists(fine_plate_map, i, buffer_culling[i]);
+        fracturing.exists(fine_plate_map, i, buffer_exists[i]);
         displacement_for_formation_summary(formation_summary, displacements[i]);
         // arithmetic.divide(displacements, procedural::uniform(length(si::kilometer)), buffer_scalars2);
         arithmetic.divide(fine_buoyancy_pressure, procedural::uniform(pressure(si::pascal)), buffer_scalars2[i]);
@@ -490,7 +488,7 @@ int main() {
           buffer_scalars2[i],  // color value
           buffer_uniform,   // displacement
           buffer_uniform,   // darken
-          buffer_culling[i],   // culling
+          buffer_exists[i],   // culling
           buffer_element_vertex_ids,
           colorscale_state,
           mat4(orientations[i]),
