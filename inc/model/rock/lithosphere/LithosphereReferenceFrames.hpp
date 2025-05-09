@@ -60,12 +60,12 @@ namespace rock{
 
         template<typename Raster>
         void localize(
-            const std::vector<mat> global_to_locals, // profiling suggests lack of & here is faster
+            const std::vector<mat> locals_to_globals, // profiling suggests lack of & here is faster
             const Raster& global,
             std::vector<Raster>& locals
         ) const {
             #pragma omp parallel for
-            for (std::size_t i = 0; i < global_to_locals.size(); ++i)
+            for (std::size_t i = 0; i < locals_to_globals.size(); ++i)
             {
                 /*
                             grid      rotation    grid
@@ -73,7 +73,7 @@ namespace rock{
                 */
                 auto resample = 
                     procedural::map(
-                        field::compose(nearest, field::Affinity(global_to_locals[i])),
+                        field::compose(nearest, field::Affinity(glm::inverse(locals_to_globals[i]))),
                         positions
                     );
                 index(global, resample, locals[i]);
