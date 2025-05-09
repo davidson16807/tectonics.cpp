@@ -5,7 +5,9 @@
 // in house libraries
 #include <index/adapted/boolean/BooleanBitset.hpp>
 #include <index/iterated/Bitset.hpp>
+#include <index/iterated/Nary.hpp>
 
+#include <model/rock/column/Column.hpp>
 #include <model/rock/formation/FormationOps.hpp>
 #include <model/rock/formation/FormationPredicates.hpp>
 #include <model/rock/crust/FormationType.hpp>
@@ -26,12 +28,16 @@ namespace rock{
         const FormationOps<M> ops;
         const FormationPredicates<M> predicates;
         const iterated::Bitset<adapted::BooleanBitset> morphology;
+        const iterated::Ternary ternary_;
+        const iterated::Identity copy_;
 
     public:
         CrustOps():
             ops(),
             predicates(),
-            morphology(adapted::BooleanBitset{})
+            morphology(adapted::BooleanBitset{}),
+            ternary_(),
+            copy_()
         {}
 
         // AKA, the identity function.
@@ -50,7 +56,7 @@ namespace rock{
             bools newly_occupied (top[0].size());
             bools empty_below    (top[0].size(), true);
 
-            copy(top, out);
+            copy_(top, out);
 
             const std::size_t MI = formations::metaigneous;
             const std::size_t S  = formations::sediment;
@@ -85,6 +91,30 @@ namespace rock{
             ops.mask(bottom[S],   empty_below, scratch);
             ops.combine(out[S],   scratch,     out[S]); // meta
 
+        }
+
+        void ternary(const bools& condition, const Crust<M,F>& crust, const Column<M,F>& column, Crust<M,F>& out) const 
+        {
+            for (std::size_t i(0); i < F; i++)
+            {
+                ternary_(condition, crust[i], procedural::uniform(column[i]), out[i]);
+            }
+        }
+
+        void ternary(const bools& condition, const Column<M,F>& column, const Crust<M,F>& crust, Crust<M,F>& out) const 
+        {
+            for (std::size_t i(0); i < F; i++)
+            {
+                ternary_(condition, procedural::uniform(column[i]), crust[i], out[i]);
+            }
+        }
+
+        void ternary(const bools& condition, const Crust<M,F>& crust1, const Crust<M,F>& crust2, Crust<M,F>& out) const 
+        {
+            for (std::size_t i(0); i < F; i++)
+            {
+                ternary_(condition, crust1[i], crust2[i], out[i]);
+            }
         }
 
         void flatten (const Crust<M,F>& crust, Formation<M>& out) const

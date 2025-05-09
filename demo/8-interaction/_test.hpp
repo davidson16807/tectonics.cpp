@@ -77,6 +77,7 @@ and gprof can't run on output using the -fopenmp flag and still provide accurate
 #include <model/rock/formation/FormationSummarization.hpp>
 #include <model/rock/crust/FormationType.hpp>
 #include <model/rock/crust/Crust.hpp>
+#include <model/rock/crust/CrustOps.hpp>
 #include <model/rock/crust/CrustSummarization.hpp>
 #include <model/rock/crust/CrustSummaryOps.hpp>
 #include <model/rock/crust/CrustSummaryProperties.hpp>
@@ -174,6 +175,7 @@ int main() {
 
   auto generation = earthlike(12.0f, 1.1e4f);
   rock::StratumStore<M> empty_stratum;
+  rock::Column<M,F> empty_column{empty_stratum};
   rock::Formation<M> empty_formation(fine.vertex_count(), empty_stratum);
   rock::Formation<M> igneous_formation(fine.vertex_count());
   copy(generation, igneous_formation);
@@ -191,6 +193,8 @@ int main() {
       length(si::centimeter)
     }
   };
+
+  rock::CrustOps<M> crust_ops;
 
   rock::CrustSummaryProperty existance{rock::ColumnSummaryExists()};
   rock::CrustSummaryProperty thicknesses{rock::ColumnSummaryThickness()};
@@ -299,7 +303,6 @@ int main() {
   std::vector<bool> fine_slab_existance(fine.vertex_count());
   std::vector<vec3> angular_velocities_in_seconds(P);
   std::vector<mat3> orientations(P, mat3(1));
-  iterated::Ternary ternary;
   for (int i = 0; i < P; ++i)
   {
       fracturing.exists(fine_plate_map, i, fine_plate_existance);
@@ -314,12 +317,7 @@ int main() {
       auto slab_drag_per_angular_velocity = motion.drag_per_angular_velocity(slab_length, slab_thickness, slab_width);
       auto slab_torque_in_newton_meters = motion.rigid_body_torque(fine_slab_pull, si::newton, si::newton*si::meter);
       angular_velocities_in_seconds[i] = slab_torque_in_newton_meters*(si::newton*si::meter/slab_drag_per_angular_velocity*si::second);
-
-      ternary(fine_plate_existance, plates[i][rock::formations::sediment], procedural::uniform(empty_stratum), plates[i][rock::formations::sediment]);
-      ternary(fine_plate_existance, plates[i][rock::formations::sedimentary], procedural::uniform(empty_stratum), plates[i][rock::formations::sedimentary]);
-      ternary(fine_plate_existance, plates[i][rock::formations::metasedimentary], procedural::uniform(empty_stratum), plates[i][rock::formations::metasedimentary]);
-      ternary(fine_plate_existance, plates[i][rock::formations::igneous], procedural::uniform(empty_stratum), plates[i][rock::formations::igneous]);
-      ternary(fine_plate_existance, plates[i][rock::formations::metaigneous], procedural::uniform(empty_stratum), plates[i][rock::formations::metaigneous]);
+      crust_ops.ternary(fine_plate_existance, plates[i], empty_column, plates[i]);
   }
 
   // flatten raster for OpenGL
@@ -450,18 +448,8 @@ int main() {
         // predicates.detaching(alone, top, exists, foundering, bools_scratch);
 
         // // apply rifting and subduction
-        // ternary(rifting, procedural::uniform(empty_stratum), plates[i][rock::formations::sediment], plates[i][rock::formations::sediment]);
-        // ternary(rifting, procedural::uniform(empty_stratum), plates[i][rock::formations::sedimentary], plates[i][rock::formations::sedimentary]);
-        // ternary(rifting, procedural::uniform(empty_stratum), plates[i][rock::formations::metasedimentary], plates[i][rock::formations::metasedimentary]);
-        // ternary(rifting, procedural::uniform(fresh_igneous), plates[i][rock::formations::igneous], plates[i][rock::formations::igneous]);
-        // ternary(rifting, procedural::uniform(fresh_metaigneous), plates[i][rock::formations::metaigneous], plates[i][rock::formations::metaigneous]);
-
-        // // apply rifting and subduction
-        // ternary(detaching, procedural::uniform(empty_stratum), plates[i][rock::formations::sediment], plates[i][rock::formations::sediment]);
-        // ternary(detaching, procedural::uniform(empty_stratum), plates[i][rock::formations::sedimentary], plates[i][rock::formations::sedimentary]);
-        // ternary(detaching, procedural::uniform(empty_stratum), plates[i][rock::formations::metasedimentary], plates[i][rock::formations::metasedimentary]);
-        // ternary(detaching, procedural::uniform(empty_stratum), plates[i][rock::formations::igneous], plates[i][rock::formations::igneous]);
-        // ternary(detaching, procedural::uniform(empty_stratum), plates[i][rock::formations::metaigneous], plates[i][rock::formations::metaigneous]);
+        // crust_ops.ternary(rifting, procedural::uniform(fresh_column), plates[i], plates[i]);
+        // crust_ops.ternary(detaching, procedural::uniform(empty_column), plates[i], plates[i]);
 
         /*
         Q: Why don't we determine rifting on master, then localize the result to each plate?
