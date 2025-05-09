@@ -53,7 +53,7 @@ namespace rock{
 
         inline bool exists() const
         {
-            return area_density() > si::area_density<float>(0.0f);
+            return plate_count()>0;
         }
 
         inline int plate_count() const
