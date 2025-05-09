@@ -198,6 +198,7 @@ int main() {
 
   rock::CrustSummaryProperty existance{rock::ColumnSummaryExists()};
   rock::CrustSummaryProperty thicknesses{rock::ColumnSummaryThickness()};
+  rock::CrustSummaryProperty place_counts{rock::ColumnSummaryPlateCount()};
 
   auto formation_summarize = rock::formation_summarization<2>(
     rock::stratum_summarization<2>(
@@ -323,8 +324,8 @@ int main() {
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<std::int8_t,int,float> grids(vertices_per_fine_square_side);
   dymaxion::VertexPositions fine_vertex_positions(fine.grid);
-  std::vector<length> displacements_i(fine.vertex_count());
-  std::vector<std::vector<length>> displacements(P, displacements_i);
+  std::vector<length> lengths_i(fine.vertex_count());
+  std::vector<std::vector<length>> lengths(P, lengths_i);
   std::vector<float> buffer_color_values(fine.vertex_count());
   std::vector<std::uint8_t> buffer_exists_i(fine.vertex_count(), std::uint8_t(1));
   std::vector<std::vector<std::uint8_t>> buffer_exists(P, buffer_exists_i);
@@ -419,8 +420,8 @@ int main() {
       colorscale_state.max_color_value = 1.0;
       colorscale_state.min_color_value = 0.0;
 
-      // colorscale_state.max_color_value = order.min(fine_buoyancy_pressure)/pressure(si::pascal);
-      // colorscale_state.min_color_value = order.max(fine_buoyancy_pressure)/pressure(si::pascal);
+      colorscale_state.max_color_value = 8.0;
+      colorscale_state.min_color_value = 0.0;
 
       // motion
       for (std::size_t i(0); i < P; ++i)
@@ -466,11 +467,26 @@ int main() {
         */
 
         copy(exists, buffer_exists_i);
-        copy(alone, buffer_scalars2_i);
+
+        // copy(alone, buffer_scalars2_i);
+
+        place_counts(summaries[i], buffer_scalars2_i);
+
         // fracturing.exists(fine_plate_map, i, buffer_scalars2[i]);
-        displacement_for_formation_summary(formation_summary, displacements[i]);
-        // arithmetic.divide(displacements, procedural::uniform(length(si::kilometer)), buffer_scalars2);
-        arithmetic.divide(fine_buoyancy_pressure, procedural::uniform(pressure(si::pascal)), buffer_scalars2[i]);
+
+        // arithmetic.divide(fine_buoyancy_pressure, procedural::uniform(pressure(si::pascal)), buffer_scalars2[i]);
+        // colorscale_state.max_color_value = order.min(buffer_scalars2_i);
+        // colorscale_state.min_color_value = order.max(buffer_scalars2_i);
+
+        // displacement_for_formation_summary(formation_summary, lengths[i]);
+        // arithmetic.divide(lengths_i, procedural::uniform(length(si::kilometer)), buffer_scalars2_i);
+        // colorscale_state.max_color_value = order.min(buffer_scalars2_i);
+        // colorscale_state.min_color_value = order.max(buffer_scalars2_i);
+
+        // thicknesses(locals[i], lengths_i);
+        // arithmetic.divide(lengths_i, procedural::uniform(length(si::kilometer)), buffer_scalars2_i);
+        // colorscale_state.max_color_value = order.min(buffer_scalars2_i);
+        // colorscale_state.min_color_value = order.max(buffer_scalars2_i);
 
         /*
         This demo shows the buoyancy field for each plate 
