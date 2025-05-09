@@ -402,10 +402,10 @@ int main() {
   };
 
   const float pi(3.1415926535);
-  const int frame_count(1000);
+  // const int frame_count(1000);
 
   auto start = std::chrono::high_resolution_clock::now();
-  for(int i=0; i<frame_count; i++) {
+  while (!glfwWindowShouldClose(window)){
 
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -416,8 +416,11 @@ int main() {
       // colorscale_state.max_color_value = 0.0;
       // colorscale_state.min_color_value = 8.0;
 
-      colorscale_state.max_color_value = order.min(fine_buoyancy_pressure)/pressure(si::pascal);
-      colorscale_state.min_color_value = order.max(fine_buoyancy_pressure)/pressure(si::pascal);
+      colorscale_state.max_color_value = 1.0;
+      colorscale_state.min_color_value = 0.0;
+
+      // colorscale_state.max_color_value = order.min(fine_buoyancy_pressure)/pressure(si::pascal);
+      // colorscale_state.min_color_value = order.max(fine_buoyancy_pressure)/pressure(si::pascal);
 
       // motion
       for (std::size_t i(0); i < P; ++i)
@@ -440,11 +443,11 @@ int main() {
       for (std::size_t i(0); i < P; ++i)
       {
         // find rifting and subduction zones
-        // predicates.alone(locals[i], alone);
-        // predicates.top(i, locals[i], top);
-        // predicates.exists(i, locals[i], exists);
+        existance(locals[i], exists);
+        predicates.alone(summaries[i], alone);
+        // predicates.top(i, summaries[i], top);
         // predicates.rifting(alone, top, exists, rifting, bools_scratch);
-        // predicates.foundering(mantle_density, locals[i], foundering);
+        // predicates.foundering(mantle_density, summaries[i], foundering);
         // predicates.detaching(alone, top, exists, foundering, bools_scratch);
 
         // // apply rifting and subduction
@@ -462,7 +465,8 @@ int main() {
            we can localize density and thickness and then calculate things on the localization for a performance gain.
         */
 
-        existance(locals[i], buffer_exists[i]);
+        copy(exists, buffer_exists_i);
+        copy(alone, buffer_scalars2_i);
         // fracturing.exists(fine_plate_map, i, buffer_scalars2[i]);
         displacement_for_formation_summary(formation_summary, displacements[i]);
         // arithmetic.divide(displacements, procedural::uniform(length(si::kilometer)), buffer_scalars2);
@@ -478,10 +482,10 @@ int main() {
 
         colorscale_program.draw(
           buffer_positions, // position
-          buffer_scalars2[i],  // color value
+          buffer_scalars2_i,  // color value
           buffer_uniform,   // displacement
           buffer_uniform,   // darken
-          buffer_exists[i],   // culling
+          buffer_exists_i,  // culling
           buffer_element_vertex_ids,
           colorscale_state,
           mat4(orientations[i]),
