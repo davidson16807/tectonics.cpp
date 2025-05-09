@@ -75,6 +75,7 @@ and gprof can't run on output using the -fopenmp flag and still provide accurate
 #include <model/rock/stratum/StratumSummaryProperties.hpp>
 #include <model/rock/formation/Formation.hpp>
 #include <model/rock/formation/FormationSummarization.hpp>
+#include <model/rock/crust/FormationType.hpp>
 #include <model/rock/crust/Crust.hpp>
 #include <model/rock/crust/CrustSummarization.hpp>
 #include <model/rock/crust/CrustSummaryOps.hpp>
@@ -191,6 +192,9 @@ int main() {
     }
   };
 
+  rock::CrustSummaryProperty existance{rock::ColumnSummaryExists()};
+  rock::CrustSummaryProperty thicknesses{rock::ColumnSummaryThickness()};
+
   auto formation_summarize = rock::formation_summarization<2>(
     rock::stratum_summarization<2>(
       rock::AgedStratumDensity{densities_for_age, age_of_world},
@@ -295,6 +299,7 @@ int main() {
   std::vector<bool> fine_slab_existance(fine.vertex_count());
   std::vector<vec3> angular_velocities_in_seconds(P);
   std::vector<mat3> orientations(P, mat3(1));
+  iterated::Ternary ternary;
   for (int i = 0; i < P; ++i)
   {
       fracturing.exists(fine_plate_map, i, fine_plate_existance);
@@ -309,6 +314,12 @@ int main() {
       auto slab_drag_per_angular_velocity = motion.drag_per_angular_velocity(slab_length, slab_thickness, slab_width);
       auto slab_torque_in_newton_meters = motion.rigid_body_torque(fine_slab_pull, si::newton, si::newton*si::meter);
       angular_velocities_in_seconds[i] = slab_torque_in_newton_meters*(si::newton*si::meter/slab_drag_per_angular_velocity*si::second);
+
+      ternary(fine_plate_existance, plates[i][rock::formations::sediment], procedural::uniform(empty_stratum), plates[i][rock::formations::sediment]);
+      ternary(fine_plate_existance, plates[i][rock::formations::sedimentary], procedural::uniform(empty_stratum), plates[i][rock::formations::sedimentary]);
+      ternary(fine_plate_existance, plates[i][rock::formations::metasedimentary], procedural::uniform(empty_stratum), plates[i][rock::formations::metasedimentary]);
+      ternary(fine_plate_existance, plates[i][rock::formations::igneous], procedural::uniform(empty_stratum), plates[i][rock::formations::igneous]);
+      ternary(fine_plate_existance, plates[i][rock::formations::metaigneous], procedural::uniform(empty_stratum), plates[i][rock::formations::metaigneous]);
   }
 
   // flatten raster for OpenGL
@@ -439,42 +450,36 @@ int main() {
         // predicates.detaching(alone, top, exists, foundering, bools_scratch);
 
         // // apply rifting and subduction
-        // ternary(rifting, procedural::uniform(empty_stratum), lithosphere[i][formations::sediment], lithosphere[i][formations::sediment]);
-        // ternary(rifting, procedural::uniform(empty_stratum), lithosphere[i][formations::sedimentary], lithosphere[i][formations::sedimentary]);
-        // ternary(rifting, procedural::uniform(empty_stratum), lithosphere[i][formations::metasedimentary], lithosphere[i][formations::metasedimentary]);
-        // ternary(rifting, procedural::uniform(fresh_igneous), lithosphere[i][formations::igneous], lithosphere[i][formations::igneous]);
-        // ternary(rifting, procedural::uniform(fresh_metaigneous), lithosphere[i][formations::metaigneous], lithosphere[i][formations::metaigneous]);
+        // ternary(rifting, procedural::uniform(empty_stratum), plates[i][rock::formations::sediment], plates[i][rock::formations::sediment]);
+        // ternary(rifting, procedural::uniform(empty_stratum), plates[i][rock::formations::sedimentary], plates[i][rock::formations::sedimentary]);
+        // ternary(rifting, procedural::uniform(empty_stratum), plates[i][rock::formations::metasedimentary], plates[i][rock::formations::metasedimentary]);
+        // ternary(rifting, procedural::uniform(fresh_igneous), plates[i][rock::formations::igneous], plates[i][rock::formations::igneous]);
+        // ternary(rifting, procedural::uniform(fresh_metaigneous), plates[i][rock::formations::metaigneous], plates[i][rock::formations::metaigneous]);
 
         // // apply rifting and subduction
-        // ternary(detaching, procedural::uniform(empty_stratum), lithosphere[i][formations::sediment], lithosphere[i][formations::sediment]);
-        // ternary(detaching, procedural::uniform(empty_stratum), lithosphere[i][formations::sedimentary], lithosphere[i][formations::sedimentary]);
-        // ternary(detaching, procedural::uniform(empty_stratum), lithosphere[i][formations::metasedimentary], lithosphere[i][formations::metasedimentary]);
-        // ternary(detaching, procedural::uniform(empty_stratum), lithosphere[i][formations::igneous], lithosphere[i][formations::igneous]);
-        // ternary(detaching, procedural::uniform(empty_stratum), lithosphere[i][formations::metaigneous], lithosphere[i][formations::metaigneous]);
+        // ternary(detaching, procedural::uniform(empty_stratum), plates[i][rock::formations::sediment], plates[i][rock::formations::sediment]);
+        // ternary(detaching, procedural::uniform(empty_stratum), plates[i][rock::formations::sedimentary], plates[i][rock::formations::sedimentary]);
+        // ternary(detaching, procedural::uniform(empty_stratum), plates[i][rock::formations::metasedimentary], plates[i][rock::formations::metasedimentary]);
+        // ternary(detaching, procedural::uniform(empty_stratum), plates[i][rock::formations::igneous], plates[i][rock::formations::igneous]);
+        // ternary(detaching, procedural::uniform(empty_stratum), plates[i][rock::formations::metaigneous], plates[i][rock::formations::metaigneous]);
 
-      }
+        /*
+        Q: Why don't we determine rifting on master, then localize the result to each plate?
+        A: We are trying to minimize the number of out-of-order traversals through memory,
+           since that is the limiting factor to the performance of the application.
+           Each localization is an out-of-order operation. Calculating rifting is in-order.
+           We're building an application that doesn't just calculate rifting, but many things, almost always in-order.
+           If all those things were localized to each plate, it would significantly affect performance.
+           However since those things are almost always calculated strictly from density and thickness,
+           we can localize density and thickness and then calculate things on the localization for a performance gain.
+        */
 
-      /*
-      Q: Why don't we determine rifting on master, then localize the result to each plate?
-      A: We are trying to minimize the number of out-of-order traversals through memory,
-         since that is the limiting factor to the performance of the application.
-         Each localization is an out-of-order operation. Calculating rifting is in-order.
-         We're building an application that doesn't just calculate rifting, but many things, almost always in-order.
-         If all those things were localized to each plate, it would significantly affect performance.
-         However since those things are almost always calculated strictly from density and thickness,
-         we can localize density and thickness and then calculate things on the localization for a performance gain.
-      */
-
-      for (std::size_t i = 0; i < P; ++i)
-      {
-        fracturing.exists(fine_plate_map, i, buffer_exists[i]);
+        existance(locals[i], buffer_exists[i]);
+        // fracturing.exists(fine_plate_map, i, buffer_scalars2[i]);
         displacement_for_formation_summary(formation_summary, displacements[i]);
         // arithmetic.divide(displacements, procedural::uniform(length(si::kilometer)), buffer_scalars2);
         arithmetic.divide(fine_buoyancy_pressure, procedural::uniform(pressure(si::pascal)), buffer_scalars2[i]);
-      }
-        // copy(fine_plate_map, buffer_scalars2);
-      for (std::size_t i = 0; i < P; ++i)
-      {
+
         /*
         This demo shows the buoyancy field for each plate 
         as plates rotate according to angular velocities
