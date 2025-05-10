@@ -51,7 +51,7 @@ namespace rock{
                 */
                 auto resample = 
                     procedural::map(
-                        field::compose(nearest, field::Affinity(locals_to_globals[i])),
+                        field::compose(nearest, field::Affinity(glm::transpose(locals_to_globals[i]))),
                         positions
                     );
                 index(locals[i], resample, globals[i]);
@@ -73,7 +73,7 @@ namespace rock{
                 */
                 auto resample = 
                     procedural::map(
-                        field::compose(nearest, field::Affinity(glm::inverse(locals_to_globals[i]))),
+                        field::compose(nearest, field::Affinity((locals_to_globals[i]))),
                         positions
                     );
                 index(global, resample, locals[i]);

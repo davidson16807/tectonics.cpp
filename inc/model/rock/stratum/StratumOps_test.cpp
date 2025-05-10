@@ -17,8 +17,7 @@
 TEST_CASE( "Stratum scale() closure", "[rock]" ) {
     const std::size_t M = 2;
 
-    rock::MineralOps minerals;
-    rock::StratumOps<M> ops(minerals);
+    rock::StratumOps<M> ops;
     rock::StratumAdapter<M> inexact;
 
     std::mt19937 generator(2);
@@ -45,8 +44,7 @@ TEST_CASE( "Stratum scale() closure", "[rock]" ) {
 TEST_CASE( "Stratum scale() monoid", "[rock]" ) {
     const std::size_t M = 2;
 
-    rock::MineralOps minerals;
-    rock::StratumOps<M> ops(minerals);
+    rock::StratumOps<M> ops;
     rock::StratumAdapter<M> inexact;
 
     std::mt19937 generator(2);
@@ -85,8 +83,7 @@ TEST_CASE( "Stratum scale() monoid", "[rock]" ) {
 TEST_CASE( "Stratum combine() commutative monoid", "[rock]" ) {
     const std::size_t M = 2;
 
-    rock::MineralOps minerals;
-    rock::StratumOps<M> ops(minerals);
+    rock::StratumOps<M> ops;
     rock::StratumAdapter<M> inexact;
 
     std::mt19937 generator(2);
@@ -113,8 +110,7 @@ TEST_CASE( "Stratum combine() commutative monoid", "[rock]" ) {
 TEST_CASE( "Stratum combine() closure", "[rock]" ) {
     const std::size_t M = 2;
 
-    rock::MineralOps minerals;
-    rock::StratumOps<M> ops(minerals);
+    rock::StratumOps<M> ops;
     rock::StratumAdapter<M> inexact;
 
     std::mt19937 generator(2);
@@ -138,8 +134,7 @@ TEST_CASE( "Stratum combine() closure", "[rock]" ) {
 
 TEST_CASE( "Stratum combine() mass conservation", "[rock]" ) {
     const std::size_t M = 2;
-    rock::MineralOps minerals;
-    rock::StratumOps<M> ops(minerals);
+    rock::StratumOps<M> ops;
 
     std::mt19937 generator(2);
     rock::Stratum<M> a = rock::get_random<M>(generator);

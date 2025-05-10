@@ -63,10 +63,10 @@ TEST_CASE( "drag_per_angular_velocity", "[rock]" ) {
     length world_radius(6.371e6 * si::meter);
     density mantle_density(3300.0*si::kilogram/si::meter3);
     viscosity mantle_viscosity(1.57e20*si::pascal*si::second);
-    dymaxion::Grid grid(world_radius/length(si::meter), vertices_per_square_side);
+    dymaxion::Grid<int,int,float> grid(world_radius/length(si::meter), vertices_per_square_side);
 
     unlayered::VectorCalculusByFundamentalTheorem calculus;
-    auto motion = rock::crust_motion<M>(
+    auto motion = rock::crust_motion<M,float,double>(
         calculus, grid, 
         world_radius, 
         acceleration(si::standard_gravity), 
@@ -171,10 +171,10 @@ TEST_CASE( "slab properties that use singleton data structures", "[rock]" ) {
     length world_radius(6.371e6 * si::meter);
     density mantle_density(3300.0*si::kilogram/si::meter3);
     viscosity mantle_viscosity(1.57e20*si::pascal*si::second);
-    dymaxion::Grid grid(world_radius/length(si::meter), vertices_per_square_side);
+    dymaxion::Grid<int,int,float> grid(world_radius/length(si::meter), vertices_per_square_side);
 
     unlayered::VectorCalculusByFundamentalTheorem calculus;
-    auto motion = rock::crust_motion<M>(
+    auto motion = rock::crust_motion<M,float,double>(
         calculus, grid, 
         world_radius, 
         acceleration(si::standard_gravity), 
@@ -281,7 +281,7 @@ TEST_CASE( "slab properties that use `FormationSummary`s", "[rock]" ) {
     length radius(6.371e6f * meter);
 
     int vertices_per_square_side(2);
-    dymaxion::Grid grid(radius/meter, vertices_per_square_side);
+    dymaxion::Grid<int,int,float> grid(radius/meter, vertices_per_square_side);
     rock::EarthlikeIgneousFormationGeneration generation(grid, radius/2.0f, 0.5f, 10, radius);
 
     iterated::Identity copy{};
@@ -335,8 +335,8 @@ TEST_CASE( "buoyancy_forces ⋅ surface normal == 0", "[rock]" ) {
     int vertices_per_fine_square_side(30);
     int vertices_per_coarse_square_side(vertices_per_fine_square_side/2);
 
-    dymaxion::Grid fine(world_radius/meter, vertices_per_fine_square_side);
-    dymaxion::Grid coarse(world_radius/meter, vertices_per_coarse_square_side);
+    dymaxion::Grid<int,int,float> fine(world_radius/meter, vertices_per_fine_square_side);
+    dymaxion::Grid<int,int,float> coarse(world_radius/meter, vertices_per_coarse_square_side);
 
     const int M(2); // number of mass pools
 
@@ -406,7 +406,7 @@ TEST_CASE( "buoyancy_forces ⋅ surface normal == 0", "[rock]" ) {
     std::vector<int> fine_plate_map(fine.vertex_count());
     index(coarse_plate_map, vertex_downsampling_ids, fine_plate_map);
 
-    auto motion = rock::crust_motion<M>(
+    auto motion = rock::crust_motion<M,float,double>(
         calculus, fine, 
         world_radius, 
         acceleration(si::standard_gravity), 

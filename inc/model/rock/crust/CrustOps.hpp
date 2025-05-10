@@ -6,6 +6,7 @@
 #include <index/adapted/boolean/BooleanBitset.hpp>
 #include <index/iterated/Bitset.hpp>
 #include <index/iterated/Nary.hpp>
+#include <index/procedural/Uniform.hpp>
 
 #include <model/rock/column/Column.hpp>
 #include <model/rock/formation/FormationOps.hpp>

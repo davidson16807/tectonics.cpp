@@ -52,8 +52,8 @@ TEST_CASE( "CrustFracturing", "[rock]" ) {
     int vertices_per_fine_square_side(30);
     int vertices_per_coarse_square_side(vertices_per_fine_square_side/2);
 
-    dymaxion::Grid fine(world_radius/meter, vertices_per_fine_square_side);
-    dymaxion::Grid coarse(world_radius/meter, vertices_per_coarse_square_side);
+    dymaxion::Grid<int,int,float> fine(world_radius/meter, vertices_per_fine_square_side);
+    dymaxion::Grid<int,int,float> coarse(world_radius/meter, vertices_per_coarse_square_side);
 
     const int M(2); // number of mass pools
 

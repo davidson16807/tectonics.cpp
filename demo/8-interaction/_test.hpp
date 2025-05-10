@@ -266,8 +266,8 @@ int main() {
   bools top(fine.vertex_count());
   bools exists(fine.vertex_count());
   bools rifting(fine.vertex_count());
-  // bools foundering(fine.vertex_count());
-  // bools detaching(fine.vertex_count());
+  bools foundering(fine.vertex_count());
+  bools detaching(fine.vertex_count());
   bools bools_scratch(fine.vertex_count());
 
   // GENERATE PLATE MAP FROM FRACTURE STATES
@@ -420,8 +420,8 @@ int main() {
       colorscale_state.max_color_value = 1.0;
       colorscale_state.min_color_value = 0.0;
 
-      colorscale_state.max_color_value = 8.0;
-      colorscale_state.min_color_value = 0.0;
+      // colorscale_state.max_color_value = 8.0;
+      // colorscale_state.min_color_value = 0.0;
 
       // motion
       for (std::size_t i(0); i < P; ++i)
@@ -429,7 +429,7 @@ int main() {
         orientations[i] = 
           glm::rotate(
             mat4(orientations[i]),
-            float(si::kiloyear/si::second) * 2.0f*pi * glm::length(angular_velocities_in_seconds[i]), 
+            float(si::hectoyear/si::second) * 2.0f*pi * glm::length(angular_velocities_in_seconds[i]), 
             glm::normalize(angular_velocities_in_seconds[i]));
       }
 
@@ -444,12 +444,12 @@ int main() {
       for (std::size_t i(0); i < P; ++i)
       {
         // find rifting and subduction zones
-        existance(locals[i], exists);
+        existance(summaries[i], exists);
         predicates.alone(summaries[i], alone);
-        // predicates.top(i, summaries[i], top);
-        // predicates.rifting(alone, top, exists, rifting, bools_scratch);
+        predicates.includes(i, summaries[i], top);
+        // predicates.rifting(fine, alone, top, exists, rifting, bools_scratch);
         // predicates.foundering(mantle_density, summaries[i], foundering);
-        // predicates.detaching(alone, top, exists, foundering, bools_scratch);
+        // predicates.detaching(fine, alone, top, exists, foundering, detaching, bools_scratch);
 
         // // apply rifting and subduction
         // crust_ops.ternary(rifting, procedural::uniform(fresh_column), plates[i], plates[i]);
@@ -468,9 +468,9 @@ int main() {
 
         copy(exists, buffer_exists_i);
 
-        // copy(alone, buffer_scalars2_i);
+        copy(top, buffer_scalars2_i);
 
-        place_counts(summaries[i], buffer_scalars2_i);
+        // place_counts(summaries[i], buffer_scalars2_i);
 
         // fracturing.exists(fine_plate_map, i, buffer_scalars2[i]);
 

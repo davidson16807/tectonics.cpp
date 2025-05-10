@@ -90,7 +90,7 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
 
     length radius(6.371e6 * si::meter);
     int vertices_per_square_side(16);
-    dymaxion::Grid grid(radius/meter, vertices_per_square_side);
+    dymaxion::Grid<int,int,float> grid(radius/meter, vertices_per_square_side);
     dymaxion::VertexPositions vertex_positions(grid);
     dymaxion::VertexNormals vertex_normals(grid);
 
@@ -145,7 +145,6 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
         rock::AgedStratumDensity{densities_for_age, age_of_world},
         mass(si::tonne)
       ), 
-      grid,
       radius
     );
 
@@ -180,7 +179,7 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
     rock::FormationSummary summary(grid.vertex_count());
     std::vector<length> actual_displacements(grid.vertex_count());
     std::vector<length> probe(grid.vertex_count());
-    formation_summarization(plate_id, igneous, summary);
+    formation_summarization(grid, plate_id, igneous, summary);
     displacements_for_formation_summary(summary, actual_displacements);
     // for (std::size_t i = 0; i < strata.size(); ++i)
     // {

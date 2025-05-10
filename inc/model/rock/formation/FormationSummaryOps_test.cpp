@@ -29,7 +29,7 @@ TEST_CASE( "FormationSummary combine() commutative monoid", "[rock]" ) {
     using density = si::density<float>;
     using length = si::length<float>;
 
-    rock::FormationSummaryOps ops {rock::StratumSummaryOps{density(3075.0*si::kilogram/si::meter3)}};
+    rock::FormationSummaryOps ops {rock::StratumSummaryOps{}};
     rock::FormationSummaryAdapter testing;
 
     float oo = std::numeric_limits<float>::max();
@@ -78,7 +78,7 @@ TEST_CASE( "FormationSummary combine() mass conservation", "[rock]" ) {
     using floats = std::vector<float>;
     using area_densities = std::vector<area_density>;
 
-    rock::FormationSummaryOps ops {rock::StratumSummaryOps{density(3075.0*si::kilogram/si::meter3)}};
+    rock::FormationSummaryOps ops {rock::StratumSummaryOps{}};
     iterated::Unary formation_area_density(rock::StratumSummaryAreaDensity{});
     iterated::Arithmetic arithmetic{adapted::TypedSymbolicArithmetic(0.0*si::kilogram/si::meter2, 1.0*si::kilogram/si::meter2)};
     rock::FormationSummaryAdapter testing;

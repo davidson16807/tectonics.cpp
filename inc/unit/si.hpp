@@ -303,22 +303,22 @@ namespace si{
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
   constexpr auto min(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
   {
-    return a < b? a : b;
+    return a < b? a : units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(b);
   }
 
-  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr auto max(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
+  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2>
+  constexpr auto max(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T2> b)
   {
-    return a > b? a : b;
+    return a > b? a : units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(b);
   }
 
-  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
+  template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2, typename T3>
   constexpr auto clamp(
       const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a,
-      const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> lo, 
-      const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> hi
+      const units<M1,KG1,S1,K1,MOL1,A1,CD1,T2> lo, 
+      const units<M1,KG1,S1,K1,MOL1,A1,CD1,T3> hi
   ) {
-      return lo > a? lo : a > hi? hi: a;
+      return lo > a? units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(lo) : a > hi? units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(hi): a;
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>

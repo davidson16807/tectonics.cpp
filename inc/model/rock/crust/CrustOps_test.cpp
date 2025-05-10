@@ -69,7 +69,7 @@ TEST_CASE( "CrustOps::absorb() monoid", "[rock]" ) {
     length radius(6.371e6f * meter);
 
     int vertices_per_square_side(2);
-    dymaxion::Grid grid(radius/meter, vertices_per_square_side);
+    dymaxion::Grid<int,int,float> grid(radius/meter, vertices_per_square_side);
     rock::EarthlikeIgneousFormationGeneration generation(grid, radius/2.0f, 0.5f, 10, radius);
 
     iterated::Identity copy{};
@@ -131,7 +131,7 @@ TEST_CASE( "CrustOps::absorb() mass conservation", "[rock]" ) {
     length radius(6.371e6f * meter);
 
     int vertices_per_square_side(2);
-    dymaxion::Grid grid(radius/meter, vertices_per_square_side);
+    dymaxion::Grid<int,int,float> grid(radius/meter, vertices_per_square_side);
     rock::EarthlikeIgneousFormationGeneration generation(grid, radius/2.0f, 0.5f, 10, radius);
 
     iterated::Identity copy{};

@@ -81,6 +81,20 @@ namespace rock {
         }
 
         /*
+        `includes` returns a boolean raster indicating cells where the topmost plate is of given id
+        */
+        void includes(
+            const int plate_id,
+            const CrustSummary& crust,
+            bools& out
+        ) const {
+            for (std::size_t i = 0; i < crust.size(); ++i)
+            {
+                out[i] = crust[i].includes(plate_id);
+            }
+        }
+
+        /*
         `top` returns a boolean raster indicating cells where the topmost plate is of given id
         */
         void top(
