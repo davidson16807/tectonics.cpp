@@ -145,7 +145,7 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
         rock::AgedStratumDensity{densities_for_age, age_of_world},
         mass(si::tonne)
       ), 
-      radius
+      meter
     );
 
     iterated::Unary displacements_for_formation_summary(
@@ -178,17 +178,21 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
 
     rock::FormationSummary summary(grid.vertex_count());
     std::vector<length> actual_displacements(grid.vertex_count());
-    std::vector<length> probe(grid.vertex_count());
     formation_summarization(grid, plate_id, igneous, summary);
     displacements_for_formation_summary(summary, actual_displacements);
-    // for (std::size_t i = 0; i < strata.size(); ++i)
-    // {
-    //   probe[i] = stratum_tools.isostatic_displacement(summary[i]);
-    // }
+
+    // std::vector<density> original_densities(grid.vertex_count());
+    // iterated::Unary formation_density{rock::AgedStratumDensity{densities_for_age, age_of_world}};
+    // formation_density(igneous, original_densities);
+
+    // std::vector<density> summarized_densities(grid.vertex_count());
+    // iterated::Unary formation_summary_density{rock::StratumSummaryDensity{}};
+    // formation_summary_density(summary, summarized_densities);
 
     std::cout << strings.format(grid, intended_displacements) << std::endl << std::endl;
     std::cout << strings.format(grid, actual_displacements) << std::endl << std::endl;
-    // std::cout << strings.format(grid, probe) << std::endl << std::endl;
+    // std::cout << strings.format(grid, original_densities) << std::endl << std::endl;
+    // std::cout << strings.format(grid, summarized_densities) << std::endl << std::endl;
 
     aggregated::Metric metric(adapted::SiMetric{});
     REQUIRE(metric.distance(intended_displacements, actual_displacements) < 1.0f*si::kilometer);

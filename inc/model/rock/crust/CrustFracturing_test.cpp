@@ -75,7 +75,7 @@ TEST_CASE( "CrustFracturing", "[rock]" ) {
           rock::AgedStratumDensity{densities_for_age, age_of_world},
           mass(si::tonne)
         ), 
-        world_radius
+        meter
     );
     int plate_id(1);
     rock::FormationSummary formation_summary(fine.vertex_count());

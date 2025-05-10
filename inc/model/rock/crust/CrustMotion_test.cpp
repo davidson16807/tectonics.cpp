@@ -358,7 +358,7 @@ TEST_CASE( "buoyancy_forces ⋅ surface normal == 0", "[rock]" ) {
           rock::AgedStratumDensity{densities_for_age, age_of_world},
           mass(si::tonne)
         ), 
-        world_radius
+        meter
     );
     int plate_id(1);
     rock::FormationSummary formation_summary(fine.vertex_count());

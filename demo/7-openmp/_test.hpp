@@ -198,7 +198,7 @@ int main() {
     ), 
     // fine,
     // world_radius
-    world_radius/fine.radius()
+    meter
   );
 
   auto crust_summarize = rock::crust_summarization<M,F>(formation_summarize, crust_summary_ops);

@@ -157,7 +157,7 @@ int main() {
       rock::AgedStratumDensity{densities_for_age, age_of_world},
       mass(si::tonne)
     ), 
-    world_radius
+    meter
   );
 
   auto crust_summarize = rock::crust_summarization<M,F>(
