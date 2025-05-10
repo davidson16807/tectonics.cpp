@@ -310,7 +310,7 @@ int main() {
   dymaxion::VertexPositions fine_vertex_positions(fine.grid);
   std::vector<length> displacements(fine.vertex_count());
   std::vector<float> buffer_color_values(fine.vertex_count());
-  std::vector<std::byte> buffer_culling(fine.vertex_count());
+  std::vector<std::uint8_t> buffer_culling(fine.vertex_count());
   std::vector<float> buffer_scalars1(fine.vertex_count());
   std::vector<float> buffer_scalars2(fine.vertex_count());
   std::vector<float> buffer_uniform(fine.vertex_count(), 1.0f);

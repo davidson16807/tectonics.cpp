@@ -320,7 +320,7 @@ int main() {
   std::vector<float> buffer_scalars1(coarse.vertex_count());
   std::vector<float> buffer_scalars2(coarse.vertex_count());
   std::vector<float> buffer_uniform(coarse.vertex_count(), 1.0f);
-  std::vector<std::byte> buffer_culling(coarse.vertex_count(), std::byte(0));
+  std::vector<std::uint8_t> buffer_culling(coarse.vertex_count(), std::byte(0));
   std::vector<glm::vec3> buffer_positions(coarse.vertex_count());
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(coarse_vertex_positions));
   std::cout << "vertex count:        " << coarse.vertex_count() << std::endl;

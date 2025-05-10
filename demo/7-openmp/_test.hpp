@@ -317,7 +317,7 @@ int main() {
   std::vector<length> displacements_i(fine.vertex_count());
   std::vector<std::vector<length>> displacements(P, displacements_i);
   std::vector<float> buffer_color_values(fine.vertex_count());
-  std::vector<std::byte> buffer_culling_i(fine.vertex_count());
+  std::vector<std::uint8_t> buffer_culling_i(fine.vertex_count());
   std::vector<std::vector<std::byte>> buffer_culling(P, buffer_culling_i);
   std::vector<float> buffer_scalars1(fine.vertex_count());
   std::vector<float> buffer_uniform(fine.vertex_count(), 1.0f);
