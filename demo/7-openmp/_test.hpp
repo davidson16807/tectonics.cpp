@@ -167,7 +167,7 @@ int main() {
   const int F(5);
 
   // GENERATE THE CRUST
-  rock::EarthlikeIgneousFormationGeneration earthlike(fine, world_radius/2.0f, 0.5f, 10, world_radius);
+  rock::EarthlikeIgneousFormationGeneration earthlike(fine, world_radius/2.0f, 0.5f, 10);
   // earthlike is only used for an in-order traversal, below, so its faster to use GridCache
   // it only uses vertex_positions and vertex_dual_areas, of which both are cached
 

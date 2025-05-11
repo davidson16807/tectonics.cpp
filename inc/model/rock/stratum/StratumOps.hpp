@@ -30,6 +30,18 @@ namespace rock
             minerals()
         {}
 
+        Stratum<M> scale(const Stratum<M>& a, float scalar) const
+        {
+            Stratum<M> output;
+            for (std::size_t i=0; i<M; i++)
+            {
+                output.minerals[i].mass = a.minerals[i].mass * scalar;
+            }
+            output.age_of_world_when_first_deposited = a.age_of_world_when_first_deposited;
+            output.age_of_world_when_last_deposited = a.age_of_world_when_last_deposited;
+            return output;
+        }
+
         void scale(const Stratum<M>& a, float scalar, Stratum<M>& output) const
         {
             output = a;

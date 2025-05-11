@@ -151,7 +151,7 @@ int main() {
   const int F(5);
 
   // GENERATE THE CRUST
-  rock::EarthlikeIgneousFormationGeneration earthlike(fine, world_radius/2.0f, 0.5f, 10, world_radius);
+  rock::EarthlikeIgneousFormationGeneration earthlike(fine, world_radius/2.0f, 0.5f, 10);
   auto generation = earthlike(12.0f, 1.1e4f);
   rock::StratumStore<M> empty_stratum;
   rock::Formation<M> empty_formation(fine.vertex_count(), empty_stratum);

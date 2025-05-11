@@ -10,8 +10,8 @@
 #include <field/Compose.hpp>                        // Compose
 #include <field/noise/RankedFractalBrownianNoise.hpp>// field::ranked_fractal_brownian_noise
 
-#include <model/rock/stratum/StratumForAreaAndElevation.hpp>  // StratumForAreaAndElevation
-#include <model/rock/formation/FormationGenerationByElevation.hpp>  // FormationGenerationByElevation
+#include <model/rock/stratum/StratumForElevation.hpp>  // StratumForElevation
+#include <model/rock/formation/FormationGeneration.hpp>  // FormationGeneration
 
 namespace rock
 {
@@ -24,21 +24,18 @@ namespace rock
         const length max_wavelength;
         const scalar hurst_exponent;
         const id octave_count;
-        const length world_radius;
 
     public:
         EarthlikeIgneousFormationGeneration(
             const Grid& grid, 
             const length max_wavelength, 
             const scalar hurst_exponent, 
-            const id octave_count,
-            const length world_radius
+            const id octave_count
         ):
           grid(grid),
           max_wavelength(max_wavelength),
           hurst_exponent(hurst_exponent),
-          octave_count(octave_count),
-          world_radius(world_radius)
+          octave_count(octave_count)
         {}
 
         auto operator() (const scalar seed1, const scalar seed2) const
@@ -61,17 +58,17 @@ namespace rock
             auto hypsometry_cdfi = inspected::inverse_by_newtons_method(hypsometry_cdf, hypsometry_pdf, 0.5f, 30);
             auto hypsometry_cdfi_meters = relation::ScalarRelation(1.0f, meter, hypsometry_cdfi);
 
-            rock::StratumForAreaAndElevation stratum_for_area_elevation {
+            rock::StratumForElevation stratum_per_area_for_elevation {
               // displacements are from Charette & Smith 2010 (shallow ocean), enclopedia britannica (shelf bottom"continental slope"), 
               // wikipedia (shelf top), and Sverdrup & Fleming 1942 (land)
               // Funck et al. (2003) suggests a sudden transition from felsic to mafic occuring at ~4km depth or 8km thickness
               relation::get_linear_interpolation_function(si::meter, si::megayear, 
                 {-11000.0, -5000.0, -4500.0, -2000.0, -900.0},
                 {250.0,    100.0,   0.0,       100.0, 1000.0}),
-              relation::get_linear_interpolation_function(si::meter, si::kilogram/si::meter2,
+              relation::get_linear_interpolation_function(si::meter, si::kilogram, // per unit of area as defined by `grid`
                 {-5000.0,              -4500.0},
                 {3300.0 * 7100.0, 2890.0 * 0.0}),
-              relation::get_linear_interpolation_function(si::meter, 2600.0 * si::kilogram/si::meter2,
+              relation::get_linear_interpolation_function(si::meter, 2600.0 * si::kilogram, // per unit of area as defined by `grid`
                 {-5000.0, -4500.0,  -950.0,  840.0,    8848.0},
                 {0.0,      7100.0, 28300.0, 36900.0, 70000.0}),
               relation::get_linear_interpolation_function(si::meter, 1.0, 
@@ -82,14 +79,15 @@ namespace rock
                 {0.15,      0.15}) // based on estimate from Wikipedia
             };
 
-            return rock::FormationGenerationByElevation(
+            return rock::FormationGeneration(
                 grid, 
                 field::compose(
-                    hypsometry_cdfi_meters,
-                    field::ranked_fractal_brownian_noise<3>(octave_count, hurst_exponent, meter/max_wavelength, seed1, seed2)
-                ), 
-                stratum_for_area_elevation,
-                world_radius
+                    stratum_per_area_for_elevation,
+                    field::compose(
+                        hypsometry_cdfi_meters,
+                        field::ranked_fractal_brownian_noise<3>(octave_count, hurst_exponent, meter/max_wavelength, seed1, seed2)
+                    )
+                )
             );
 
         }
