@@ -259,7 +259,7 @@ int main() {
   auto locals = rock::LithosphereSummary(P, crust_summary);
   auto globals = rock::LithosphereSummary(P, crust_summary);
   rock::CrustSummary master(fine.vertex_count());
-  std::vector<rock::CrustSummary> summaries(P, crust_summary); // the global CrustSummary localized into each plate
+  std::vector<rock::CrustSummary> localized(P, crust_summary); // the global CrustSummary localized into each plate
   rock::FormationSummary scratch_formation(fine.vertex_count());
   std::vector<rock::FormationSummary> scratch(P, scratch_formation); // scratch memory for LithosphereSummarization
   bools alone(fine.vertex_count());
@@ -437,7 +437,7 @@ int main() {
       summarization .summarize (fine, plates, locals, scratch);   // summarize each plate into a (e.g.) CrustSummary raster
       frames        .globalize (orientations, locals, globals);   // resample plate-specific rasters onto a global grid
       summarization .flatten   (globals,      master);            // condense globalized rasters into e.g. LithosphereSummary
-      frames        .localize  (orientations, master, summaries); // resample global raster to a plate-specific for each plate
+      frames        .localize  (orientations, master, localized); // resample global raster to a plate-specific for each plate
       // summarization uses fine only for vertex_dual_areas, so it's faster if fine is a GridCache
 
       // rifting and subduction
@@ -445,10 +445,10 @@ int main() {
       {
         // find rifting and subduction zones
         existance(locals[i], exists);
-        predicates.alone(summaries[i], alone);
-        predicates.includes(i, summaries[i], top);
+        predicates.alone(localized[i], alone);
+        predicates.includes(i, localized[i], top);
         // predicates.rifting(fine, alone, top, exists, rifting, bools_scratch);
-        // predicates.foundering(mantle_density, summaries[i], foundering);
+        // predicates.foundering(mantle_density, localized[i], foundering);
         // predicates.detaching(fine, alone, top, exists, foundering, detaching, bools_scratch);
 
         // // apply rifting and subduction
@@ -470,7 +470,7 @@ int main() {
 
         copy(top, buffer_scalars2_i);
 
-        // place_counts(summaries[i], buffer_scalars2_i);
+        // place_counts(localized[i], buffer_scalars2_i);
 
         // fracturing.exists(fine_plate_map, i, buffer_scalars2[i]);
 
