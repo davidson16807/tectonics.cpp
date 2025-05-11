@@ -1,7 +1,7 @@
 #pragma once
 
-#include <model/rock/stratum/StratumStore.hpp>
 #include <model/rock/stratum/Stratum.hpp>
+#include <model/rock/mineral/Mineral.hpp>
 
 namespace rock {
 
@@ -47,7 +47,7 @@ namespace rock {
         {}
 
         using size_type = std::size_t; 
-        using value_type = StratumStore<M>; 
+        using value_type = Stratum<M>; 
 
         auto operator() (const si::length<double> elevation) const
         {
