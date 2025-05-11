@@ -444,7 +444,7 @@ int main() {
       for (std::size_t i(0); i < P; ++i)
       {
         // find rifting and subduction zones
-        existance(summaries[i], exists);
+        existance(locals[i], exists);
         predicates.alone(summaries[i], alone);
         predicates.includes(i, summaries[i], top);
         // predicates.rifting(fine, alone, top, exists, rifting, bools_scratch);
