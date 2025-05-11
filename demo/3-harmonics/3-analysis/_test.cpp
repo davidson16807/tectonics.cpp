@@ -159,7 +159,7 @@ int main() {
   std::vector<float> buffer_scalars2(grid.vertex_count());
   std::vector<float> buffer_scalars1(grid.vertex_count());
   std::vector<float> buffer_uniform(grid.vertex_count(), 1.0f);
-  std::vector<std::byte>  buffer_culling(grid.vertex_count(), std::byte(0));
+  std::vector<std::uint8_t>  buffer_culling(grid.vertex_count(), std::uint8_t(1));
   std::vector<glm::vec3> buffer_positions(grid.vertex_count());
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(vertex_positions));
   std::cout << "vertex count:        " << grid.vertex_count() << std::endl;
