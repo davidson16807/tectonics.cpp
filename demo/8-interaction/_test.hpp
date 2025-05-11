@@ -262,7 +262,7 @@ int main() {
   std::vector<rock::CrustSummary> localized(P, crust_summary); // the global CrustSummary localized into each plate
   rock::FormationSummary scratch_formation(fine.vertex_count());
   std::vector<rock::FormationSummary> scratch(P, scratch_formation); // scratch memory for LithosphereSummarization
-  bools alone(fine.vertex_count());
+  bools ownable(fine.vertex_count());
   bools top(fine.vertex_count());
   bools exists(fine.vertex_count());
   bools rifting(fine.vertex_count());
@@ -397,10 +397,8 @@ int main() {
 
   auto summarization = rock::lithosphere_summarization<M,F>(crust_summarize, crust_summary_ops);
   iterated::Bitset<adapted::BooleanBitset> bitset;
-  rock::CrustSummaryPredicates predicates{
-    unlayered::Morphology{bitset},
-    bitset
-  };
+  unlayered::Morphology morphology{bitset};
+  rock::CrustSummaryPredicates predicates{morphology, bitset};
 
   const float pi(3.1415926535);
   // const int frame_count(1000);
@@ -441,16 +439,17 @@ int main() {
       // summarization uses fine only for vertex_dual_areas, so it's faster if fine is a GridCache
 
       // rifting and subduction
-      for (std::size_t i(0); i < P; ++i)
+      for (std::size_t i(1); i < 2; ++i)
       {
         // find rifting and subduction zones
         existance(locals[i], exists);
-        predicates.alone(localized[i], alone);
-        // predicates.includes(i, localized[i], top);
-        predicates.top(i, localized[i], top);
-        // predicates.rifting(fine, alone, top, exists, rifting, bools_scratch);
+        predicates.ownable(i, localized[i], ownable);
+        predicates.rifting(fine, ownable, exists, rifting, bools_scratch);
+        // morphology.outshell(fine, exists, rifting);
+        // bitset.intersect(rifting, ownable, rifting);
+        // predicates.rifting(fine, ownable, exists, rifting, bools_scratch);
         // predicates.foundering(mantle_density, localized[i], foundering);
-        // predicates.detaching(fine, alone, top, exists, foundering, detaching, bools_scratch);
+        // predicates.detaching(fine, ownable, top, exists, foundering, detaching, bools_scratch);
 
         // // apply rifting and subduction
         // crust_ops.ternary(rifting, procedural::uniform(fresh_column), plates[i], plates[i]);
@@ -467,9 +466,9 @@ int main() {
            we can localize density and thickness and then calculate things on the localization for a performance gain.
         */
 
-        copy(exists, buffer_exists_i);
+        copy(procedural::uniform(true), buffer_exists_i);
 
-        copy(top, buffer_scalars2_i);
+        copy(rifting, buffer_scalars2_i);
 
         // place_counts(localized[i], buffer_scalars2_i);
 

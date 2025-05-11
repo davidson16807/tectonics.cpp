@@ -54,9 +54,9 @@ namespace rock {
         */
 
         /*
-        `alone` returns a boolean raster indicating where cells are occupied by one or fewer plate
+        `solo` returns a boolean raster indicating where cells are occupied by one or fewer plate
         */
-        void alone(
+        void solo(
             const CrustSummary& crust,
             bools& out
         ) const {
@@ -109,6 +109,23 @@ namespace rock {
         }
 
         /*
+        `ownable` returns a boolean raster indicating cells that can be owned by a plate of given id
+        */
+        void ownable(
+            const int plate_id,
+            const CrustSummary& crust,
+            bools& out
+        ) const {
+            for (std::size_t i = 0; i < crust.size(); ++i)
+            {
+                out[i] = 
+                    crust[i].plate_count() == 0
+                || (crust[i].plate_count() == 1 &&  
+                    crust[i].is_top(plate_id));
+            }
+        }
+
+        /*
         `foundering` returns a boolean raster indicating where an entire rock column is foundering
         */
         void foundering(
@@ -122,30 +139,26 @@ namespace rock {
             }
         }
 
-
         /*
         `rifting` returns a scalar raster indicating where gaps in the plates should be filled by a given plate
         */
         template<typename Grid>
         void rifting(
             const Grid& grid,
-            const bools& alone,
-            const bools& top,
+            const bools& ownable,
             const bools& exists,
             bools& out,
             bools& scratch
         ) const {
             /*
             The implementation below is equivalent to the following set logic:
-                rifting = erode(alone ∩ top) ∩ margin(exists)
+                rifting = erode(ownable) ∩ margin(exists)
             */
-            bools* riftable           = &out;
-            bools* will_stay_riftable = &scratch;
-            bools* just_outside       = &out;
-            bitsets.intersect  (alone, top,      *riftable);
-            morphology.erode   (grid, *riftable, *will_stay_riftable);
-            morphology.outshell(grid, exists,   *just_outside);
-            bitsets.intersect  (*will_stay_riftable, *just_outside, out);
+            bools* will_stay_ownable = &scratch;
+            bools* just_outside      = &out;
+            morphology.erode   (grid, ownable,      *will_stay_ownable);
+            morphology.outshell(grid, exists,       *just_outside);
+            bitsets.intersect  (*will_stay_ownable, *just_outside, out);
         }
 
         /*
@@ -154,7 +167,7 @@ namespace rock {
         template<typename Grid>
         void detaching(
             const Grid& grid,
-            const bools& alone,
+            const bools& solo,
             const bools& top,
             const bools& exists,
             const bools& foundering,
@@ -163,7 +176,7 @@ namespace rock {
         ) const {
             /*
             The implementation below is equivalent to the following set logic:
-                detaching = erode(!alone ∩ !top) ∩ padding(exists) ∩ foundering
+                detaching = erode(!solo ∩ !top) ∩ padding(exists) ∩ foundering
             */
             bools* not_alone   = &out;
             bools* not_top     = &scratch;
@@ -171,7 +184,7 @@ namespace rock {
             // bools* will_stay_subducting = &scratch;
             bools* just_inside = &out;
             bools* detachable  = &out;
-            bitsets.negate      (alone,                *not_alone);
+            bitsets.negate      (solo,                *not_alone);
             bitsets.negate      (top,                  *not_top);
             bitsets.intersect   (*not_alone, *not_top,   *subducting);
             // morphology.erode  (grid, *subducting, will_stay_subducting); // NOTE: this was in the js implementation but it is suspected to be wrong
