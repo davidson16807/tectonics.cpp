@@ -4,7 +4,7 @@ this file tests an assortment of functionality within rock::, namely:
 * Crust
 * CrustOps.absorb()
 * CrustMass()
-* FormationGenerationByElevation[]
+* EarthlikeIgneousFormationGeneration
 */
 
 // std libraries
@@ -46,7 +46,6 @@ this file tests an assortment of functionality within rock::, namely:
 #include <model/rock/stratum/StratumProperties.hpp>  // StratumProperties
 #include <model/rock/stratum/StratumSummaryProperties.hpp>  // StratumSummaryIsostaticDisplacement
 #include <model/rock/formation/FormationOps.hpp>  // CrustSummaryOps
-#include <model/rock/formation/FormationGenerationByElevation.hpp>  // FormationGenerationByElevation
 #include <model/rock/formation/FormationSummaryOps.hpp>  // CrustSummaryOps
 #include <model/rock/crust/CrustOps.hpp>  // CrustOps
 #include <model/rock/crust/CrustProperties.hpp>  // CrustMass
@@ -70,7 +69,7 @@ TEST_CASE( "CrustOps::absorb() monoid", "[rock]" ) {
 
     int vertices_per_square_side(2);
     dymaxion::Grid<int,int,float> grid(radius/meter, vertices_per_square_side);
-    rock::EarthlikeIgneousFormationGeneration generation(grid, radius/2.0f, 0.5f, 10, radius);
+    rock::EarthlikeIgneousFormationGeneration generation(grid, radius/2.0f, 0.5f, 10);
 
     iterated::Identity copy{};
     rock::Formation<M> formation1(grid.vertex_count());
@@ -132,7 +131,7 @@ TEST_CASE( "CrustOps::absorb() mass conservation", "[rock]" ) {
 
     int vertices_per_square_side(2);
     dymaxion::Grid<int,int,float> grid(radius/meter, vertices_per_square_side);
-    rock::EarthlikeIgneousFormationGeneration generation(grid, radius/2.0f, 0.5f, 10, radius);
+    rock::EarthlikeIgneousFormationGeneration generation(grid, radius/2.0f, 0.5f, 10);
 
     iterated::Identity copy{};
     rock::Formation<M> formation1(grid.vertex_count());

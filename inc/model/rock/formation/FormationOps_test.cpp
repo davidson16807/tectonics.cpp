@@ -27,7 +27,7 @@ TEST_CASE( "FormationOps::absorb() commutative monoid", "[rock]" ) {
 
     int vertices_per_square_side(4);
     dymaxion::Grid<int,int,float> grid(radius/meter, vertices_per_square_side);
-    rock::EarthlikeIgneousFormationGeneration generation(grid, radius/2.0f, 0.5f, 10, radius);
+    rock::EarthlikeIgneousFormationGeneration generation(grid, radius/2.0f, 0.5f, 10);
 
     iterated::Identity copy{};
     rock::Formation<M> formation1(grid.vertex_count());

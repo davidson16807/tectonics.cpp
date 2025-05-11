@@ -9,7 +9,7 @@ this file tests an assortment of functionality within rock::, namely:
 * FormationOps.flatten()
 * CrustSummarization()
 * FormationSummarization()
-* FormationGenerationByElevation[]
+* EarthlikeIgneousFormationGeneration[]
 
 It does so by testing that mass properties are commutative as the limit of this diagram:
 
@@ -61,7 +61,6 @@ It does so by testing that mass properties are commutative as the limit of this 
 #include <model/rock/stratum/StratumSummaryOps.hpp>  // StratumSummaryOps
 #include <model/rock/stratum/StratumSummaryProperties.hpp>  // StratumSummaryIsostaticDisplacement
 #include <model/rock/formation/FormationOps.hpp>  // FormationOps
-#include <model/rock/formation/FormationGenerationByElevation.hpp>  // FormationGenerationByElevation
 #include <model/rock/formation/FormationSummarization.hpp>  // FormationSummarization
 #include <model/rock/formation/FormationProperties.hpp>  // FormationMass
 #include <model/rock/formation/FormationSummaryOps.hpp>  // FormationSummaryOps
@@ -89,7 +88,7 @@ TEST_CASE( "CrustOps::flatten()/CrustSummarization() mass conservation", "[rock]
 
     int vertices_per_square_side(2);
     dymaxion::Grid<int,int,float> grid(radius/meter, vertices_per_square_side);
-    rock::EarthlikeIgneousFormationGeneration generation(grid, radius/2.0f, 0.5f, 10, radius);
+    rock::EarthlikeIgneousFormationGeneration generation(grid, radius/2.0f, 0.5f, 10);
 
     iterated::Identity copy{};
     rock::Formation<M> formation1(grid.vertex_count());
