@@ -446,7 +446,8 @@ int main() {
         // find rifting and subduction zones
         existance(locals[i], exists);
         predicates.alone(localized[i], alone);
-        predicates.includes(i, localized[i], top);
+        // predicates.includes(i, localized[i], top);
+        predicates.top(i, localized[i], top);
         // predicates.rifting(fine, alone, top, exists, rifting, bools_scratch);
         // predicates.foundering(mantle_density, localized[i], foundering);
         // predicates.detaching(fine, alone, top, exists, foundering, detaching, bools_scratch);
