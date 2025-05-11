@@ -4,7 +4,7 @@ this file tests an assortment of functionality within rock::, namely:
 * Crust
 * CrustOps.absorb()
 * CrustMass()
-* FormationGeneration[]
+* FormationGenerationByElevation[]
 */
 
 // std libraries
@@ -46,7 +46,7 @@ this file tests an assortment of functionality within rock::, namely:
 #include <model/rock/stratum/StratumProperties.hpp>  // StratumProperties
 #include <model/rock/stratum/StratumSummaryProperties.hpp>  // StratumSummaryIsostaticDisplacement
 #include <model/rock/formation/FormationOps.hpp>  // CrustSummaryOps
-#include <model/rock/formation/FormationGeneration.hpp>  // FormationGeneration
+#include <model/rock/formation/FormationGenerationByElevation.hpp>  // FormationGenerationByElevation
 #include <model/rock/formation/FormationSummaryOps.hpp>  // CrustSummaryOps
 #include <model/rock/crust/CrustOps.hpp>  // CrustOps
 #include <model/rock/crust/CrustProperties.hpp>  // CrustMass

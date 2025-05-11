@@ -105,7 +105,7 @@ TEST_CASE( "Formation combine() mass conservation", "[rock]" ) {
         {0.15,      0.15}) // based on estimate from Wikipedia
     };
 
-    rock::FormationGeneration igneous(grid, 
+    rock::FormationGenerationByElevation igneous(grid, 
         field::compose(
             hypsometry_cdfi_meters,
             field::ranked_fractal_brownian_noise<3>(10, 0.5f, 2.0f*meter/radius, 12.0f, 1.1e4f)

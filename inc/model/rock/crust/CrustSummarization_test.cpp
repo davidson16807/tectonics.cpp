@@ -9,7 +9,7 @@ this file tests an assortment of functionality within rock::, namely:
 * FormationOps.flatten()
 * CrustSummarization()
 * FormationSummarization()
-* FormationGeneration[]
+* FormationGenerationByElevation[]
 
 It does so by testing that mass properties are commutative as the limit of this diagram:
 
@@ -61,7 +61,7 @@ It does so by testing that mass properties are commutative as the limit of this 
 #include <model/rock/stratum/StratumSummaryOps.hpp>  // StratumSummaryOps
 #include <model/rock/stratum/StratumSummaryProperties.hpp>  // StratumSummaryIsostaticDisplacement
 #include <model/rock/formation/FormationOps.hpp>  // FormationOps
-#include <model/rock/formation/FormationGeneration.hpp>  // FormationGeneration
+#include <model/rock/formation/FormationGenerationByElevation.hpp>  // FormationGenerationByElevation
 #include <model/rock/formation/FormationSummarization.hpp>  // FormationSummarization
 #include <model/rock/formation/FormationProperties.hpp>  // FormationMass
 #include <model/rock/formation/FormationSummaryOps.hpp>  // FormationSummaryOps

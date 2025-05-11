@@ -2,7 +2,7 @@
 /*
 this file is primarily meant to test StratumGenerator[], 
 but incidentally tests other functionality within rock::, to summarize:
-* FormationGeneration[]
+* FormationGenerationByElevation[]
 * Formation
 * FormationSummary
 * FormationSummarization()
@@ -77,10 +77,10 @@ It does so by testing that this diagram commutes:
 #include <model/rock/stratum/StratumSummarization.hpp>  // StratumSummarization
 #include <model/rock/stratum/StratumSummaryProperties.hpp>  // StratumSummaryIsostaticDisplacement
 #include <model/rock/stratum/StratumForAreaAndElevation.hpp>  // StratumForAreaAndElevation
-#include <model/rock/formation/FormationGeneration.hpp>  // FormationGeneration
+#include <model/rock/formation/FormationGenerationByElevation.hpp>  // FormationGenerationByElevation
 #include <model/rock/formation/FormationSummarization.hpp>  // FormationSummarization
 
-TEST_CASE( "FormationGeneration must be able to achieve desired displacements as indicated by elevation_for_position", "[rock]" ) {
+TEST_CASE( "FormationGenerationByElevation must be able to achieve desired displacements as indicated by elevation_for_position", "[rock]" ) {
 
     using mass = si::mass<float>;
     using length = si::length<float>;
@@ -174,7 +174,7 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
           {0.15,      0.15}) // based on estimate from Wikipedia
     };
 
-    rock::FormationGeneration igneous(grid, elevation_for_position, stratum_for_area_elevation, radius);
+    rock::FormationGenerationByElevation igneous(grid, elevation_for_position, stratum_for_area_elevation, radius);
 
     rock::FormationSummary summary(grid.vertex_count());
     std::vector<length> actual_displacements(grid.vertex_count());

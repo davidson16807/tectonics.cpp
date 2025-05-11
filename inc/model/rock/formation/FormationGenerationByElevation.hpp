@@ -6,7 +6,7 @@
 namespace rock {
 
     /* 
-    `FormationGeneration` maps: id ⟶ stratum
+    `FormationGenerationByElevation` maps: id ⟶ stratum
 
     It accomplishes this by traversing the following diagram:
 
@@ -20,7 +20,7 @@ namespace rock {
         typename ElevationForPosition,
         typename StratumForAreaElevation,
         typename length>
-    class FormationGeneration {
+    class FormationGenerationByElevation {
 
         using id     = typename Grid::size_type;
         using scalar = typename Grid::value_type;
@@ -34,7 +34,7 @@ namespace rock {
 
     public:
 
-        constexpr explicit FormationGeneration(
+        constexpr explicit FormationGenerationByElevation(
             const Grid&                    grid,
             const ElevationForPosition&    elevation_for_position, 
             const StratumForAreaElevation& stratum_for_area_elevation,

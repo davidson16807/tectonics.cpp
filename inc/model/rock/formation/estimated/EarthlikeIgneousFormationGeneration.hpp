@@ -11,7 +11,7 @@
 #include <field/noise/RankedFractalBrownianNoise.hpp>// field::ranked_fractal_brownian_noise
 
 #include <model/rock/stratum/StratumForAreaAndElevation.hpp>  // StratumForAreaAndElevation
-#include <model/rock/formation/FormationGeneration.hpp>  // FormationGeneration
+#include <model/rock/formation/FormationGenerationByElevation.hpp>  // FormationGenerationByElevation
 
 namespace rock
 {
@@ -82,7 +82,7 @@ namespace rock
                 {0.15,      0.15}) // based on estimate from Wikipedia
             };
 
-            return rock::FormationGeneration(
+            return rock::FormationGenerationByElevation(
                 grid, 
                 field::compose(
                     hypsometry_cdfi_meters,
