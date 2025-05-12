@@ -8,7 +8,7 @@
 #include <index/iterated/Nary.hpp>
 #include <index/procedural/Uniform.hpp>
 
-#include <model/rock/column/Column.hpp>
+#include <model/rock/strata/Strata.hpp>
 #include <model/rock/formation/FormationOps.hpp>
 #include <model/rock/formation/FormationPredicates.hpp>
 #include <model/rock/crust/FormationType.hpp>
@@ -94,19 +94,19 @@ namespace rock{
 
         }
 
-        void ternary(const bools& condition, const Crust<M,F>& crust, const Column<M,F>& column, Crust<M,F>& out) const 
+        void ternary(const bools& condition, const Crust<M,F>& crust, const Strata<M,F>& strata, Crust<M,F>& out) const 
         {
             for (std::size_t i(0); i < F; i++)
             {
-                ternary_(condition, crust[i], procedural::uniform(column[i]), out[i]);
+                ternary_(condition, crust[i], procedural::uniform(strata[i]), out[i]);
             }
         }
 
-        void ternary(const bools& condition, const Column<M,F>& column, const Crust<M,F>& crust, Crust<M,F>& out) const 
+        void ternary(const bools& condition, const Strata<M,F>& strata, const Crust<M,F>& crust, Crust<M,F>& out) const 
         {
             for (std::size_t i(0); i < F; i++)
             {
-                ternary_(condition, procedural::uniform(column[i]), crust[i], out[i]);
+                ternary_(condition, procedural::uniform(strata[i]), crust[i], out[i]);
             }
         }
 

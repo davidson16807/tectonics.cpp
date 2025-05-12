@@ -12,7 +12,7 @@ namespace rock
 {
 
     template<std::size_t mineral_count, std::size_t formation_count>
-    using Column = std::array<StratumStore<mineral_count>,formation_count>;
+    using Strata = std::array<StratumStore<mineral_count>,formation_count>;
 
 }
 
