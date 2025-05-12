@@ -54,19 +54,6 @@ namespace rock {
         */
 
         /*
-        `solo` returns a boolean raster indicating where cells are occupied by one or fewer plate
-        */
-        void solo(
-            const CrustSummary& crust,
-            bools& out
-        ) const {
-            for (std::size_t i = 0; i < crust.size(); ++i)
-            {
-                out[i] = crust[i].plate_count() <= 1;
-            }
-        }
-
-        /*
         `exists` returns a boolean raster indicating where cells are occupied by a plate of given id
         */
         void exists(

@@ -442,7 +442,7 @@ int main() {
       for (std::size_t i(1); i < 2; ++i)
       {
         // find rifting and subduction zones
-        predicates.exists(locals[i], exists);
+        predicates.exists(i, locals[i], exists);
         predicates.ownable(i, localized[i], ownable);
         predicates.rifting(fine, ownable, exists, rifting, bools_scratch);
         // morphology.outshell(fine, exists, rifting);
