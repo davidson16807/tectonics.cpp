@@ -175,7 +175,7 @@ int main() {
 
   auto generation = earthlike(12.0f, 1.1e4f);
   rock::StratumStore<M> empty_stratum;
-  rock::Column<M,F> empty_column{empty_stratum};
+  rock::Strata<M,F> empty_strata{empty_stratum};
   rock::Formation<M> empty_formation(fine.vertex_count(), empty_stratum);
   rock::Formation<M> igneous_formation(fine.vertex_count());
   copy(generation, igneous_formation);
@@ -318,7 +318,7 @@ int main() {
       auto slab_drag_per_angular_velocity = motion.drag_per_angular_velocity(slab_length, slab_thickness, slab_width);
       auto slab_torque_in_newton_meters = motion.rigid_body_torque(fine_slab_pull, si::newton, si::newton*si::meter);
       angular_velocities_in_seconds[i] = slab_torque_in_newton_meters*(si::newton*si::meter/slab_drag_per_angular_velocity*si::second);
-      crust_ops.ternary(fine_plate_existance, plates[i], empty_column, plates[i]);
+      crust_ops.ternary(fine_plate_existance, plates[i], empty_strata, plates[i]);
   }
 
   // flatten raster for OpenGL
@@ -442,7 +442,7 @@ int main() {
       for (std::size_t i(1); i < 2; ++i)
       {
         // find rifting and subduction zones
-        existance(locals[i], exists);
+        predicates.exists(locals[i], exists);
         predicates.ownable(i, localized[i], ownable);
         predicates.rifting(fine, ownable, exists, rifting, bools_scratch);
         // morphology.outshell(fine, exists, rifting);
@@ -453,7 +453,7 @@ int main() {
 
         // // apply rifting and subduction
         // crust_ops.ternary(rifting, procedural::uniform(fresh_column), plates[i], plates[i]);
-        // crust_ops.ternary(detaching, procedural::uniform(empty_column), plates[i], plates[i]);
+        // crust_ops.ternary(detaching, procedural::uniform(empty_strata), plates[i], plates[i]);
 
         /*
         Q: Why don't we determine rifting on master, then localize the result to each plate?
