@@ -67,11 +67,12 @@ TEST_CASE( "drag_per_angular_velocity", "[rock]" ) {
 
     unlayered::VectorCalculusByFundamentalTheorem calculus;
     auto motion = rock::crust_motion<M,float,double>(
-        calculus, grid, 
+        calculus,  
         world_radius, 
         acceleration(si::standard_gravity), 
         mantle_density, 
-        mantle_viscosity
+        mantle_viscosity,
+        length(si::meter)
     );
 
     std::vector<length> dimensions{
@@ -175,11 +176,12 @@ TEST_CASE( "slab properties that use singleton data structures", "[rock]" ) {
 
     unlayered::VectorCalculusByFundamentalTheorem calculus;
     auto motion = rock::crust_motion<M,float,double>(
-        calculus, grid, 
+        calculus,  
         world_radius, 
         acceleration(si::standard_gravity), 
         mantle_density, 
-        mantle_viscosity
+        mantle_viscosity,
+        length(si::meter)
     );
 
     std::vector<length> positive_lengths{
@@ -407,11 +409,12 @@ TEST_CASE( "buoyancy_forces ⋅ surface normal == 0", "[rock]" ) {
     index(coarse_plate_map, vertex_downsampling_ids, fine_plate_map);
 
     auto motion = rock::crust_motion<M,float,double>(
-        calculus, fine, 
+        calculus, 
         world_radius, 
         acceleration(si::standard_gravity), 
         mantle_density, 
-        mantle_viscosity
+        mantle_viscosity,
+        meter
     );
 
     dymaxion::VertexNormals normals(fine);
@@ -433,7 +436,7 @@ TEST_CASE( "buoyancy_forces ⋅ surface normal == 0", "[rock]" ) {
     for (int i = 0; i < plate_count; ++i)
     {
         fracturing.exists(fine_plate_map, i, fine_plate_existance);
-        motion.slab_pull(fine_buoyancy_pressure, fine_plate_existance, si::force<float>(si::newton), fine_slab_pull);
+        motion.slab_pull(fine, fine_buoyancy_pressure, fine_plate_existance, si::force<float>(si::newton), fine_slab_pull);
 
         geometric.dot(fine_slab_pull, normals, dot_lengths);
         metric3.length(fine_slab_pull, fine_slab_pull_lengths);
@@ -444,14 +447,14 @@ TEST_CASE( "buoyancy_forces ⋅ surface normal == 0", "[rock]" ) {
         REQUIRE(order.less_than(dot_lengths, procedural::uniform(0.01f)));
 
         motion.is_slab(fine_slab_pull, fine_slab_existance);
-        auto slab_volume = motion.slab_volume(formation_summary, fine_slab_existance);
-        auto slab_area = motion.slab_area(formation_summary, fine_slab_existance);
+        auto slab_volume = motion.slab_volume(fine, formation_summary, fine_slab_existance);
+        auto slab_area = motion.slab_area(fine, formation_summary, fine_slab_existance);
         auto slab_cell_count = motion.slab_cell_count(fine_slab_existance);
         auto slab_thickness = motion.slab_thickness(slab_volume, slab_area);
         auto slab_length = motion.slab_length(slab_area, slab_cell_count);
         auto slab_width = motion.slab_width(slab_area, slab_length);
         auto slab_drag_per_angular_velocity = motion.drag_per_angular_velocity(slab_length, slab_thickness, slab_width);
-        auto slab_torque = motion.rigid_body_torque(fine_slab_pull, si::newton, si::newton*si::meter);
+        auto slab_torque = motion.rigid_body_torque(fine, fine_slab_pull, si::newton, si::newton*si::meter);
         auto slab_angular_velocity = glm::length(slab_torque)*si::newton*si::meter/slab_drag_per_angular_velocity;
         auto slab_period = 1.0/slab_angular_velocity;
 

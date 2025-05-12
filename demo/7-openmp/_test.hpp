@@ -284,11 +284,12 @@ int main() {
 
   // CALCULATE MOTION FOR EACH PLATE
   auto motion = rock::crust_motion<M,float,double>(
-      calculus, fine, 
+      calculus, 
       world_radius, 
       acceleration(si::standard_gravity), 
       mantle_density, 
-      mantle_viscosity
+      mantle_viscosity,
+      meter
   );
   std::vector<bool> fine_plate_existance(fine.vertex_count());
   std::vector<vec3> fine_slab_pull(fine.vertex_count());
@@ -298,16 +299,16 @@ int main() {
   for (int i = 0; i < P; ++i)
   {
       fracturing.exists(fine_plate_map, i, fine_plate_existance);
-      motion.slab_pull(fine_buoyancy_pressure, fine_plate_existance, si::force<float>(si::newton), fine_slab_pull);
+      motion.slab_pull(fine, fine_buoyancy_pressure, fine_plate_existance, si::force<float>(si::newton), fine_slab_pull);
       motion.is_slab(fine_slab_pull, fine_slab_existance);
-      auto slab_volume = motion.slab_volume(formation_summary, fine_slab_existance);
-      auto slab_area = motion.slab_area(formation_summary, fine_slab_existance);
+      auto slab_volume = motion.slab_volume(fine, formation_summary, fine_slab_existance);
+      auto slab_area = motion.slab_area(fine, formation_summary, fine_slab_existance);
       auto slab_cell_count = motion.slab_cell_count(fine_slab_existance);
       auto slab_thickness = motion.slab_thickness(slab_volume, slab_area);
       auto slab_length = motion.slab_length(slab_area, slab_cell_count);
       auto slab_width = motion.slab_width(slab_area, slab_length);
       auto slab_drag_per_angular_velocity = motion.drag_per_angular_velocity(slab_length, slab_thickness, slab_width);
-      auto slab_torque_in_newton_meters = motion.rigid_body_torque(fine_slab_pull, si::newton, si::newton*si::meter);
+      auto slab_torque_in_newton_meters = motion.rigid_body_torque(fine, fine_slab_pull, si::newton, si::newton*si::meter);
       angular_velocities_in_seconds[i] = slab_torque_in_newton_meters*(si::newton*si::meter/slab_drag_per_angular_velocity*si::second);
   }
 
@@ -317,8 +318,8 @@ int main() {
   std::vector<length> displacements_i(fine.vertex_count());
   std::vector<std::vector<length>> displacements(P, displacements_i);
   std::vector<float> buffer_color_values(fine.vertex_count());
-  std::vector<std::uint8_t> buffer_culling_i(fine.vertex_count());
-  std::vector<std::vector<std::byte>> buffer_culling(P, buffer_culling_i);
+  std::vector<std::uint8_t> buffer_exists_i(fine.vertex_count());
+  std::vector<std::vector<std::uint8_t>> buffer_exists(P, buffer_exists_i);
   std::vector<float> buffer_scalars1(fine.vertex_count());
   std::vector<float> buffer_uniform(fine.vertex_count(), 1.0f);
   std::vector<float> buffer_scalars2_i(fine.vertex_count());
@@ -441,7 +442,7 @@ int main() {
       #pragma omp parallel for
       for (std::size_t i = 0; i < P; ++i)
       {
-        fracturing.exists(fine_plate_map, i, buffer_culling[i]);
+        fracturing.exists(fine_plate_map, i, buffer_exists[i]);
         displacement_for_formation_summary(formation_summary, displacements[i]);
         // arithmetic.divide(displacements, procedural::uniform(length(si::kilometer)), buffer_scalars2);
         arithmetic.divide(fine_buoyancy_pressure, procedural::uniform(pressure(si::pascal)), buffer_scalars2[i]);
@@ -462,7 +463,7 @@ int main() {
           buffer_scalars2[i],  // color value
           buffer_uniform,   // displacement
           buffer_uniform,   // darken
-          buffer_culling[i],   // culling
+          buffer_exists[i],   // culling
           buffer_element_vertex_ids,
           colorscale_state,
           mat4(orientations[i]),

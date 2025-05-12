@@ -167,11 +167,11 @@ int main() {
   unlayered::VectorCalculusByFundamentalTheorem calculus;
   auto motion = rock::crust_motion<M, float, double>(
       calculus, 
-      grid, 
       world_radius, 
       acceleration(si::standard_gravity), 
       mantle_density, 
-      mantle_viscosity
+      mantle_viscosity,
+      meter
   );
 
   iterated::Unary buoyancy_pressure_for_formation_summary(

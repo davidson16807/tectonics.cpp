@@ -185,11 +185,12 @@ int main() {
   );
   unlayered::VectorCalculusByFundamentalTheorem calculus;
   // auto motion = rock::crust_motion<M>(
-  //     calculus, fine, 
+  //     calculus, 
   //     world_radius, 
   //     acceleration(si::standard_gravity), 
   //     mantle_density, 
-  //     mantle_viscosity
+  //     mantle_viscosity,
+  //     meter
   // );
 
   iterated::Unary buoyancy_pressure_for_formation_summary(
@@ -320,7 +321,7 @@ int main() {
   std::vector<float> buffer_scalars1(coarse.vertex_count());
   std::vector<float> buffer_scalars2(coarse.vertex_count());
   std::vector<float> buffer_uniform(coarse.vertex_count(), 1.0f);
-  std::vector<std::uint8_t> buffer_culling(coarse.vertex_count(), std::byte(0));
+  std::vector<std::uint8_t> buffer_exists(coarse.vertex_count(), std::uint8_t(1));
   std::vector<glm::vec3> buffer_positions(coarse.vertex_count());
   std::vector<unsigned int> buffer_element_vertex_ids(grids.triangle_strips_size(coarse_vertex_positions));
   std::cout << "vertex count:        " << coarse.vertex_count() << std::endl;
@@ -432,7 +433,7 @@ int main() {
         buffer_scalars1,  // color value
         buffer_uniform,   // displacement
         buffer_uniform,   // darken
-        buffer_culling,   // culling
+        buffer_exists,   // culling
         buffer_element_vertex_ids,
         colorscale_state,
         glm::mat4(1),

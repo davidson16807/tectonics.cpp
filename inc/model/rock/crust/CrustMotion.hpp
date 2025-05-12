@@ -26,7 +26,7 @@ namespace rock {
 	*/
 
 	// NOTE: `M` is mineral count
-	template<int M, typename stored, typename handled, typename VectorCalculus, typename Grid, glm::qualifier quality=glm::defaultp>
+	template<int M, typename stored, typename handled, typename VectorCalculus, glm::qualifier quality=glm::defaultp>
     class CrustMotion
     {
 
@@ -53,7 +53,6 @@ namespace rock {
     	static constexpr handled pi = 3.1415926535897932384626433832795028841971;
 
         const VectorCalculus calculus;
-		const Grid grid; 
 		const length world_radius;
 		const acceleration gravity;
 		const density mantle_density;
@@ -63,19 +62,18 @@ namespace rock {
     public:
         CrustMotion(
 			const VectorCalculus& calculus, 
-			const Grid& grid, 
 			const length world_radius,
 			const acceleration gravity,
 			const density mantle_density,
-			const dynamic_viscosity mantle_viscosity
+			const dynamic_viscosity mantle_viscosity,
+			const length radius_units
 		):
             calculus(calculus),
-            grid(grid),
             world_radius(world_radius),
             gravity(gravity),
             mantle_density(mantle_density),
             mantle_viscosity(mantle_viscosity),
-            radius_units(world_radius/grid.radius())
+            radius_units(radius_units)
         {}
 
 
@@ -91,9 +89,7 @@ namespace rock {
 	            );
 	            buoyancy_pressure[i] = pressure(
 	                gravity * density_difference   // Δρ density difference
-	              * length(summary[i].thickness())    // V  volume
-	              // * grid.vertex_dual_area(i)
-	              // * radius_units * radius_units
+	              * length(summary[i].thickness()) // V  volume
 	            );
 		    }
 		}
@@ -106,7 +102,9 @@ namespace rock {
 		TODO: See if it's possible to reuse this code for both 
 		spin angular velocity and orbital angular velocity.
 		*/
+		template<typename Grid>
 		void slab_pull(
+			const Grid& grid,
 			const pressures& buoyancy_pressure,
 			const bools& exists,
 			const force  slab_pull_units,
@@ -133,7 +131,9 @@ namespace rock {
 		    }
 		}
 
+		template<typename Grid>
 		volume slab_volume(
+			const Grid& grid,
 			const FormationSummary& summary,
 			const bools& is_slab
 		) const {
@@ -149,7 +149,9 @@ namespace rock {
 			return slab_volume;
 		}
 
+		template<typename Grid>
 		area slab_area(
+			const Grid& grid,
 			const FormationSummary& summary,
 			const bools& is_slab
 		) const {
@@ -201,7 +203,9 @@ namespace rock {
 		assuming that crust is a rigid body submitted to `forces`.
 		See CrustMotion.txt for more details.
 		*/
+		template<typename Grid>
 		glm::dvec3 rigid_body_torque(
+			const Grid& grid,
 			const vec3s& forces,
 			const force  force_units,
 			const torque torque_units
@@ -248,18 +252,17 @@ namespace rock {
 
     template<
     	int M, typename stored, typename handled, 
-    	typename VectorCalculus, typename Grid>
-    CrustMotion<M, stored, handled, VectorCalculus, Grid> crust_motion(
+    	typename VectorCalculus>
+    CrustMotion<M, stored, handled, VectorCalculus> crust_motion(
 		const VectorCalculus& calculus, 
-		const Grid& grid, 
 		const si::length<handled> world_radius,
 		const si::acceleration<handled> gravity,
 		const si::density<handled> mantle_density,
-		const si::dynamic_viscosity<handled> mantle_viscosity
+		const si::dynamic_viscosity<handled> mantle_viscosity,
+		const si::length<handled> radius_units
     ) {
-    	return CrustMotion<M, stored, handled, VectorCalculus, Grid>(
-    		calculus, grid, world_radius, 
-    		gravity, mantle_density, mantle_viscosity
+    	return CrustMotion<M, stored, handled, VectorCalculus>(
+    		calculus, world_radius, gravity, mantle_density, mantle_viscosity, radius_units
 		);
     }
 
