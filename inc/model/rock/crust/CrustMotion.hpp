@@ -53,7 +53,7 @@ namespace rock {
     	static constexpr handled pi = 3.1415926535897932384626433832795028841971;
 
         const VectorCalculus calculus;
-		const Grid& grid; 
+		const Grid grid; 
 		const length world_radius;
 		const acceleration gravity;
 		const density mantle_density;

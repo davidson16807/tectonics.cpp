@@ -20,7 +20,7 @@ namespace rock
     class EarthlikeIgneousFormationGeneration
     {
 
-        const Grid& grid;
+        const Grid grid;
         const length max_wavelength;
         const scalar hurst_exponent;
         const id octave_count;
