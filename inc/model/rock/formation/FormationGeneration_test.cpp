@@ -134,8 +134,8 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
     );
 
     std::array<relation::PolynomialRailyardRelation<si::time<double>,si::density<double>,0,1>, 2> densities_for_age {
-      relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2890.0, 3300.0}), // Carlson & Raskin 1984
-      relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2600.0, 2600.0})
+      relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 50.0, 250.0}, {1970.0, 2770.0, 3300.0}), // Carlson & Herrick 1990
+      relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 1000.0}, {2600.0, 2600.0})
     };
 
     auto age_of_world = 0.0f*si::megayear;
@@ -160,9 +160,9 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
         relation::get_linear_interpolation_function(si::meter, si::megayear, 
           {-11000.0, -5000.0, -4500.0, -2000.0, -900.0},
           {250.0,    100.0,   0.0,       100.0, 1000.0}),
-        relation::get_linear_interpolation_function(si::meter, si::kilogram, // mass per the unit area defined by the grid
-          {-5000.0,              -4500.0},
-          {3300.0 * 7100.0, 2890.0 * 0.0}),
+        relation::get_linear_interpolation_function(si::meter, 2890.0 * si::kilogram, // mass per the unit area defined by the grid
+          {-5000.0, -4500.0},
+          {7100.0,      0.0}),
         relation::get_linear_interpolation_function(si::meter, 2600.0 * si::kilogram, // mass per the unit area defined by the grid
           {-5000.0, -4500.0,  -950.0,  840.0,    8848.0},
           {0.0,      7100.0, 28300.0, 36900.0, 70000.0}),
@@ -195,7 +195,7 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
     // std::cout << strings.format(grid, summarized_densities) << std::endl << std::endl;
 
     aggregated::Metric metric(adapted::SiMetric{});
-    REQUIRE(metric.distance(intended_displacements, actual_displacements) < 1.0f*si::kilometer);
+    REQUIRE(metric.distance(intended_displacements, actual_displacements) < 0.3f*si::kilometer);
 
 }
 
