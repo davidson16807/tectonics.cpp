@@ -49,6 +49,7 @@ and gprof can't run on output using the -fopenmp flag and still provide accurate
 #include <index/iterated/Bitset.hpp>
 #include <index/grouped/Statistics.hpp>
 
+#include <field/Uniform.hpp>                        // Uniform
 #include <field/Compose.hpp>                        // Compose
 #include <field/noise/RankedFractalBrownianNoise.hpp> // dymaxion::RankedFractalBrownianNoise
 
@@ -74,6 +75,7 @@ and gprof can't run on output using the -fopenmp flag and still provide accurate
 #include <model/rock/stratum/StratumSummarization.hpp>
 #include <model/rock/stratum/StratumSummaryProperties.hpp>
 #include <model/rock/formation/Formation.hpp>
+#include <model/rock/formation/FormationField.hpp>
 #include <model/rock/formation/FormationSummarization.hpp>
 #include <model/rock/formation/EarthlikeIgneousFormationGeneration.hpp>
 #include <model/rock/crust/FormationType.hpp>
@@ -85,6 +87,8 @@ and gprof can't run on output using the -fopenmp flag and still provide accurate
 #include <model/rock/crust/CrustMotion.hpp>
 #include <model/rock/crust/CrustFracturing.hpp>
 #include <model/rock/crust/CrustSummaryPredicates.hpp>
+#include <model/rock/crust/EmptyCrustField.hpp>
+#include <model/rock/crust/IgneousCrustField.hpp>
 #include <model/rock/lithosphere/Lithosphere.hpp>
 #include <model/rock/lithosphere/LithosphereSummary.hpp>
 #include <model/rock/lithosphere/LithosphereSummarization.hpp>
@@ -96,6 +100,15 @@ and gprof can't run on output using the -fopenmp flag and still provide accurate
 #include <view/ColorscaleSurfaceShaderProgram.hpp>  
 #include <view/IndicatorSwarmShaderProgram.hpp>     
 #include <view/MultichannelSurfaceShaderProgram.hpp>
+
+
+namespace minerals{
+  enum enumeration {
+    mafic,
+    felsic
+  };
+  const int count(2);
+}
 
 int main() {
   // initialize GLFW
@@ -139,6 +152,9 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
 
+  const int M(minerals::count);
+  const int F(5);
+
   using mass = si::mass<float>;
   using density = si::density<float>;
   using length = si::length<float>;
@@ -154,6 +170,8 @@ int main() {
 
   using Grid = dymaxion::Grid<std::int8_t, int, float>;
 
+  using Minerals = std::array<rock::Mineral,M>;
+
   length meter(si::meter);
 
   length world_radius(6.371e6 * si::meter);
@@ -166,9 +184,6 @@ int main() {
 
   iterated::Identity copy;
 
-  const int M(2);
-  const int F(5);
-
   // GENERATE THE CRUST
   rock::EarthlikeIgneousFormationGeneration earthlike(fine, world_radius/2.0f, 0.5f, 10);
   // earthlike is only used for an in-order traversal, below, so its faster to use GridCache
@@ -176,9 +191,9 @@ int main() {
 
   auto generation = earthlike(12.0f, 1.1e4f);
   rock::StratumStore<M> empty_stratum;
-  rock::Strata<M,F> empty_strata{empty_stratum};
   rock::Formation<M> empty_formation(fine.vertex_count(), empty_stratum);
   rock::Formation<M> igneous_formation(fine.vertex_count());
+  rock::EmptyCrustField empty_crust;
   copy(generation, igneous_formation);
   rock::Crust<M,F> crust{empty_formation, empty_formation, empty_formation, igneous_formation, empty_formation};
 
@@ -320,7 +335,7 @@ int main() {
       auto slab_drag_per_angular_velocity = motion.drag_per_angular_velocity(slab_length, slab_thickness, slab_width);
       auto slab_torque_in_newton_meters = motion.rigid_body_torque(fine, fine_slab_pull, si::newton, si::newton*si::meter);
       angular_velocities_in_seconds[i] = slab_torque_in_newton_meters*(si::newton*si::meter/slab_drag_per_angular_velocity*si::second);
-      crust_ops.ternary(fine_plate_existance, plates[i], empty_strata, plates[i]);
+      crust_ops.ternary(fine, fine_plate_existance, plates[i], empty_crust, plates[i]);
   }
 
   // flatten raster for OpenGL
@@ -440,6 +455,22 @@ int main() {
       frames        .localize  (orientations, master, localized); // resample global raster to a plate-specific for each plate
       // summarization uses fine only for vertex_dual_areas, so it's faster if fine is a GridCache
 
+      const si::length<double> average_crust_thickness(7.1*si::kilometer); // McKenzie and O'nions 1992
+      const si::density<double> average_crust_density(2890.0*si::kilogram/si::meter3); // Carlson and Raskin 1984
+      rock::IgneousCrustField fresh_crust(
+        rock::FormationField(
+          field::uniform(
+            rock::Stratum<M>(
+              age_of_world,
+              age_of_world,
+              Minerals{
+                rock::Mineral(
+                  average_crust_density * average_crust_thickness * si::meter * si::meter, 
+                  0, int(rock::GrainType::unweathered_extrusive)), // mafic
+                rock::Mineral(0.0*si::kilogram, 0) // felsic
+              }
+            ))));
+
       // rifting and subduction
       for (std::size_t i(1); i < 2; ++i)
       {
@@ -454,8 +485,8 @@ int main() {
         // predicates.detaching(fine, ownable, top, exists, foundering, detaching, bools_scratch);
 
         // // apply rifting and subduction
-        // crust_ops.ternary(rifting, procedural::uniform(fresh_column), plates[i], plates[i]);
-        // crust_ops.ternary(detaching, procedural::uniform(empty_strata), plates[i], plates[i]);
+        crust_ops.ternary(fine, rifting, fresh_crust, plates[i], plates[i]);
+        // crust_ops.ternary(fine, detaching, procedural::uniform(empty_crust), plates[i], plates[i]);
 
         /*
         Q: Why don't we determine rifting on master, then localize the result to each plate?

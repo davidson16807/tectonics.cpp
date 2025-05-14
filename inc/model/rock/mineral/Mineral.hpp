@@ -43,7 +43,7 @@ namespace rock
 	struct Mineral
 	{
 		si::mass<double> mass; 
-		unsigned int phase_id;
+		int phase_id;
 		std::array<float, int(GrainType::count)> grain_type_relative_volume;
 
 		/*
@@ -58,12 +58,23 @@ namespace rock
 		}
 		Mineral(
 			const si::mass<double> mass, 
-			const unsigned int phase_id
+			const int phase_id
 		):
 			mass(mass),
 			phase_id(phase_id)
 		{
 			grain_type_relative_volume.fill(1e-4);
+		}
+		Mineral(
+			const si::mass<double> mass, 
+			const int phase_id,
+			const int grain_type_id
+		):
+			mass(mass),
+			phase_id(phase_id)
+		{
+			grain_type_relative_volume.fill(0);
+			grain_type_relative_volume[grain_type_id] = 1.0f;
 		}
 		Mineral(const Mineral& other):
 			mass(other.mass),

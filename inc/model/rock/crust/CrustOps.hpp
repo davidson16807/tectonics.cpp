@@ -41,14 +41,6 @@ namespace rock{
             copy_()
         {}
 
-        // AKA, the identity function.
-        void copy(const Crust<M,F>& crust, Crust<M,F>& out) const {
-            for (std::size_t i = 0; i < out.size(); ++i)
-            {
-                ops.copy(crust[i], out[i]);
-            }
-        }
-
         void absorb (const Crust<M,F>& top, const Crust<M,F>& bottom, Crust<M,F>& out, Formation<M>& scratch) const
         {
 
@@ -94,27 +86,55 @@ namespace rock{
 
         }
 
-        void ternary(const bools& condition, const Crust<M,F>& crust, const Strata<M,F>& strata, Crust<M,F>& out) const 
-        {
-            for (std::size_t i(0); i < F; i++)
+        // AKA, the identity function.
+        void copy(const Crust<M,F>& crust, Crust<M,F>& out) const {
+            for (std::size_t i = 0; i < out.size(); ++i)
             {
-                ternary_(condition, crust[i], procedural::uniform(strata[i]), out[i]);
+                ops.copy(crust[i], out[i]);
             }
         }
 
-        void ternary(const bools& condition, const Strata<M,F>& strata, const Crust<M,F>& crust, Crust<M,F>& out) const 
-        {
-            for (std::size_t i(0); i < F; i++)
+        // AKA, the identity function.
+        template<typename Grid, typename CrustField>
+        void copy(const Grid& grid, const CrustField crust, Crust<M,F>& out) const {
+            for (std::size_t i = 0; i < out.size(); ++i)
             {
-                ternary_(condition, procedural::uniform(strata[i]), crust[i], out[i]);
+                ops.copy(crust[i], out[i]);
+            }
+        }
+
+        template<typename Grid, typename CrustField>
+        void ternary(const Grid& grid, const bools& condition, const Crust<M,F>& crust, const CrustField& field, Crust<M,F>& out) const 
+        {
+            for (std::size_t i(0); i < F; ++i)
+            {
+                for (auto j = 0*grid.vertex_count(); j < grid.vertex_count(); ++j)
+                {
+                    out[i][j] = condition[i]? crust[i][j] : field(grid,i,j);
+                }
+            }
+        }
+
+        template<typename Grid, typename CrustField>
+        void ternary(const Grid& grid, const bools& condition, const CrustField& field, const Crust<M,F>& crust, Crust<M,F>& out) const 
+        {
+            for (std::size_t i(0); i < F; ++i)
+            {
+                for (auto j = 0*grid.vertex_count(); j < grid.vertex_count(); ++j)
+                {
+                    out[i][j] = condition[i]? field(grid,i,j) : crust[i][j];
+                }
             }
         }
 
         void ternary(const bools& condition, const Crust<M,F>& crust1, const Crust<M,F>& crust2, Crust<M,F>& out) const 
         {
-            for (std::size_t i(0); i < F; i++)
+            for (std::size_t i(0); i < F; ++i)
             {
-                ternary_(condition, crust1[i], crust2[i], out[i]);
+                for (std::size_t j(0); j < out[i].size(); ++j)
+                {
+                    out[i][j] = condition[i]? crust1[i][j] : crust2[i][j];
+                }
             }
         }
 

@@ -11,8 +11,8 @@ namespace rock {
 
     It accomplishes this by traversing the following diagram:
 
-    id ⟶ position ⟶ elevation 
-       ↘            ↑
+    id ⟶ position 
+       ↘          ↖
          area     ← Π → stratum
 
     */
