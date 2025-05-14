@@ -36,7 +36,7 @@
 #include <model/rock/stratum/StratumStore.hpp>
 #include <model/rock/formation/Formation.hpp>
 #include <model/rock/crust/Crust.hpp>
-#include <model/rock/formation/estimated/EarthlikeIgneousFormationGeneration.hpp>
+#include <model/rock/formation/EarthlikeIgneousFormationGeneration.hpp>
 
 #include <model/rock/crust/CrustMotion.hpp>
 

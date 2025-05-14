@@ -71,7 +71,7 @@ It does so by testing that mass properties are commutative as the limit of this 
 #include <model/rock/crust/CrustSummaryOps.hpp>  // CrustSummaryOps
 #include <model/rock/crust/CrustSummaryProperties.hpp>  // CrustSummaryMass
 
-#include <model/rock/formation/estimated/EarthlikeIgneousFormationGeneration.hpp>
+#include <model/rock/formation/EarthlikeIgneousFormationGeneration.hpp>
 
 #include <unit/_test_tools.hpp> // UnitAdapter
 #include <model/rock/crust/_test_tools.hpp> // CrustAdapter

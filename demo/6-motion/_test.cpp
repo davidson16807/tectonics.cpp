@@ -61,7 +61,7 @@
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 #include <raster/unlayered/Morphology.hpp>          // unlayered::Morphology
 
-#include <model/rock/formation/estimated/EarthlikeIgneousFormationGeneration.hpp>
+#include <model/rock/formation/EarthlikeIgneousFormationGeneration.hpp>
 #include <model/rock/column/ColumnSummaryProperties.hpp>  // ColumnProperties
 #include <model/rock/stratum/StratumProperties.hpp>  // StratumProperties
 #include <model/rock/stratum/StratumSummarization.hpp>  // StratumSummarization

@@ -68,13 +68,14 @@ and gprof can't run on output using the -fopenmp flag and still provide accurate
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 #include <raster/unlayered/Morphology.hpp>          // unlayered::Morphology
 
-#include <model/rock/formation/estimated/EarthlikeIgneousFormationGeneration.hpp>
+#include <model/rock/mineral/GrainType.hpp>
 #include <model/rock/column/ColumnSummaryProperties.hpp>
 #include <model/rock/stratum/StratumProperties.hpp>
 #include <model/rock/stratum/StratumSummarization.hpp>
 #include <model/rock/stratum/StratumSummaryProperties.hpp>
 #include <model/rock/formation/Formation.hpp>
 #include <model/rock/formation/FormationSummarization.hpp>
+#include <model/rock/formation/EarthlikeIgneousFormationGeneration.hpp>
 #include <model/rock/crust/FormationType.hpp>
 #include <model/rock/crust/Crust.hpp>
 #include <model/rock/crust/CrustOps.hpp>
