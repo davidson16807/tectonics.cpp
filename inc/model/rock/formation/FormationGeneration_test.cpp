@@ -53,6 +53,7 @@ It does so by testing that this diagram commutes:
 #include <index/aggregated/Order.hpp>
 #include <index/aggregated/Statistics.hpp>
 #include <index/iterated/Arithmetic.hpp>
+#include <index/iterated/ClosedForm.hpp>
 #include <index/iterated/Nary.hpp>
 
 #include <field/noise/ValueNoise.hpp>               // ValueNoise
@@ -124,24 +125,26 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
     iterated::Unary{elevation_for_position}(vertex_positions, intended_displacements);
 
     adapted::TypedSymbolicArithmetic subarithmetic {length(0),length(1)};
-    adapted::SiClosedForm closed_form;
+    adapted::SiClosedForm si_closed_form;
 
     adapted::SymbolicOrder suborder;
     aggregated::Order order(suborder);
-    aggregated::Statistics stats(subarithmetic, closed_form);
-    length min_observed_elevation(order.min(intended_displacements));
+    aggregated::Statistics stats(subarithmetic, si_closed_form);
+    iterated::ClosedForm closed_form(si_closed_form);
 
     iterated::Arithmetic arithmetic(subarithmetic);
-    arithmetic.subtract(intended_displacements, procedural::uniform(min_observed_elevation), intended_displacements);
+    arithmetic.subtract(intended_displacements, procedural::uniform(order.min(intended_displacements)), intended_displacements);
 
     auto strings = spheroidal::Strings(adapted::SiStrings{}, order);
 
-    const double mafic_rho(2800.0); // average density of mafic crust in kg/m³, from Carlson & Rakin (1984)
-    const double felsic_rho(2750.0); // average density of felsic crust in kg/m³
+    const double mafic_rho(2890.0); // average density of mafic crust in kg/m³, from Carlson & Rakin 1984
+    const double felsic_rho(2700.0); // average density of felsic crust in kg/m³, fit to data, often quoted at 2700, Christensen & Mooney 1995 estimate 2830
+    // const double average_mafic_age(65.0); // in megayears
 
     std::array<relation::PolynomialRailyardRelation<si::time<double>,si::density<double>,0,1>, 2> densities_for_age {
-      relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 50.0, 180.0}, {1970.0, 2770.0, 3300.0}), // Carlson & Herrick (1990) for first 45my
-      // relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2890.0, 3600.0}), // designed to fit the data
+      // relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 30.0, 200.0}, {1970.0, 2450.0, 3380.0}), // from Carlson & Herrick (1990) up to 30My, density of oldest crust is the density of pure (nonporous) augite
+      // relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 55.0, 200.0}, {2700.0, mafic_rho, 3380.0}), // started with Carlson & Herrick (1990), then tried to fit the data, density of oldest crust is the density of pure (nonporous) augite
+      relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 200.0}, {mafic_rho, 3600.0}), // fit to data, often quoted from 2800 to 3300 but foundering crust should be denser than the mantle
       relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 1000.0}, {felsic_rho, felsic_rho})
     };
 
@@ -156,28 +159,32 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
     );
 
     rock::FormationSummaryAiryIsostaticDisplacement displacements_for_formation_summary(
-      density(3300.0*si::kilogram/si::meter3));
+      density(3300.0*si::kilogram/si::meter3)); // fit to data, often quoted as 3300, should be somewhere around 3380 (solid augite) and 3810 (forsterite)
 
-    const double mafic_lo(-3500.0); // elevation of mafic-felsic transition in meters
-    const double mafic_hi(-3000.0); // elevation of mafic-felsic transition in meters
+    // elevations of mafic-felsic transition in meters, based on data from Funck 2003
+    const double mafic_lo (-4000.0); 
+    const double mafic_hi (-3000.0);
+    const double felsic_lo (-4500.0);
+    const double felsic_hi (-4000.0);
     // const double atlantic_ridge(-2500.0); // depth in meters
     // const double average_ocean_depth(-3682.0); // in meters
-    // const double average_mafic_age(65.0); // in megayears
-    const double average_mafic_thickness(7100.0); // in megayears
+    const double average_mafic_thickness(5000.0); // in meters, data from Funck 2003 shows ~5000 by Newfoundland
 
     rock::StratumForElevation stratum_per_area_for_elevation {
-        // displacements are from Charette & Smith 2010 (shallow ocean), enclopedia britannica (shelf bottom"continental slope"), 
-        // wikipedia (shelf top), and Sverdrup & Fleming 1942 (land)
-        // Funck et al. (2003) suggests a sudden transition from felsic to mafic occuring at ~4km depth or 8km thickness
+        /*
+        See EarthlikeIgneousFormationGeneration-source-data.svg for maps containing source data for mafic thickness
+        See Funck 2003 for data used for continent-ocean transition.
+        Other data are from Encyclopedia Britannica (shelf bottoms), wikipedia (shelf tops) and Sverdrup & Fleming 1942 (land)
+        */
         relation::get_linear_interpolation_function(si::meter, si::megayear, 
-          {-6000.0, -5000.0, -4000.0, mafic_lo, mafic_hi, -500.0},
-          {180.0,      50.0,    20.0,      0.0,   1000.0, 1000.0}),
+          {-6500.0, -6000.0, -5000.0, mafic_lo, mafic_hi, -500.0},
+          {  200.0,   180.0,    50.0,      0.0,   1000.0, 1000.0}),
         relation::get_linear_interpolation_function(si::meter, mafic_rho * si::kilogram, // mass per the unit area defined by the grid
           {mafic_lo,                mafic_hi},
-          {average_mafic_thickness, 0.0}),
+          {average_mafic_thickness,      0.0}),
         relation::get_linear_interpolation_function(si::meter, felsic_rho * si::kilogram, // mass per the unit area defined by the grid
-          {mafic_lo, mafic_hi,                 -500.0,  840.0,    8848.0},
-          {0.0,      average_mafic_thickness, 28300.0, 36900.0, 70000.0}),
+          {felsic_lo, felsic_hi,  -500.0,   840.0,  8848.0},
+          {0.0,          3000.0, 28300.0, 36900.0, 70000.0}),
         relation::get_linear_interpolation_function(si::meter, 1.0, 
           {-1500.0, 8848.0},
           {0.25,      0.25}), // from Gillis (2013)
@@ -193,10 +200,13 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
     std::vector<length> actual_displacements(grid.vertex_count());
     formation_summarization(grid, plate_id, igneous, summary);
     displacements_for_formation_summary(summary, actual_displacements);
+    arithmetic.subtract(actual_displacements, procedural::uniform(order.min(actual_displacements)), actual_displacements);
 
     std::vector<length> displacement_error(grid.vertex_count());
     arithmetic.subtract(actual_displacements, intended_displacements, displacement_error);
     arithmetic.subtract(displacement_error, procedural::uniform(stats.mean(displacement_error)), displacement_error);
+    std::vector<length> abs_displacement_error(grid.vertex_count());
+    closed_form.abs(displacement_error, abs_displacement_error);
 
     // std::vector<density> original_densities(grid.vertex_count());
     // iterated::Unary formation_density{rock::AgedStratumDensity{densities_for_age, age_of_world}};
@@ -213,7 +223,7 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
     // std::cout << strings.format(grid, summarized_densities) << std::endl << std::endl;
 
     aggregated::Metric metric(adapted::SiMetric{});
-    REQUIRE(order.max(displacement_error) < 0.3f*si::kilometer);
+    REQUIRE(order.max(abs_displacement_error) < 0.3f*si::kilometer);
 
 }
 

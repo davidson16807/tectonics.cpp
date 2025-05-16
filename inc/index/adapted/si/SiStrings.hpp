@@ -36,7 +36,8 @@ namespace adapted
 			const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> hi
 		) const {
 			string out("");
-			for (unsigned int i = 0; i < characters.size(); ++i)
+			unsigned int i(0);
+			for (; i < characters.size(); ++i)
 			{
 				auto bound = si::mix(lo, hi, T1(i)/T1(characters.size()));
 				out += characters[i];
@@ -44,6 +45,10 @@ namespace adapted
 				out += si::to_string(bound);
 				out += "\n";
 			}
+				out += characters[i-1];
+				out += " ≤ ";
+				out += si::to_string(hi);
+				out += "\n";
 			return out;
 		}
 

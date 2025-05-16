@@ -16,6 +16,7 @@ TEST_CASE( "estimated liquid density order of magnitude", "[table]" ) {
             for (si::temperature<double> T = 3.0*si::kelvin; T <= si::solar_temperature; T*=3.0)
             {
                 auto x = compound::estimated::thermodynamics.density_as_liquid[i](T);
+                // std::cout << compound::published::name[i] << " " << T << " " << x << std::endl;
                 CHECK(x / (si::gram / si::centimeter3) < 20.0); /*based on gold*/ \
                 CHECK(x / (si::gram / si::centimeter3) > 0.01); /*based on mercury*/ \
             }
