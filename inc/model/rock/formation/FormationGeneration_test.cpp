@@ -143,7 +143,7 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
 
     std::array<relation::PolynomialRailyardRelation<si::time<double>,si::density<double>,0,1>, 2> densities_for_age {
       // relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 30.0, 200.0}, {1970.0, 2450.0, 3380.0}), // from Carlson & Herrick (1990) up to 30My, density of oldest crust is the density of pure (nonporous) augite
-      relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 64.0, 200.0}, {2500.0, mafic_rho, 3600.0}), // started with Carlson & Herrick (1990), then tried to fit the data
+      relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 65.0, 200.0}, {2500.0, mafic_rho, 3600.0}), // started with Carlson & Herrick (1990), then tried to fit the data
       // relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 200.0}, {mafic_rho, 3600.0}), // fit to data, often quoted from 2800 to 3300 but foundering crust should be denser than the mantle
       relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 1000.0}, {felsic_rho, felsic_rho})
     };
@@ -178,7 +178,7 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
         */
         relation::get_linear_interpolation_function(si::meter, si::megayear, 
           {-6500.0, -6000.0, -5000.0, mafic_lo, mafic_hi, -500.0},
-          {  200.0,   180.0,    50.0,      0.0,    100.0, 1000.0}),
+          {  200.0,   180.0,    50.0,      0.0,    70.0, 1000.0}),
         relation::get_linear_interpolation_function(si::meter, mafic_rho * si::kilogram, // mass per the unit area defined by the grid
           {mafic_lo,                mafic_hi},
           {average_mafic_thickness,      0.0}),
