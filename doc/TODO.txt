@@ -1,19 +1,23 @@
 TODO:
 
-plate class
-rotation
-hypsography
+fix isostasy
+detachment
+erosion
+metamorphosis
+lithification
+physically based rendering
+lod
+orbital mechanics
+climate
+primary producers
+secondary producers
 
 lower priority:
-lod
 dedicated dymaxion noise
 
 nonearthlike planets:
 density tower
-stratigraphy
-
-
-
+expanded mineral types
 
 graphics optimizations:
 * use gl_FragCoord with depth testing to render atmosphere using a coarse spheroid mesh
