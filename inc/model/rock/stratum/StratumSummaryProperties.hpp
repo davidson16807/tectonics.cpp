@@ -8,21 +8,15 @@ namespace rock{
     class StratumSummaryIsostaticDisplacement
     {
         const si::density<float> mantle_density;
-        const si::area_density<float> max_crust_area_density;
     public:
         StratumSummaryIsostaticDisplacement(
-            const si::density<float> mantle_density,
-            const si::area_density<float> max_crust_area_density
+            const si::density<float> mantle_density
         ):
-            mantle_density(mantle_density),
-            max_crust_area_density(max_crust_area_density)
+            mantle_density(mantle_density)
         {}
-        si::length<float> operator()(
-            const StratumSummary& summary
-        ) const {
-            auto crust_area_density = summary.area_density();
-            auto mantle_area_density = max_crust_area_density - crust_area_density;
-            return mantle_area_density / mantle_density + summary.thickness();
+        si::length<float> operator()(const StratumSummary& summary) const 
+        {
+            return summary.thickness() * (1.0f - summary.density()/mantle_density);
         }
     };
 
