@@ -77,6 +77,7 @@ and gprof can't run on output using the -fopenmp flag and still provide accurate
 #include <model/rock/formation/Formation.hpp>
 #include <model/rock/formation/FormationField.hpp>
 #include <model/rock/formation/FormationSummarization.hpp>
+#include <model/rock/formation/FormationSummaryArchimedianDisplacement.hpp>
 #include <model/rock/formation/EarthlikeIgneousFormationGeneration.hpp>
 #include <model/rock/crust/FormationType.hpp>
 #include <model/rock/crust/Crust.hpp>
@@ -200,6 +201,8 @@ int main() {
   // CALCULATE BUOYANCY
   auto age_of_world = 0.0f*si::megayear;
   std::array<relation::PolynomialRailyardRelation<si::time<double>,si::density<double>,0,1>, 2> densities_for_age {
+    // relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 65.0, 200.0}, {2500.0, 2890.0, 3600.0}), // started with Carlson & Herrick (1990), then tried to fit the data
+    // relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 1000.0}, {2700.0, 2700.0})
     relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2890.0, 3300.0}), // Carlson & Raskin 1984
     relation::get_linear_interpolation_function(si::megayear, si::kilogram/si::meter3, {0.0, 250.0}, {2600.0, 2600.0})
   };
@@ -214,12 +217,14 @@ int main() {
 
   rock::CrustSummaryProperty existance{rock::ColumnSummaryExists()};
   rock::CrustSummaryProperty thicknesses{rock::ColumnSummaryThickness()};
+  rock::CrustSummaryProperty densities{rock::ColumnSummaryDensity()};
   rock::CrustSummaryProperty place_counts{rock::ColumnSummaryPlateCount()};
+  rock::CrustSummaryProperty displacements{rock::ColumnSummaryIsostaticDisplacement(density(3300.0*si::kilogram/si::meter3))};
 
   auto formation_summarize = rock::formation_summarization<2>(
     rock::stratum_summarization<2>(
       rock::AgedStratumDensity{densities_for_age, age_of_world},
-      mass(si::tonne)
+      mass(0.0*si::tonne)
     ), 
     // fine,
     // world_radius
@@ -300,6 +305,10 @@ int main() {
     adapted::IdStrings<float>(adapted::dotshades), 
     aggregated::Order<adapted::SymbolicOrder>()
   );
+  auto scalar_strings = spheroidal::Strings(
+    adapted::ScalarStrings<float>(adapted::dotshades), 
+    aggregated::Order<adapted::SymbolicOrder>()
+  );
   auto si_strings = spheroidal::Strings(
     adapted::SiStrings(adapted::dotshades), 
     aggregated::Order<adapted::SymbolicOrder>()
@@ -341,6 +350,7 @@ int main() {
   // flatten raster for OpenGL
   dymaxion::WholeGridBuffers<std::int8_t,int,float> grids(vertices_per_fine_square_side);
   dymaxion::VertexPositions fine_vertex_positions(fine.grid);
+  std::vector<density> densities_i(fine.vertex_count());
   std::vector<length> lengths_i(fine.vertex_count());
   std::vector<std::vector<length>> lengths(P, lengths_i);
   std::vector<float> buffer_color_values(fine.vertex_count());
@@ -401,10 +411,8 @@ int main() {
   messages::MessageQueue message_queue;
   message_queue.activate(window);
 
-  iterated::Unary displacement_for_formation_summary(
-    rock::StratumSummaryIsostaticDisplacement{
-      density(3300.0*si::kilogram/si::meter3)
-    }
+  rock::FormationSummaryArchimedianDisplacement displacement_for_summary(
+    density(3300.0*si::kilogram/si::meter3)
   );
 
   auto frames = rock::lithosphere_reference_frames<int,float,mat3>(
@@ -418,6 +426,7 @@ int main() {
   rock::CrustSummaryPredicates predicates{morphology, bitset};
 
   const float pi(3.1415926535);
+  const float oo = std::numeric_limits<float>::max();
   // const int frame_count(1000);
 
   auto start = std::chrono::high_resolution_clock::now();
@@ -434,9 +443,6 @@ int main() {
 
       colorscale_state.max_color_value = 1.0;
       colorscale_state.min_color_value = 0.0;
-
-      // colorscale_state.max_color_value = 8.0;
-      // colorscale_state.min_color_value = 0.0;
 
       // motion
       for (std::size_t i(0); i < P; ++i)
@@ -499,27 +505,36 @@ int main() {
            we can localize density and thickness and then calculate things on the localization for a performance gain.
         */
 
-        // copy(procedural::uniform(true), buffer_exists_i);
+        // place_counts(localized[i], buffer_scalars2_i);
+        // colorscale_state.max_color_value = 8.0;
+        // colorscale_state.min_color_value = 0.0;
+
+        // copy(procedural::uniform(i), buffer_scalars2_i);
+        // colorscale_state.max_color_value = 8.0;
+        // colorscale_state.min_color_value = 0.0;
 
         copy(exists, buffer_exists_i);
 
-        // place_counts(localized[i], buffer_scalars2_i);
-
-        // fracturing.exists(fine_plate_map, i, buffer_scalars2[i]);
-
         // arithmetic.divide(fine_buoyancy_pressure, procedural::uniform(pressure(si::pascal)), buffer_scalars2[i]);
-        // colorscale_state.max_color_value = order.min(buffer_scalars2_i);
-        // colorscale_state.min_color_value = order.max(buffer_scalars2_i);
+        // colorscale_state.min_color_value = order.min(buffer_scalars2_i);
+        // colorscale_state.max_color_value = order.max(buffer_scalars2_i);
 
-        // displacement_for_formation_summary(formation_summary, lengths[i]);
+        // thicknesses(locals[i], lengths_i);
         // arithmetic.divide(lengths_i, procedural::uniform(length(si::kilometer)), buffer_scalars2_i);
-        // colorscale_state.max_color_value = order.min(buffer_scalars2_i);
-        // colorscale_state.min_color_value = order.max(buffer_scalars2_i);
+        // colorscale_state.min_color_value = order.min(buffer_scalars2_i, oo);
+        // colorscale_state.max_color_value = order.max(buffer_scalars2_i,-oo);
 
-        thicknesses(locals[i], lengths_i);
+        // densities(locals[i], densities_i);
+        // arithmetic.divide(densities_i, procedural::uniform(density(si::kilogram/si::meter3)), buffer_scalars2_i);
+        // colorscale_state.min_color_value = order.min(buffer_scalars2_i, oo);
+        // colorscale_state.max_color_value = order.max(buffer_scalars2_i,-oo);
+
+        displacements(locals[i], lengths_i);
         arithmetic.divide(lengths_i, procedural::uniform(length(si::kilometer)), buffer_scalars2_i);
-        colorscale_state.max_color_value = order.min(buffer_scalars2_i);
-        colorscale_state.min_color_value = order.max(buffer_scalars2_i);
+        // colorscale_state.min_color_value = 0.0;
+        // colorscale_state.max_color_value = 16.0f;
+        colorscale_state.min_color_value = order.min(buffer_scalars2_i, oo);
+        colorscale_state.max_color_value = order.max(buffer_scalars2_i,-oo);
 
         /*
         This demo shows the buoyancy field for each plate 
