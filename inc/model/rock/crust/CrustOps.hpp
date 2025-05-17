@@ -108,9 +108,9 @@ namespace rock{
         {
             for (std::size_t i(0); i < F; ++i)
             {
-                for (auto j = 0*grid.vertex_count(); j < grid.vertex_count(); ++j)
+                for (typename Grid::size_type j(0); j < grid.vertex_count(); ++j)
                 {
-                    out[i][j] = condition[i]? crust[i][j] : field(grid,i,j);
+                    out[i][j] = condition[j]? crust[i][j] : field(grid,i,j);
                 }
             }
         }
@@ -120,9 +120,9 @@ namespace rock{
         {
             for (std::size_t i(0); i < F; ++i)
             {
-                for (auto j = 0*grid.vertex_count(); j < grid.vertex_count(); ++j)
+                for (typename Grid::size_type j(0); j < grid.vertex_count(); ++j)
                 {
-                    out[i][j] = condition[i]? field(grid,i,j) : crust[i][j];
+                    out[i][j] = condition[j]? field(grid,i,j) : crust[i][j];
                 }
             }
         }
@@ -133,7 +133,7 @@ namespace rock{
             {
                 for (std::size_t j(0); j < out[i].size(); ++j)
                 {
-                    out[i][j] = condition[i]? crust1[i][j] : crust2[i][j];
+                    out[i][j] = condition[j]? crust1[i][j] : crust2[i][j];
                 }
             }
         }
