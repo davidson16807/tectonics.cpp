@@ -8,7 +8,7 @@
    version="1.1"
    id="svg1"
    inkscape:version="1.4.2 (1:1.4.2+202505120737+ebf0e940d0)"
-   sodipodi:docname="StratumSummaryIsostaticDisplacement.svg"
+   sodipodi:docname="FormationSummaryAiryIsostaticDisplacement.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -23,14 +23,14 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="1.0387346"
-     inkscape:cx="907.83536"
-     inkscape:cy="414.92793"
-     inkscape:window-width="2560"
+     inkscape:zoom="0.5193673"
+     inkscape:cx="579.55131"
+     inkscape:cy="562.22253"
+     inkscape:window-width="1280"
      inkscape:window-height="1403"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="1"
+     inkscape:window-maximized="0"
      inkscape:current-layer="layer1" />
   <defs
      id="defs1" />
@@ -44,7 +44,7 @@
        width="57.583828"
        height="24.729256"
        x="72.125519"
-       y="56.650772"
+       y="47.990395"
        ry="0.40308484" />
     <rect
        style="fill:#804000;fill-opacity:1;stroke:#000000;stroke-width:0.970852"
@@ -52,7 +52,7 @@
        width="56.545429"
        height="101.59688"
        x="129.61523"
-       y="35.100998"
+       y="26.44062"
        ry="0.40308484" />
     <rect
        style="fill:#c04000;fill-opacity:1;stroke:#000000;stroke-width:0.970852"
@@ -60,59 +60,59 @@
        width="57.583828"
        height="55.205242"
        x="72.125519"
-       y="81.381279"
+       y="72.720901"
        ry="0.40308484" />
     <text
        xml:space="preserve"
        style="font-size:9.78558px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.277386;stroke-dasharray:none"
        x="98.478806"
-       y="71.373405"
+       y="62.713028"
        id="text3"><tspan
          sodipodi:role="line"
          id="tspan3"
          style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.277386;stroke-dasharray:none"
          x="98.478806"
-         y="71.373405">a</tspan></text>
+         y="62.713028">a</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:9.78558px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.277386;stroke-dasharray:none"
        x="98.478806"
-       y="108.59408"
+       y="99.933701"
        id="text4"><tspan
          sodipodi:role="line"
          id="tspan4"
          style="stroke-width:0.277386"
          x="98.478806"
-         y="108.59408">b</tspan></text>
+         y="99.933701">b</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:9.78558px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.277386;stroke-dasharray:none"
        x="154.68454"
-       y="83.114166"
+       y="74.453789"
        id="text5"><tspan
          sodipodi:role="line"
          id="tspan5"
          style="stroke-width:0.277386"
          x="154.68454"
-         y="83.114166">c</tspan></text>
+         y="74.453789">c</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:5.87134px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.970852;stroke-dasharray:none;stroke-opacity:1"
        x="245.93115"
-       y="133.62155"
+       y="124.96117"
        id="text6"><tspan
          sodipodi:role="line"
          id="tspan6"
          style="font-size:5.87134px;stroke:none;stroke-width:0.970852"
          x="245.93115"
-         y="133.62155">&quot;lowest base&quot;</tspan></text>
+         y="124.96117">&quot;lowest base&quot;</tspan></text>
     <rect
        style="fill:#c04000;fill-opacity:1;stroke:#000000;stroke-width:0.970852"
        id="rect6"
        width="56.584618"
        height="69.194214"
        x="15.420211"
-       y="67.392311"
+       y="58.731934"
        ry="0.40308484" />
     <rect
        style="fill:#c04000;fill-opacity:1;stroke:#000000;stroke-width:0.970852"
@@ -120,11 +120,11 @@
        width="56.584618"
        height="69.194214"
        x="186.28557"
-       y="67.392311"
+       y="58.731934"
        ry="0.40308484" />
     <path
        style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.970852;stroke-dasharray:none;stroke-opacity:1"
-       d="M 283.13012,136.66006 H 14.703125"
+       d="M 283.13012,127.99968 H 14.703125"
        id="path5"
        sodipodi:nodetypes="cc" />
     <text
@@ -147,46 +147,46 @@
        xml:space="preserve"
        style="font-size:9.78558px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.970852;stroke-dasharray:none;stroke-opacity:1"
        x="132.34999"
-       y="131.13089"
+       y="122.47051"
        id="text7-9"><tspan
          sodipodi:role="line"
          style="stroke-width:0.970852"
          x="132.34999"
-         y="131.13089"
+         y="122.47051"
          id="tspan8-2">ρ</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:9.78558px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.970852;stroke-dasharray:none;stroke-opacity:1"
        x="74.504326"
-       y="131.19182"
+       y="122.53144"
        id="text10"><tspan
          sodipodi:role="line"
          style="stroke-width:0.970852"
          x="74.504326"
-         y="131.19182"
+         y="122.53144"
          id="tspan10">ϱ</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:9.78558px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.970852;stroke-dasharray:none;stroke-opacity:1"
        x="75.472717"
-       y="77.079811"
+       y="68.419434"
        id="text11"><tspan
          sodipodi:role="line"
          style="stroke-width:0.970852"
          x="75.472717"
-         y="77.079811"
+         y="68.419434"
          id="tspan11">ρ</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:5.87134px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.970852;stroke-dasharray:none;stroke-opacity:1"
        x="135.88983"
-       y="31.525072"
+       y="22.864695"
        id="text12"><tspan
          sodipodi:role="line"
          id="tspan12"
          style="font-size:5.87134px;stroke:none;stroke-width:0.970852"
          x="135.88983"
-         y="31.525072">&quot;largest column&quot;</tspan></text>
+         y="22.864695">&quot;largest column&quot;</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:9.78558px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.970852;stroke-dasharray:none;stroke-opacity:1"

@@ -6,7 +6,7 @@ but incidentally tests other functionality within rock::, to summarize:
 * Formation
 * FormationSummary
 * FormationSummarization()
-* StratumSummaryIsostaticDisplacement()
+* FormationSummaryAiryIsostaticDisplacement()
 
 It does so by testing that this diagram commutes:
 
@@ -76,6 +76,7 @@ It does so by testing that this diagram commutes:
 #include <model/rock/formation/Formation.hpp>  
 #include <model/rock/formation/FormationSummary.hpp>  
 #include <model/rock/formation/FormationSummaryAiryIsostaticDisplacement.hpp>  
+#include <model/rock/formation/FormationSummaryArchimedianDisplacement.hpp>  
 
 #include <model/rock/stratum/StratumProperties.hpp>  // StratumProperties
 #include <model/rock/stratum/StratumSummarization.hpp>  // StratumSummarization
@@ -158,7 +159,7 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
       meter
     );
 
-    rock::FormationSummaryAiryIsostaticDisplacement displacements_for_formation_summary(
+    rock::FormationSummaryArchimedianDisplacement displacements_for_formation_summary(
       density(3300.0*si::kilogram/si::meter3)); // fit to data, often quoted as 3300, should be somewhere around 3380 (solid augite) and 3810 (forsterite)
 
     // elevations of mafic-felsic transition in meters, based on data from Funck 2003

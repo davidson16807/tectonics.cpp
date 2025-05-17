@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="297mm"
+   height="210mm"
+   viewBox="0 0 297 210"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.2 (1:1.4.2+202505120737+ebf0e940d0)"
+   sodipodi:docname="FormationSummaryArchimedianDisplacement.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.73449628"
+     inkscape:cx="542.5487"
+     inkscape:cy="462.90228"
+     inkscape:window-width="1196"
+     inkscape:window-height="1403"
+     inkscape:window-x="1364"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1"
+     showgrid="false" />
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="marker2"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Stop"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1"
+         d="M 0,4 V -4"
+         id="path2" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Stop"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Stop"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1"
+         d="M 0,4 V -4"
+         id="path23" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#c04000;fill-opacity:1;stroke:#000000;stroke-width:0.966883"
+       id="rect6"
+       width="169.93762"
+       height="68.911049"
+       x="21.531431"
+       y="32.195419"
+       ry="0.40143526" />
+    <rect
+       style="fill:#804000;fill-opacity:1;stroke:#000000;stroke-width:0.966883"
+       id="rect1"
+       width="57.348183"
+       height="40.609558"
+       x="78.004684"
+       y="21.497845"
+       ry="0.40143526" />
+    <text
+       xml:space="preserve"
+       style="font-size:9.74563px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.276251;stroke-dasharray:none"
+       x="104.25012"
+       y="43.770466"
+       id="text3"><tspan
+         sodipodi:role="line"
+         id="tspan3"
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.276251;stroke-dasharray:none"
+         x="104.25012"
+         y="43.770466">a</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:9.82541px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.974798;stroke-dasharray:none;stroke-opacity:1"
+       x="213.76202"
+       y="54.919674"
+       id="text7"><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.974798"
+         x="213.76202"
+         y="54.919674"
+         id="tspan8">aρ/ϱ = b</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.974798"
+         x="213.76202"
+         y="67.201439"
+         id="tspan6">z = a-b</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.974798"
+         x="213.76202"
+         y="79.4832"
+         id="tspan7">z = a-aρ/ϱ</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.974798"
+         x="213.76202"
+         y="91.764961"
+         id="tspan9">z = a(1-ρ/ϱ)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:9.74563px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.966883;stroke-dasharray:none;stroke-opacity:1"
+       x="37.996643"
+       y="84.444862"
+       id="text10"><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.966883"
+         x="37.996643"
+         y="84.444862"
+         id="tspan10">ϱ</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:9.74563px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.966883;stroke-dasharray:none;stroke-opacity:1"
+       x="81.338188"
+       y="57.063751"
+       id="text11"><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.966883"
+         x="81.338188"
+         y="57.063751"
+         id="tspan11">ρ</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:9.74563px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.276251;stroke-dasharray:none"
+       x="61.343868"
+       y="50.524704"
+       id="text4"><tspan
+         sodipodi:role="line"
+         id="tspan4"
+         style="stroke-width:0.276251"
+         x="61.343868"
+         y="50.524704">b</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.967026;stroke-opacity:1;marker-start:url(#marker2);marker-end:url(#Stop)"
+       d="M 72.637069,34.092074 V 62.109438"
+       id="path1"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.967026;stroke-opacity:1;marker-start:url(#marker2);marker-end:url(#Stop)"
+       d="M 72.637069,21.761028 V 30.50028"
+       id="path3"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-size:9.74563px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.276251;stroke-dasharray:none"
+       x="61.343868"
+       y="28.815119"
+       id="text5"><tspan
+         sodipodi:role="line"
+         id="tspan5"
+         style="stroke-width:0.276251"
+         x="61.343868"
+         y="28.815119">z</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:9.82541px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.974798;stroke-dasharray:none;stroke-opacity:1"
+       x="223.21738"
+       y="42.13744"
+       id="text17"><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.974798"
+         x="223.21738"
+         y="42.13744"
+         id="tspan17">aρ = bϱ</tspan></text>
+  </g>
+</svg>
