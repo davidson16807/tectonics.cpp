@@ -426,7 +426,7 @@ int main() {
   rock::CrustSummaryPredicates predicates{morphology, bitset};
 
   const float pi(3.1415926535);
-  const float oo = std::numeric_limits<float>::max();
+  // const float oo(std::numeric_limits<float>::max());
   // const int frame_count(1000);
 
   auto start = std::chrono::high_resolution_clock::now();
@@ -487,8 +487,9 @@ int main() {
         // morphology.outshell(fine, exists, rifting);
         // bitset.intersect(rifting, ownable, rifting);
         // predicates.rifting(fine, ownable, exists, rifting, bools_scratch);
-        // predicates.foundering(mantle_density, localized[i], foundering);
-        // predicates.detaching(fine, ownable, top, exists, foundering, detaching, bools_scratch);
+        predicates.top(i, locals[i], top);
+        predicates.foundering(mantle_density, localized[i], foundering);
+        predicates.detaching(fine, ownable, top, exists, foundering, detaching, bools_scratch);
 
         // // apply rifting and subduction
         crust_ops.ternary(fine, rifting, fresh_crust, plates[i], plates[i]);
@@ -515,9 +516,9 @@ int main() {
 
         copy(exists, buffer_exists_i);
 
-        // arithmetic.divide(fine_buoyancy_pressure, procedural::uniform(pressure(si::pascal)), buffer_scalars2[i]);
-        // colorscale_state.min_color_value = order.min(buffer_scalars2_i);
-        // colorscale_state.max_color_value = order.max(buffer_scalars2_i);
+        copy(detaching, buffer_scalars2_i);
+        colorscale_state.min_color_value = 0.0f;
+        colorscale_state.max_color_value = 1.0f;
 
         // thicknesses(locals[i], lengths_i);
         // arithmetic.divide(lengths_i, procedural::uniform(length(si::kilometer)), buffer_scalars2_i);
@@ -529,12 +530,10 @@ int main() {
         // colorscale_state.min_color_value = order.min(buffer_scalars2_i, oo);
         // colorscale_state.max_color_value = order.max(buffer_scalars2_i,-oo);
 
-        displacements(locals[i], lengths_i);
-        arithmetic.divide(lengths_i, procedural::uniform(length(si::kilometer)), buffer_scalars2_i);
-        // colorscale_state.min_color_value = 0.0;
-        // colorscale_state.max_color_value = 16.0f;
-        colorscale_state.min_color_value = order.min(buffer_scalars2_i, oo);
-        colorscale_state.max_color_value = order.max(buffer_scalars2_i,-oo);
+        // displacements(locals[i], lengths_i);
+        // arithmetic.divide(lengths_i, procedural::uniform(length(si::kilometer)), buffer_scalars2_i);
+        // colorscale_state.min_color_value = order.min(buffer_scalars2_i, oo);
+        // colorscale_state.max_color_value = order.max(buffer_scalars2_i,-oo);
 
         /*
         This demo shows the buoyancy field for each plate 
