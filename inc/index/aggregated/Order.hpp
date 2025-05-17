@@ -22,38 +22,6 @@ namespace aggregated
 		{}
 
 		template <typename T>
-		auto min(const T& a, const typename T::value_type lo, const typename T::value_type hi) const
-		{
-			if (a.size() < 1)
-			{
-				throw std::out_of_range("cannot find the minimum value of an empty series");
-			}
-			auto extremum = (a[0]);
-			for (auto i = 0*a.size()+1; i < a.size(); ++i)
-			{
-				auto ai = (a[i]);
-				extremum = elements.less_than(ai, extremum) && elements.less_than(lo, ai) && elements.less_than(ai, hi)? ai : extremum;
-			}
-			return extremum;
-		}
-
-		template <typename T>
-		auto max(const T& a, const typename T::value_type lo, const typename T::value_type hi) const
-		{
-			if (a.size() < 1)
-			{
-				throw std::out_of_range("cannot find the minimum value of an empty series");
-			}
-			auto extremum = (a[0]);
-			for (auto i = 0*a.size()+1; i < a.size(); ++i)
-			{
-				auto ai = (a[i]);
-				extremum = elements.greater_than(ai, extremum) && elements.less_than(lo, ai) && elements.less_than(ai, hi)? ai : extremum;
-			}
-			return extremum;
-		}
-
-		template <typename T>
 		auto min(const T& a) const
 		{
 			if (a.size() < 1)
@@ -64,7 +32,12 @@ namespace aggregated
 			for (auto i = 0*a.size()+1; i < a.size(); ++i)
 			{
 				auto ai = (a[i]);
-				extremum = elements.less_than(ai, extremum)? ai : extremum;
+				auto lt = elements.less_than(ai, extremum);
+				auto gt = elements.greater_than(ai, extremum);
+				extremum = 
+				    lt? ai
+				  : gt? extremum
+				  : extremum; // equal, nan, or other nonsense value, protect the extremum
 			}
 			return extremum;
 		}
@@ -80,7 +53,76 @@ namespace aggregated
 			for (auto i = 0*a.size()+1; i < a.size(); ++i)
 			{
 				auto ai = (a[i]);
-				extremum = elements.greater_than(ai, extremum)? ai : extremum;
+				auto lt = elements.less_than(ai, extremum);
+				auto gt = elements.greater_than(ai, extremum);
+				extremum = 
+				    lt? extremum
+				  : gt? ai 
+				  : extremum; // equal, nan, or other nonsense value, protect the extremum
+			}
+			return extremum;
+		}
+
+		template <typename T>
+		auto min(const T& a, const typename T::value_type hi) const
+		{
+			if (a.size() < 1)
+			{
+				throw std::out_of_range("cannot find the minimum value of an empty series");
+			}
+			auto extremum = (hi);
+			for (auto i = 0*a.size(); i < a.size(); ++i)
+			{
+				auto ai = (a[i]);
+				extremum = elements.less_than(ai, extremum) && elements.less_than(ai, hi)? ai : extremum;
+			}
+			return extremum;
+		}
+
+		template <typename T>
+		auto max(const T& a, const typename T::value_type lo) const
+		{
+			if (a.size() < 1)
+			{
+				throw std::out_of_range("cannot find the minimum value of an empty series");
+			}
+			auto extremum = (lo);
+			for (auto i = 0*a.size(); i < a.size(); ++i)
+			{
+				auto ai = (a[i]);
+				extremum = elements.greater_than(ai, extremum) && elements.greater_than(ai, lo)? ai : extremum;
+			}
+			return extremum;
+		}
+
+		template <typename T>
+		auto min(const T& a, const typename T::value_type lo, const typename T::value_type hi) const
+		{
+			if (a.size() < 1)
+			{
+				throw std::out_of_range("cannot find the minimum value of an empty series");
+			}
+			auto extremum = (hi);
+			for (auto i = 0*a.size(); i < a.size(); ++i)
+			{
+				auto ai = (a[i]);
+				extremum = elements.less_than(ai, extremum) && elements.less_than(lo, ai) && elements.less_than(ai, hi)? ai : extremum;
+			}
+			return extremum;
+		}
+
+		template <typename T>
+		auto max(const T& a, const typename T::value_type lo, const typename T::value_type hi) const
+		{
+			if (a.size() < 1)
+			{
+				throw std::out_of_range("cannot find the minimum value of an empty series");
+			}
+			auto extremum = (lo);
+			for (auto i = 0*a.size(); i < a.size(); ++i)
+			{
+				auto ai = (a[i]);
+				extremum = elements.greater_than(ai, extremum) && elements.less_than(lo, ai) && elements.less_than(ai, hi)? ai : extremum;
 			}
 			return extremum;
 		}
@@ -94,7 +136,7 @@ namespace aggregated
 			for (auto i = 0*a.size(); i < a.size(); ++i)
 			{
 				auto ai = (a[i]);
-				if (elements.less_than(ai, extremum) && elements.less_than(lo, ai) && elements.less_than(ai, hi))
+				if (elements.less_than(ai, extremum) && elements.greater_than(lo, ai) && elements.less_than(ai, hi))
 				{
 					extremum = ai;
 					extremum_id = i;
@@ -111,7 +153,7 @@ namespace aggregated
 			for (auto i = 0*a.size(); i < a.size(); ++i)
 			{
 				auto ai = (a[i]);
-				if (elements.greater_than(ai, extremum) && elements.less_than(lo, ai) && elements.less_than(ai, hi))
+				if (elements.greater_than(ai, extremum) && elements.greater_than(lo, ai) && elements.less_than(ai, hi))
 				{
 					extremum = ai;
 					extremum_id = i;
