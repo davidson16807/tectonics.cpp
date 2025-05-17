@@ -1,7 +1,6 @@
 #pragma once
 
 // in house libraries
-#include "FormationSummary.hpp"
 
 namespace rock{
 
@@ -11,18 +10,23 @@ namespace rock{
     */
     class FormationSummaryArchimedianDisplacement
     {
+
         using length = si::length<float>;
         using lengths = std::vector<length>;
 
         const si::density<float> mantle_density;
+
     public:
+
         FormationSummaryArchimedianDisplacement(
             const si::density<float> mantle_density
         ):
             mantle_density(mantle_density)
         {}
+
+        template<typename Summary>
         void operator()(
-            const FormationSummary& summary,
+            const Summary& summary,
             lengths& out
         ) const {
             for (std::size_t i = 0; i < summary.size(); ++i)
@@ -30,6 +34,7 @@ namespace rock{
                 out[i] = summary[i].thickness() * (1.0f - summary[i].density()/mantle_density);
             }
         }
+
     };
 
 }
