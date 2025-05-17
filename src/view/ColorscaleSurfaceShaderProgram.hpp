@@ -173,14 +173,19 @@ namespace view
 			            : colorscale_type == 1? get_rgb_signal_of_fraction_for_topomap(color_value_fraction)
 			            :                       mix( min_color, max_color, color_value_fraction );
 			            if(fragment_exists<0.5){discard;}
-			            fragment_color = vec4(
-				            mix(
-				                vec3(0.), 
-				                color_without_ocean, 
-				                fragment_darken < darken_threshold? 0.5 : 1.0
-				            ), 
-				            fragment_exists
-				        );
+			            fragment_color = 
+			            	isnan(fragment_color_value)? vec4(1,0,1,0.5)
+			              : isinf(fragment_color_value)? vec4(1,1,1,0.5)
+			              : isnan(color_value_fraction)? vec4(0,1,1,0.5)
+			              : isinf(color_value_fraction)? vec4(1,1,1,1)/2.0f
+				          : vec4(
+					            mix(
+					                vec3(0.), 
+					                color_without_ocean, 
+					                fragment_darken < darken_threshold? 0.5 : 1.0
+					            ), 
+					            fragment_exists
+					        );
 			        }
 				)"
 			),
