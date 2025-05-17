@@ -444,7 +444,7 @@ int main() {
         orientations[i] = 
           glm::rotate(
             mat4(orientations[i]),
-            float(si::hectoyear/si::second) * 2.0f*pi * glm::length(angular_velocities_in_seconds[i]), 
+            float(si::kiloyear/si::second) * 2.0f*pi * glm::length(angular_velocities_in_seconds[i]), 
             glm::normalize(angular_velocities_in_seconds[i]));
       }
 
@@ -472,7 +472,7 @@ int main() {
             ))));
 
       // rifting and subduction
-      for (std::size_t i(1); i < 2; ++i)
+      for (std::size_t i(0); i < P; ++i)
       {
         // find rifting and subduction zones
         predicates.exists(i, locals[i], exists);
@@ -499,9 +499,9 @@ int main() {
            we can localize density and thickness and then calculate things on the localization for a performance gain.
         */
 
-        copy(procedural::uniform(true), buffer_exists_i);
+        // copy(procedural::uniform(true), buffer_exists_i);
 
-        copy(rifting, buffer_scalars2_i);
+        copy(exists, buffer_exists_i);
 
         // place_counts(localized[i], buffer_scalars2_i);
 
@@ -516,10 +516,10 @@ int main() {
         // colorscale_state.max_color_value = order.min(buffer_scalars2_i);
         // colorscale_state.min_color_value = order.max(buffer_scalars2_i);
 
-        // thicknesses(locals[i], lengths_i);
-        // arithmetic.divide(lengths_i, procedural::uniform(length(si::kilometer)), buffer_scalars2_i);
-        // colorscale_state.max_color_value = order.min(buffer_scalars2_i);
-        // colorscale_state.min_color_value = order.max(buffer_scalars2_i);
+        thicknesses(locals[i], lengths_i);
+        arithmetic.divide(lengths_i, procedural::uniform(length(si::kilometer)), buffer_scalars2_i);
+        colorscale_state.max_color_value = order.min(buffer_scalars2_i);
+        colorscale_state.min_color_value = order.max(buffer_scalars2_i);
 
         /*
         This demo shows the buoyancy field for each plate 
