@@ -103,11 +103,13 @@ namespace rock {
             const CrustSummary& crust,
             bools& out
         ) const {
+            int plate_count(0);
             for (std::size_t i = 0; i < crust.size(); ++i)
             {
+                plate_count = crust[i].plate_count();
                 out[i] = 
-                    crust[i].plate_count() == 0
-                || (crust[i].plate_count() == 1 &&  
+                    plate_count == 0
+                || (plate_count == 1 &&  
                     crust[i].is_top(plate_id))
                 ;
             }
@@ -122,14 +124,18 @@ namespace rock {
             const CrustSummary& crust,
             bools& out
         ) const {
+            int plate_count(0);
             for (std::size_t i = 0; i < crust.size(); ++i)
             {
+                plate_count = crust[i].plate_count();
                 out[i] = 
-                    crust[i].plate_count() > 1
-                 && !crust[i].is_top(plate_id)
-                 // && crust[i].is_subducted(plate_id)
-                 // && crust[i].density() > mantle_density
-                ;
+                     // plate_count == 0 ||
+                  (plate_count > 1 && 
+                     // !crust[i].is_top(plate_id)
+                     crust[i].is_subducted(plate_id)
+                  );
+                  // && crust[i].density() > mantle_density
+                
             }
         }
 
@@ -166,11 +172,11 @@ namespace rock {
             bools& out,
             bools& scratch
         ) const {
-            bools* will_stay_detachable = &scratch;
+            // bools* will_stay_detachable = &scratch;
             bools* just_inside          = &out;
-            morphology.erode  (grid, detachable, *will_stay_detachable);
-            morphology.inshell(grid, exists,     *just_inside);
-            bitsets.intersect  (*will_stay_detachable, *just_inside, out);
+            // morphology.erode   (grid, detachable, *will_stay_detachable);
+            morphology.inshell (grid, exists,     *just_inside);
+            bitsets.intersect  (detachable, *just_inside, out);
         }
 
     };
