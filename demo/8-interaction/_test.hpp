@@ -426,7 +426,7 @@ int main() {
   rock::CrustSummaryPredicates predicates{morphology, bitset};
 
   const float pi(3.1415926535);
-  // const float oo(std::numeric_limits<float>::max());
+  const float oo(std::numeric_limits<float>::max());
   // const int frame_count(1000);
 
   auto start = std::chrono::high_resolution_clock::now();
@@ -437,12 +437,6 @@ int main() {
 
       // colorscale_state.max_color_value = -10.0;
       // colorscale_state.min_color_value = 16.0;
-
-      // colorscale_state.max_color_value = 0.0;
-      // colorscale_state.min_color_value = 8.0;
-
-      colorscale_state.max_color_value = 1.0;
-      colorscale_state.min_color_value = 0.0;
 
       // motion
       for (std::size_t i(0); i < P; ++i)
@@ -493,7 +487,7 @@ int main() {
 
         // // apply rifting and subduction
         crust_ops.ternary(fine, rifting, fresh_crust, plates[i], plates[i]);
-        // crust_ops.ternary(fine, detaching, procedural::uniform(empty_crust), plates[i], plates[i]);
+        crust_ops.ternary(fine, detaching, empty_crust, plates[i], plates[i]);
 
         /*
         Q: Why don't we determine rifting on master, then localize the result to each plate?
@@ -506,30 +500,36 @@ int main() {
            we can localize density and thickness and then calculate things on the localization for a performance gain.
         */
 
+        // // PLATE COUNT:
         // place_counts(localized[i], buffer_scalars2_i);
         // colorscale_state.max_color_value = 8.0;
         // colorscale_state.min_color_value = 0.0;
 
+        // // PLATE ID:
         // copy(procedural::uniform(i), buffer_scalars2_i);
         // colorscale_state.max_color_value = 8.0;
         // colorscale_state.min_color_value = 0.0;
 
         copy(exists, buffer_exists_i);
 
-        copy(detaching, buffer_scalars2_i);
-        colorscale_state.min_color_value = 0.0f;
-        colorscale_state.max_color_value = 1.0f;
+        // // DETACHING:
+        // copy(detaching, buffer_scalars2_i);
+        // colorscale_state.min_color_value = 0.0f;
+        // colorscale_state.max_color_value = 1.0f;
 
-        // thicknesses(locals[i], lengths_i);
-        // arithmetic.divide(lengths_i, procedural::uniform(length(si::kilometer)), buffer_scalars2_i);
-        // colorscale_state.min_color_value = order.min(buffer_scalars2_i, oo);
-        // colorscale_state.max_color_value = order.max(buffer_scalars2_i,-oo);
+        // THICKNESS:
+        thicknesses(locals[i], lengths_i);
+        arithmetic.divide(lengths_i, procedural::uniform(length(si::kilometer)), buffer_scalars2_i);
+        colorscale_state.min_color_value = order.min(buffer_scalars2_i, oo);
+        colorscale_state.max_color_value = order.max(buffer_scalars2_i,-oo);
 
+        // // DENSITY:
         // densities(locals[i], densities_i);
         // arithmetic.divide(densities_i, procedural::uniform(density(si::kilogram/si::meter3)), buffer_scalars2_i);
         // colorscale_state.min_color_value = order.min(buffer_scalars2_i, oo);
         // colorscale_state.max_color_value = order.max(buffer_scalars2_i,-oo);
 
+        // // DISPLACEMENT:
         // displacements(locals[i], lengths_i);
         // arithmetic.divide(lengths_i, procedural::uniform(length(si::kilometer)), buffer_scalars2_i);
         // colorscale_state.min_color_value = order.min(buffer_scalars2_i, oo);
