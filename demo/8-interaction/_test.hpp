@@ -287,7 +287,7 @@ int main() {
   bools top(fine.vertex_count());
   bools exists(fine.vertex_count());
   bools rifting(fine.vertex_count());
-  bools foundering(fine.vertex_count());
+  bools detachable(fine.vertex_count());
   bools detaching(fine.vertex_count());
   bools bools_scratch(fine.vertex_count());
 
@@ -488,8 +488,8 @@ int main() {
         // bitset.intersect(rifting, ownable, rifting);
         // predicates.rifting(fine, ownable, exists, rifting, bools_scratch);
         predicates.top(i, locals[i], top);
-        predicates.foundering(mantle_density, localized[i], foundering);
-        predicates.detaching(fine, ownable, top, exists, foundering, detaching, bools_scratch);
+        predicates.detachable(i, mantle_density, localized[i], detachable);
+        predicates.detaching(fine, detachable, exists, detaching, bools_scratch);
 
         // // apply rifting and subduction
         crust_ops.ternary(fine, rifting, fresh_crust, plates[i], plates[i]);

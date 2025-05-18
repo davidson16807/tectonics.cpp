@@ -108,21 +108,28 @@ namespace rock {
                 out[i] = 
                     crust[i].plate_count() == 0
                 || (crust[i].plate_count() == 1 &&  
-                    crust[i].is_top(plate_id));
+                    crust[i].is_top(plate_id))
+                ;
             }
         }
 
         /*
-        `foundering` returns a boolean raster indicating where an entire rock column is foundering
+        `detachable` returns a boolean raster indicating where an entire rock column is detachable
         */
-        void foundering(
+        void detachable(
+            const int plate_id,
             const density mantle_density,
             const CrustSummary& crust,
             bools& out
         ) const {
             for (std::size_t i = 0; i < crust.size(); ++i)
             {
-                out[i] = crust[i].density() > mantle_density;
+                out[i] = 
+                    crust[i].plate_count() > 1
+                 && !crust[i].is_top(plate_id)
+                 // && crust[i].is_subducted(plate_id)
+                 // && crust[i].density() > mantle_density
+                ;
             }
         }
 
@@ -154,30 +161,16 @@ namespace rock {
         template<typename Grid>
         void detaching(
             const Grid& grid,
-            const bools& solo,
-            const bools& top,
+            const bools& detachable,
             const bools& exists,
-            const bools& foundering,
             bools& out,
             bools& scratch
         ) const {
-            /*
-            The implementation below is equivalent to the following set logic:
-                detaching = erode(!solo ∩ !top) ∩ padding(exists) ∩ foundering
-            */
-            bools* not_alone   = &out;
-            bools* not_top     = &scratch;
-            bools* subducting  = &out;
-            // bools* will_stay_subducting = &scratch;
-            bools* just_inside = &out;
-            bools* detachable  = &out;
-            bitsets.negate      (solo,                *not_alone);
-            bitsets.negate      (top,                  *not_top);
-            bitsets.intersect   (*not_alone, *not_top,   *subducting);
-            // morphology.erode  (grid, *subducting, will_stay_subducting); // NOTE: this was in the js implementation but it is suspected to be wrong
-            morphology.inshell  (grid, exists, *just_inside);
-            bitsets.intersect   (*subducting, *just_inside, *detachable);
-            bitsets.intersect   (*detachable, foundering, out);
+            bools* will_stay_detachable = &scratch;
+            bools* just_inside          = &out;
+            morphology.erode  (grid, detachable, *will_stay_detachable);
+            morphology.inshell(grid, exists,     *just_inside);
+            bitsets.intersect  (*will_stay_detachable, *just_inside, out);
         }
 
     };
