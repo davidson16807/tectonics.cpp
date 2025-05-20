@@ -221,26 +221,25 @@ int main() {
   rock::CrustSummaryProperty place_counts{rock::ColumnSummaryPlateCount()};
   rock::CrustSummaryProperty displacements{rock::ColumnSummaryIsostaticDisplacement(density(3300.0*si::kilogram/si::meter3))};
 
-  auto formation_summarize = rock::formation_summarization<2>(
-    rock::stratum_summarization<2>(
-      rock::AgedStratumDensity{densities_for_age, age_of_world},
-      mass(0.0*si::tonne)
-    ), 
-    // fine,
-    // world_radius
-    meter
-  );
-
-  auto crust_summarize = rock::crust_summarization<M,F>(formation_summarize, crust_summary_ops);
+  auto crust_summarize0 = 
+    rock::crust_summarization<M,F>(
+      rock::formation_summarization<2>(
+        rock::stratum_summarization<2>(
+          rock::AgedStratumDensity{densities_for_age, age_of_world},
+          mass(0.0*si::tonne)
+        ), 
+        // fine,
+        // world_radius
+        meter
+      ), crust_summary_ops);
 
   // SUMMARIZE THE CRUST
   rock::CrustSummary crust_summary(fine.vertex_count());
   rock::FormationSummary formation_summary(fine.vertex_count());
   int plate_id(1);
-  crust_summarize(fine, plate_id, crust, crust_summary, formation_summary);
+  crust_summarize0(fine, plate_id, crust, crust_summary, formation_summary);
   // crust_summarize is in-order, so its faster to use a GridCache
   crust_summary_ops.flatten(crust_summary, formation_summary);
-  // formation_summarize(grid, plate_id, igneous_formation, formation_summary);
 
   // CALCULATE BUOYANCY
   iterated::Unary buoyancy_pressure_for_formation_summary(
@@ -285,9 +284,10 @@ int main() {
   std::vector<rock::FormationSummary> scratch(P, scratch_formation); // scratch memory for LithosphereSummarization
   bools ownable(fine.vertex_count());
   bools top(fine.vertex_count());
+  bools beneath(fine.vertex_count());
   bools exists(fine.vertex_count());
   bools rifting(fine.vertex_count());
-  bools detachable(fine.vertex_count());
+  bools accompanied(fine.vertex_count());
   bools detaching(fine.vertex_count());
   bools bools_scratch(fine.vertex_count());
 
@@ -420,7 +420,6 @@ int main() {
     fine.vertex_positions // vertex_positions is traversed in-order so it's faster to use a cache
   );
 
-  auto summarization = rock::lithosphere_summarization<M,F>(crust_summarize, crust_summary_ops);
   iterated::Bitset<adapted::BooleanBitset> bitset;
   unlayered::Morphology morphology{bitset};
   rock::CrustSummaryPredicates predicates{morphology, bitset};
@@ -434,6 +433,19 @@ int main() {
 
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+      auto crust_summarize = 
+        rock::crust_summarization<M,F>(
+          rock::formation_summarization<2>(
+            rock::stratum_summarization<2>(
+              rock::AgedStratumDensity{densities_for_age, age_of_world},
+              mass(0.0*si::tonne)
+            ), 
+            // fine,
+            // world_radius
+            meter
+          ), crust_summary_ops);
+      auto summarization = rock::lithosphere_summarization<M,F>(crust_summarize, crust_summary_ops);
 
       // colorscale_state.max_color_value = -10.0;
       // colorscale_state.min_color_value = 16.0;
@@ -474,16 +486,15 @@ int main() {
       // rifting and subduction
       for (std::size_t i(0); i < P; ++i)
       {
+
         // find rifting and subduction zones
         predicates.exists(i, locals[i], exists);
         predicates.ownable(i, localized[i], ownable);
         predicates.rifting(fine, ownable, exists, rifting, bools_scratch);
-        // morphology.outshell(fine, exists, rifting);
-        // bitset.intersect(rifting, ownable, rifting);
-        // predicates.rifting(fine, ownable, exists, rifting, bools_scratch);
-        predicates.top(i, locals[i], top);
-        predicates.detachable(i, mantle_density, localized[i], detachable);
-        predicates.detaching(fine, detachable, exists, detaching, bools_scratch);
+        predicates.top(i, localized[i], top);
+        predicates.beneath(i, localized[i], beneath);
+        predicates.accompanied(i, mantle_density, localized[i], accompanied);
+        predicates.detaching(fine, accompanied, beneath, exists, detaching, bools_scratch);
 
         // // apply rifting and subduction
         crust_ops.ternary(fine, rifting, fresh_crust, plates[i], plates[i]);
@@ -513,15 +524,15 @@ int main() {
         copy(exists, buffer_exists_i);
 
         // // DETACHING:
-        // copy(detaching, buffer_scalars2_i);
+        // copy(beneath, buffer_scalars2_i);
         // colorscale_state.min_color_value = 0.0f;
         // colorscale_state.max_color_value = 1.0f;
 
-        // THICKNESS:
-        thicknesses(locals[i], lengths_i);
-        arithmetic.divide(lengths_i, procedural::uniform(length(si::kilometer)), buffer_scalars2_i);
-        colorscale_state.min_color_value = order.min(buffer_scalars2_i, oo);
-        colorscale_state.max_color_value = order.max(buffer_scalars2_i,-oo);
+        // // THICKNESS:
+        // thicknesses(locals[i], lengths_i);
+        // arithmetic.divide(lengths_i, procedural::uniform(length(si::kilometer)), buffer_scalars2_i);
+        // colorscale_state.min_color_value = order.min(buffer_scalars2_i, oo);
+        // colorscale_state.max_color_value = order.max(buffer_scalars2_i,-oo);
 
         // // DENSITY:
         // densities(locals[i], densities_i);
@@ -529,11 +540,11 @@ int main() {
         // colorscale_state.min_color_value = order.min(buffer_scalars2_i, oo);
         // colorscale_state.max_color_value = order.max(buffer_scalars2_i,-oo);
 
-        // // DISPLACEMENT:
-        // displacements(locals[i], lengths_i);
-        // arithmetic.divide(lengths_i, procedural::uniform(length(si::kilometer)), buffer_scalars2_i);
-        // colorscale_state.min_color_value = order.min(buffer_scalars2_i, oo);
-        // colorscale_state.max_color_value = order.max(buffer_scalars2_i,-oo);
+        // DISPLACEMENT:
+        displacements(locals[i], lengths_i);
+        arithmetic.divide(lengths_i, procedural::uniform(length(si::kilometer)), buffer_scalars2_i);
+        colorscale_state.min_color_value = order.min(buffer_scalars2_i, oo);
+        colorscale_state.max_color_value = order.max(buffer_scalars2_i,-oo);
 
         /*
         This demo shows the buoyancy field for each plate 
@@ -544,11 +555,11 @@ int main() {
         */
 
         colorscale_program.draw(
-          buffer_positions, // position
+          buffer_positions,   // position
           buffer_scalars2_i,  // color value
-          buffer_uniform,   // displacement
-          buffer_uniform,   // darken
-          buffer_exists_i,  // culling
+          buffer_uniform,     // displacement
+          buffer_uniform,     // darken
+          buffer_exists_i,    // culling
           buffer_element_vertex_ids,
           colorscale_state,
           mat4(orientations[i]),

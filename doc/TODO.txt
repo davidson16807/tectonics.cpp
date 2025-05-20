@@ -1,14 +1,16 @@
 TODO:
 
-fix isostasy
-detachment
-erosion
-metamorphosis
-lithification
+prevent detachment of continental crust
+incorporate refined parameters for crust initialization
+transform FormationGeneration to map: grid×id → stratum
+sealevel calculation
 physically based rendering
 lod
+metamorphosis
+lithification
 orbital mechanics
 climate
+erosion
 primary producers
 secondary producers
 
