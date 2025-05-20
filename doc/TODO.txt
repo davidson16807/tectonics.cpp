@@ -1,6 +1,7 @@
 TODO:
 
 prevent detachment of continental crust
+impose elastic forces on continent-continent collision
 incorporate refined parameters for crust initialization
 transform FormationGeneration to map: grid×id → stratum
 sealevel calculation

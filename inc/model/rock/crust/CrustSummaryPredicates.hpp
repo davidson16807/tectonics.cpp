@@ -96,9 +96,9 @@ namespace rock {
         }
 
         /*
-        `beneath` returns a boolean raster indicating cells where the plate is beneath the top plate
+        `below` returns a boolean raster indicating cells where the plate is below the top plate
         */
-        void beneath(
+        void below(
             const int plate_id,
             const CrustSummary& crust,
             bools& out
@@ -181,7 +181,7 @@ namespace rock {
         void detaching(
             const Grid& grid,
             const bools& accompanied,
-            const bools& beneath,
+            const bools& below,
             const bools& exists,
             bools& out,
             bools& scratch
@@ -191,7 +191,7 @@ namespace rock {
             // morphology.erode   (grid, accompanied, *will_stay_accompanied);
             morphology.inshell (grid, exists, *just_inside);
             bitsets.intersect  (accompanied, *just_inside, out);
-            bitsets.intersect  (beneath, out, out);
+            bitsets.intersect  (below, out, out);
         }
 
     };

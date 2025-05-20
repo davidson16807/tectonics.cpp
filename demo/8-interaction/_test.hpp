@@ -284,7 +284,7 @@ int main() {
   std::vector<rock::FormationSummary> scratch(P, scratch_formation); // scratch memory for LithosphereSummarization
   bools ownable(fine.vertex_count());
   bools top(fine.vertex_count());
-  bools beneath(fine.vertex_count());
+  bools below(fine.vertex_count());
   bools exists(fine.vertex_count());
   bools rifting(fine.vertex_count());
   bools accompanied(fine.vertex_count());
@@ -492,9 +492,9 @@ int main() {
         predicates.ownable(i, localized[i], ownable);
         predicates.rifting(fine, ownable, exists, rifting, bools_scratch);
         predicates.top(i, localized[i], top);
-        predicates.beneath(i, localized[i], beneath);
+        predicates.below(i, localized[i], below);
         predicates.accompanied(i, mantle_density, localized[i], accompanied);
-        predicates.detaching(fine, accompanied, beneath, exists, detaching, bools_scratch);
+        predicates.detaching(fine, accompanied, below, exists, detaching, bools_scratch);
 
         // // apply rifting and subduction
         crust_ops.ternary(fine, rifting, fresh_crust, plates[i], plates[i]);
@@ -524,7 +524,7 @@ int main() {
         copy(exists, buffer_exists_i);
 
         // // DETACHING:
-        // copy(beneath, buffer_scalars2_i);
+        // copy(below, buffer_scalars2_i);
         // colorscale_state.min_color_value = 0.0f;
         // colorscale_state.max_color_value = 1.0f;
 
