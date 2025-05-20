@@ -285,6 +285,7 @@ int main() {
   bools ownable(fine.vertex_count());
   bools top(fine.vertex_count());
   bools below(fine.vertex_count());
+  bools foundering(fine.vertex_count());
   bools exists(fine.vertex_count());
   bools rifting(fine.vertex_count());
   bools accompanied(fine.vertex_count());
@@ -488,13 +489,17 @@ int main() {
       {
 
         // find rifting and subduction zones
-        predicates.exists(i, locals[i], exists);
+        // note where we use locals and localized, this is important!
+        // locals preserves original cell boundaries without distortion from resampling, but only carries info on a single plate
+        // localized carries info on the plates that share a cell, but is distorted from resampling
+        predicates.exists(i, locals[i], exists); 
+        predicates.foundering(mantle_density, locals[i], foundering);
         predicates.ownable(i, localized[i], ownable);
         predicates.rifting(fine, ownable, exists, rifting, bools_scratch);
         predicates.top(i, localized[i], top);
         predicates.below(i, localized[i], below);
         predicates.accompanied(i, mantle_density, localized[i], accompanied);
-        predicates.detaching(fine, accompanied, below, exists, detaching, bools_scratch);
+        predicates.detaching(fine, accompanied, below, foundering, exists, detaching, bools_scratch);
 
         // // apply rifting and subduction
         crust_ops.ternary(fine, rifting, fresh_crust, plates[i], plates[i]);

@@ -153,6 +153,20 @@ namespace rock {
         }
 
         /*
+        `foundering` returns a boolean raster indicating where an entire rock column is foundering
+        */
+        void foundering(
+            const density mantle_density,
+            const CrustSummary& crust,
+            bools& out
+        ) const {
+            for (std::size_t i = 0; i < crust.size(); ++i)
+            {
+                out[i] = crust[i].density() > mantle_density;
+            }
+        }
+
+        /*
         `rifting` returns a scalar raster indicating where gaps in the plates should be filled by a given plate
         */
         template<typename Grid>
@@ -182,6 +196,7 @@ namespace rock {
             const Grid& grid,
             const bools& accompanied,
             const bools& below,
+            const bools& foundering,
             const bools& exists,
             bools& out,
             bools& scratch
@@ -192,6 +207,7 @@ namespace rock {
             morphology.inshell (grid, exists, *just_inside);
             bitsets.intersect  (accompanied, *just_inside, out);
             bitsets.intersect  (below, out, out);
+            bitsets.intersect  (foundering, out, out);
         }
 
     };
