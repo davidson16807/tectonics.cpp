@@ -5,6 +5,8 @@
 
 namespace rock{
 
+    // TODO: move this to generic "summary/" folder
+    // TODO: clarify that this represents *Archimedian* displacement
     class StratumSummaryIsostaticDisplacement
     {
         const si::density<float> mantle_density;
@@ -20,6 +22,7 @@ namespace rock{
         }
     };
 
+    // TODO: move this to generic "summary/" folder
     struct StratumSummaryBuoyancyPressure
     {
 

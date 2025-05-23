@@ -248,6 +248,15 @@ int main() {
           mantle_density, 
       }
   );
+
+  // CALCULATE BUOYANCY
+  iterated::Unary buoyancy_pressure_for_crust_summary(
+      rock::ColumnSummaryBuoyancyPressure{
+          acceleration(si::standard_gravity), 
+          mantle_density, 
+      }
+  );
+
   std::vector<pressure> fine_buoyancy_pressure(fine.vertex_count());
   buoyancy_pressure_for_formation_summary(formation_summary, fine_buoyancy_pressure);
 
@@ -329,22 +338,12 @@ int main() {
   std::vector<bool> fine_plate_existance(fine.vertex_count());
   std::vector<vec3> fine_slab_pull(fine.vertex_count());
   std::vector<bool> fine_slab_existance(fine.vertex_count());
-  std::vector<vec3> angular_velocities_in_seconds(P);
+  std::vector<vec3> angular_velocities_in_seconds_per_turn(P);
   std::vector<mat3> orientations(P, mat3(1));
+
   for (int i = 0; i < P; ++i)
   {
       fracturing.exists(fine_plate_map, i, fine_plate_existance);
-      motion.slab_pull(fine, fine_buoyancy_pressure, fine_plate_existance, si::force<float>(si::newton), fine_slab_pull);
-      motion.is_slab(fine_slab_pull, fine_slab_existance);
-      auto slab_volume = motion.slab_volume(fine, formation_summary, fine_slab_existance);
-      auto slab_area = motion.slab_area(fine, formation_summary, fine_slab_existance);
-      auto slab_cell_count = motion.slab_cell_count(fine_slab_existance);
-      auto slab_thickness = motion.slab_thickness(slab_volume, slab_area);
-      auto slab_length = motion.slab_length(slab_area, slab_cell_count);
-      auto slab_width = motion.slab_width(slab_area, slab_length);
-      auto slab_drag_per_angular_velocity = motion.drag_per_angular_velocity(slab_length, slab_thickness, slab_width);
-      auto slab_torque_in_newton_meters = motion.rigid_body_torque(fine, fine_slab_pull, si::newton, si::newton*si::meter);
-      angular_velocities_in_seconds[i] = slab_torque_in_newton_meters*(si::newton*si::meter/slab_drag_per_angular_velocity*si::second);
       crust_ops.ternary(fine, fine_plate_existance, plates[i], empty_crust, plates[i]);
   }
 
@@ -435,6 +434,7 @@ int main() {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+      // UPDATE SUMMARIZATION TO REFLECT NEW AGE OF WORLD
       auto crust_summarize = 
         rock::crust_summarization<M,F>(
           rock::formation_summarization<2>(
@@ -451,23 +451,42 @@ int main() {
       // colorscale_state.max_color_value = -10.0;
       // colorscale_state.min_color_value = 16.0;
 
-      // motion
-      for (std::size_t i(0); i < P; ++i)
-      {
-        orientations[i] = 
-          glm::rotate(
-            mat4(orientations[i]),
-            float(si::kiloyear/si::second) * 2.0f*pi * glm::length(angular_velocities_in_seconds[i]), 
-            glm::normalize(angular_velocities_in_seconds[i]));
-      }
-
-      // summarize
+      // SUMMARIZE
       summarization .summarize (fine, plates, locals, scratch);   // summarize each plate into a (e.g.) CrustSummary raster
       frames        .globalize (orientations, locals, globals);   // resample plate-specific rasters onto a global grid
       summarization .flatten   (globals,      master);            // condense globalized rasters into e.g. LithosphereSummary
       frames        .localize  (orientations, master, localized); // resample global raster to a plate-specific for each plate
       // summarization uses fine only for vertex_dual_areas, so it's faster if fine is a GridCache
 
+      // CALCULATE VELOCITIES
+      for (int i = 0; i < P; ++i)
+      {
+          predicates.exists(i, locals[i], exists);
+          buoyancy_pressure_for_crust_summary(locals[i], fine_buoyancy_pressure);
+          motion.slab_pull(fine, fine_buoyancy_pressure, exists, si::force<float>(si::newton), fine_slab_pull);
+          motion.is_slab(fine_slab_pull, fine_slab_existance);
+          auto slab_volume = motion.slab_volume(fine, formation_summary, fine_slab_existance);
+          auto slab_area = motion.slab_area(fine, formation_summary, fine_slab_existance);
+          auto slab_cell_count = motion.slab_cell_count(fine_slab_existance);
+          auto slab_thickness = motion.slab_thickness(slab_volume, slab_area);
+          auto slab_length = motion.slab_length(slab_area, slab_cell_count);
+          auto slab_width = motion.slab_width(slab_area, slab_length);
+          auto slab_drag_per_angular_velocity = motion.drag_per_angular_velocity(slab_length, slab_thickness, slab_width);
+          auto slab_torque_in_newton_meters = motion.rigid_body_torque(fine, fine_slab_pull, si::newton, si::newton*si::meter);
+          angular_velocities_in_seconds_per_turn[i] = slab_torque_in_newton_meters*(si::newton*si::meter/slab_drag_per_angular_velocity*si::second);
+      }
+
+      // CALCULATE NEW ROTATION VECTORS BASED ON VELOCITY
+      for (std::size_t i(0); i < P; ++i)
+      {
+        orientations[i] = 
+          glm::rotate(
+            mat4(orientations[i]),
+            float(si::kiloyear/si::second) * 2.0f*pi * glm::length(angular_velocities_in_seconds_per_turn[i]), 
+            glm::normalize(angular_velocities_in_seconds_per_turn[i]));
+      }
+
+      // 
       const si::length<double> average_crust_thickness(7.1*si::kilometer); // McKenzie and O'nions 1992
       const si::density<double> average_crust_density(2890.0*si::kilogram/si::meter3); // Carlson and Raskin 1984
       rock::IgneousCrustField fresh_crust(
@@ -483,6 +502,7 @@ int main() {
                 rock::Mineral(0.0*si::kilogram, 0) // felsic
               }
             ))));
+
 
       // rifting and subduction
       for (std::size_t i(0); i < P; ++i)
