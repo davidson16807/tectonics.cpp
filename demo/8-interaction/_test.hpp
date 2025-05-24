@@ -336,8 +336,6 @@ int main() {
       meter
   );
   std::vector<bool> fine_plate_existance(fine.vertex_count());
-  std::vector<vec3> fine_slab_pull(fine.vertex_count());
-  std::vector<bool> fine_slab_existance(fine.vertex_count());
   std::vector<vec3> angular_velocities_in_seconds_per_turn(P);
   std::vector<mat3> orientations(P, mat3(1));
 
@@ -459,22 +457,34 @@ int main() {
       // summarization uses fine only for vertex_dual_areas, so it's faster if fine is a GridCache
 
       // CALCULATE VELOCITIES
-      for (int i = 0; i < P; ++i)
+      #pragma omp parallel default(private) \
+        shared(predicates, motion, crust_summary_ops, \
+          fine, locals, buoyancy_pressure_for_crust_summary, angular_velocities_in_seconds_per_turn, \
+          si::newton, si::meter, si::second)
       {
-          predicates.exists(i, locals[i], exists);
-          buoyancy_pressure_for_crust_summary(locals[i], fine_buoyancy_pressure);
-          motion.slab_pull(fine, fine_buoyancy_pressure, exists, si::force<float>(si::newton), fine_slab_pull);
-          motion.is_slab(fine_slab_pull, fine_slab_existance);
-          crust_summary_ops.flatten(locals[i], formation_summary);
-          auto slab_volume = motion.slab_volume(fine, formation_summary, fine_slab_existance);
-          auto slab_area = motion.slab_area(fine, formation_summary, fine_slab_existance);
-          auto slab_cell_count = motion.slab_cell_count(fine_slab_existance);
-          auto slab_thickness = motion.slab_thickness(slab_volume, slab_area);
-          auto slab_length = motion.slab_length(slab_area, slab_cell_count);
-          auto slab_width = motion.slab_width(slab_area, slab_length);
-          auto slab_drag_per_angular_velocity = motion.drag_per_angular_velocity(slab_length, slab_thickness, slab_width);
-          auto slab_torque_in_newton_meters = motion.rigid_body_torque(fine, fine_slab_pull, si::newton, si::newton*si::meter);
-          angular_velocities_in_seconds_per_turn[i] = slab_torque_in_newton_meters*(si::newton*si::meter/slab_drag_per_angular_velocity*si::second);
+        bools exists(fine.vertex_count());
+        std::vector<pressure> fine_buoyancy_pressure(fine.vertex_count());
+        std::vector<bool> fine_slab_existance(fine.vertex_count());
+        std::vector<vec3> fine_slab_pull(fine.vertex_count());
+        rock::FormationSummary formation_summary(fine.vertex_count());
+        #pragma omp for
+        for (int i = 0; i < P; ++i)
+        {
+            predicates.exists(i, locals[i], exists);
+            buoyancy_pressure_for_crust_summary(locals[i], fine_buoyancy_pressure);
+            motion.slab_pull(fine, fine_buoyancy_pressure, exists, si::force<float>(si::newton), fine_slab_pull);
+            motion.is_slab(fine_slab_pull, fine_slab_existance);
+            crust_summary_ops.flatten(locals[i], formation_summary);
+            auto slab_volume = motion.slab_volume(fine, formation_summary, fine_slab_existance);
+            auto slab_area = motion.slab_area(fine, formation_summary, fine_slab_existance);
+            auto slab_cell_count = motion.slab_cell_count(fine_slab_existance);
+            auto slab_thickness = motion.slab_thickness(slab_volume, slab_area);
+            auto slab_length = motion.slab_length(slab_area, slab_cell_count);
+            auto slab_width = motion.slab_width(slab_area, slab_length);
+            auto slab_drag_per_angular_velocity = motion.drag_per_angular_velocity(slab_length, slab_thickness, slab_width);
+            auto slab_torque_in_newton_meters = motion.rigid_body_torque(fine, fine_slab_pull, si::newton, si::newton*si::meter);
+            angular_velocities_in_seconds_per_turn[i] = slab_torque_in_newton_meters*(si::newton*si::meter/slab_drag_per_angular_velocity*si::second);
+        }
       }
 
       // CALCULATE NEW ROTATION VECTORS BASED ON VELOCITY
