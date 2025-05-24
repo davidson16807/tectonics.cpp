@@ -465,6 +465,7 @@ int main() {
           buoyancy_pressure_for_crust_summary(locals[i], fine_buoyancy_pressure);
           motion.slab_pull(fine, fine_buoyancy_pressure, exists, si::force<float>(si::newton), fine_slab_pull);
           motion.is_slab(fine_slab_pull, fine_slab_existance);
+          crust_summary_ops.flatten(locals[i], formation_summary);
           auto slab_volume = motion.slab_volume(fine, formation_summary, fine_slab_existance);
           auto slab_area = motion.slab_area(fine, formation_summary, fine_slab_existance);
           auto slab_cell_count = motion.slab_cell_count(fine_slab_existance);
