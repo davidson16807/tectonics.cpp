@@ -162,8 +162,9 @@ namespace si{
       return units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(-raw);
     }
 
+    // NOTE: `std::pow()` is non-constexpr on non-g++ compilers
     template<int N>
-    constexpr units<M1*N,KG1*N,S1*N,K1*N,MOL1*N,A1*N,CD1*N,T1> pow() const
+    units<M1*N,KG1*N,S1*N,K1*N,MOL1*N,A1*N,CD1*N,T1> pow() const
     {
       return units<M1*N,KG1*N,S1*N,K1*N,MOL1*N,A1*N,CD1*N,T1>(std::pow(raw, N));
     }
@@ -171,6 +172,11 @@ namespace si{
     constexpr units<M1/N,KG1/N,S1/N,K1/N,MOL1/N,A1/N,CD1/N,T1> root() const
     {
       return units<M1/N,KG1/N,S1/N,K1/N,MOL1/N,A1/N,CD1/N,T1>(std::pow(raw,1.0/double(N)));
+    }
+    // NOTE: `inverse()` is a faster, non-template, constexpr alternative to pow() for a restricted use case
+    constexpr units<-M1,-KG1,-S1,-K1,-MOL1,-A1,-CD1,T1> inverse() const
+    {
+      return units<-M1,-KG1,-S1,-K1,-MOL1,-A1,-CD1,T1>(T1(1)/raw);
     }
 
     constexpr bool isinf() const
@@ -268,7 +274,7 @@ namespace si{
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2>
   constexpr auto operator/(const T2 a, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b)
   {
-    return b.template pow<-1>()*T1(a);
+    return b.inverse()*T1(a);
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1, typename T2>
