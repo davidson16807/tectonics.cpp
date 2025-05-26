@@ -26,7 +26,7 @@ namespace procedural
 	{
 
 	    using size_type = std::size_t;
-		using value_type = typename procedural::value_type;
+		using value_type = typename Series::value_type;
 
 		Series values;
 		std::size_t copies_per_value;
