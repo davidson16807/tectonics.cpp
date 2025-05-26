@@ -34,8 +34,8 @@ namespace test {
             add_name  (add_name),  add  (add), 
             mult_name (mult_name), mult (mult)
         {}
-        template<typename Adapter, typename A>
-        bool valid(const Adapter& adapter, const many<A>& as) const {
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
             return 
 
             addition      .valid(adapter, as) &&
@@ -44,8 +44,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
             return 
 
             addition      .valid(adapter, as, bs) &&
@@ -60,8 +60,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B, typename C>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        template<typename Adapter, typename As, typename Bs, typename Cs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
             return 
 
             addition      .valid(adapter, as, bs, cs) &&
@@ -99,8 +99,8 @@ namespace test {
             sub_name  (sub_name),  sub  (sub), 
             mult_name (mult_name), mult (mult)
         {}
-        template<typename Adapter, typename A>
-        bool valid(const Adapter& adapter, const many<A>& as) const {
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
             return 
 
             addition      .valid(adapter, as) &&
@@ -109,8 +109,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
             return 
 
             addition      .valid(adapter, as, bs) &&
@@ -125,8 +125,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B, typename C>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        template<typename Adapter, typename As, typename Bs, typename Cs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
             return 
 
             addition      .valid(adapter, as, bs, cs) &&
@@ -167,8 +167,8 @@ namespace test {
             sub_name  (sub_name),  sub  (sub), 
             mult_name (mult_name), mult (mult)
         {}
-        template<typename Adapter, typename A>
-        bool valid(const Adapter& adapter, const many<A>& as) const {
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
             return 
 
             addition      .valid(adapter, as) &&
@@ -177,8 +177,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
             return 
 
             addition      .valid(adapter, as, bs) &&
@@ -193,8 +193,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B, typename C>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        template<typename Adapter, typename As, typename Bs, typename Cs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
             return 
 
             addition      .valid(adapter, as, bs, cs) &&
@@ -233,8 +233,8 @@ namespace test {
             add_name  (add_name),  add  (add), 
             mult_name (mult_name), mult (mult)
         {}
-        template<typename Adapter, typename A>
-        bool valid(const Adapter& adapter, const many<A>& as) const {
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
             return 
 
             addition      .valid(adapter, as) &&
@@ -243,8 +243,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
             return 
 
             addition      .valid(adapter, as, bs) &&
@@ -259,8 +259,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B, typename C>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        template<typename Adapter, typename As, typename Bs, typename Cs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
             return 
 
             addition      .valid(adapter, as, bs, cs) &&
@@ -298,8 +298,8 @@ namespace test {
             sub_name  (sub_name),  sub  (sub), 
             mult_name (mult_name), mult (mult)
         {}
-        template<typename Adapter, typename A>
-        bool valid(const Adapter& adapter, const many<A>& as) const {
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
             return 
 
             addition      .valid(adapter, as) &&
@@ -308,8 +308,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
             return 
 
             addition      .valid(adapter, as, bs) &&
@@ -324,8 +324,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B, typename C>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        template<typename Adapter, typename As, typename Bs, typename Cs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
             return 
 
             addition      .valid(adapter, as, bs, cs) &&
@@ -366,8 +366,8 @@ namespace test {
             sub_name  (sub_name),  sub  (sub), 
             mult_name (mult_name), mult (mult)
         {}
-        template<typename Adapter, typename A>
-        bool valid(const Adapter& adapter, const many<A>& as) const {
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
             return 
 
             addition      .valid(adapter, as) &&
@@ -376,8 +376,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
             return 
 
             addition      .valid(adapter, as, bs) &&
@@ -392,8 +392,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B, typename C>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        template<typename Adapter, typename As, typename Bs, typename Cs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
             return 
 
             addition      .valid(adapter, as, bs, cs) &&
@@ -438,8 +438,8 @@ namespace test {
             mult_name (mult_name), mult (mult),
             div_name  (div_name),  div  (div)
         {}
-        template<typename Adapter, typename A>
-        bool valid(const Adapter& adapter, const many<A>& as) const {
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
             return 
 
             addition      .valid(adapter, as) &&
@@ -448,8 +448,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
             return 
 
             addition      .valid(adapter, as, bs) &&
@@ -464,8 +464,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B, typename C>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        template<typename Adapter, typename As, typename Bs, typename Cs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
             return 
 
             addition      .valid(adapter, as, bs, cs) &&

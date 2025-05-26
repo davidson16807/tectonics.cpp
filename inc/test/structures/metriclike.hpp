@@ -21,8 +21,8 @@ namespace test {
         ): 
             f_name(f_name),       f(f)
         {}
-        template<typename Adapter, typename A>
-        bool valid(const Adapter& adapter, const many<A>& as) const {
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
 
             auto ge0 = [](double x)           {return x>=0.0;};
 
@@ -35,8 +35,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
 
             auto ge0 = [](double x)           {return x>=0.0;};
 
@@ -59,8 +59,8 @@ namespace test {
         ): 
             f_name(f_name),       f(f)
         {}
-        template<typename Adapter, typename A>
-        bool valid(const Adapter& adapter, const many<A>& as) const {
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
 
             auto ge0 = [](double x)           {return x>=0.0;};
 
@@ -74,8 +74,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
 
             auto ge0 = [](double x)           {return x>=0.0;};
 
@@ -105,8 +105,8 @@ namespace test {
         ): 
             f_name(f_name),       f(f)
         {}
-        template<typename Adapter, typename A>
-        bool valid(const Adapter& adapter, const many<A>& as) const {
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
 
             auto add = [](double x, double y) {return x+y; };
             auto leq = [](double x, double y) {return x<=y; };
@@ -122,8 +122,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
 
             auto add = [](double x, double y) {return x+y; };
             auto leq = [](double x, double y) {return x<=y; };
@@ -147,8 +147,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B, typename C>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        template<typename Adapter, typename As, typename Bs, typename Cs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
 
             auto add = [](double x, double y) {return x+y; };
             auto leq = [](double x, double y) {return x+y; };
@@ -203,8 +203,8 @@ namespace test {
         ): 
             f_name(f_name),       f(f)
         {}
-        template<typename Adapter, typename A>
-        bool valid(const Adapter& adapter, const many<A>& as) const {
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
 
             auto add = [](double x, double y) {return x+y; };
             auto leq = [](double x, double y) {return x<=y; };
@@ -221,8 +221,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
 
             auto add = [](double x, double y) {return x+y; };
             auto leq = [](double x, double y) {return x<=y; };
@@ -246,8 +246,8 @@ namespace test {
 
             true; // added so lines above can be easily swapped
         }
-        template<typename Adapter, typename A, typename B, typename C>
-        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+        template<typename Adapter, typename As, typename Bs, typename Cs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
 
             auto add = [](double x, double y) {return x+y; };
             auto leq = [](double x, double y) {return x+y; };
