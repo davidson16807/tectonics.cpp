@@ -9,8 +9,10 @@
 #include <catch/catch.hpp>
 
 // in-house libraries
-#include <math/analytic/Scaling.hpp>
 #include <math/analytic/Identity.hpp>
+#include <math/analytic/Scaling.hpp>
+#include <math/analytic/Polynomial.hpp>
+#include <math/analytic/Rational.hpp>
 
 #include <test/macros.hpp>
 #include <test/structures/grouplike.hpp>
