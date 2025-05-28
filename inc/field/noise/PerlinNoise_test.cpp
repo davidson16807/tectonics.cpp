@@ -24,6 +24,7 @@
 
 #include "MosaicNoise.hpp"
 #include "PerlinNoise.hpp"
+#include "MosaicOps.hpp"
 
 #include <test/properties.hpp>  
 #include <test/macros.hpp>  

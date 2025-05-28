@@ -10,6 +10,7 @@
 #define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 #include <glm/vec2.hpp>     // *vec3
 #include <glm/vec3.hpp>     // *vec3
+#include <glm/geometric.hpp>     // length, normalize, etc
 
 // in-house libraries
 #include <index/whole.hpp>  
