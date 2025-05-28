@@ -34,7 +34,9 @@
 #include <grid/dymaxion/VertexDownsamplingIds.hpp> // dymaxion::VertexDownsamplingIds
 
 #include <model/rock/stratum/StratumStore.hpp>
+#include <model/rock/stratum/StratumSummarization.hpp>
 #include <model/rock/formation/Formation.hpp>
+#include <model/rock/formation/FormationSummarization.hpp>
 #include <model/rock/crust/Crust.hpp>
 #include <model/rock/formation/EarthlikeIgneousFormationGeneration.hpp>
 
