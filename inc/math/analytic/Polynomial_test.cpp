@@ -10,6 +10,7 @@
 
 // in-house libraries
 #include <math/analytic/Polynomial.hpp>
+#include <math/analytic/Rational.hpp>
 
 #include <test/macros.hpp>
 #include <test/structures/ringlike.hpp>
