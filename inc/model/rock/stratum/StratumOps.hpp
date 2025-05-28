@@ -11,6 +11,7 @@
 #include <model/rock/mineral/MineralOps.hpp>
 
 #include "Stratum.hpp"
+#include "StratumStore.hpp"
 
 namespace rock
 {

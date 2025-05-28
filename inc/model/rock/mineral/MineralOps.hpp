@@ -12,6 +12,7 @@
 // in-house libraries
 #include <unit/si.hpp>
 #include "GrainType.hpp"
+#include "Mineral.hpp"
 
 namespace rock
 {
