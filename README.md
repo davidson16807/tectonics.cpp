@@ -8,16 +8,42 @@ This library is not just designed for use by tectonics.js. Numerous space simula
 As of completing major milestones in May 2025, permission to use all code going forward is provided under the Creative Commons Attribution-NonCommercial-Sharealike 4.0 license. This code is written with fellow hobby developers in mind, and noncommercial hobby projects are always welcome to use it freely. Drop me a line if you use it, since it's encouraging to hear my work is getting used, and it's always fun to hear from someone with fellow interests! Commercial licensing is also available by prior agreement - drop me a line if interested. 
 
 # Getting Started
-Make file commands exist throuhgout the library for building demos and running unit tests. Simply run `make` in any project folder with a `Makefile` to run all the functionality that's defined within that folder. 
+Tectonics.cpp has been tested on many combinations of operating system, build system, and compiler. Here are a few of the most common approaches.
 
-Building with scons is also supported. Simply run `scons -u` from any project folder to run the functionality that's defined within that folder. 
+## Ubuntu
 
-Running the graphics demo requires two other libraries to be installed on your machine: [GLEW](http://glew.sourceforge.net/) and [GLFW](https://www.glfw.org/). On Ubuntu you can install both with the following commands:
+### make with g++
 
-`
+Numerous makefiles exist throuhgout the library. These are used to build demos and run isolated unit tests. Simply run `make` in any project folder with a `Makefile` to run all the functionality that's defined within that folder. 
+
+Makefiles under the `demo/` folder build demos for graphical functionality. To run any of these makefiles, you'll first need to install two other libraries: [GLEW](http://glew.sourceforge.net/) and [GLFW](https://www.glfw.org/). On Ubuntu you can install both with the following commands:
+
+```bash
 sudo apt-get install libglew-dev
 sudo apt-get install libglfw3-dev
-`
+```
+
+### Scons with g++
+
+First, you'll need to install Scons on an instance of Python. Python comes with Ubuntu but installing libraries on the system-wide Python instance is risky and frowned upon, so first you'll need to setup a virtual environment. Navigate to a folder that's easy for you to access and run:
+
+```bash
+python3 -m venv venv-path
+source venv-path/bin/activate
+python -m pip install scons
+```
+
+Once scons is installed, simply run `scons -u` from any project folder and scons will run the functionality that's defined within the folder. Remember that whenever you start a new terminal session, you'll need to restart your virtual environment before you use scons. This is done by calling `source venv-path/bin/activate` again.
+
+## Windows
+
+### g++ in Cygwin
+
+```bash
+g++ -std=c++17 -o test.exe test.cpp -g -D GLM_FORCE_SWIZZLE -D GLEW_STATIC -I ../inc/ -I /c/glew-2.1.0/include/ -I /c/glfw-3.4.bin.WIN64/include/ -L /c/glew-2.1.0/bin/Release/x64/ -L /c/glfw-3.4.bin.WIN64/lib-mingw-w64/ -lglfw3 -lopengl32 -lgdi32 -lglew32
+```
+
+### MSVC with Scons
 
 # Design Methodology
 tectonics.cpp is adheres to a strict design philosophy that is meant to prioritize functional programming concerns in a way that also leverages object-oriented paradigms. See `doc/general-design-approach.md` for more information.
