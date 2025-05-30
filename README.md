@@ -55,12 +55,27 @@ It may be better to add this to your ~/.bashrc file so you don't have to repeat 
 
 ```bash
 echo 'export CPLUS_INCLUDE_PATH=/c/glfw-3.4.bin.WIN64/include/:/c/glew-2.1.0/include/' >> ~/.bashrc
-echo 'export LIBRARY_PATH=/cygwin/c/glfw-3.4.bin.WIN64/lib-mingw-w64/:/cygwin/c/glew-2.1.0/bin/Release/x64/' >> ~/.bashrc
+echo 'export LIBRARY_PATH=/cygwin/c/glfw-3.4.bin.WIN64/lib-static-ucrt/:/cygwin/c/glew-2.1.0/bin/Release/x64/' >> ~/.bashrc
 ```
 
-Next, call `make`, and the demo should execute. 
+You will also need to copy glfw3.dll from the lib-static-ucrt folder of the distributable to the same folder that stores the Makefile
+
+Once the setup above is complete, call `make`, and the demo should execute. 
 
 If you have trouble, try something like the following (replacing paths for glew and glfw with the paths that you setup earlier):
+
+```bash
+g++ -std=c++17 -o test.exe test.cpp -g -D GLM_FORCE_SWIZZLE -D GLEW_STATIC -I ../inc/ -I /cygdrive/c/glew-2.1.0/include/ -I /cygdrive/c/glfw-3.4.bin.WIN64/include/ -L /cygdrive/c/glew-2.1.0/bin/Release/x64/ -L /cygdrive/c/glfw-3.4.bin.WIN64/lib-static-ucrt/ -lglfw3 -lopengl32 -lgdi32 -lglew32
+```
+
+### g++ in MinGW/MSYS
+
+If you have trouble, try something like the following (replacing paths for glew and glfw with the paths that you setup earlier):
+
+```bash
+export CPLUS_INCLUDE_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/include/:/cygdrive/c/glew-2.1.0/include/
+export LIBRARY_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/lib-mingw-w64/:/cygdrive/c/glew-2.1.0/bin/Release/x64/
+```
 
 ```bash
 g++ -std=c++17 -o test.exe test.cpp -g -D GLM_FORCE_SWIZZLE -D GLEW_STATIC -I ../inc/ -I /c/glew-2.1.0/include/ -I /c/glfw-3.4.bin.WIN64/include/ -L /c/glew-2.1.0/bin/Release/x64/ -L /c/glfw-3.4.bin.WIN64/lib-mingw-w64/ -lglfw3 -lopengl32 -lgdi32 -lglew32
