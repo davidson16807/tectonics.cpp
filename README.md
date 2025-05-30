@@ -39,6 +39,29 @@ Once scons is installed, simply run `scons -u` from any project folder and scons
 
 ### g++ in Cygwin
 
+To run the graphical demos under `demo/`, you will first need to download the binaries for glew and glfw:
+
+	https://glew.sourceforge.net/
+	https://www.glfw.org/
+
+Unzip the downloads to paths that you can remember, then setup variables for the compiler that point to those paths:
+
+```bash
+export CPLUS_INCLUDE_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/include/:/cygdrive/c/glew-2.1.0/include/
+export LIBRARY_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/lib-mingw-w64/:/cygdrive/c/glew-2.1.0/bin/Release/x64/
+```
+
+It may be better to add this to your ~/.bashrc file so you don't have to repeat the last step with every new terminal session:
+
+```bash
+echo 'export CPLUS_INCLUDE_PATH=/c/glfw-3.4.bin.WIN64/include/:/c/glew-2.1.0/include/' >> ~/.bashrc
+echo 'export LIBRARY_PATH=/cygwin/c/glfw-3.4.bin.WIN64/lib-mingw-w64/:/cygwin/c/glew-2.1.0/bin/Release/x64/' >> ~/.bashrc
+```
+
+Next, call `make`, and the demo should execute. 
+
+If you have trouble, try something like the following (replacing paths for glew and glfw with the paths that you setup earlier):
+
 ```bash
 g++ -std=c++17 -o test.exe test.cpp -g -D GLM_FORCE_SWIZZLE -D GLEW_STATIC -I ../inc/ -I /c/glew-2.1.0/include/ -I /c/glfw-3.4.bin.WIN64/include/ -L /c/glew-2.1.0/bin/Release/x64/ -L /c/glfw-3.4.bin.WIN64/lib-mingw-w64/ -lglfw3 -lopengl32 -lgdi32 -lglew32
 ```
