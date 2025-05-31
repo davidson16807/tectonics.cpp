@@ -7,82 +7,6 @@ This library is not just designed for use by tectonics.js. Numerous space simula
 
 As of completing major milestones in May 2025, permission to use all code going forward is provided under the Creative Commons Attribution-NonCommercial-Sharealike 4.0 license. This code is written with fellow hobby developers in mind, and noncommercial hobby projects are always welcome to use it freely. Drop me a line if you use it, since it's encouraging to hear my work is getting used, and it's always fun to hear from someone with fellow interests! Commercial licensing is also available by prior agreement - drop me a line if interested. 
 
-# Getting Started
-Tectonics.cpp has been tested on many combinations of operating system, build system, and compiler. Here are a few of the most common approaches.
-
-## Ubuntu
-
-### make with g++
-
-Numerous makefiles exist throuhgout the library. These are used to build demos and run isolated unit tests. Simply run `make` in any project folder with a `Makefile` to run all the functionality that's defined within that folder. 
-
-Makefiles under the `demo/` folder build demos for graphical functionality. To run any of these makefiles, you'll first need to install two other libraries: [GLEW](http://glew.sourceforge.net/) and [GLFW](https://www.glfw.org/). On Ubuntu you can install both with the following commands:
-
-```bash
-sudo apt-get install libglew-dev
-sudo apt-get install libglfw3-dev
-```
-
-### Scons with g++
-
-First, you'll need to install Scons on an instance of Python. Python comes with Ubuntu but installing libraries on the system-wide Python instance is risky and frowned upon, so first you'll need to setup a virtual environment. Navigate to a folder that's easy for you to access and run:
-
-```bash
-python3 -m venv venv-path
-source venv-path/bin/activate
-python -m pip install scons
-```
-
-Once scons is installed, simply run `scons -u` from any project folder and scons will run the functionality that's defined within the folder. Remember that whenever you start a new terminal session, you'll need to restart your virtual environment before you use scons. This is done by calling `source venv-path/bin/activate` again.
-
-## Windows
-
-### g++ in Cygwin
-
-To run the graphical demos under `demo/`, you will first need to download the binaries for glew and glfw:
-
-	https://glew.sourceforge.net/
-	https://www.glfw.org/
-
-Unzip the downloads to paths that you can remember, then setup variables for the compiler that point to those paths:
-
-```bash
-export CPLUS_INCLUDE_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/include/:/cygdrive/c/glew-2.1.0/include/
-export LIBRARY_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/lib-mingw-w64/:/cygdrive/c/glew-2.1.0/bin/Release/x64/
-```
-
-It may be better to add this to your ~/.bashrc file so you don't have to repeat the last step with every new terminal session:
-
-```bash
-echo 'export CPLUS_INCLUDE_PATH=/c/glfw-3.4.bin.WIN64/include/:/c/glew-2.1.0/include/' >> ~/.bashrc
-echo 'export LIBRARY_PATH=/cygwin/c/glfw-3.4.bin.WIN64/lib-static-ucrt/:/cygwin/c/glew-2.1.0/bin/Release/x64/' >> ~/.bashrc
-```
-
-You will also need to copy glfw3.dll from the lib-static-ucrt folder of the distributable to the same folder that stores the Makefile
-
-Once the setup above is complete, call `make`, and the demo should execute. 
-
-If you have trouble, try something like the following (replacing paths for glew and glfw with the paths that you setup earlier):
-
-```bash
-g++ -std=c++17 -o test.exe test.cpp -g -D GLM_FORCE_SWIZZLE -D GLEW_STATIC -I ../inc/ -I /cygdrive/c/glew-2.1.0/include/ -I /cygdrive/c/glfw-3.4.bin.WIN64/include/ -L /cygdrive/c/glew-2.1.0/bin/Release/x64/ -L /cygdrive/c/glfw-3.4.bin.WIN64/lib-static-ucrt/ -lglfw3 -lopengl32 -lgdi32 -lglew32
-```
-
-### g++ in MinGW/MSYS
-
-If you have trouble, try something like the following (replacing paths for glew and glfw with the paths that you setup earlier):
-
-```bash
-export CPLUS_INCLUDE_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/include/:/cygdrive/c/glew-2.1.0/include/
-export LIBRARY_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/lib-mingw-w64/:/cygdrive/c/glew-2.1.0/bin/Release/x64/
-```
-
-```bash
-g++ -std=c++17 -o test.exe test.cpp -g -D GLM_FORCE_SWIZZLE -D GLEW_STATIC -I ../inc/ -I /c/glew-2.1.0/include/ -I /c/glfw-3.4.bin.WIN64/include/ -L /c/glew-2.1.0/bin/Release/x64/ -L /c/glfw-3.4.bin.WIN64/lib-mingw-w64/ -lglfw3 -lopengl32 -lgdi32 -lglew32
-```
-
-### MSVC with Scons
-
 # Design Methodology
 tectonics.cpp is adheres to a strict design philosophy that is meant to prioritize functional programming concerns in a way that also leverages object-oriented paradigms. See `doc/general-design-approach.md` for more information.
 
@@ -100,7 +24,183 @@ The most important top-level folders are:
 
 Unit tests and documentation are placed alongside the folder or file they describe. File-specific documentation is stored in image or markdown files that share the same name as the thing it documents (e.g. `grid/dymaxion/Projection.svg` documents `grid/dymaxion/Projection.hpp`). Folder-specific documentation is stored in the folder it documents using one of several standardized names, in uppercase (e.g. `README.md`, `CATEGORY.png`, `DEPENDENCY.png`, etc.)
 
-# Standards
-* **Semantic Versioning 2.0.0**
-* **"GLSL/GLM" Linear Algebra API**
-* **"MKS/SI" International System of Units**
+# Getting Started
+Tectonics.cpp has been tested on many combinations of operating system, build system, and compiler. Here are a few of the most common approaches.
+
+Numerous makefiles exist throuhgout the library. These are used to build demos and run isolated unit tests. Simply run `make` in any project folder with a `Makefile` to run all the functionality that's defined within that folder. Alternatively, you can run `scons -u` from any directory and generate an executable. Building graphical demos requires two additional libraries: [GLEW](http://glew.sourceforge.net/) and [GLFW](https://www.glfw.org/). For more OS-specific details, see below.
+
+## Ubuntu
+
+### make with g++
+
+In case you haven't done so already, install `g++`:
+
+`sudo apt install g++`
+
+Run `make` under any folder with a `Makefile`. To run graphical demos under `demo/`, you will first need to install glew and glfw with the following commands:
+
+```bash
+sudo apt-get install libglew-dev
+sudo apt-get install libglfw3-dev
+```
+
+### Scons with g++
+
+First, you'll need to install Scons on an instance of Python. Python comes with Ubuntu but installing libraries like `scons` on this instance is not recommended, so first you'll need to setup a virtual environment. Navigate to a folder that's easy for you to access and run:
+
+```bash
+python3 -m venv venv-path
+source venv-path/bin/activate
+python -m pip install scons
+```
+
+Once scons is installed, run `scons -u` from any project folder and scons will build the functionality that's defined within the folder. This will create a `test.out` file that you can execute. Remember that whenever you start a new terminal session, you'll need to restart your virtual environment before you use scons. This is done by calling `source venv-path/bin/activate` again.
+
+## Windows
+
+### g++ in Cygwin
+
+Download and execute the Cygwin installer:
+
+https://cygwin.com/install.html
+
+* search for "g++" and under "gcc-g++" select the most recent non-test version
+* search for "make" and under "make" select the most recent non-test version
+
+From the start menu, open "Cygwin Terminal" and use `cd` to navigate to where you want the tectonics.cpp repo to be located (note that the contents of the `C:/` drive are located under `/cygdrive/c/`), then clone the repo:
+
+```bash
+git clone https://github.com/davidson16807/tectonics.cpp.git
+```
+
+Use `cd` to navigate to a directory in the repo that has a `Makefile` in it, type `make`, and hit enter.
+
+Additional setup is needed to run graphical demos under `demo/`. You will first need to download the binaries for glew and glfw:
+
+https://glew.sourceforge.net/
+https://www.glfw.org/
+
+Unzip the downloads to paths that you can remember. Sample commands below will assume they are unzipped to C:/glfw-3.4.bin.WIN64 and C:/glfw-3.4.bin.WIN64. Once their contents are unzipped, specify paths for header and library files:
+
+```bash
+export CPLUS_INCLUDE_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/include/:/cygdrive/c/glew-2.1.0/include/
+export LIBRARY_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/lib-mingw-w64/:/cygdrive/c/glew-2.1.0/bin/Release/x64/
+```
+
+It may be easier to add these to your ~/.bashrc file so you don't have to repeat this last step with every new terminal session:
+
+```bash
+echo 'export CPLUS_INCLUDE_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/include/:/cygdrive/c/glew-2.1.0/include/' >> ~/.bashrc
+echo 'export LIBRARY_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/lib-static-ucrt/:/cygdrive/c/glew-2.1.0/bin/Release/x64/' >> ~/.bashrc
+```
+
+You will also need to copy glfw3.dll from the lib-static-ucrt folder of the distributable to the same folder that stores the Makefile you want to build from.
+
+Once the setup above is complete, call `make`, and the demo should execute. 
+
+If you have trouble, try something like the following (replacing paths for glew and glfw with the paths that you setup earlier):
+
+```bash
+g++ -std=c++17 -o test.exe test.cpp -g -D GLM_FORCE_SWIZZLE -D GLEW_STATIC -I ../inc/ -I /cygdrive/c/glew-2.1.0/include/ -I /cygdrive/c/glfw-3.4.bin.WIN64/include/ -L /cygdrive/c/glew-2.1.0/bin/Release/x64/ -L /cygdrive/c/glfw-3.4.bin.WIN64/lib-static-ucrt/ -lglfw3 -lopengl32 -lgdi32 -lglew32
+```
+
+### g++ in MinGW/MSYS
+
+As of writing in May 2025, the g++ that comes with MinGW ("mingw32-gcc-g++") is outdated an insufficient to build most folders tectonics.cpp. These instructions will assume you have found a updated version of g++ that is still compatible with MinGW, which is not covered by these instructions. 
+
+Download and execute the installers available below:
+
+https://git-scm.com/downloads/win
+https://sourceforge.net/projects/mingw/
+
+Open MinGW installation manager, mark the following for installation:
+* mingw-developer-toolkit
+* mingw32-base
+* msys-base
+* mingw32-gcc-g++ or equivalent
+
+Click Installation > "Apply Changes" > Apply. 
+
+Add the paths to MinGW and `make` to your system PATH. You can do this with the following commands in gitbash:
+
+```bash
+echo 'export PATH="/c/MinGW/bin:$PATH"' >> ~/.bashrc
+echo 'export PATH="/c/MinGW/msys/1.0/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+If this works you should be able to find `g++` and `make` in git bash:
+
+```bash
+which g++
+which make
+```
+
+You should also be able to specify paths manually by opening "Control Panel" > "Environment Variables".
+
+next, open gitbash and clone tectonics.cpp:
+
+```bash
+git clone https://github.com/davidson16807/tectonics.cpp.git
+```
+
+Use `cd` to move to a directory within `tectonics.cpp` that has a `Makefile` in it, type `make`, and hit enter.
+
+Additional setup is needed to run graphical demos under `demo/`. You will first need to download the binaries for glew and glfw:
+
+https://glew.sourceforge.net/
+https://www.glfw.org/
+
+Unzip the downloads to paths that you can remember. Sample commands below will assume they are unzipped to C:/glfw-3.4.bin.WIN64 and C:/glfw-3.4.bin.WIN64. Once their contents are unzipped, specify paths for header and library files:
+
+```bash
+export CPLUS_INCLUDE_PATH=/c/glfw-3.4.bin.WIN64/include/:/c/glew-2.1.0/include/
+export LIBRARY_PATH=/c/glfw-3.4.bin.WIN64/lib-mingw-w64/:/c/glew-2.1.0/bin/Release/x64/
+```
+
+It may be easier to add these to your ~/.bashrc file so you don't have to repeat this last step with every new terminal session:
+
+```bash
+echo 'export CPLUS_INCLUDE_PATH=/c/glfw-3.4.bin.WIN64/include/:/c/glew-2.1.0/include/' >> ~/.bashrc
+echo 'export LIBRARY_PATH=/cygwin/c/glfw-3.4.bin.WIN64/lib-static-ucrt/:/cygwin/c/glew-2.1.0/bin/Release/x64/' >> ~/.bashrc
+```
+
+If you have trouble, try something like the following (replacing paths for glew and glfw with the paths that you setup earlier):
+
+```bash
+g++ -std=c++17 -o test.exe test.cpp -g -D GLM_FORCE_SWIZZLE -D GLEW_STATIC -I ../inc/ -I /c/glew-2.1.0/include/ -I /c/glfw-3.4.bin.WIN64/include/ -L /c/glew-2.1.0/bin/Release/x64/ -L /c/glfw-3.4.bin.WIN64/lib-mingw-w64/ -lglfw3 -lopengl32 -lgdi32 -lglew32
+```
+
+### MSVC with Scons
+
+For this you can either install Visual Studio or the MSVC redistributable. The MSVC redistributable is much smaller and easier to install so is reccomended if you have no plan to develop using Visual Studio. If you prefer to install Visual Studio, the free Community edition is sufficient.
+
+https://visualstudio.microsoft.com/vs/community/
+https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#visual-studio-2015-2017-2019-and-2022
+
+You will also need to install Python. You will need version 3 or higher, and you will need to check the "Add Python to PATH" option in the installer:
+
+https://www.python.org/downloads/windows/
+
+After Python is installed, open your terminal of choice and install the `scons` library for Python:
+
+```bash
+python -m pip install scons
+```
+
+Now within the terminal, navigate to any folder in the tectonics repo and run `scons -u`. This will create an executable in the same folder that you can run.
+
+Additional setup is needed to run graphical demos under `demo/`. You will need to download the binaries for glew and glfw:
+
+https://glew.sourceforge.net/
+https://www.glfw.org/
+
+Additional instructions will be provided in the future to decribe how to proceed from there.
+
+# Using Visual Studio
+
+Download and install Visual Studio. The free Community edition will be sufficient:
+
+https://visualstudio.microsoft.com/vs/community/
+
+This approach will require a VS config file that will provided in the future.
