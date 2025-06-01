@@ -1,7 +1,7 @@
 import glob
 import os 
 cwd = GetLaunchDir()
-root = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
+root = os.path.join(os.getcwd(), os.pardir)
 testexe = os.path.join(cwd, 'tests')
 testcpp = os.path.join(cwd, 'test.cpp')
 
@@ -46,7 +46,10 @@ executable = environment.Program(
         os.path.join(root,*'demo/windows-glew-2.1/lib/Release/x64'.split(),''),
         os.path.join(root,*'demo/windows-glfw-3.4/lib-vc2022'.split(),'')
     ],
-    LIBS=['glew32 glfw3dll opengl32 gdi32'.split()]
+    LIBS=[
+        'glew32 glfw3dll opengl32 gdi32'.split() if is_windows else
+        'glfw GL GLEW'.split()
+    ]
 )
 
 # works on some linux distros, but doesn't work on Ubuntu

@@ -150,10 +150,7 @@ git clone https://github.com/davidson16807/tectonics.cpp.git
 
 Use `cd` to move to a directory within `tectonics.cpp` that has a `Makefile` in it, type `make`, and hit enter.
 
-Additional setup is needed to run graphical demos under `demo/`. Windows binaries for glew and glfw can be found under `demo/windows-*` folders, or the latest binaries can be downloaded here:
-
-https://glew.sourceforge.net/
-https://www.glfw.org/
+Additional setup is needed to run graphical demos under `demo/`. Windows binaries for glew and glfw can be found under `demo/windows-*` folders, or the latest binaries can be downloaded [here](https://glew.sourceforge.net/) and [here](https://www.glfw.org/)
 
 Sample commands below will assume binaries are placed under C:/glew-2.1 and C:/glfw-3.4. Once their contents are unzipped, specify paths for header and library files:
 
@@ -194,10 +191,7 @@ python -m pip install scons
 
 Now within the terminal, navigate to any folder in the tectonics repo and run `scons -u`. This will create an executable in the same folder that you can run.
 
-Additional setup is needed to run graphical demos under `demo/`. You will need the Windows binaries for glew and glfw. Windows binaries for glew and glfw can be found under `demo/windows-*` folders, or the latest binaries can be downloaded here:
-
-https://glew.sourceforge.net/
-https://www.glfw.org/
+Additional setup is needed to run graphical demos under `demo/`. You will need the Windows binaries for glew and glfw. Windows binaries for glew and glfw can be found under `demo/windows-*` folders, or the latest binaries can be downloaded [here](https://glew.sourceforge.net/) and [here](https://www.glfw.org/)
 
 Copy glew32.dll and glfw3.dll to the folder with the Makefile that you are building from, then run `scons -u`. This will create a new executable, "tests.exe", which you can run.
 
