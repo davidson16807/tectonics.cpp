@@ -7,10 +7,9 @@ This library is not just designed for use by tectonics.js. Numerous space simula
 
 As of completing major milestones in May 2025, permission to use all code going forward is provided under the Creative Commons Attribution-NonCommercial-Sharealike 4.0 license. This code is written with fellow hobby developers in mind, and noncommercial hobby projects are always welcome to use it freely. Drop me a line if you use it, since it's encouraging to hear my work is getting used, and it's always fun to hear from someone with fellow interests! Commercial licensing is also available by prior agreement - drop me a line if interested. 
 
-# Design Methodology
+# Overview
 tectonics.cpp is adheres to a strict design philosophy that is meant to prioritize functional programming concerns in a way that also leverages object-oriented paradigms. See `doc/general-design-approach.md` for more information.
 
-# Subcomponents
 tectonics.cpp can be broken down into several subcomponents. Users can pick and choose which subcomponents they'd like to include in their project at their discretion. Some optional dependencies exist between subcomponents, which are indicated clearly by the folder structure (e.g. `index/adapted/glm` stores behavior that requires `glm`). Using optional dependencies this way allows the use of functionality that wouldn't otherwise be possible without requiring people to copy over other unwanted components. 
 
 The most important top-level folders are:
@@ -80,25 +79,26 @@ Additional setup is needed to run graphical demos under `demo/`. You will first 
 https://glew.sourceforge.net/
 https://www.glfw.org/
 
-Unzip the downloads to paths that you can remember. Sample commands below will assume they are unzipped to C:/glfw-3.4.bin.WIN64 and C:/glfw-3.4.bin.WIN64. Once their contents are unzipped, specify paths for header and library files:
+Unzip the downloads to paths that you can remember. Sample commands below will assume they are unzipped to C:/glfw-3.4 and C:/glfw-3.4. Once their contents are unzipped, specify paths for header and library files:
 
 ```bash
 export CPLUS_INCLUDE_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/include/:/cygdrive/c/glew-2.1.0/include/
 export LIBRARY_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/lib-mingw-w64/:/cygdrive/c/glew-2.1.0/bin/Release/x64/
 ```
 
-It may be easier to add these to your ~/.bashrc file so you don't have to repeat this last step with every new terminal session:
+You may want to add these to your ~/.bashrc file so you don't have to repeat this last step with every new terminal session:
 
 ```bash
 echo 'export CPLUS_INCLUDE_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/include/:/cygdrive/c/glew-2.1.0/include/' >> ~/.bashrc
 echo 'export LIBRARY_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/lib-static-ucrt/:/cygdrive/c/glew-2.1.0/bin/Release/x64/' >> ~/.bashrc
+source ~/.bashrc
 ```
 
 You will also need to copy glfw3.dll from the lib-static-ucrt folder of the distributable to the same folder that stores the Makefile you want to build from.
 
 Once the setup above is complete, call `make`, and the demo should execute. 
 
-If you have trouble, try something like the following (replacing paths for glew and glfw with the paths that you setup earlier):
+If you have trouble, you can troubleshoot with the following direct call to g++ (make sure you're in the same folder as a test.cpp file):
 
 ```bash
 g++ -std=c++17 -o test.exe test.cpp -g -D GLM_FORCE_SWIZZLE -D GLEW_STATIC -I ../inc/ -I /cygdrive/c/glew-2.1.0/include/ -I /cygdrive/c/glfw-3.4.bin.WIN64/include/ -L /cygdrive/c/glew-2.1.0/bin/Release/x64/ -L /cygdrive/c/glfw-3.4.bin.WIN64/lib-static-ucrt/ -lglfw3 -lopengl32 -lgdi32 -lglew32
@@ -106,22 +106,26 @@ g++ -std=c++17 -o test.exe test.cpp -g -D GLM_FORCE_SWIZZLE -D GLEW_STATIC -I ..
 
 ### g++ in MinGW/MSYS
 
-As of writing in May 2025, the g++ that comes with MinGW ("mingw32-gcc-g++") is outdated an insufficient to build most folders tectonics.cpp. These instructions will assume you have found a updated version of g++ that is still compatible with MinGW, which is not covered by these instructions. 
+As of writing in May 2025, the g++ that comes with the official [MinGW](https://sourceforge.net/projects/mingw/) installation is outdated and unable to build the vast majority of tectonics.cpp. We recommend downloading the following unofficial build of MINGW that comes with a modern g++:
 
-Download and execute the installers available below:
+https://nuwen.net/mingw.html
+
+Download and run the executable. The executable will unzip MinGW to a directory of your choosing. Choose a directory you will easily remember. Sample commands below will assume MinGW is unzipped to C:/MinGW/
+
+We also recommend installing gitbash, which you can get here:
 
 https://git-scm.com/downloads/win
-https://sourceforge.net/projects/mingw/
 
-Open MinGW installation manager, mark the following for installation:
-* mingw-developer-toolkit
-* mingw32-base
-* msys-base
-* mingw32-gcc-g++ or equivalent
+We recommend accepting default settings during installation, though you may be able to get by with other settings.
 
-Click Installation > "Apply Changes" > Apply. 
+Add the paths to MinGW to your system PATH. You can do this with the following commands in gitbash:
 
-Add the paths to MinGW and `make` to your system PATH. You can do this with the following commands in gitbash:
+```bash
+export PATH="/c/MinGW/bin:$PATH"
+export PATH="/c/MinGW/msys/1.0/bin:$PATH"
+```
+
+You may want to add these to your ~/.bashrc file so you don't have to repeat this last step with every new terminal session:
 
 ```bash
 echo 'export PATH="/c/MinGW/bin:$PATH"' >> ~/.bashrc
@@ -138,7 +142,7 @@ which make
 
 You should also be able to specify paths manually by opening "Control Panel" > "Environment Variables".
 
-next, open gitbash and clone tectonics.cpp:
+Now that setup is complete, open gitbash and clone tectonics.cpp:
 
 ```bash
 git clone https://github.com/davidson16807/tectonics.cpp.git
@@ -151,21 +155,24 @@ Additional setup is needed to run graphical demos under `demo/`. You will first 
 https://glew.sourceforge.net/
 https://www.glfw.org/
 
-Unzip the downloads to paths that you can remember. Sample commands below will assume they are unzipped to C:/glfw-3.4.bin.WIN64 and C:/glfw-3.4.bin.WIN64. Once their contents are unzipped, specify paths for header and library files:
+Unzip the downloads to paths that you can remember. Sample commands below will assume they are unzipped to C:/glfw-3.4 and C:/glfw-3.4. Once their contents are unzipped, specify paths for header and library files:
 
 ```bash
 export CPLUS_INCLUDE_PATH=/c/glfw-3.4.bin.WIN64/include/:/c/glew-2.1.0/include/
 export LIBRARY_PATH=/c/glfw-3.4.bin.WIN64/lib-mingw-w64/:/c/glew-2.1.0/bin/Release/x64/
 ```
 
-It may be easier to add these to your ~/.bashrc file so you don't have to repeat this last step with every new terminal session:
+Here is the command you can run to copy the above to your ~/.bashrc file:
 
 ```bash
 echo 'export CPLUS_INCLUDE_PATH=/c/glfw-3.4.bin.WIN64/include/:/c/glew-2.1.0/include/' >> ~/.bashrc
 echo 'export LIBRARY_PATH=/cygwin/c/glfw-3.4.bin.WIN64/lib-static-ucrt/:/cygwin/c/glew-2.1.0/bin/Release/x64/' >> ~/.bashrc
+source ~/.bashrc
 ```
 
-If you have trouble, try something like the following (replacing paths for glew and glfw with the paths that you setup earlier):
+You will also need to copy glfw3.dll from the lib-mingw-w64 folder of the distributable to the same folder that stores the Makefile you want to build from.
+
+If you have trouble, you can troubleshoot with the following direct call to g++ (make sure you're in the same folder as a test.cpp file):
 
 ```bash
 g++ -std=c++17 -o test.exe test.cpp -g -D GLM_FORCE_SWIZZLE -D GLEW_STATIC -I ../inc/ -I /c/glew-2.1.0/include/ -I /c/glfw-3.4.bin.WIN64/include/ -L /c/glew-2.1.0/bin/Release/x64/ -L /c/glfw-3.4.bin.WIN64/lib-mingw-w64/ -lglfw3 -lopengl32 -lgdi32 -lglew32
