@@ -82,15 +82,15 @@ https://www.glfw.org/
 Sample commands below will assume binaries are placed under C:/glew-2.1 and C:/glfw-3.4. Once their contents are unzipped, specify paths for header and library files:
 
 ```bash
-export CPLUS_INCLUDE_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/include/:/cygdrive/c/glew-2.1/include/
-export LIBRARY_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/lib-mingw-w64/:/cygdrive/c/glew-2.1/bin/Release/x64/
+export CPLUS_INCLUDE_PATH=/cygdrive/c/glfw-3.4/include/:/cygdrive/c/glew-2.1/include/
+export LIBRARY_PATH=/cygdrive/c/glfw-3.4/lib-mingw-w64/:/cygdrive/c/glew-2.1/bin/Release/x64/
 ```
 
 You may want to add these to your ~/.bashrc file so you don't have to repeat this last step with every new terminal session:
 
 ```bash
-echo 'export CPLUS_INCLUDE_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/include/:/cygdrive/c/glew-2.1/include/' >> ~/.bashrc
-echo 'export LIBRARY_PATH=/cygdrive/c/glfw-3.4.bin.WIN64/lib-static-ucrt/:/cygdrive/c/glew-2.1/bin/Release/x64/' >> ~/.bashrc
+echo 'export CPLUS_INCLUDE_PATH=/cygdrive/c/glfw-3.4/include/:/cygdrive/c/glew-2.1/include/' >> ~/.bashrc
+echo 'export LIBRARY_PATH=/cygdrive/c/glfw-3.4/lib-static-ucrt/:/cygdrive/c/glew-2.1/bin/Release/x64/' >> ~/.bashrc
 source ~/.bashrc
 ```
 
@@ -101,7 +101,7 @@ Once the setup above is complete, call `make`, and the demo should execute.
 If you have trouble, you can troubleshoot with the following direct call to g++ (make sure you're in the same folder as a test.cpp file):
 
 ```bash
-g++ -std=c++17 -o test.exe test.cpp -g -D GLM_FORCE_SWIZZLE -D GLEW_STATIC -I ../inc/ -I /cygdrive/c/glew-2.1/include/ -I /cygdrive/c/glfw-3.4.bin.WIN64/include/ -L /cygdrive/c/glew-2.1/bin/Release/x64/ -L /cygdrive/c/glfw-3.4.bin.WIN64/lib-static-ucrt/ -lglfw3 -lopengl32 -lgdi32 -lglew32
+g++ -std=c++17 -o test.exe test.cpp -g -D GLM_FORCE_SWIZZLE -D GLEW_STATIC -I ../inc/ -I /cygdrive/c/glew-2.1/include/ -I /cygdrive/c/glfw-3.4/include/ -L /cygdrive/c/glew-2.1/bin/Release/x64/ -L /cygdrive/c/glfw-3.4/lib-static-ucrt/ -lglfw3 -lopengl32 -lgdi32 -lglew32
 ```
 
 ### g++ in MinGW/MSYS
@@ -155,15 +155,15 @@ Additional setup is needed to run graphical demos under `demo/`. Windows binarie
 Sample commands below will assume binaries are placed under C:/glew-2.1 and C:/glfw-3.4. Once their contents are unzipped, specify paths for header and library files:
 
 ```bash
-export CPLUS_INCLUDE_PATH=/c/glfw-3.4.bin.WIN64/include/:/c/glew-2.1/include/
-export LIBRARY_PATH=/c/glfw-3.4.bin.WIN64/lib-mingw-w64/:/c/glew-2.1/bin/Release/x64/
+export CPLUS_INCLUDE_PATH=/c/glfw-3.4/include/:/c/glew-2.1/include/
+export LIBRARY_PATH=/c/glfw-3.4/lib-mingw-w64/:/c/glew-2.1/bin/Release/x64/
 ```
 
 Here is the command you can run to copy the above to your ~/.bashrc file:
 
 ```bash
-echo 'export CPLUS_INCLUDE_PATH=/c/glfw-3.4.bin.WIN64/include/:/c/glew-2.1/include/' >> ~/.bashrc
-echo 'export LIBRARY_PATH=/cygwin/c/glfw-3.4.bin.WIN64/lib-static-ucrt/:/cygwin/c/glew-2.1/bin/Release/x64/' >> ~/.bashrc
+echo 'export CPLUS_INCLUDE_PATH=/c/glfw-3.4/include/:/c/glew-2.1/include/' >> ~/.bashrc
+echo 'export LIBRARY_PATH=/c/glfw-3.4/lib-static-ucrt/:/c/glew-2.1/bin/Release/x64/' >> ~/.bashrc
 source ~/.bashrc
 ```
 
@@ -172,7 +172,7 @@ You will also need to copy glfw3.dll from the lib-mingw-w64 folder of the distri
 If you have trouble, you can troubleshoot with the following direct call to g++ (make sure you're in the same folder as a test.cpp file):
 
 ```bash
-g++ -std=c++17 -o test.exe test.cpp -g -D GLM_FORCE_SWIZZLE -D GLEW_STATIC -I ../inc/ -I /c/glew-2.1/include/ -I /c/glfw-3.4.bin.WIN64/include/ -L /c/glew-2.1/bin/Release/x64/ -L /c/glfw-3.4.bin.WIN64/lib-mingw-w64/ -lglfw3 -lopengl32 -lgdi32 -lglew32
+g++ -std=c++17 -o test.exe test.cpp -g -D GLM_FORCE_SWIZZLE -D GLEW_STATIC -I ../inc/ -I /c/glew-2.1/include/ -I /c/glfw-3.4/include/ -L /c/glew-2.1/bin/Release/x64/ -L /c/glfw-3.4/lib-mingw-w64/ -lglfw3 -lopengl32 -lgdi32 -lglew32
 ```
 
 ### MSVC with Scons
