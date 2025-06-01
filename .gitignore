@@ -21,12 +21,17 @@ test.cpp
 *.so
 *.dylib
 *.dll
+!demo/windows-glew-2.1/**/*.dll
+!demo/windows-glfw-3.4/**/*.dll
 
 # Compiled Static libraries
 *.lai
 *.la
 *.a
 *.lib
+*.lib
+!demo/windows-glew-2.1/**/*.lib
+!demo/windows-glfw-3.4/**/*.lib
 *.pyc
 
 # Executables
