@@ -1,7 +1,10 @@
-import glob
 import os 
+import shutil
+import glob
+
 cwd = GetLaunchDir()
-root = os.path.join(os.getcwd(), os.pardir)
+demo = os.getcwd()
+root = os.path.join(demo, os.pardir)
 testexe = os.path.join(cwd, 'tests')
 testcpp = os.path.join(cwd, 'test.cpp')
 
@@ -19,12 +22,16 @@ f'''
 Building executable, "tests", under "{cwd}"
 from newly created test.cpp file under "{cwd}"
 that includes only *_test.cpp files under "{cwd}"
-using sconstruct.py under "{root}".
+using sconstruct.py under "{demo}".
 ''')
-
 
 test = Environment()
 is_windows = test['CC']=='cl'
+
+if is_windows:
+    shutil.copy2(os.path.join(root,*'demo/windows-glew-2.1/bin/Release/x64/glew32.dll'.split('/')), cwd)
+    shutil.copy2(os.path.join(root,*'demo/windows-glfw-3.4/lib-vc2022/glfw3.dll'.split('/')), cwd)
+
 environment = Environment(
     CCFLAGS=(
         ("/std:c++20 /D GLM_FORCE_SWIZZLE" if is_windows else 
@@ -33,8 +40,8 @@ environment = Environment(
         *[os.path.join(root,path) for path in 'inc lib src sketch'.split()],
         *([] if not is_windows else
           [
-            os.path.join(root,*'demo/windows-glew-2.1/include'.split(),''), 
-            os.path.join(root,*'demo/windows-glfw-3.4/include'.split(),'')
+            os.path.join(root,*'demo/windows-glew-2.1/include'.split('/'),''), 
+            os.path.join(root,*'demo/windows-glfw-3.4/include'.split('/'),'')
           ])
     ],
     # CPPDEFINES=['GLFW_INCLUDE_ES2'],
@@ -43,8 +50,8 @@ environment = Environment(
 executable = environment.Program(
     target=testexe, source=testcpp,
     LIBPATH=[
-        os.path.join(root,*'demo/windows-glew-2.1/lib/Release/x64'.split(),''),
-        os.path.join(root,*'demo/windows-glfw-3.4/lib-vc2022'.split(),'')
+        os.path.join(root,*'demo/windows-glew-2.1/lib/Release/x64'.split('/'),''),
+        os.path.join(root,*'demo/windows-glfw-3.4/lib-vc2022'.split('/'),'')
     ],
     LIBS=[
         'glew32 glfw3dll opengl32 gdi32'.split() if is_windows else
