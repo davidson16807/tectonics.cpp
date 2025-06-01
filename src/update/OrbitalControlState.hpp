@@ -20,6 +20,8 @@ namespace update
 	};
 	struct OrbitalControlState
 	{
+		static constexpr float pi =3.141592653589793238462643383279;
+
 		// latitude/longitude of geographic coordinates indicating position over world
 		glm::vec2 angular_position;
 		// altitude/azimuth of horizontal coordinates indicating direction of viewer relative to "up" axis
@@ -50,7 +52,7 @@ namespace update
 			glm::mat4 I   = glm::mat4(1.0f);
 			glm::mat4 out = glm::mat4(1.0f);
 			out = glm::translate(I, glm::vec3(0,0,-(std::exp2(log2_height)+min_zoom_distance)));
-			out = out * glm::rotate(I, angular_position.y-float(M_PI)/2.0f, glm::vec3(1,0,0));
+			out = out * glm::rotate(I, angular_position.y-pi/2.0f, glm::vec3(1,0,0));
 			out = out * glm::rotate(I, angular_position.x, glm::vec3(0,0,1));
 			out = glm::rotate(I, angular_direction.y, glm::vec3(1,0,0)) * out;
 			out = glm::rotate(I, angular_direction.x, glm::vec3(0,1,0)) * out;
@@ -67,7 +69,7 @@ namespace update
 		{
 			if (&state_in != &state_out) { state_out = state_in; }
 			state_out.angular_position = state_in.angular_position + motion;
-			state_out.angular_position.y = std::clamp(state_out.angular_position.y, -float(M_PI)/2.0f, float(M_PI)/2.0f);
+			state_out.angular_position.y = std::clamp(state_out.angular_position.y, -pi/2.0f, pi/2.0f);
 		}
 	};
 
