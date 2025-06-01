@@ -74,7 +74,7 @@ git clone https://github.com/davidson16807/tectonics.cpp.git
 
 Use `cd` to navigate to a directory in the repo that has a `Makefile` in it, type `make`, and hit enter.
 
-Additional setup is needed to run graphical demos under `demo/`. Windows binaries for glew and glfw can be found under `demo/windows-*` folders, or downloaded here:
+Additional setup is needed to run graphical demos under `demo/`. You will need the Windows binaries for glew and glfw. Windows binaries for glew and glfw can be found under `demo/windows-*` folders, or the latest binaries can be downloaded here:
 
 https://glew.sourceforge.net/
 https://www.glfw.org/
@@ -150,7 +150,7 @@ git clone https://github.com/davidson16807/tectonics.cpp.git
 
 Use `cd` to move to a directory within `tectonics.cpp` that has a `Makefile` in it, type `make`, and hit enter.
 
-Additional setup is needed to run graphical demos under `demo/`. Windows binaries for glew and glfw can be found under `demo/windows-*` folders, or downloaded here:
+Additional setup is needed to run graphical demos under `demo/`. Windows binaries for glew and glfw can be found under `demo/windows-*` folders, or the latest binaries can be downloaded here:
 
 https://glew.sourceforge.net/
 https://www.glfw.org/
@@ -180,10 +180,7 @@ g++ -std=c++17 -o test.exe test.cpp -g -D GLM_FORCE_SWIZZLE -D GLEW_STATIC -I ..
 
 ### MSVC with Scons
 
-For this you can either install Visual Studio or the MSVC redistributable. The MSVC redistributable is much smaller and easier to install so is reccomended if you have no plan to develop using Visual Studio. If you prefer to install Visual Studio, the free Community edition is sufficient.
-
-https://visualstudio.microsoft.com/vs/community/
-https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#visual-studio-2015-2017-2019-and-2022
+For this you can either install [Visual Studio](https://visualstudio.microsoft.com/vs/community/) or the [MSVC redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#visual-studio-2015-2017-2019-and-2022). The MSVC redistributable is much smaller and easier to install so it is reccomended if you have no plan to develop using Visual Studio. If you prefer to install Visual Studio, the free Community edition is sufficient.
 
 You will also need to install Python. You will need version 3 or higher, and you will need to check the "Add Python to PATH" option in the installer:
 
@@ -197,12 +194,12 @@ python -m pip install scons
 
 Now within the terminal, navigate to any folder in the tectonics repo and run `scons -u`. This will create an executable in the same folder that you can run.
 
-Additional setup is needed to run graphical demos under `demo/`. You will need to download the binaries for glew and glfw:
+Additional setup is needed to run graphical demos under `demo/`. You will need the Windows binaries for glew and glfw. Windows binaries for glew and glfw can be found under `demo/windows-*` folders, or the latest binaries can be downloaded here:
 
 https://glew.sourceforge.net/
 https://www.glfw.org/
 
-Additional instructions will be provided in the future to decribe how to proceed from there.
+Copy glew32.dll and glfw3.dll to the folder with the Makefile that you are building from, then run `scons -u`. This will create a new executable, "tests.exe", which you can run.
 
 # Using Visual Studio
 
