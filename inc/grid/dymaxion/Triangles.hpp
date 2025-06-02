@@ -62,7 +62,7 @@ namespace dymaxion
 			const id i,
 			const bool is_polar
 		) const {
-			return is_polar == i%2;
+			return is_polar == bool(i%2);
 		}
 
 		inline constexpr bool is_polar_square_id(
