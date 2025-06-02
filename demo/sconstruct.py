@@ -17,16 +17,17 @@ with open(testcpp, 'w') as file:
         localized = include.replace(cwd, '.')
         file.write(f'#include "{localized}"\n')
 
+test = Environment()
+is_windows = test['CC']=='cl'
+
 print(
 f'''
 Building executable, "tests", under "{cwd}"
-from newly created test.cpp file under "{cwd}"
+using the {test['CC']} compiler
+to build a newly created test.cpp file under "{cwd}"
 that includes only *_test.cpp files under "{cwd}"
 using sconstruct.py under "{demo}".
 ''')
-
-test = Environment()
-is_windows = test['CC']=='cl'
 
 if is_windows:
     shutil.copy2(os.path.join(root,*'demo/windows-glew-2.1/bin/Release/x64/glew32.dll'.split('/')), cwd)
