@@ -1,25 +1,46 @@
 TODO:
 
-impose elastic forces on continent-continent collision
-incorporate refined parameters for crust initialization
-transform FormationGeneration to map: grid×id → stratum
-sealevel calculation
-physically based rendering
-lod
-metamorphosis
-lithification
-orbital mechanics
-climate
-erosion
-primary producers
-secondary producers
+build support:
+  windows/wsl/g++/make
+  windows/wsl/scons
+  windows/vs
+  windows build for "minimum motion" milestone
 
-lower priority:
-dedicated dymaxion noise
 
-nonearthlike planets:
-density tower
-expanded mineral types
+PROVEN DESIGN:
+  incorporate refined parameters into crust initialization
+  refactor: transform FormationGeneration to map: grid×id → stratum
+  sealevel calculation
+  physically based surface rendering
+  physically based atmospheric rendering
+  physically based solar disc rendering
+  physically based rendering for generic spheres
+  physically based star rendering
+  metamorphosis
+  lithification
+  erosion
+  supercontinent cycle using existing js method
+  temperature estimates via max entropy production principle (MEPP)
+  ice as a mineral
+  handwavey precipitation and fluid models from js
+  orbital mechanics assuming elliptical orbits
+  stellar motion and orbital perturbation via barnes hutt algorithm (needs universal formulation)
+  expanded mineral types
+
+UNTESTED DESIGN:
+  lod
+  orbital mechanics via universal formulation
+  density towers
+  selection of points on a grid
+
+SPECULATIVE OR UNCERTAIN DESIGN:
+  supercontinent cycle using more dynamic plate fracture
+  physically based cloud rendering
+  impose forces that result in slow down due to continent-continent collision
+  full 3d climate simulation
+  defensible/generic precipitation and fluid models
+  models for primary producers
+  models for secondary producers 
 
 graphics optimizations:
 * use gl_FragCoord with depth testing to render atmosphere using a coarse spheroid mesh
@@ -28,5 +49,5 @@ graphics optimizations:
 * find way to incrementally update buffer for LOD chunks using glBufferSubData
 * use gl_VertexId to procedurally offset vertices of LOD chunks
 * use gl_VertexId (gl_InstanceId for vector rasters) to procedurally generate vertex positions (requires a dedicated `*ShaderProgram` for each grid)
-* "billboard clouds" for rendering stars
+* "billboard clouds" for rendering galaxies
 
