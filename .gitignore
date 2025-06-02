@@ -21,17 +21,16 @@ test.cpp
 *.so
 *.dylib
 *.dll
-!demo/windows-glew-2.1/**/*.dll
-!demo/windows-glfw-3.4/**/*.dll
+!lib/glew/**/*.dll
+!lib/glfw/**/*.dll
 
 # Compiled Static libraries
 *.lai
 *.la
 *.a
 *.lib
-*.lib
-!demo/windows-glew-2.1/**/*.lib
-!demo/windows-glfw-3.4/**/*.lib
+!lib/glew/**/*.lib
+!lib/glfw/**/*.lib
 *.pyc
 
 # Executables
@@ -43,6 +42,7 @@ tests
 # Log files
 *.log
 
-inc/grid/dymaxion/venv/
+# Python virtual environments
+**/venv/
 
 .vs/

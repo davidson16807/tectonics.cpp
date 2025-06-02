@@ -30,8 +30,8 @@ using sconstruct.py under "{demo}".
 ''')
 
 if is_windows:
-    shutil.copy2(os.path.join(root,*'demo/windows-glew-2.1/bin/Release/x64/glew32.dll'.split('/')), cwd)
-    shutil.copy2(os.path.join(root,*'demo/windows-glfw-3.4/lib-vc2022/glfw3.dll'.split('/')), cwd)
+    shutil.copy2(os.path.join(root,*'lib/glew/bin/Release/x64/glew32.dll'.split('/')), cwd)
+    shutil.copy2(os.path.join(root,*'lib/glfw/lib-vc2022/glfw3.dll'.split('/')), cwd)
 
 environment = Environment(
     CCFLAGS=(
@@ -41,8 +41,8 @@ environment = Environment(
         *[os.path.join(root,path) for path in 'inc lib src sketch'.split()],
         *([] if not is_windows else
           [
-            os.path.join(root,*'demo/windows-glew-2.1/include'.split('/'),''), 
-            os.path.join(root,*'demo/windows-glfw-3.4/include'.split('/'),'')
+            os.path.join(root,*'lib/glew/include'.split('/'),''), 
+            os.path.join(root,*'lib/glfw/include'.split('/'),'')
           ])
     ],
     # CPPDEFINES=['GLFW_INCLUDE_ES2'],
@@ -51,8 +51,8 @@ environment = Environment(
 executable = environment.Program(
     target=testexe, source=testcpp,
     LIBPATH=[
-        os.path.join(root,*'demo/windows-glew-2.1/lib/Release/x64'.split('/'),''),
-        os.path.join(root,*'demo/windows-glfw-3.4/lib-vc2022'.split('/'),'')
+        os.path.join(root,*'lib/glew/lib/Release/x64'.split('/'),''),
+        os.path.join(root,*'lib/glfw/lib-vc2022'.split('/'),'')
     ],
     LIBS=[
         'glew32 glfw3dll opengl32 gdi32'.split() if is_windows else

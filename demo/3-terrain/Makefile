@@ -17,7 +17,7 @@ FLAGS-Cygwin  =-Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE
 
 all: $(TEST) ./Makefile
 	rm -f test.cpp && \
-	cp $(ROOT)/demo/windows-glew-2.1/bin/Release/x64/glew32.dll . && \
+	cp $(ROOT)/lib/glew/bin/Release/x64/glew32.dll . && \
 	find ./ -type f -name '*_specialization.*pp' -exec echo "#include \"{}\"" >> test.cpp \; && \
 	find ./ -type f -name '*_test.*pp' -exec echo "#include \"{}\"" >> test.cpp \; && \
 	$(CPP) -std=c++20 -o test.out test.cpp  $(FLAGS-$(OS)) \
