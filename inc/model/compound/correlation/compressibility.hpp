@@ -133,7 +133,7 @@ The fitted function offers the following guarantees:
 * The approximation is implemented using only floating point arithmetic, 3*2 exponentials, and 3 exponents.
   This should place runtime in the same class as the fastest approximations reviewed by Takacs (1989), namely Papay, Burnett
 */
-constexpr float estimate_compressibility_factor(
+float estimate_compressibility_factor(
     const si::pressure<double> pressure,
     const si::temperature<double> temperature,
     const si::pressure<double> critical_pressure,

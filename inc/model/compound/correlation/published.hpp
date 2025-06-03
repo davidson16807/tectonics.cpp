@@ -371,7 +371,7 @@ namespace correlation {
         return si::universal_gas_constant * critical_temperature / critical_pressure * pow(critical_compressibility, 1.0 + pow(1.0 - reduced_temperature, 2.0/7.0));
     }
 
-    constexpr si::molar_volume<double> estimate_molar_volume_as_gas(
+    si::molar_volume<double> estimate_molar_volume_as_gas(
         const si::pressure<double> pressure, 
         const si::pressure<double> critical_pressure, 
         const si::temperature<double> temperature, 
