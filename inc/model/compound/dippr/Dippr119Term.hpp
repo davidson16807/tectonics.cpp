@@ -28,7 +28,7 @@ namespace dippr {
             c2(c2),
             c3(c3)
         {}
-        constexpr float operator()(const float x) const
+        float operator()(const float x) const
         {
             return c1*pow(1.0-(x/c2), c3);
         }

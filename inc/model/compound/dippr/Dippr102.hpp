@@ -31,7 +31,7 @@ namespace dippr {
             c3(f.c3),
             c4(f.c4)
         {}
-        constexpr float operator()(const float x) const
+        float operator()(const float x) const
         {
             return c1 * std::pow(x, c2) / (1.0f + c3/x + c4/(x*x));
         }
@@ -64,7 +64,7 @@ namespace dippr {
     }
 
 
-    constexpr Dippr102 compose(Dippr102 f, const analytic::Scaling<float> g)
+    Dippr102 compose(Dippr102 f, const analytic::Scaling<float> g)
     {
         return Dippr102(
             f.c1 * std::pow(g.factor, f.c2),

@@ -65,7 +65,7 @@ namespace
       This should place runtime in the same class as the fastest approximations reviewed by Takacs (1989), namely Papay, Burnett
     * Only 10 parameters, with straight forward interpretations, making it easy to implement and manipulate without requiring reoptimization.
     */
-    constexpr float estimate_compressibility_factor(
+    float estimate_compressibility_factor(
         const float reduced_pressure,
         const float reduced_temperature,
 

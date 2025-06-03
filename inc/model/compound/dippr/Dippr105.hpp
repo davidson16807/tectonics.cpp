@@ -33,7 +33,7 @@ namespace dippr {
             c3(c3),
             c4(c4)
         {}
-        constexpr float operator()(const float x) const
+        float operator()(const float x) const
         {
             return c1 / std::pow(c2, 1+std::pow(1.0-(x/c3), c4));
         }

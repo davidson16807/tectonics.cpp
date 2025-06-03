@@ -18,7 +18,7 @@ namespace combinatoric {
 
     // number of possible sets of any size composed from a set of candidates
     // (repetition is not allowed, order does not matter)
-    constexpr int subset(const int candidates)
+    int subset(const int candidates)
     {
         return std::pow(2, candidates);
     }
@@ -46,7 +46,7 @@ namespace combinatoric {
 
     // number of possible sequences of given size composed from a set of candidates
     // (repetition is allowed, order matters)
-    constexpr int sequence(const int candidates, const int size)
+    int sequence(const int candidates, const int size)
     {
         return std::pow(candidates,size);
     }

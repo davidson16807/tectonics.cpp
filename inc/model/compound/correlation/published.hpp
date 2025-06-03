@@ -112,7 +112,7 @@ namespace correlation {
     }
 
     // Sheffy Johnson: https://chemicals.readthedocs.io/chemicals.thermal_conductivity.html#pure-low-pressure-liquid-correlations
-    constexpr si::thermal_conductivity<double> estimate_thermal_conductivity_as_liquid_from_sheffy_johnson(
+    si::thermal_conductivity<double> estimate_thermal_conductivity_as_liquid_from_sheffy_johnson(
         const si::molar_mass<double> molar_mass,
         const si::temperature<double> temperature,
         const si::temperature<double> normal_melting_point
@@ -127,7 +127,7 @@ namespace correlation {
     }
 
     // Sato-Riedel method: https://chemicals.readthedocs.io/chemicals.thermal_conductivity.html#pure-low-pressure-liquid-correlations
-    constexpr si::thermal_conductivity<double> estimate_thermal_conductivity_as_liquid_from_sato_riedel(
+    si::thermal_conductivity<double> estimate_thermal_conductivity_as_liquid_from_sato_riedel(
         const si::molar_mass<double> molar_mass,  
         const si::temperature<double> temperature, 
         const si::temperature<double> normal_boiling_point, 
@@ -153,7 +153,7 @@ namespace correlation {
     }
 
     // Rowlinson-Poling: https://chemicals.readthedocs.io/chemicals.heat_capacity.html?highlight=rowlinson#chemicals.heat_capacity.Rowlinson_Poling
-    constexpr si::molar_heat_capacity<double> estimate_isobaric_heat_capacity_as_liquid_from_rowlinson_poling(
+    si::molar_heat_capacity<double> estimate_isobaric_heat_capacity_as_liquid_from_rowlinson_poling(
         const si::temperature<double> critical_temperature,
         const si::temperature<double> temperature,
         const double acentric_factor,
@@ -167,7 +167,7 @@ namespace correlation {
     }
 
     // Rowlinson-Poling: https://chemicals.readthedocs.io/chemicals.heat_capacity.html?highlight=rowlinson#chemicals.heat_capacity.Rowlinson_Poling
-    constexpr si::molar_heat_capacity<double> estimate_isobaric_heat_capacity_as_gas_from_rowlinson_poling(
+    si::molar_heat_capacity<double> estimate_isobaric_heat_capacity_as_gas_from_rowlinson_poling(
         const si::temperature<double> critical_temperature,
         const si::temperature<double> temperature,
         const double acentric_factor,
@@ -180,7 +180,7 @@ namespace correlation {
         return isobaric_heat_capacity_as_liquid - heat_capacity_phase_difference_versus_gas_constant * si::universal_gas_constant;
     }
 
-    constexpr double estimate_acentric_factor_from_rowlinson_poling(
+    double estimate_acentric_factor_from_rowlinson_poling(
         const si::temperature<double> critical_temperature,
         const si::temperature<double> temperature,
         const si::molar_heat_capacity<double> isobaric_heat_capacity_as_liquid,
@@ -203,7 +203,7 @@ namespace correlation {
     }
 
     // Pitzer model: https://chemicals.readthedocs.io/chemicals.phase_change.html#heat-of-vaporization-at-tb-correlations
-    constexpr si::specific_energy<double> estimate_latent_heat_of_vaporization_from_pitzer(
+    si::specific_energy<double> estimate_latent_heat_of_vaporization_from_pitzer(
         const double acentric_factor,
         const si::molar_mass<double> molar_mass,  
         const si::temperature<double> temperature,
@@ -214,7 +214,7 @@ namespace correlation {
     }
 
     // Letsou-Stiel method: https://chemicals.readthedocs.io/chemicals.viscosity.html?highlight=letsou%20stiel#chemicals.viscosity.Letsou_Stiel
-    constexpr si::dynamic_viscosity<double> estimate_viscosity_as_liquid_from_letsou_stiel(
+    si::dynamic_viscosity<double> estimate_viscosity_as_liquid_from_letsou_stiel(
         const double acentric_factor,
         const si::molar_mass<double> molar_mass,  
         const si::temperature<double> temperature, 
@@ -234,7 +234,7 @@ namespace correlation {
     }
 
     // Letsou-Stiel method: https://chemicals.readthedocs.io/chemicals.viscosity.html?highlight=letsou%20stiel#chemicals.viscosity.Letsou_Stiel
-    constexpr double estimate_acentric_factor_from_letsou_stiel(
+    double estimate_acentric_factor_from_letsou_stiel(
         const si::dynamic_viscosity<double> viscosity_as_liquid,
         const si::molar_mass<double> molar_mass,  
         const si::temperature<double> temperature, 
@@ -251,7 +251,7 @@ namespace correlation {
         return ((viscosity_as_liquid * zeta / (si::pascal * si::second)) - eta_zeta_0) / eta_zeta_1;
     }
 
-    constexpr si::length<double> estimate_molecular_diameter_from_tee_gotoh_steward(
+    si::length<double> estimate_molecular_diameter_from_tee_gotoh_steward(
         const si::temperature<double> critical_temperature, 
         const si::pressure<double> critical_pressure
     ){
@@ -268,18 +268,18 @@ namespace correlation {
         NOTE: 
         this namespace describes subfunctions of the Lee-Kesler method: https://en.wikipedia.org/wiki/Lee%E2%80%93Kesler_method
         */
-        constexpr double f0(const double reduced_temperature) {
+        double f0(const double reduced_temperature) {
             const double Tr = reduced_temperature;
             return 5.92714 - 6.09648f/Tr - 1.28862f*log(Tr) + 0.169347f*Tr*Tr*Tr*Tr*Tr*Tr;
         }
-        constexpr double f1(const double reduced_temperature) {
+        double f1(const double reduced_temperature) {
             const double Tr = reduced_temperature;
             return 15.2518 - 15.6875f/Tr - 13.4721f*log(Tr) + 0.43577 *Tr*Tr*Tr*Tr*Tr*Tr;
         }
     }
 
     // Lee Kesler method: https://en.wikipedia.org/wiki/Lee%E2%80%93Kesler_method
-    constexpr si::pressure<double> estimate_vapor_pressure_as_liquid_from_lee_kesler(
+    si::pressure<double> estimate_vapor_pressure_as_liquid_from_lee_kesler(
         const double acentric_factor, 
         const si::temperature<double> temperature, 
         const si::temperature<double> critical_temperature, 
@@ -291,7 +291,7 @@ namespace correlation {
     }
 
     // Bird-Steward-Lightfoot: https://chemicals.readthedocs.io/chemicals.lennard_jones.html#molecular-diameter-correlations
-    constexpr si::length<double> estimate_molecular_diameter_from_bird_steward_lightfoot_1(const si::molar_volume<double> critical_molar_volume)
+    si::length<double> estimate_molecular_diameter_from_bird_steward_lightfoot_1(const si::molar_volume<double> critical_molar_volume)
     {
         double critical_molar_volume_in_meter3_per_mole = (critical_molar_volume / (si::milliliter/si::mole));
         double molecular_diameter_in_angstrom = 0.841 * pow(critical_molar_volume_in_meter3_per_mole, 1.0/3.0);
@@ -299,7 +299,7 @@ namespace correlation {
     }
 
     // Bird-Steward-Lightfoot: https://chemicals.readthedocs.io/chemicals.lennard_jones.html#molecular-diameter-correlations
-    constexpr si::molar_volume<double> estimate_critical_molar_volume_from_bird_steward_lightfoot_1(const si::length<double> molecular_diameter)
+    si::molar_volume<double> estimate_critical_molar_volume_from_bird_steward_lightfoot_1(const si::length<double> molecular_diameter)
     {
         double molecular_diameter_in_angstrom = (molecular_diameter / si::angstrom);
         double critical_molar_volume_in_meter3_per_mole = pow(molecular_diameter_in_angstrom / 0.841f, 3.0);
@@ -307,7 +307,7 @@ namespace correlation {
     }
 
     // Bird-Steward-Lightfoot: https://chemicals.readthedocs.io/chemicals.lennard_jones.html#molecular-diameter-correlations
-    constexpr si::length<double> estimate_molecular_diameter_from_bird_steward_lightfoot_2(const si::molar_volume<double> liquid_molar_volume_at_melting_point)
+    si::length<double> estimate_molecular_diameter_from_bird_steward_lightfoot_2(const si::molar_volume<double> liquid_molar_volume_at_melting_point)
     {
         double liquid_molar_volume_in_meter3_per_mole = (liquid_molar_volume_at_melting_point / (si::milliliter/si::mole));
         double molecular_diameter_in_angstrom = 1.222 * pow(liquid_molar_volume_in_meter3_per_mole, 1.0/3.0);
@@ -315,7 +315,7 @@ namespace correlation {
     }
 
     // Bird-Steward-Lightfoot: https://chemicals.readthedocs.io/chemicals.lennard_jones.html#molecular-diameter-correlations
-    constexpr si::molar_volume<double> estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(const si::length<double> molecular_diameter)
+    si::molar_volume<double> estimate_molar_volume_as_liquid_from_bird_steward_lightfoot_2(const si::length<double> molecular_diameter)
     {
         double molecular_diameter_in_angstrom = (molecular_diameter / si::angstrom);
         double liquid_molar_volume_in_meter3_per_mole = pow(molecular_diameter_in_angstrom / 1.222f, 3.0);
@@ -362,7 +362,7 @@ namespace correlation {
     }
 
     // Rackett equation
-    constexpr si::molar_volume<double> estimate_molar_volume_as_liquid_from_rackett(const si::temperature<double> temperature, 
+    si::molar_volume<double> estimate_molar_volume_as_liquid_from_rackett(const si::temperature<double> temperature, 
         const si::temperature<double> critical_temperature, 
         const si::pressure<double> critical_pressure, 
         const double critical_compressibility
@@ -411,7 +411,7 @@ namespace correlation {
 
     // Clapeyron: https://chemicals.readthedocs.io/chemicals.vapor_pressure.html#sublimation-pressure-estimation-correlations
     // NOTE: the inverse of this function, mapping vapor_pressure → latent_heat, is not possible in the general case because it causes division by zero when temperature == triple_point_temperature
-    constexpr si::pressure<double> estimate_vapor_pressure_as_solid_from_clapeyron(
+    si::pressure<double> estimate_vapor_pressure_as_solid_from_clapeyron(
         const si::specific_energy<double> latent_heat_of_sublimation_at_triple_point,
         const si::molar_mass<double> molar_mass,
         const si::temperature<double> temperature,
@@ -422,7 +422,7 @@ namespace correlation {
     }
 
     // Clapeyron: https://chemicals.readthedocs.io/chemicals.vapor_pressure.html#sublimation-pressure-estimation-correlations
-    constexpr si::pressure<double> estimate_triple_point_pressure_from_clapeyron(
+    si::pressure<double> estimate_triple_point_pressure_from_clapeyron(
         const si::specific_energy<double> latent_heat_of_sublimation_at_triple_point,
         const si::molar_mass<double> molar_mass,
         const si::temperature<double> temperature,
