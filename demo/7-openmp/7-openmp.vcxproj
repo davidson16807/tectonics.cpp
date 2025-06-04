@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
-    <ProjectGuid>{684FB990-604C-90A4-D69A-161E72A6A710}</ProjectGuid>
+    <ProjectGuid>{A9F4F1D2-00B3-44D7-BE89-D621BAB7F9C2}</ProjectGuid>
     <Keyword>MakeFileProj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
