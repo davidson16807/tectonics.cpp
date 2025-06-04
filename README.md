@@ -202,3 +202,15 @@ Download and install Visual Studio. The free Community edition will be sufficien
 https://visualstudio.microsoft.com/vs/community/
 
 This approach will require a VS config file that will provided in the future.
+
+You can create your own Visual Studio projects from the folders under demo/ using the settings below.
+
+Executable Path:
+$(ProjectDir)/tests.exe
+
+Include Directories:
+$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\..\lib\glfw\include;$(ProjectDir)..\..\lib\glew\include
+
+Library Directories:
+$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(ProjectDir)..\..\lib\glfw\lib-vc2022;$(ProjectDir)..\..\lib\glew\bin\Release\x64
+

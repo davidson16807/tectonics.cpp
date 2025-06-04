@@ -35,8 +35,8 @@ if is_msvc:
 
 environment = Environment(
     CCFLAGS=(
-        ("/std:c++20 /D GLM_FORCE_SWIZZLE" if is_msvc else 
-         "-std=c++20 -Wall -Werror -pedantic-errors -rdynamic -g -D GLM_FORCE_SWIZZLE").split()),
+        ("/std:c++20 /O2 /openmp:llvm /D GLM_FORCE_SWIZZLE" if is_msvc else 
+         "-std=c++20 -O2 -Wall -Werror -pedantic-errors -rdynamic -g -D GLM_FORCE_SWIZZLE").split()),
     CPPPATH=[
         *[os.path.join(root,path) for path in 'inc lib src sketch'.split()],
         *([] if not is_msvc else
