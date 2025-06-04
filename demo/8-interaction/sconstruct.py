@@ -3,15 +3,15 @@ import shutil
 import glob
 
 cwd = GetLaunchDir()
-demo = os.getcwd()
+demo = os.path.join(cwd, os.pardir)
 root = os.path.join(demo, os.pardir)
 testexe = os.path.join(cwd, 'tests')
 testcpp = os.path.join(cwd, 'test.cpp')
 
 with open(testcpp, 'w') as file:
     includes = [
-        *glob.glob(os.path.join(cwd, '**/*_specialization.hpp'), recursive=True),
-        *glob.glob(os.path.join(cwd, '**/*_test.*pp'), recursive=True),
+        *glob.glob(os.path.join(cwd, '*_specialization.hpp'), recursive=True),
+        *glob.glob(os.path.join(cwd, '*_test.cpp'), recursive=True),
     ]
     for include in includes:
         localized = include.replace(cwd, '.')
@@ -27,6 +27,7 @@ using the {test['CC']} compiler
 to build a newly created test.cpp file under "{cwd}"
 that includes only *_test.cpp files under "{cwd}"
 using sconstruct.py under "{demo}".
+Project root is "{root}".
 ''')
 
 if is_msvc:
@@ -35,8 +36,8 @@ if is_msvc:
 
 environment = Environment(
     CCFLAGS=(
-        ("/std:c++20 /D GLM_FORCE_SWIZZLE" if is_msvc else 
-         "-std=c++20 -Wall -Werror -pedantic-errors -rdynamic -g -D GLM_FORCE_SWIZZLE").split()),
+        ("/std:c++20 /O2 /openmp:llvm /D GLM_FORCE_SWIZZLE" if is_msvc else 
+         "-std=c++20 -O2 -Wall -Werror -pedantic-errors -rdynamic -g -D GLM_FORCE_SWIZZLE").split()),
     CPPPATH=[
         *[os.path.join(root,path) for path in 'inc lib src sketch'.split()],
         *([] if not is_msvc else
