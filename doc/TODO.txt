@@ -3,9 +3,7 @@ TODO:
 build support:
   windows/wsl/g++/make
   windows/wsl/scons
-  windows/vs
   windows build for "minimum motion" milestone
-
 
 PROVEN DESIGN:
   incorporate refined parameters into crust initialization

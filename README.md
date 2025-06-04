@@ -197,20 +197,12 @@ Copy glew32.dll and glfw3.dll to the folder with the Makefile that you are build
 
 # Using Visual Studio
 
-Download and install Visual Studio. The free Community edition will be sufficient:
+Download and install Visual Studio. The free Community edition is sufficient:
 
 https://visualstudio.microsoft.com/vs/community/
 
-This approach will require a VS config file that will provided in the future.
+Download or clone the project repo using your method of choice, then open "tectonics.sln".
 
-You can create your own Visual Studio projects from the folders under demo/ using the settings below.
+Right click the demo you want to build in the Solution Explorer, select "Set as Startup Project", then in the main menu click the green play button.
 
-Executable Path:
-$(ProjectDir)/tests.exe
-
-Include Directories:
-$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\..\lib\glfw\include;$(ProjectDir)..\..\lib\glew\include
-
-Library Directories:
-$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(ProjectDir)..\..\lib\glfw\lib-vc2022;$(ProjectDir)..\..\lib\glew\bin\Release\x64
-
+Visual Studio builds projects using scons, so in principle any folder that builds with `scons` can build with Visual Studio. To build a folder in Visual Studio, copy the .vcxproj and .vcxproj.user files from one of the folders under demo/ to the folder that you want to build. Rename the files to something unique since Visual Studio forbids projects with the same name. Open Visual Studio, right click the solution in the Solution Explorer, select Add > "Existing Project", and select the project file you just created.
