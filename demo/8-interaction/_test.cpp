@@ -111,7 +111,12 @@ namespace minerals{
   const int count(2);
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+  std::vector<std::string> arguments(argv, argv + argc); 
+  std::cout << std::to_string(argc) << std::endl;
+  float seed1(argc<=1? 12.0f : std::stoi(arguments[1]));
+  float seed2(argc<=2? 1.1e4f : std::stoi(arguments[2]));
+
   // initialize GLFW
   if (!glfwInit()) {
     std::cout << stderr << " ERROR: could not start GLFW3" << std::endl;
@@ -190,7 +195,7 @@ int main() {
   // earthlike is only used for an in-order traversal, below, so its faster to use GridCache
   // it only uses vertex_positions and vertex_dual_areas, of which both are cached
 
-  auto generation = earthlike(12.0f, 1.1e4f);
+  auto generation = earthlike(seed1, seed2);
   rock::StratumStore<M> empty_stratum;
   rock::Formation<M> empty_formation(fine.vertex_count(), empty_stratum);
   rock::Formation<M> igneous_formation(fine.vertex_count());

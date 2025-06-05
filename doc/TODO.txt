@@ -1,10 +1,5 @@
 TODO:
 
-build support:
-  windows/wsl/g++/make
-  windows/wsl/scons
-  windows build for "minimum motion" milestone
-
 PROVEN DESIGN:
   incorporate refined parameters into crust initialization
   refactor: transform FormationGeneration to map: grid×id → stratum
@@ -22,11 +17,17 @@ PROVEN DESIGN:
   ice as a mineral
   handwavey precipitation and fluid models from js
   orbital mechanics assuming elliptical orbits
-  stellar motion and orbital perturbation via barnes hutt algorithm (needs universal formulation)
-  expanded mineral types
+  stellar motion and orbital perturbation via barnes hutt algorithm
+    needs universal formulation
+
+SIMPLE DESIGN:
+  csv reader 
+  deserializer for orbits
+  deserializer for compound properties
 
 UNTESTED DESIGN:
   lod
+  expanded mineral types
   orbital mechanics via universal formulation
   density towers
   selection of points on a grid
