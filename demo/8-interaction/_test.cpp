@@ -113,9 +113,10 @@ namespace minerals{
 
 int main(int argc, char *argv[]) {
   std::vector<std::string> arguments(argv, argv + argc); 
-  std::cout << std::to_string(argc) << std::endl;
   float seed1(argc<=1? 12.0f : std::stoi(arguments[1]));
   float seed2(argc<=2? 1.1e4f : std::stoi(arguments[2]));
+
+  std::cout << "seed parameters: " << std::to_string(seed1) << ", " << std::to_string(seed2) << std::endl;
 
   // initialize GLFW
   if (!glfwInit()) {
