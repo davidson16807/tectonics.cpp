@@ -36,6 +36,11 @@ namespace procedural
 			step_size(end_value>start_value? 1:-1),
 			reported_size((end_value-start_value) > T(0)? (end_value-start_value) : -(end_value-start_value))
 		{}
+		constexpr explicit Range(const T start_value, const T end_value, const std::size_t size): 
+			start_value(start_value),
+			step_size((end_value-start_value)/size),
+			reported_size(size)
+		{}
 
 		constexpr inline size_type size() const { return reported_size; }
 
@@ -67,15 +72,23 @@ namespace procedural
 	{
 		return Range();
 	}
+
 	template<typename T>
 	constexpr inline Range<T> range(const T reported_size)
 	{
 		return Range<T>(reported_size);
 	}
+
 	template<typename T>
 	constexpr inline Range<T> range(const T start_value, const T end_value)
 	{
 		return Range<T>(start_value, end_value);
+	}
+
+	template<typename T>
+	constexpr inline Range<T> range(const T start_value, const T end_value, const std::size_t size)
+	{
+		return Range<T>(start_value, end_value, size);
 	}
 
 

@@ -6,7 +6,7 @@
 // in-house libraries
 #include <index/iterated/Nary.hpp>
 
-namespace grouped
+namespace branched
 {
 
 	template <typename ElementOrder>
@@ -25,7 +25,7 @@ namespace grouped
 		{}
 
 		template <typename Ids, typename In, typename Out>
-		void min (const Ids& parent_ids, const In& a, const Out& out)
+		void min (const Ids& parent_ids, const In& a, const Out& out) const
 		{
 			copy(a, out);
 			auto size = a.size();
@@ -36,7 +36,7 @@ namespace grouped
 		}
 
 		template <typename Ids, typename In, typename Out>
-		void max (const Ids& parent_ids, const In& a, const Out& out)
+		void max (const Ids& parent_ids, const In& a, const Out& out) const
 		{
 			copy(a, out);
 			auto size = a.size();

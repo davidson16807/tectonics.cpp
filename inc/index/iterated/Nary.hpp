@@ -29,6 +29,22 @@ namespace iterated
 		}
 	};
 
+	struct Cast // A.K.A. `Copy` but cast to output
+	{
+		Cast(){}
+		template <typename In1, typename Out>
+		void operator() (const In1& a, Out& out) const
+		{
+			using T = typename Out::value_type;
+			assert(compatible(a,out));
+			auto size = out.size();
+			for (auto i = 0*size; i < size; ++i)
+			{
+				out[i] = T(a[i]);
+			}
+		}
+	};
+
 	struct Ternary // A.K.A. `CopyIf`
 	{
 		Ternary(){}

@@ -21,7 +21,7 @@ namespace grouped
 		{}
 
 		template <typename Ids, typename In, typename Out>
-		void min (const Ids& group_ids, const In& a, const Out& out)
+		void min (const Ids& group_ids, const In& a, const Out& out) const
 		{
 			std::fill(out.begin(), out.end(), std::numeric_limits<typename Out::value_type>::max());
 			auto size = a.size();
@@ -32,7 +32,7 @@ namespace grouped
 		}
 
 		template <typename Ids, typename In, typename Out>
-		void max (const Ids& group_ids, const In& a, const Out& out)
+		void max (const Ids& group_ids, const In& a, const Out& out) const
 		{
 			std::fill(out.begin(), out.end(), std::numeric_limits<typename Out::value_type>::min());
 			auto size = a.size();

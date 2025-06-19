@@ -24,7 +24,7 @@ namespace inherited
 		{}
 
 		template <typename Ids, typename Out>
-		void count (const Ids& parent_ids, Out& out)
+		void count (const Ids& parent_ids, Out& out) const
 		{
 			copy(a, out);
 			auto size = a.size();
@@ -35,7 +35,7 @@ namespace inherited
 		}
 
 		template <typename Ids, typename In, typename Out>
-		void sum (const Ids& parent_ids, const In& a, Out& out)
+		void sum (const Ids& parent_ids, const In& a, Out& out) const
 		{
 			copy(a, out);
 			auto size = a.size();
@@ -46,7 +46,7 @@ namespace inherited
 		}
 
 		template <typename Ids, typename In, typename Out>
-		void product (const Ids& parent_ids, const In& a, Out& out)
+		void product (const Ids& parent_ids, const In& a, Out& out) const
 		{
 			copy(a, out);
 			auto size = a.size();

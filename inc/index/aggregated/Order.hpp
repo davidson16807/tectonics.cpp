@@ -12,8 +12,11 @@ namespace aggregated
 	template <typename ElementOrder>
 	class Order
 	{
+
 		const ElementOrder elements;
+
 	public:
+
 		Order(const ElementOrder& elements):
 			elements(elements)
 		{}

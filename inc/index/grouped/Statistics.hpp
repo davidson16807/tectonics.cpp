@@ -21,7 +21,7 @@ namespace grouped
 		{}
 
 		template <typename Ids, typename Out>
-		void count (const Ids& group_ids, Out& out)
+		void count (const Ids& group_ids, Out& out) const
 		{
 			std::fill(out.begin(), out.end(), typename Out::value_type(0));
 			auto size = group_ids.size();
@@ -32,7 +32,7 @@ namespace grouped
 		}
 
 		template <typename Ids, typename In, typename Out>
-		void sum (const Ids& group_ids, const In& a, Out& out)
+		void sum (const Ids& group_ids, const In& a, Out& out) const
 		{
 			std::fill(out.begin(), out.end(), typename Out::value_type(0));
 			auto size = a.size();
@@ -43,7 +43,7 @@ namespace grouped
 		}
 
 		template <typename Ids, typename In, typename Out>
-		void product (const Ids& group_ids, const In& a, Out& out)
+		void product (const Ids& group_ids, const In& a, Out& out) const
 		{
 			std::fill(out.begin(), out.end(), typename Out::value_type(1));
 			auto size = a.size();

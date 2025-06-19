@@ -1,7 +1,6 @@
 TODO:
 
 PROVEN DESIGN:
-  incorporate refined parameters into crust initialization
   refactor: transform FormationGeneration to map: grid×id → stratum
   sealevel calculation
   physically based surface rendering
@@ -19,6 +18,7 @@ PROVEN DESIGN:
   orbital mechanics assuming elliptical orbits
   stellar motion and orbital perturbation via barnes hutt algorithm
     needs universal formulation
+  fix segfault when using incorporate refined parameters into crust initialization
 
 SIMPLE DESIGN:
   csv reader 
