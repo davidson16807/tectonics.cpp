@@ -38,7 +38,7 @@ namespace dymaxion
 		return TITLE<id,id2,scalar>(grid);\
 	}
 
-	DYMAXION_SERIES(id2,     grid.vertex_count,  SquareId,           square_ids,           grid.square_id)
+	DYMAXION_SERIES(id2,    grid.vertex_count,  SquareId,           square_ids,           grid.square_id)
 	DYMAXION_SERIES(vec3,   grid.vertex_count,  VertexPositions,    vertex_positions,     grid.vertex_position)
 	DYMAXION_SERIES(vec3,   grid.vertex_count,  VertexNormals,      vertex_normals,       grid.vertex_normal)
 	DYMAXION_SERIES(vec3,   grid.vertex_count,  VertexEast,         vertex_east,          grid.vertex_east)

@@ -12,10 +12,10 @@ namespace spline {
     See "Spline_library.R" for the R script that generated these approximations.
     */
 
-    template<typename T, typename T2> 
+    template<typename T, typename Xs, typename Ys> 
     PolynomialRailyard<T,0,1> linear_spline(
-        const std::vector<T2> x,
-        const std::vector<T2> y
+        const Xs x,
+        const Ys y
     ){
         assert(x.size() == y.size());
         assert(x.size() >= 1);
@@ -40,7 +40,7 @@ namespace spline {
     }
 
     template<typename T, typename F> 
-    PolynomialRailyard<T,0,1> linear_spline(
+    PolynomialRailyard<T,0,1> linear_spline_from_function(
         const F f,
         const std::vector<T> x
     ){
