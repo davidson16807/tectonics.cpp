@@ -140,54 +140,6 @@ namespace sea
 
         }
 
-        /*
-        This alternate implementation of `depth` finds the 
-        maximum depth of a hydrosphere using binning and interpolation.
-        It is slightly faster in principle but is not currently implemented since it fails unit tests.
-        Performance here is not essential since it is not a bottleneck to the application.
-        */
-        /*
-        template <typename areas, typename volume>
-        length depth(
-            const lengths& displacement, 
-            const areas& area, 
-            const volume sea_volume, 
-            scalars& raster_scratch,
-            scalars& bin_scratch
-        ) const {
-            scalars* areas_in_units = &raster_scratch;
-            scalars* area_per_displacement = &bin_scratch;
-            scalars* area_for_displacement = &bin_scratch;
-            scalars* volume_per_displacement = &bin_scratch;
-            scalars* volume_for_displacement = &bin_scratch;
-            auto min_displacement = order.min(displacement);
-            auto max_displacement = order.max(displacement);
-            auto bin_count = bin_scratch.size();
-            auto bin_increment = (max_displacement - min_displacement) / bin_count;
-            arithmetic.divide(area, procedural::uniform(unit_length*unit_length), *areas_in_units);
-            binning.sum(displacement, *areas_in_units, *area_per_displacement);
-            preceding.sum(*area_per_displacement, *area_for_displacement);
-            auto max_area = total.sum(area);
-            // auto max_area = bin_scratch[bin_count-1] * unit_length * unit_length;
-            arithmetic.multiply(*area_for_displacement, procedural::uniform(bin_increment/unit_length), *volume_per_displacement);
-            orders.max(procedural::uniform(epsilon), *volume_per_displacement, *volume_per_displacement);
-            // ^^^ ensure the function represented by `volume_for_displacement` is always increasing so it can invert, below
-            preceding.sum(*volume_per_displacement, *volume_for_displacement);
-            auto area_for_displacement_relation = 
-                relation::get_linear_interpolation_function(si::meter3, si::meter,
-                    *volume_for_displacement,
-                    procedural::range(min_displacement/unit_length, max_displacement/unit_length, bin_scratch.size())
-                );
-            auto max_volume = bin_scratch[bin_count-1] * unit_length * unit_length * unit_length;
-            auto max_sea_depth = area_for_displacement_relation(sea_volume);
-            if (sea_volume > max_volume) // water world, need to add depth covering tallest mountain
-            {
-                max_sea_depth += (sea_volume - max_volume) / max_area;
-            }
-            return max_sea_depth;
-        }
-        */
-
     };
 
 }
