@@ -7,8 +7,9 @@
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>
 #include <index/adapted/symbolic/SymbolicOrder.hpp>
 #include <index/iterated/Arithmetic.hpp>
-#include <index/aggregated/Order.hpp>
 #include <index/iterated/Order.hpp>
+#include <index/aggregated/Order.hpp>
+#include <index/aggregated/Reduction.hpp>
 #include <index/binned/Statistics.hpp>
 #include <index/preceded/Statistics.hpp>
 #include <index/procedural/Uniform.hpp>
@@ -38,6 +39,7 @@ namespace sea
         const iterated::Order<adapted::SymbolicOrder> orders;
         const binned::Statistics<aggregated::Order<adapted::SymbolicOrder>, adapted::SymbolicArithmetic> binning;
         const preceded::Statistics<adapted::SymbolicArithmetic> preceding;
+        const aggregated::Reduction<adapted::SymbolicArithmetic> total;
 
         const length unit_length;
         const scalar epsilon;
@@ -63,8 +65,21 @@ namespace sea
         template <typename areas>
         auto volume(
             const lengths& displacement,
-            const areas& area, 
+            const areas& vertex_areas, 
             const length max_sea_depth
+        ) const {
+            return volume(displacement, vertex_areas, max_sea_depth, order.min(displacement));
+        }
+
+        /*
+        `volume` finds the total volume of a hydrosphere
+        */
+        template <typename areas>
+        auto volume(
+            const lengths& displacement,
+            const areas& vertex_areas, 
+            const length max_sea_depth,
+            const length min_displacement
         ) const {
             /*
             We use a regular for loop instead of functionality under `index/` 
@@ -75,19 +90,63 @@ namespace sea
             auto column = zero;
             for (unsigned int i = 0; i < displacement.size(); ++i)
             {
-                column = (max_sea_depth - displacement[i]) * area[i];
+                column = (max_sea_depth - (displacement[i]-min_displacement)) * vertex_areas[i];
                 out += column > zero? column : zero;
             }
             return out;
         }
 
+
         /*
-        `depth` finds the maximum depth of a hydrosphere using iterative numerical approximation.
+        "depth" finds the maximum depth of a hydrosphere using iterative numerical approximation.
         It accepts a raster that stores the height of a terrain relative to its lowest point 
         and a float that indicates the volume of water to be filled along the terrain.
-        The model assumes that water will eventually be able to fill every space available 
+        The model assumes that water has enough time to fill every space available 
         and achieve a globally uniform water depth.
         */
+        template <typename L2, typename L3>
+        length depth(
+            const lengths& displacement, 
+            const L2& vertex_areas, 
+            const L3 sea_volume, 
+            const unsigned int iterations = 15
+        ){
+
+            using area = typename L2::value_type;
+            length min_displacement = order.min(displacement);
+            area global_surface_area(total.sum(vertex_areas));
+            // the depth of the ocean if the entire globe is at a single height
+            length uniform_ocean_depth(sea_volume / global_surface_area);
+            // lowest possible value - the value sealevel takes if all but an infinitesimal point on the globe is at the lowest height observed
+            length sealevel_min(min_displacement + uniform_ocean_depth);
+            // highest possible value - the value sealevel takes if all but an infinitesimal point on the globe is at the highest height observed
+            length sealevel_max(order.max(displacement) + uniform_ocean_depth);
+            // our current guess for sealevel, which we improve iteratively
+            length sealevel_guess(0.0f);
+            // the volume of the sea, presuming our guess were correct
+            L3 sea_volume_of_guess(0.0f);
+
+            scalar half(0.5);
+
+            for (unsigned int i = 0; i < iterations; i++) 
+            {
+                sealevel_guess = (sealevel_max + sealevel_min) * half;
+                sea_volume_of_guess = volume(displacement, vertex_areas, sealevel_guess, min_displacement);
+                sealevel_min = sea_volume_of_guess < sea_volume? sealevel_guess : sealevel_min;
+                sealevel_max = sea_volume_of_guess > sea_volume? sealevel_guess : sealevel_max;
+            }
+
+            return sealevel_guess;
+
+        }
+
+        /*
+        This alternate implementation of `depth` finds the 
+        maximum depth of a hydrosphere using binning and interpolation.
+        It is slightly faster in principle but is not currently implemented since it fails unit tests.
+        Performance here is not essential since it is not a bottleneck to the application.
+        */
+        /*
         template <typename areas, typename volume>
         length depth(
             const lengths& displacement, 
@@ -108,7 +167,8 @@ namespace sea
             arithmetic.divide(area, procedural::uniform(unit_length*unit_length), *areas_in_units);
             binning.sum(displacement, *areas_in_units, *area_per_displacement);
             preceding.sum(*area_per_displacement, *area_for_displacement);
-            auto max_area = bin_scratch[bin_count-1] * unit_length * unit_length;
+            auto max_area = total.sum(area);
+            // auto max_area = bin_scratch[bin_count-1] * unit_length * unit_length;
             arithmetic.multiply(*area_for_displacement, procedural::uniform(bin_increment/unit_length), *volume_per_displacement);
             orders.max(procedural::uniform(epsilon), *volume_per_displacement, *volume_per_displacement);
             // ^^^ ensure the function represented by `volume_for_displacement` is always increasing so it can invert, below
@@ -120,12 +180,13 @@ namespace sea
                 );
             auto max_volume = bin_scratch[bin_count-1] * unit_length * unit_length * unit_length;
             auto max_sea_depth = area_for_displacement_relation(sea_volume);
-            if (max_sea_depth > max_displacement) // water world, need to add depth covering tallest mountain
+            if (sea_volume > max_volume) // water world, need to add depth covering tallest mountain
             {
                 max_sea_depth += (sea_volume - max_volume) / max_area;
             }
             return max_sea_depth;
         }
+        */
 
     };
 

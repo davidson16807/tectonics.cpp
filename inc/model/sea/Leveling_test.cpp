@@ -33,7 +33,6 @@
 #include <test/properties.hpp>
 
 TEST_CASE( "sea::Leveling depth/volume invertibility", "[rock]" ) {
-    si::UnitAdapter<float> inexact(1.0);
 
     using length = si::length<float>;
     using area = si::area<float>;
@@ -41,11 +40,13 @@ TEST_CASE( "sea::Leveling depth/volume invertibility", "[rock]" ) {
 
     using lengths = std::vector<length>;
     using areas = std::vector<area>;
-    using floats = std::vector<float>;
 
     length meter(si::meter);
     area meter2(si::meter2);
-    volume meter3(si::meter3);
+    volume megameter3(si::megameter3);
+
+    si::AbsoluteUnitAdapter<length> length_adapter(meter);
+    si::AbsoluteUnitAdapter<volume> volume_adapter(0.1*megameter3);
 
     iterated::Identity copy;
     iterated::Arithmetic<adapted::SymbolicArithmetic> arithmetic;
@@ -79,31 +80,40 @@ TEST_CASE( "sea::Leveling depth/volume invertibility", "[rock]" ) {
     auto elevation_in_meters = procedural::map(elevation_meters_for_position, vertex_positions);
     lengths displacement(grid.vertex_count());
     arithmetic.multiply(elevation_in_meters, procedural::uniform(meter), displacement);
-    arithmetic.add(displacement, procedural::uniform(order.min(displacement)), displacement);
-
-    floats raster_scratch(grid.vertex_count());
-    floats bin_scratch(100);
+    arithmetic.subtract(displacement, procedural::uniform(order.min(displacement)), displacement);
 
     sea::Leveling<length, float> sea_leveling(meter, 0.01);
 
     std::vector<volume> sea_volumes{
-        1.332e18 * meter3,
-        0.0 * meter3
+        100 * megameter3,
+        1.332 * megameter3,
+        0.1 * megameter3,
+        0.0 * megameter3
     };
 
     std::vector<length> sea_depths{
-        5000.0 * meter,
+        1000.0 * meter,
         0.0 * meter
     };
 
-    REQUIRE(test::left_invertibility(inexact,
-        "depth",  [&](auto volume){ return sea_leveling.depth(displacement, vertex_areas, volume, raster_scratch, bin_scratch); }, 
+    REQUIRE(test::codomain(length_adapter,
+        "positive", [=](auto depth){ return depth >= 0.0*meter; },
+        "depth",  [&](auto volume){ return sea_leveling.depth(displacement, vertex_areas, volume); }, 
+        sea_volumes));
+
+    REQUIRE(test::codomain(volume_adapter,
+        "positive", [=](auto volume){ return volume >= 0.0*megameter3; },
         "volume", [&](auto depth) { return sea_leveling.volume(displacement, vertex_areas, depth); }, 
         sea_depths));
 
-    REQUIRE(test::left_invertibility(inexact,
+    REQUIRE(test::left_invertibility(length_adapter,
+        "depth",  [&](auto volume){ return sea_leveling.depth(displacement, vertex_areas, volume); }, 
         "volume", [&](auto depth) { return sea_leveling.volume(displacement, vertex_areas, depth); }, 
-        "depth",  [&](auto volume){ return sea_leveling.depth(displacement, vertex_areas, volume, raster_scratch, bin_scratch); }, 
+        sea_depths));
+
+    REQUIRE(test::left_invertibility(volume_adapter,
+        "volume", [&](auto depth) { return sea_leveling.volume(displacement, vertex_areas, depth); }, 
+        "depth",  [&](auto volume){ return sea_leveling.depth(displacement, vertex_areas, volume); }, 
         sea_volumes));
 
 }
