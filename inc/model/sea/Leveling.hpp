@@ -104,15 +104,15 @@ namespace sea
         The model assumes that water has enough time to fill every space available 
         and achieve a globally uniform water depth.
         */
-        template <typename L2, typename L3>
+        template <typename length2, typename length3>
         length depth(
             const lengths& displacement, 
-            const L2& vertex_areas, 
-            const L3 sea_volume, 
-            const unsigned int iterations = 15
+            const length2& vertex_areas, 
+            const length3 sea_volume, 
+            const unsigned int iterations = 16
         ){
 
-            using area = typename L2::value_type;
+            using area = typename length2::value_type;
             length min_displacement = order.min(displacement);
             area global_surface_area(total.sum(vertex_areas));
             // the depth of the ocean if the entire globe is at a single height
@@ -124,7 +124,7 @@ namespace sea
             // our current guess for sealevel, which we improve iteratively
             length sealevel_guess(0.0f);
             // the volume of the sea, presuming our guess were correct
-            L3 sea_volume_of_guess(0.0f);
+            length3 sea_volume_of_guess(0.0f);
 
             scalar half(0.5);
 

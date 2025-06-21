@@ -45,7 +45,8 @@ TEST_CASE( "sea::Leveling depth/volume invertibility", "[rock]" ) {
     area meter2(si::meter2);
     volume megameter3(si::megameter3);
 
-    si::AbsoluteUnitAdapter<length> length_adapter(meter);
+    // error tolerance is slightly greater than tidal amplitude on earth
+    si::AbsoluteUnitAdapter<length> length_adapter(0.2*meter); 
     si::AbsoluteUnitAdapter<volume> volume_adapter(0.1*megameter3);
 
     iterated::Identity copy;
@@ -86,13 +87,20 @@ TEST_CASE( "sea::Leveling depth/volume invertibility", "[rock]" ) {
 
     std::vector<volume> sea_volumes{
         100 * megameter3,
-        1.332 * megameter3,
+        10  * megameter3,
+        1.332 * megameter3, // earth's oceans
         0.1 * megameter3,
         0.0 * megameter3
     };
 
     std::vector<length> sea_depths{
+        100000.0 * meter,
+        10000.0 * meter,
+        5000.0 * meter, // earth's oceans
         1000.0 * meter,
+        100.0 * meter,
+        10.0 * meter,
+        1.0 * meter,
         0.0 * meter
     };
 
