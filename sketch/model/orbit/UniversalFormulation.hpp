@@ -14,8 +14,22 @@
 namespace orbit {
 
 template <typename scalar>
-struct UniversalVariableFormulation
+class UniversalVariableFormulation
 {
+	scalar C(const scalar y) const
+	{
+		scalar abs_y = std::abs(y);
+		return y > scalar(0)? (scalar(1) - std::cos(std::sqrt(abs_y)))  / abs_y:
+		                      (std::cosh(std::sqrt(abs_y)) - scalar(1)) / abs_y;
+	}
+	scalar S(const scalar y) const
+	{
+		scalar sqrt_abs_y = std::sqrt(std::abs(y));
+		scalar sqrt_abs_y3 = sqrt_abs_y*sqrt_abs_y*sqrt_abs_y;
+		return y > scalar(0)? (sqrt_abs_y - std::sin(sqrt_abs_y))  / sqrt_abs_y3 :
+		                      (std::sinh(sqrt_abs_y) - sqrt_abs_y) / sqrt_abs_y3;
+	}
+public:
 	const property::UniversalProperties<scalar> properties;
 	const scalar laguerre_method_n;
 	const int laguerre_iteration_count;
@@ -58,19 +72,6 @@ struct UniversalVariableFormulation
 		glm::vec<4,scalar,glm::defaultp> velocity = perifocal_to_reference_matrix * glm::vec<4,scalar,glm::defaultp>(perifocal_velocity, scalar(1.0));
 		// NOTE: we convert to vec4 since it is the only thing glm allows to multiply with mat4
         return State<scalar>(position, velocity);
-	}
-	scalar C(const scalar y) const
-	{
-		scalar abs_y = std::abs(y);
-		return y > scalar(0)? (scalar(1) - std::cos(std::sqrt(abs_y)))  / abs_y:
-		                      (std::cosh(std::sqrt(abs_y)) - scalar(1)) / abs_y;
-	}
-	scalar S(const scalar y) const
-	{
-		scalar sqrt_abs_y = std::sqrt(std::abs(y));
-		scalar sqrt_abs_y3 = sqrt_abs_y*sqrt_abs_y*sqrt_abs_y;
-		return y > scalar(0)? (sqrt_abs_y - std::sin(sqrt_abs_y))  / sqrt_abs_y3 :
-		                      (std::sinh(sqrt_abs_y) - sqrt_abs_y) / sqrt_abs_y3;
 	}
 	Universals<scalar> tare(const Universals<scalar>& orbit) const
 	{
