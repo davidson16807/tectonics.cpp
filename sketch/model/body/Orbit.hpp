@@ -159,3 +159,43 @@ namespace body {
 
 }
 
+/*
+We need Orbit to do the following:
+1 allow queries over phases, such as to find average insolations over many years
+2 apply force to create a new orbit without updating or changing the epoch used in orbits for other bodies
+
+1) is accomplished using `state(t)`, however since `Orbit` can also represent hyperbolic or parabolic orbits,
+time t must be selected according to phase outside of logic for `Orbit`. This behavior is still acceptable.
+
+2) is accomplished such that, when applying a change in velocity Δv, 
+the new state s+Δv is used to create an orbit Orbit(s+Δv, -t₀), where t₀ is time since the epoch started 
+time t₀ is tracked outside the Orbits so that Orbits do not need update every timestep. 
+
+
+advance is group-like (trivial):
+	o.advance(0) = o
+	o.advance(s+t) = o.advance(s).advance(t)
+	o.advance(t).advance(-t) = t
+behavioral equality (trivial):
+	o.advance(0).state(0) ≈ o.state(0)
+
+tare is idempotent:
+	o.tare().tare() = o.tare()
+invariance under reference time:
+	o.state(t) ≈ o.tare().state(t)
+continuity:
+	o.state(ε) = o.state(0)
+	d(o.state(ε), o.state(0)) < d(o.state(2ε), o.state(0)) 
+
+preservation of gravitational parameter:
+	(o.advance(t)).gravitational_parameter == o.gravitational_parameter
+	(o.tare()).gravitational_parameter == o.gravitational_parameter
+
+energy is conserved:
+	E = v²/2 - μ/|r|
+angular momentum is conserved:
+	h = r × v
+
+radius is constant when eccentricity=0
+	glm::length(o.advance(t).position) = glm::length(o.position)
+*/
