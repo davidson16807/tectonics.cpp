@@ -3,6 +3,8 @@
 // 3rd party libraries
 #include <glm/vec3.hpp>     // *vec3
 
+#include <math/special.hpp>
+
 #include "State.hpp"
 
 namespace body {
@@ -31,6 +33,7 @@ namespace body {
 			const vec3 initial_position,
 			const vec3 initial_velocity
 		) : 
+			gravitational_parameter(gravitational_parameter),
 			initial_position(initial_position),
 			initial_velocity(initial_velocity),
 			time_offset(0)
@@ -40,6 +43,7 @@ namespace body {
 			const scalar gravitational_parameter,
 			const State<scalar> state
 		) : 
+			gravitational_parameter(gravitational_parameter),
 			initial_position(state.position),
 			initial_velocity(state.velocity),
 			time_offset(0)
@@ -51,6 +55,7 @@ namespace body {
 			const vec3 initial_velocity,
 			const scalar time_offset
 		) : 
+			gravitational_parameter(gravitational_parameter),
 			initial_position(initial_position),
 			initial_velocity(initial_velocity),
 			time_offset(time_offset)
@@ -61,6 +66,7 @@ namespace body {
 			const State<scalar> state,
 			const scalar time_offset
 		) : 
+			gravitational_parameter(gravitational_parameter),
 			initial_position(state.position),
 			initial_velocity(state.velocity),
 			time_offset(time_offset)
@@ -78,6 +84,9 @@ namespace body {
 	class OrbitPropagator
 	{
 		using vec3 = glm::vec<3,scalar,glm::defaultp>;
+
+		static constexpr scalar s1 = scalar(1);
+		static constexpr scalar s2 = scalar(2);
 
 		scalar C(const scalar y) const
 		{
@@ -104,22 +113,23 @@ namespace body {
 
 		State<scalar> state(const Orbit<scalar> orbit, const scalar t) const
 		{
-			const auto n = laguerre_method_n;
+			const auto t0 = orbit.time_offset;
 			const auto mu = orbit.gravitational_parameter;
 			const auto sqrt_mu = std::sqrt(mu);
-			const auto sigma0 = glm::dot(orbit.initial_position, orbit.initial_velocity) / sqrt_mu;
-			const auto dt = orbit.time_offset;
-			const auto r0 = glm::length(orbit.position);
-			const auto v0 = glm::length(orbit.velocity);
-			const auto a = scalar(2)/r0 - v0*v0/mu;
-			const auto one = scalar(1);
-			const auto n_one = n-one;
+			const auto R0 = orbit.initial_position;
+			const auto V0 = orbit.initial_velocity;
+			const auto r0 = glm::length(R0);
+			const auto v0 = glm::length(V0);
+			const auto sigma0 = glm::dot(R0, V0) / sqrt_mu;
+			const auto dt = t - t0;
+			const auto a = s2/r0 - v0*v0/mu;
+			const auto n = laguerre_method_n;
+			const auto n_1 = n-s1;
 
 			/*
 			Conway & Prussing suggest that any value within upper and lower bounds is appropriate
-			upper and lower bounds are each defined by sqrt_mu*dt/r, 
-			where r is an upper or lower bound of radius
-			better estimates exist but require complex calculation,
+			upper (r⁺) and lower (r⁻) bounds are each defined by r± = sqrt_mu*dt/r∓.
+			Better estimates exist but require complex calculation,
 			however we do know that r0 is guaranteed to be between upper and lower bounds for r,
 			so we suffice to choose an x based on r0.
 			*/
@@ -133,18 +143,18 @@ namespace body {
 				ax2 = a*x2;
 				Cax2 = C(ax2);
 				Sax2 = S(ax2);
-				one_r0a = one-r0*a;
+				one_r0a = s1-r0*a;
 				F      = sigma0 * x2 * Cax2 + one_r0a*x3 * Sax2 + r0*x - sqrt_mu*dt;
-				dFdx   = sigma0*x*(one-ax2*Sax2) + one_r0a*x2*Cax2 + r0;
-				d2Fdx2 = sigma0 - sigma0*ax2*(Cax2 - 3*Sax2) + (one_r0a/x)*(one - ax2*Sax2 - 2*Cax2)
+				dFdx   = sigma0*x*(s1-ax2*Sax2) + one_r0a*x2*Cax2 + r0;
+				d2Fdx2 = sigma0 - sigma0*ax2*(Cax2 - 3*Sax2) + (one_r0a/x)*(s1 - ax2*Sax2 - 2*Cax2);
 				x -= n*F / 
-					(dFdx + sign(dFdx) * std::sqrt(std::abs(n_one*n_one*dFdx*dFdx - n*n_one*F*d2Fdx2)));
+					(dFdx + math::sign(dFdx) * std::sqrt(std::abs(n_1*n_1*dFdx*dFdx - n*n_1*F*d2Fdx2)));
 			}
 
 			x2 = x*x;
 			x3 = x*x2;
-			vec3 r  = (1.0 - x2/r0 * Cax2) * r0 + 
-			                                      ((t-t0) - x3/sqrt_mu * Sax2) * v0;
+			vec3 r  = (s1 - x2/r0 * Cax2) * R0 + 
+			          ((t-t0) - x3/sqrt_mu * Sax2) * V0;
 			vec3 v  = (x*sqrt_mu/(r*r0) * (ax2 * Sax2 - 1.0)) * r0 +
 			                                      (1.0 - x2/r * Cax2) * v0;
 			return State<scalar>(r,v);
@@ -152,7 +162,7 @@ namespace body {
 
 		Orbit<scalar> tare(const Orbit<scalar> orbit) const
 		{
-			return Orbit<scalar>(orbit.gravitational_parameter, state(orbit.time_offset));
+			return Orbit<scalar>(orbit.gravitational_parameter, state(orbit, orbit.time_offset));
 		}
 
 	};
