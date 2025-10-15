@@ -57,6 +57,7 @@ namespace dymaxion
 		static constexpr scalar s0 = 0;
 		static constexpr scalar s1 = 1;
 		static constexpr scalar s2 = 2;
+		static constexpr scalar s10 = 10;
 		static constexpr scalar pi = 3.141592652653589793f;
 		static constexpr scalar turn = s2*pi;
 		static constexpr id2 square_count = 10;
@@ -67,6 +68,7 @@ namespace dymaxion
 		static constexpr id2 i0 = 0;
 		static constexpr id2 i1 = 1;
 		static constexpr id2 i2 = 2;
+		static constexpr id2 i5 = 5;
 
 		struct GridIdCache {
 		    mat3   Binv_NO;
@@ -118,6 +120,27 @@ namespace dymaxion
 			vec3   O   (origin(i,is_polar));     // O: northernmost or southernmost triangle vertex that serves as origin
 			bool   is_inverted(triangles.is_inverted_square_id   (i, is_polar));
 			return triangles.basis(is_inverted,W,E,O);
+		}
+
+		static constexpr scalar tan0 = std::tan(0*turn/10.0);
+		static constexpr scalar tan1 = std::tan(1*turn/10.0);
+		static constexpr scalar tan2 = std::tan(2*turn/10.0);
+		static constexpr scalar tan3 = std::tan(3*turn/10.0);
+		static constexpr scalar tan4 = std::tan(4*turn/10.0);
+
+		/*
+		Identifies y and x as belonging to one of 10 evenly divided angular regions
+		using a method that's faster than atan2.
+		*/
+		inline static constexpr id atan2id(const scalar y, const scalar x) 
+		{
+			return (x<0?1:-1)*(
+			   (y<x*tan0?1:0)
+			 + (y<x*tan1?1:0)
+			 + (y<x*tan2?1:0)
+			 + (y<x*tan3?1:0)
+			 + (y<x*tan4?1:0)
+			)+id(12);
 		}
 
 	public:
@@ -188,7 +211,9 @@ namespace dymaxion
 			EWid can be approximated using a lagrange polynomial but this either produces
 			a slight speedup or a dramatic slowdown, and its unclear if this can be relied on across platforms.
 			*/
-			id2    EWid((std::atan2(V3.y,V3.x)+turn)*half_subgrid_fraction_of_turn);
+			// id2    EWid((std::atan2(V3.y,V3.x)+turn)*half_subgrid_fraction_of_turn);
+			id2    EWid(std::atan2(V3.y,V3.x)*half_subgrid_fraction_of_turn+s10);
+			// id2    EWid(atan2id(V3.y,V3.x));
 			id2    i ((EWid - id2(glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
 			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0); 
 			GridIdCache triangle(grid_ids[i2*i + is_polar]);
