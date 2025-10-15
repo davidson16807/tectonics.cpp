@@ -3,9 +3,20 @@
 // 3rd party libraries
 #include <glm/vec3.hpp>     // *vec3
 
+#include "State.hpp"
+
 namespace body {
 
-	template <typename scalar, typename duration>
+	/*
+	Output of advance(t), tare(), and state() are conceptually pure methods, 
+	i.e. they are free of side effects and their output is completely
+	determiend by parameters and the state of `this`.
+
+	Output of advance(t), tare(), and state() are always represented in 
+	whatever units of measured that are used by parameters and `this`.
+	It is the developer's responsibility to ensure consistency of units.
+	*/
+	template <typename scalar>
 	struct Orbit
 	{
 		using vec3 = glm::vec<3,scalar,glm::defaultp>;
@@ -13,7 +24,7 @@ namespace body {
 		const scalar gravitational_parameter;
 		const vec3 initial_position;
 		const vec3 initial_velocity;
-		const duration time_offset;
+		const scalar time_offset;
 
 		Orbit(
 			const scalar gravitational_parameter,
@@ -38,7 +49,7 @@ namespace body {
 			const scalar gravitational_parameter,
 			const vec3 initial_position,
 			const vec3 initial_velocity,
-			const duration time_offset
+			const scalar time_offset
 		) : 
 			initial_position(initial_position),
 			initial_velocity(initial_velocity),
@@ -48,17 +59,53 @@ namespace body {
 		Orbit(
 			const scalar gravitational_parameter,
 			const State<scalar> state,
-			const duration time_offset
+			const scalar time_offset
 		) : 
 			initial_position(state.position),
 			initial_velocity(state.velocity),
 			time_offset(time_offset)
 		{}
 
-		State<scalar> state(const duration t) const
+		Orbit<scalar> advance(const scalar time_step) const
+		{
+			return Orbit<scalar>(gravitational_parameter, initial_position, initial_velocity, time_offset+time_step);
+		}
+
+	};
+
+
+	template <typename scalar>
+	class OrbitPropagator
+	{
+		using vec3 = glm::vec<3,scalar,glm::defaultp>;
+
+		scalar C(const scalar y) const
+		{
+			scalar abs_y = std::abs(y);
+			return y > scalar(0)? (scalar(1) - std::cos(std::sqrt(abs_y)))  / abs_y:
+			                      (std::cosh(std::sqrt(abs_y)) - scalar(1)) / abs_y;
+		}
+		scalar S(const scalar y) const
+		{
+			scalar sqrt_abs_y = std::sqrt(std::abs(y));
+			scalar sqrt_abs_y3 = sqrt_abs_y*sqrt_abs_y*sqrt_abs_y;
+			return y > scalar(0)? (sqrt_abs_y - std::sin(sqrt_abs_y))  / sqrt_abs_y3 :
+			                      (std::sinh(sqrt_abs_y) - sqrt_abs_y) / sqrt_abs_y3;
+		}
+	public:
+		const scalar laguerre_method_n;
+		const int laguerre_iteration_count;
+		OrbitPropagator():
+			laguerre_method_n(6),
+			laguerre_iteration_count(5)
+		{
+
+		}
+
+		State<scalar> state(const Orbit<scalar> orbit, const scalar t) const
 		{
 			const auto n = laguerre_method_n;
-			const auto mu = gravitational_parameter;
+			const auto mu = orbit.gravitational_parameter;
 			const auto sqrt_mu = std::sqrt(mu);
 			const auto sigma0 = glm::dot(orbit.initial_position, orbit.initial_velocity) / sqrt_mu;
 			const auto dt = orbit.time_offset;
@@ -103,16 +150,12 @@ namespace body {
 			return State<scalar>(r,v);
 		}
 
-		Orbit<scalar,duration> advance(const duration time_step) const
+		Orbit<scalar> tare(const Orbit<scalar> orbit) const
 		{
-			return Orbit<state,duration>(gravitational_parameter, initial_position, initial_velocity, time_offset+time_step);
-		}
-
-		Orbit<scalar,duration> tare() const
-		{
-			return Orbit<state,duration>(gravitational_parameter, state(time_offset));
+			return Orbit<scalar>(orbit.gravitational_parameter, state(orbit.time_offset));
 		}
 
 	};
 
 }
+
