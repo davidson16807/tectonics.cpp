@@ -7,7 +7,7 @@
 #include <catch/catch.hpp>
 
 // in-house libraries
-#include <math/lerp.hpp>
+#include <math/special.hpp>
 #include <unit/si.hpp>
 
 #include "Properties.hpp"

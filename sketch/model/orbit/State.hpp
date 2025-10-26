@@ -1,20 +1,21 @@
 #pragma once
 
 // 3rd party libraries
-#define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
-#define GLM_ENABLE_EXPERIMENTAL // length2
 #include <glm/vec3.hpp>     // *vec3
 
 namespace orbit {
 
-	template <typename Tfloat>
-	struct State
-	{
-		const glm::vec<3,Tfloat,glm::defaultp> position;
-		glm::vec<3,Tfloat,glm::defaultp> velocity;
+	template<typename scalar>
+	struct State {
+
+		using vec3 = glm::vec<3,scalar,glm::defaultp>;
+
+		const vec3 position;
+		const vec3 velocity;
+
 		State(
-			const glm::vec<3,Tfloat,glm::defaultp> position,
-			const glm::vec<3,Tfloat,glm::defaultp> velocity
+			const vec3 position,
+			const vec3 velocity
 		) : 
 			position(position),
 			velocity(velocity)

@@ -2,22 +2,22 @@
 
 namespace orbit {
 
-	template <typename Tfloat>
+	template <typename scalar>
 	struct Elements
 	{
-		const Tfloat semi_major_axis;
-		const Tfloat eccentricity;
-		const Tfloat inclination;
-		const Tfloat longitude_of_ascending_node;
-		const Tfloat argument_of_periapsis;
-		Tfloat mean_anomaly;
+		const scalar semi_major_axis;
+		const scalar eccentricity;
+		const scalar inclination;
+		const scalar longitude_of_ascending_node;
+		const scalar argument_of_periapsis;
+		const scalar mean_anomaly;
 		Elements(
-			const Tfloat semi_major_axis,
-			const Tfloat eccentricity,
-			const Tfloat inclination,
-			const Tfloat longitude_of_ascending_node,
-			const Tfloat argument_of_periapsis,
-			const Tfloat mean_anomaly
+			const scalar semi_major_axis,
+			const scalar eccentricity,
+			const scalar inclination,
+			const scalar longitude_of_ascending_node,
+			const scalar argument_of_periapsis,
+			const scalar mean_anomaly
 		):
 			semi_major_axis(semi_major_axis),
 			eccentricity(eccentricity),
@@ -29,3 +29,4 @@ namespace orbit {
 	};
 
 }
+

@@ -19,39 +19,39 @@
 
 #include <test/properties.hpp>
 
-namespace body {
+namespace orbit {
 
-template<typename scalar>
-struct Adapter{
-	using vec3 = glm::vec<3,scalar,glm::defaultp>;
-	using Propagator = body::OrbitPropagator<double>;
-	using State = body::State<double>;
+	template<typename scalar>
+	struct Adapter{
+		using vec3 = glm::vec<3,scalar,glm::defaultp>;
+		using Propagator = body::OrbitPropagator<double>;
+		using State = body::State<double>;
 
-    static constexpr scalar s0 = scalar(0);
+	    static constexpr scalar s0 = scalar(0);
 
-	Propagator propagator;
-    scalar threshold;
+		Propagator propagator;
+	    scalar threshold;
 
-    Adapter(const scalar threshold):
-        threshold(threshold)
-    {}
+	    Adapter(const scalar threshold):
+	        threshold(threshold)
+	    {}
 
-    bool equal(const Orbit<scalar>& a, const Orbit<scalar>& b) const {
-    	State a0(propagator.state(a,s0));
-    	State b0(propagator.state(b,s0));
-    	return 
-    		glm::distance(a0.position, b0.position) < threshold &&
-    		glm::distance(a0.velocity, b0.velocity) < threshold;
-    }
+	    bool equal(const Orbit<scalar>& a, const Orbit<scalar>& b) const {
+	    	State a0(propagator.state(a,s0));
+	    	State b0(propagator.state(b,s0));
+	    	return 
+	    		glm::distance(a0.position, b0.position) < threshold &&
+	    		glm::distance(a0.velocity, b0.velocity) < threshold;
+	    }
 
-    std::string print(const Orbit<scalar>& orbit) const {
-        return std::to_string(orbit.gravitational_parameter) + " " +
-        	std::to_string(orbit.time_offset) + " " +
-        	glm::to_string(orbit.initial_position) + " " +
-        	glm::to_string(orbit.initial_velocity) + " ";
-    }
+	    std::string print(const Orbit<scalar>& orbit) const {
+	        return std::to_string(orbit.gravitational_parameter) + " " +
+	        	std::to_string(orbit.time_offset) + " " +
+	        	glm::to_string(orbit.initial_position) + " " +
+	        	glm::to_string(orbit.initial_velocity) + " ";
+	    }
 
-};
+	};
 
 }
 
