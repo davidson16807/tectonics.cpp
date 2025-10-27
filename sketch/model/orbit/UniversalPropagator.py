@@ -147,14 +147,10 @@ au = 1.5e11
 # 	glm.vec3(0.0,9.2e3,0.0)) # from example 2.2 in Conway & Prussing
 # plot(satellite, 60*60*24*30, sample_count = 3000)
 
-halley = Universals(1.32712440018e20, 0.0,
-	glm.vec3(0.59*au,0.0,0.0), 
-	glm.vec3(0.0,70.56e3,0.0))
+halley = Universals(1.32712440018e20, 0.0, glm.vec3(0.59*au,0.0,0.0), glm.vec3(0.0,70.56e3,0.0))
 plot(halley, 60*60*24*365*80, sample_count = 6000)
 
-moon = orbit = Universals(3.986004418e14, 0.0,
-	glm.vec3(384399e3,0.0,0.0),
-	glm.vec3(0.0,1.022e3,0.0))
+moon = orbit = Universals(3.986004418e14, 0.0, glm.vec3(384399e3,0.0,0.0), glm.vec3(0.0,1.022e3,0.0))
 plot(moon, 60*60*24*30)
 
 earth = Universals(1.32712440018e20, 0.0, glm.vec3(au,0.0,0.0), glm.vec3(0.0,29.7e3,0.0))

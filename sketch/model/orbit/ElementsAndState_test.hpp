@@ -17,7 +17,7 @@
 namespace orbit {
 
 	TEST_CASE( "get_elements_from_state()/get_state_from_elements() invertibility", "[orbit]" ) {
-		orbit::Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant * si::solar_mass / (si::meter3/si::second2));
+		orbit::Properties<double> properties(glm::vec3(1,0,0), glm::vec3(0,0,1), si::gravitational_constant * si::solar_mass / (si::meter3/si::second2));
 		ElementsAndState<double> conversion(properties);
 	    SECTION("For a given function there exists another function that negates its effect") {
 	    	const double max_samples = 3.0;
@@ -62,7 +62,7 @@ namespace orbit {
 		*/
 	}
 	TEST_CASE( "get_state_from_elements() inclination congruence", "[orbit]" ) {
-		orbit::Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant * si::solar_mass / (si::meter3/si::second2));
+		orbit::Properties<double> properties(glm::vec3(1,0,0), glm::vec3(0,0,1), si::gravitational_constant * si::solar_mass / (si::meter3/si::second2));
 		ElementsAndState<double> conversion(properties);
 	    SECTION("For a given function there exists another function that negates its effect"){
 	    	const double max_samples = 3.0;
