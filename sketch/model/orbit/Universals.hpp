@@ -10,11 +10,11 @@
 namespace orbit {
 
 	/*
-	Output of advance(t), tare(), and state() are conceptually pure methods, 
+	All methods are conceptually pure methods, 
 	i.e. they are free of side effects and their output is completely
 	determiend by parameters and the state of `this`.
 
-	Output of advance(t), tare(), and state() are always represented in 
+	Output of methods are always represented in 
 	whatever units of measured that are used by parameters and `this`.
 	It is the developer's responsibility to ensure consistency of units.
 	*/

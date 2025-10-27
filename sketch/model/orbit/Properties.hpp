@@ -10,7 +10,6 @@
 #include <glm/mat3x3.hpp>
 
 namespace orbit {
-namespace property {
 	/*
 	`Properties` is a mathematical small category implemented as a class for which methods are conceptually pure functions.
 	Arrows in the category map orbital properties of a single orbit for which the gravitational parameter is known.
@@ -197,5 +196,4 @@ namespace property {
 		}
 	};
 
-
-}}
+}

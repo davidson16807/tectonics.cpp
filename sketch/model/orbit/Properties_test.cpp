@@ -13,7 +13,6 @@
 #include "Properties.hpp"
 
 namespace orbit {
-namespace property {
 
 	TEST_CASE( "get_mean_anomaly_from_eccentric_anomaly()/solve_eccentric_anomaly_from_mean_anomaly() invertibility", "[orbit]" ) {
 		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant * si::earth_mass / (si::meter3/si::second2));
@@ -102,4 +101,4 @@ namespace property {
 	/*
 
 	*/
-}}
+}
