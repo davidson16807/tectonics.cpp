@@ -8,7 +8,6 @@ from Elements import Elements
 from Properties import Properties
 from ElementsAndState import ElementsAndState
 
-
 # from orbit import Elements, State, Properties, ElementsAndState
 # from si import solar_radius, astronomical_unit, gravitational_constant, solar_mass, meter, meter3, second2
 
@@ -36,18 +35,19 @@ def elements_equal(e1, e2, tol=0.0001):
     assert math.isclose(e1.mean_anomaly, e2.mean_anomaly, rel_tol=tol)
 
 def state_equal(s1, s2, tol=1e-4):
-    assert glm.length(s1.position - s2.position)/max(glm.length(s1.position), glm.length(s2.position)) < tol
-    assert glm.length(s1.velocity - s2.velocity)/max(glm.length(s1.velocity), glm.length(s2.velocity)) < tol
+    assert glm.length(s1.position - s2.position) / max(glm.length(s1.position), glm.length(s2.position)) < tol
+    assert glm.length(s1.velocity - s2.velocity) / max(glm.length(s1.velocity), glm.length(s2.velocity)) < tol
 
 # get_elements_from_state()/get_state_from_elements() invertibility
 def test_get_elements_from_state_invertibility():
     properties = Properties(
         glm.vec3(1, 0, 0),
         glm.vec3(0, 0, 1),
-        si.gravitational_constant * si.solar_mass / (si.meter3 / si.second2)
+        si.gravitational_constant
     )
     conversion = ElementsAndState(properties)
 
+    m = si.solar_mass / (si.meter3 / si.second2)
     max_samples = 3.0
     pi = math.pi
 
@@ -66,7 +66,8 @@ def test_get_elements_from_state_invertibility():
 
                             elements = Elements(a, e, i, O, w, M)
                             reproduced = conversion.get_elements_from_state(
-                                conversion.get_state_from_elements(elements)
+                                conversion.get_state_from_elements(elements, m),
+                                m
                             )
                             elements_equal(reproduced, elements)
 
@@ -75,10 +76,11 @@ def test_get_state_from_elements_inclination_congruence():
     properties = Properties(
         glm.vec3(1, 0, 0),
         glm.vec3(0, 0, 1),
-        si.gravitational_constant * si.solar_mass / (si.meter3 / si.second2)
+        si.gravitational_constant
     )
     conversion = ElementsAndState(properties)
 
+    m = si.solar_mass / (si.meter3 / si.second2)
     max_samples = 3.0
     pi = math.pi
 
@@ -95,9 +97,9 @@ def test_get_state_from_elements_inclination_congruence():
                             w = mix(0.1, 0.9 * pi, wi / max_samples)
                             M = mix(0.1, 0.9 * pi, Mi / max_samples)
 
-                            baseline = conversion.get_state_from_elements(Elements(a, e, i, O, w, M))
+                            baseline = conversion.get_state_from_elements(Elements(a, e, i, O, w, M), m)
 
-                            state_equal(baseline, conversion.get_state_from_elements(Elements(a, e, i + 2 * pi, O, w, M)))
-                            state_equal(baseline, conversion.get_state_from_elements(Elements(a, e, i, O + 2 * pi, w, M)))
-                            state_equal(baseline, conversion.get_state_from_elements(Elements(a, e, i, O, w + 2 * pi, M)))
-                            state_equal(baseline, conversion.get_state_from_elements(Elements(a, e, i, O, w, M + 2 * pi)))
+                            state_equal(baseline, conversion.get_state_from_elements(Elements(a, e, i + 2 * pi, O, w, M), m))
+                            state_equal(baseline, conversion.get_state_from_elements(Elements(a, e, i, O + 2 * pi, w, M), m))
+                            state_equal(baseline, conversion.get_state_from_elements(Elements(a, e, i, O, w + 2 * pi, M), m))
+                            state_equal(baseline, conversion.get_state_from_elements(Elements(a, e, i, O, w, M + 2 * pi), m))

@@ -1,35 +1,17 @@
 
 import math
 
-import glm
+from pyglm import glm
 import plotly.express as px
 
 from State import *
 from Universals import *
 from Properties import Properties
+from ElementsAndState import ElementsAndState
+from Elements import Elements
 
 def sign(x):
     return 0 if x==0 else 1 if x>0 else -1
-
-class Universals:
-    def __init__(self, gravitational_parameter, time_offset, initial_position, initial_velocity):
-        self.gravitational_parameter = gravitational_parameter
-        self.time_offset = time_offset
-        self.initial_position = initial_position
-        self.initial_velocity = initial_velocity
-    def __repr__(self):
-        return (f"Universals("
-                f"{self.gravitational_parameter}, "
-                f"{self.time_offset}, "
-                f"{list(self.initial_position)}, "
-                f"{list(self.initial_velocity)})")
-    def __str__(self):
-        return ("{"
-                f"μ={self.gravitational_parameter}, "
-                f"t₀={self.time_offset}, "
-                f"r₀={list(self.initial_position)}, "
-                f"v₀={list(self.initial_velocity)}"
-                "}")
 
 def C(y):
 	abs_y = abs(y)
@@ -46,7 +28,11 @@ def S(y):
 
 class UniversalPropagator:
 
-	def __init__(self, max_refinement_count = 10, max_precision = 1e-10, laguerre_method_n = 5):
+	def __init__(self, 
+		standard_gravitational_parameter,
+		max_refinement_count = 10, max_precision = 1e-10, laguerre_method_n = 5
+	):
+		self.standard_gravitational_parameter = standard_gravitational_parameter
 		self.max_refinement_count = 10
 		self.max_precision = 1e-10
 		self.laguerre_method_n = 5
@@ -80,7 +66,7 @@ class UniversalPropagator:
 		t0 = orbit.time_offset
 		R0 = orbit.initial_position
 		V0 = orbit.initial_velocity
-		mu = orbit.gravitational_parameter
+		mu = self.standard_gravitational_parameter * orbit.combined_mass
 		sqrt_mu = math.sqrt(mu)
 		r0 = glm.length(R0)
 		v0 = glm.length(V0)
@@ -110,12 +96,19 @@ class UniversalPropagator:
 
 	def advance(self, orbit, t):
 		state_ = self.state(orbit, t)
-		return Universals(orbit.gravitation_parameter, 0.0, state_.position, state_.velocity)
+		return Universals(orbit.combined_mass, 0.0, state_.position, state_.velocity)
 
 	def tare(self, orbit):
 		return self.advance(orbit, orbit.time_offset)
 
-propagator = UniversalPropagator(max_refinement_count=100, laguerre_method_n = 5)
+G = 6.6743015e-11 # m³kg⁻¹s⁻²
+m_sun = 1.32712440018e20/G # kg
+m_galaxy = 1.262e41 * G # kg, back calculated to achieve period of 250 million years
+au = 1.5e11
+
+propagator = UniversalPropagator(G, max_refinement_count=100, laguerre_method_n = 5)
+properties = Properties(glm.vec3(1,0,0), glm.vec3(0,0,1), G)
+converter = ElementsAndState(properties)
 
 def plot(orbit, period, sample_count = 10000):
 	# ts = range(-int(period/2), int(period/2), int(period/sample_count))
@@ -139,55 +132,37 @@ def plot(orbit, period, sample_count = 10000):
 		range_z=[-m,m],
 	).show()
 
-# mu_sun = 1.32712440018e20
-au = 1.5e11
-
-# satellite = orbit = Universals(3.986004418e14, 0.0,
+# satellite = orbit = Universals(3.986004418e14/G, 0.0,
 # 	glm.vec3(10e6,0.0,0.0),
 # 	glm.vec3(0.0,9.2e3,0.0)) # from example 2.2 in Conway & Prussing
-# plot(satellite, 60*60*24*30, sample_count = 3000)
+# plot(satellite, 60*60*24*30, sample_count = 3000) # currently doesn't work
 
-halley = Universals(1.32712440018e20, 0.0, glm.vec3(0.59*au,0.0,0.0), glm.vec3(0.0,70.56e3,0.0))
+halley = Universals(m_sun, 0.0, glm.vec3(0.59*au,0.0,0.0), glm.vec3(0.0,70.56e3,0.0))
 plot(halley, 60*60*24*365*80, sample_count = 6000)
 
-moon = orbit = Universals(3.986004418e14, 0.0, glm.vec3(384399e3,0.0,0.0), glm.vec3(0.0,1.022e3,0.0))
+moon = orbit = Universals(3.986004418e14/G, 0.0, glm.vec3(384399e3,0.0,0.0), glm.vec3(0.0,1.022e3,0.0))
 plot(moon, 60*60*24*30)
 
-earth = Universals(1.32712440018e20, 0.0, glm.vec3(au,0.0,0.0), glm.vec3(0.0,29.7e3,0.0))
+earth = Universals(m_sun, 0.0, glm.vec3(au,0.0,0.0), glm.vec3(0.0,29.7e3,0.0))
 plot(earth, 60*60*24*365)
 
-eccentric_solar = Universals(1.32712440018e20, 0.0,	glm.vec3(0.59*au,0.0,0.0), glm.vec3(0.0,54e3,0.0))
+eccentric_solar = Universals(m_sun, 0.0,	glm.vec3(0.59*au,0.0,0.0), glm.vec3(0.0,54e3,0.0))
 plot(eccentric_solar, 60*60*24*365*80)
 
-hyperbolic_solar = Universals(1.32712440018e20, 0.0,glm.vec3(0.59*au,0.0,0.0), glm.vec3(0.0,55e3,0.0))
+hyperbolic_solar = Universals(m_sun, 0.0,glm.vec3(0.59*au,0.0,0.0), glm.vec3(0.0,55e3,0.0))
 plot(hyperbolic_solar, 60*60*24*365*80)
 
-breakpoint()
+# breakpoint()
 
-mars = Universals(1.32712440018e20, 0.0,
+mars = Universals(m_sun, 0.0,
 	glm.vec3(1.3814*au,0.0,0.0), 
 	glm.vec3(0.0,24.07e3,0.0))
-plot(mars, 60*60*24*365*3)
+# plot(mars, 60*60*24*365*3)
 
-plot(moon, 60*60*24*30)
-
-elliptics = [
-
-    from_6_element(mu=mu_sun, a=5.790905e10,   e=0.2056), # Mercury
-    from_6_element(mu=mu_sun, a=1.082080e11,   e=0.0068), # Venus
-    from_6_element(mu=mu_sun, a=1.49598023e11, e=0.0167), # Earth
-    from_6_element(mu=mu_sun, a=2.279392e11,   e=0.0934), # Mars
-    from_6_element(mu=mu_sun, a=7.78570e11,    e=0.0489), # Jupiter
-    from_6_element(mu=mu_sun, a=1.43353e12,    e=0.0565), # Saturn
-    from_6_element(mu=mu_sun, a=2.87246e12,    e=0.046), # Uranus
-    from_6_element(mu=mu_sun, a=4.49506e12,    e=0.009), # Neptune
-
-]
+# plot(moon, 60*60*24*30)
 
 '''
-
 test cases:
-
 	elliptic:
 		circular:
 			circular lunar satellite
@@ -195,14 +170,35 @@ test cases:
 		eccentric lunar satellite
 		eccentric earth satellite
 		eccentric solar satellite
-		all planets
+	x	all planets
 		the sun around the galactic core
-
 	hyperbolic:
 		hyperbolic lunar satellite
 		hyperbolic earth satellite
 		hyperbolic solar satellite
+'''
 
+elliptics = [
+
+    # Universals.from_state(m_sun, converter.get_state_from_elements(Elements(5.790905e10,   0.2056, 0.0, 0.0, 0.0, 0.0), m_sun)), # Mercury
+    # Universals.from_state(m_sun, converter.get_state_from_elements(Elements(1.082080e11,   0.0068, 0.0, 0.0, 0.0, 0.0), m_sun)), # Venus
+    Universals.from_state(m_sun, converter.get_state_from_elements(Elements(1.49598023e11, 0.0167, 0.0, 0.0, 0.0, 0.0), m_sun)), # Earth
+    # Universals.from_state(m_sun, converter.get_state_from_elements(Elements(2.279392e11,   0.0934, 0.0, 0.0, 0.0, 0.0), m_sun)), # Mars
+    # Universals.from_state(m_sun, converter.get_state_from_elements(Elements(7.78570e11,    0.0489, 0.0, 0.0, 0.0, 0.0), m_sun)), # Jupiter
+    # Universals.from_state(m_sun, converter.get_state_from_elements(Elements(1.43353e12,    0.0565, 0.0, 0.0, 0.0, 0.0), m_sun)), # Saturn
+    # Universals.from_state(m_sun, converter.get_state_from_elements(Elements(2.87246e12,    0.046,  0.0, 0.0, 0.0, 0.0), m_sun)), # Uranus
+    # Universals.from_state(m_sun, converter.get_state_from_elements(Elements(4.49506e12,    0.009,  0.0, 0.0, 0.0, 0.0), m_sun)), # Neptune
+    # Universals.from_state(m_galaxy, converter.get_state_from_elements(Elements(4.49506e12,    0.009,  0.0, 0.0, 0.0, 0.0), m_sun)), # Neptune
+
+]
+
+# breakpoint()
+
+def test_group():
+	T = properties.get_period_from_semi_major_axis()
+	assert state_distance(propagator.state(orbit,T), State(orbit.initial_position, orbit.initial_velocity)) < 1 # m/s
+
+'''
 for any orbit:
 
 	group:
