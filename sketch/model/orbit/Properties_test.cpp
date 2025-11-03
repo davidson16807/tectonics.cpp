@@ -35,9 +35,11 @@ namespace orbit {
 		    }
 		}
 	}
+
 	TEST_CASE( "get_true_anomaly_from_eccentric_anomaly()/get_eccentric_anomaly_from_true_anomaly() invertibility", "[orbit]" ) {
-		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant * si::earth_mass / (si::meter3/si::second2));
+		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant/(si::meter3/si::kilogram/si::second2));
 	    SECTION("For every function there exists another function that negates its effect"){
+	    	// const double m = si::earth_mass / si::kilogram;
 	    	const double max_i = 10.0;
 	    	const double max_j = 10.0;
 	    	const double pi = 3.14159;
@@ -57,8 +59,9 @@ namespace orbit {
 		}
 	}
 	TEST_CASE( "get_semi_latus_rectum_from_semi_major_axis_and_eccentricity()/get_semi_major_axis_from_semi_latus_rectum_and_eccentricity() invertibility", "[orbit]" ) {
-		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant * si::earth_mass / (si::meter3/si::second2));
+		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant/(si::meter3/si::kilogram/si::second2));
 	    SECTION("For every function there exists another function that negates its effect"){
+	    	// const double m = si::earth_mass / si::kilogram;
 	    	const double max_i = 10.0;
 	    	const double max_j = 10.0;
 	    	const double epsilon = 0.0001;
@@ -78,8 +81,9 @@ namespace orbit {
 		}
 	}
 	TEST_CASE( "get_true_anomaly_from_eccentric_anomaly() congruence", "[orbit]" ) {
-		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant * si::earth_mass / (si::meter3/si::second2));
+		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant/(si::meter3/si::kilogram/si::second2));
 	    SECTION("Results of a function repeat after a certain offset"){
+	    	// const double m = si::earth_mass / si::kilogram;
 	    	const double max_i = 10.0;
 	    	const double max_j = 10.0;
 	    	const double pi = 3.14159;
@@ -98,7 +102,8 @@ namespace orbit {
 	    	}
 		}
 	}
-	/*
 
+	/*
 	*/
+
 }

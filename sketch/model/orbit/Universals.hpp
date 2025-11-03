@@ -23,50 +23,50 @@ namespace orbit {
 	{
 		using vec3 = glm::vec<3,scalar,glm::defaultp>;
 
-		const scalar gravitational_parameter;
+		const scalar combined_mass;
 		const vec3 initial_position;
 		const vec3 initial_velocity;
 		const scalar time_offset;
 
 		Universals(
-			const scalar gravitational_parameter,
+			const scalar combined_mass,
 			const vec3 initial_position,
 			const vec3 initial_velocity
 		) : 
-			gravitational_parameter(gravitational_parameter),
+			combined_mass(combined_mass),
 			initial_position(initial_position),
 			initial_velocity(initial_velocity),
 			time_offset(0)
 		{}
 
 		Universals(
-			const scalar gravitational_parameter,
+			const scalar combined_mass,
 			const State<scalar> state
 		) : 
-			gravitational_parameter(gravitational_parameter),
+			combined_mass(combined_mass),
 			initial_position(state.position),
 			initial_velocity(state.velocity),
 			time_offset(0)
 		{}
 
 		Universals(
-			const scalar gravitational_parameter,
+			const scalar combined_mass,
 			const vec3 initial_position,
 			const vec3 initial_velocity,
 			const scalar time_offset
 		) : 
-			gravitational_parameter(gravitational_parameter),
+			combined_mass(combined_mass),
 			initial_position(initial_position),
 			initial_velocity(initial_velocity),
 			time_offset(time_offset)
 		{}
 
 		Universals(
-			const scalar gravitational_parameter,
+			const scalar combined_mass,
 			const State<scalar> state,
 			const scalar time_offset
 		) : 
-			gravitational_parameter(gravitational_parameter),
+			combined_mass(combined_mass),
 			initial_position(state.position),
 			initial_velocity(state.velocity),
 			time_offset(time_offset)
@@ -74,7 +74,7 @@ namespace orbit {
 
 		Universals<scalar> advance(const scalar time_step) const
 		{
-			return Universals<scalar>(gravitational_parameter, initial_position, initial_velocity, time_offset+time_step);
+			return Universals<scalar>(combined_mass, initial_position, initial_velocity, time_offset+time_step);
 		}
 
 	};

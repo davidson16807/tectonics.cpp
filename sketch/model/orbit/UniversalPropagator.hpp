@@ -49,7 +49,7 @@ namespace orbit {
 		State<scalar> state(const Orbit<scalar> orbit, const scalar t) const
 		{
 			const auto t0 = orbit.time_offset;
-			const auto mu = orbit.gravitational_parameter;
+			const auto mu = standard_gravitation_parameter * orbit.combined_mass;
 			const auto sqrt_mu = std::sqrt(mu);
 			const auto R0 = orbit.initial_position;
 			const auto V0 = orbit.initial_velocity;
@@ -99,7 +99,7 @@ namespace orbit {
 
 		Orbit<scalar> tare(const Orbit<scalar> orbit) const
 		{
-			return Orbit<scalar>(orbit.gravitational_parameter, state(orbit, orbit.time_offset));
+			return Orbit<scalar>(orbit.combined_mass, state(orbit, orbit.time_offset));
 		}
 
 	};
@@ -134,9 +134,9 @@ invariance under reference time:
 continuity:
 	d(o.state(ε), o.state(0)) < d(o.state(2ε), o.state(0)) 
 
-preservation of gravitational parameter:
-	(o.advance(t)).gravitational_parameter == o.gravitational_parameter
-	(o.tare()).gravitational_parameter == o.gravitational_parameter
+preservation of combined mass:
+	(o.advance(t)).combined_mass == o.combined_mass
+	(o.tare()).combined_mass == o.combined_mass
 
 energy is conserved:
 	E = v²/2 - μ/|r|

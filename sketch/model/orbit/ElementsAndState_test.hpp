@@ -17,9 +17,11 @@
 namespace orbit {
 
 	TEST_CASE( "get_elements_from_state()/get_state_from_elements() invertibility", "[orbit]" ) {
-		orbit::Properties<double> properties(glm::vec3(1,0,0), glm::vec3(0,0,1), si::gravitational_constant * si::solar_mass / (si::meter3/si::second2));
+		orbit::Properties<double> properties(glm::vec3(1,0,0), glm::vec3(0,0,1), 
+			si::gravitational_constant / (si::meter3/si::kilogram/si::second2));
 		ElementsAndState<double> conversion(properties);
 	    SECTION("For a given function there exists another function that negates its effect") {
+			const double m = si::solar_mass / si::kilogram;
 	    	const double max_samples = 3.0;
 	    	const double pi = 3.1415926;
 	    	for (double ai = 0.0; ai < max_samples; ++ai) {
@@ -35,12 +37,15 @@ namespace orbit {
 	    		double w = math::mix(0.1, 0.9*pi, wi/max_samples); // `w` must be less than pi to allow reconstruction
 	    		double M = math::mix(0.1, 0.9*pi, Mi/max_samples); // `M` must be less than pi to allow reconstruction
 	    		Elements<double> elements(a,e,i,O,w,M);
-	    		Elements<double> reproduced = conversion.get_elements_from_state(conversion.get_state_from_elements(elements));
+	    		Elements<double> reproduced = conversion.get_elements_from_state(
+	    			conversion.get_state_from_elements(elements, m), m
+	    		);
 				ORBIT_EQUAL(reproduced, elements);
 	    	}}}}}}
 		}
 		/*
 	    SECTION("Same as above, but starting from the other direction") {
+			const double m = si::solar_mass / si::kilogram;
 	    	const double max_samples = 4.0;
 	    	for (double uxi = 0.0; uxi < max_samples; ++uxi) {
 	    	for (double uyi = 0.0; uyi < max_samples; ++uyi) {
@@ -55,16 +60,18 @@ namespace orbit {
 	    		double vy = math::mix(-10000.0, 10000.0, vyi/max_samples);
 	    		double vz = math::mix(-10000.0, 10000.0, vzi/max_samples);
 	    		State<double> state(glm::vec3(ux,uy,uz), glm::vec3(vx,vy,vz));
-	    		State<double> reproduced = conversion.get_state_from_elements(conversion.get_elements_from_state(state));
+	    		State<double> reproduced = conversion.get_state_from_elements(conversion.get_elements_from_state(state,m),m);
 				STATE_EQUAL(reproduced, state);
 	    	}}}}}}
 		}
 		*/
 	}
 	TEST_CASE( "get_state_from_elements() inclination congruence", "[orbit]" ) {
-		orbit::Properties<double> properties(glm::vec3(1,0,0), glm::vec3(0,0,1), si::gravitational_constant * si::solar_mass / (si::meter3/si::second2));
+		orbit::Properties<double> properties(glm::vec3(1,0,0), glm::vec3(0,0,1), 
+			si::gravitational_constant / (si::meter3/si::kilogram/si::second2));
 		ElementsAndState<double> conversion(properties);
 	    SECTION("For a given function there exists another function that negates its effect"){
+			const double m = si::solar_mass / si::kilogram;
 	    	const double max_samples = 3.0;
 	    	const double pi = 3.1415926;
 	    	for (double ai = 0.0; ai < max_samples; ++ai) {
@@ -79,11 +86,11 @@ namespace orbit {
 	    		double O = math::mix(0.1, 0.9*pi, Oi/max_samples); // `O` must be less than pi to allow reconstruction
 	    		double w = math::mix(0.1, 0.9*pi, wi/max_samples); // `w` must be less than pi to allow reconstruction
 	    		double M = math::mix(0.1, 0.9*pi, Mi/max_samples); // `M` must be less than pi to allow reconstruction
-	    		State<double> baseline = conversion.get_state_from_elements(Elements(a,e,i,O,w,M));
-				STATE_EQUAL(baseline, conversion.get_state_from_elements(Elements(a,e,i+2.0*pi,O,w,M)));
-				STATE_EQUAL(baseline, conversion.get_state_from_elements(Elements(a,e,i,O+2.0*pi,w,M)));
-				STATE_EQUAL(baseline, conversion.get_state_from_elements(Elements(a,e,i,O,w+2.0*pi,M)));
-				STATE_EQUAL(baseline, conversion.get_state_from_elements(Elements(a,e,i,O,w,M+2.0*pi)));
+	    		State<double> baseline = conversion.get_state_from_elements(Elements(a,e,i,O,w,M),m);
+				STATE_EQUAL(baseline, conversion.get_state_from_elements(Elements(a,e,i+2.0*pi,O,w,M),m));
+				STATE_EQUAL(baseline, conversion.get_state_from_elements(Elements(a,e,i,O+2.0*pi,w,M),m));
+				STATE_EQUAL(baseline, conversion.get_state_from_elements(Elements(a,e,i,O,w+2.0*pi,M),m));
+				STATE_EQUAL(baseline, conversion.get_state_from_elements(Elements(a,e,i,O,w,M+2.0*pi),m));
 	    	}}}}}}
 		}
 	}

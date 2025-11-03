@@ -75,16 +75,23 @@ namespace orbit {
 
 		const vec3 vernal_equinox_direction;
 		const vec3 north_pole_direction;
-		const scalar gravitational_parameter;
+		const scalar standard_gravitational_parameter;
 		Properties(
 			const vec3 vernal_equinox_direction, 
 			const vec3 north_pole_direction, 
-			const scalar gravitational_parameter
+			const scalar standard_gravitational_parameter
 		) : 
 			vernal_equinox_direction(glm::normalize(vernal_equinox_direction)),
 			north_pole_direction(glm::normalize(north_pole_direction)),
-			gravitational_parameter(gravitational_parameter)
+			standard_gravitational_parameter(standard_gravitational_parameter)
 		{}
+		scalar get_period_from_semi_major_axis(const scalar semi_major_axis, const scalar combined_mass) const
+		{
+			const scalar a = semi_major_axis;
+	        const scalar pi = 3.141592653589793238462;
+			const scalar mu = standard_gravitational_parameter * combined_mass;
+        	return 2*pi*std::sqrt(a*a*a/mu);
+		}
 		vec3 get_angular_momentum_vector_from_position_and_velocity(const vec3 position, const vec3 velocity) const
 		{
 			return glm::cross(position, velocity);
@@ -93,12 +100,14 @@ namespace orbit {
 		{
 			return glm::cross(north_pole_direction, momentum);
 		}
-		vec3 get_eccentricity_vector_from_position_and_velocity(const vec3 position, const vec3 velocity) const
-		{
+		vec3 get_eccentricity_vector_from_position_and_velocity(
+			const vec3 position, const vec3 velocity, const scalar combined_mass
+		) const {
+			const scalar mu = standard_gravitational_parameter * combined_mass;
 			return (
-				(glm::length2(velocity) - gravitational_parameter / glm::length(position)) * position - 
+				(glm::length2(velocity) - mu / glm::length(position)) * position - 
 				glm::dot(position, velocity) * velocity
-			) / gravitational_parameter;
+			) / mu;
 		}
 		// "i"
 		scalar get_inclination_from_momentum_vector(const vec3 momentum) const
@@ -131,9 +140,10 @@ namespace orbit {
 			return longitude_of_ascending_node + argument_of_latitude;
 		}
 		// "p"
-		scalar get_semi_latus_rectum_from_momentum_vector(const vec3 momentum_vector) const
+		scalar get_semi_latus_rectum_from_momentum_vector(const vec3 momentum_vector, const scalar combined_mass) const
 		{
-			return glm::length2(momentum_vector) / gravitational_parameter;
+			const scalar mu = standard_gravitational_parameter * combined_mass;
+			return glm::length2(momentum_vector) / mu;
 		}
 		// "p"
 		scalar get_semi_latus_rectum_from_semi_major_axis_and_eccentricity(const scalar semi_major_axis, const scalar eccentricity) const
@@ -148,7 +158,7 @@ namespace orbit {
 		// "E"
 		scalar get_eccentric_anomaly_from_true_anomaly(const scalar true_anomaly, const scalar eccentricity, const int iterations = 10) const
 		{
-	        const scalar pi = 3.1415926;
+	        const scalar pi = 3.141592653589793238462;
 			return std::acos(-(std::cos(pi - true_anomaly) - eccentricity) / (1.0 - eccentricity * std::cos(pi - true_anomaly)));
 		}
 		// "ν₀"
@@ -187,11 +197,13 @@ namespace orbit {
 			const scalar radius = semi_latus_rectum / (1.0 + eccentricity*std::cos(true_anomaly));
 			return radius * (std::cos(true_anomaly) * P + std::sin(true_anomaly) * Q);
 		}
-		vec3 get_perifocal_velocity(const scalar semi_latus_rectum, const scalar eccentricity, const scalar true_anomaly) const
-		{
+		vec3 get_perifocal_velocity(
+			const scalar semi_latus_rectum, const scalar eccentricity, const scalar true_anomaly, const scalar combined_mass
+		) const {
 			const vec3 P = vernal_equinox_direction;
 			const vec3 Q = glm::cross(north_pole_direction,vernal_equinox_direction);
-			const scalar noneccentric_speed = std::sqrt(gravitational_parameter / semi_latus_rectum);
+			const scalar mu = standard_gravitational_parameter * combined_mass;
+			const scalar noneccentric_speed = std::sqrt(mu / semi_latus_rectum);
 			return noneccentric_speed * (-std::sin(true_anomaly) * P + (eccentricity + std::cos(true_anomaly)) * Q);
 		}
 	};
