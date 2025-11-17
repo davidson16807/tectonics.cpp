@@ -13,7 +13,7 @@ class Properties:
         a = semi_major_axis
         pi = math.pi
         mu = self.standard_gravitational_parameter * combined_mass
-        return 2*pi*sqrt(a*a*a/mu)
+        return 2*pi*math.sqrt(a*a*a/mu)
 
     # Angular momentum vector
     def angular_momentum_vector_from_position_and_velocity(self, position: glm.vec3, velocity: glm.vec3):
