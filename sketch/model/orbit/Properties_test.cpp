@@ -14,7 +14,7 @@
 
 namespace orbit {
 
-	TEST_CASE( "get_mean_anomaly_from_eccentric_anomaly()/solve_eccentric_anomaly_from_mean_anomaly() invertibility", "[orbit]" ) {
+	TEST_CASE( "mean_anomaly_from_eccentric_anomaly()/eccentric_anomaly_from_mean_anomaly() invertibility", "[orbit]" ) {
 		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant * si::earth_mass / (si::meter3/si::second2));
 	    SECTION("For every function there exists another function that negates its effect"){
 	    	const double max_i = 20.0;
@@ -27,8 +27,8 @@ namespace orbit {
 		    		double M = math::mix(-2.0*pi, 2.0*pi, i/max_i);
 		    		double e = math::mix(0.0, 1.1, j/max_j);
 					CHECK( 
-						properties.get_mean_anomaly_from_eccentric_anomaly(
-							properties.solve_eccentric_anomaly_from_mean_anomaly(M, e), e
+						properties.mean_anomaly_from_eccentric_anomaly(
+							properties.eccentric_anomaly_from_mean_anomaly(M, e), e
 						) == Approx(M).margin(0.01)
 					);
 		    	}
@@ -36,7 +36,7 @@ namespace orbit {
 		}
 	}
 
-	TEST_CASE( "get_true_anomaly_from_eccentric_anomaly()/get_eccentric_anomaly_from_true_anomaly() invertibility", "[orbit]" ) {
+	TEST_CASE( "true_anomaly_from_eccentric_anomaly()/eccentric_anomaly_from_true_anomaly() invertibility", "[orbit]" ) {
 		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant/(si::meter3/si::kilogram/si::second2));
 	    SECTION("For every function there exists another function that negates its effect"){
 	    	// const double m = si::earth_mass / si::kilogram;
@@ -50,15 +50,15 @@ namespace orbit {
 		    		double nu = math::mix(0.0, pi, i/max_i);
 		    		double e = math::mix(0.0, 0.99, j/max_j);
 					CHECK( 
-						properties.get_true_anomaly_from_eccentric_anomaly(
-							properties.get_eccentric_anomaly_from_true_anomaly(nu, e), e
+						properties.true_anomaly_from_eccentric_anomaly(
+							properties.eccentric_anomaly_from_true_anomaly(nu, e), e
 						) == Approx(nu).margin(0.01)
 					);
 				}
 	    	}
 		}
 	}
-	TEST_CASE( "get_semi_latus_rectum_from_semi_major_axis_and_eccentricity()/get_semi_major_axis_from_semi_latus_rectum_and_eccentricity() invertibility", "[orbit]" ) {
+	TEST_CASE( "semi_latus_rectum_from_semi_major_axis_and_eccentricity()/semi_major_axis_from_semi_latus_rectum_and_eccentricity() invertibility", "[orbit]" ) {
 		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant/(si::meter3/si::kilogram/si::second2));
 	    SECTION("For every function there exists another function that negates its effect"){
 	    	// const double m = si::earth_mass / si::kilogram;
@@ -72,15 +72,15 @@ namespace orbit {
 		    		double a = math::mix(epsilon, si::astronomical_unit/si::meter, i/max_i);
 		    		double e = math::mix(0.0, 1.5, j/max_j);
 					CHECK( 
-						properties.get_semi_major_axis_from_semi_latus_rectum_and_eccentricity(
-							properties.get_semi_latus_rectum_from_semi_major_axis_and_eccentricity(a, e), e
+						properties.semi_major_axis_from_semi_latus_rectum_and_eccentricity(
+							properties.semi_latus_rectum_from_semi_major_axis_and_eccentricity(a, e), e
 						) == Approx(a).margin(0.01)
 					);
 				}
 	    	}
 		}
 	}
-	TEST_CASE( "get_true_anomaly_from_eccentric_anomaly() congruence", "[orbit]" ) {
+	TEST_CASE( "true_anomaly_from_eccentric_anomaly() congruence", "[orbit]" ) {
 		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant/(si::meter3/si::kilogram/si::second2));
 	    SECTION("Results of a function repeat after a certain offset"){
 	    	// const double m = si::earth_mass / si::kilogram;
@@ -95,8 +95,8 @@ namespace orbit {
 		    		double E = math::mix(epsilon, si::astronomical_unit/si::meter, i/max_i);
 		    		double e = math::mix(0.0, 1.1, j/max_j);
 					CHECK(
-						properties.get_true_anomaly_from_eccentric_anomaly(E,e) == 
-							Approx(properties.get_true_anomaly_from_eccentric_anomaly(E+2.0*pi,e)).margin(0.01)
+						properties.true_anomaly_from_eccentric_anomaly(E,e) == 
+							Approx(properties.true_anomaly_from_eccentric_anomaly(E+2.0*pi,e)).margin(0.01)
 					);
 				}
 	    	}

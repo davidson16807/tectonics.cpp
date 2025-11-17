@@ -9,18 +9,18 @@ class ElementsAndState:
         self.properties = properties
 
     def get_elements_from_state(self, state:State, combined_mass:float):
-        angular_momentum_vector = self.properties.get_angular_momentum_vector_from_position_and_velocity(state.position, state.velocity)
-        eccentricity_vector = self.properties.get_eccentricity_vector_from_position_and_velocity(state.position, state.velocity, combined_mass)
-        node_vector = self.properties.get_node_vector_from_momentum_vector(angular_momentum_vector)
-        inclination = self.properties.get_inclination_from_momentum_vector(angular_momentum_vector)
-        longitude_of_ascending_node = self.properties.get_longitude_of_ascending_node_from_node_vector(node_vector)
-        argument_of_periapsis = self.properties.get_argument_of_periapsis_from_node_and_eccentricity(node_vector, eccentricity_vector)
-        true_anomaly = self.properties.get_true_anomaly_from_position_and_eccentricity(state.position, eccentricity_vector)
+        angular_momentum_vector = self.properties.angular_momentum_vector_from_position_and_velocity(state.position, state.velocity)
+        eccentricity_vector = self.properties.eccentricity_vector_from_position_and_velocity(state.position, state.velocity, combined_mass)
+        node_vector = self.properties.node_vector_from_momentum_vector(angular_momentum_vector)
+        inclination = self.properties.inclination_from_momentum_vector(angular_momentum_vector)
+        longitude_of_ascending_node = self.properties.longitude_of_ascending_node_from_node_vector(node_vector)
+        argument_of_periapsis = self.properties.argument_of_periapsis_from_node_and_eccentricity(node_vector, eccentricity_vector)
+        true_anomaly = self.properties.true_anomaly_from_position_and_eccentricity(state.position, eccentricity_vector)
         eccentricity = glm.length(eccentricity_vector)
-        eccentric_anomaly = self.properties.get_eccentric_anomaly_from_true_anomaly(true_anomaly, eccentricity)
-        mean_anomaly = self.properties.get_mean_anomaly_from_eccentric_anomaly(eccentric_anomaly, eccentricity)
-        semi_latus_rectum = self.properties.get_semi_latus_rectum_from_momentum_vector(angular_momentum_vector, combined_mass)
-        semi_major_axis = self.properties.get_semi_major_axis_from_semi_latus_rectum_and_eccentricity(semi_latus_rectum, eccentricity)
+        eccentric_anomaly = self.properties.eccentric_anomaly_from_true_anomaly(true_anomaly, eccentricity)
+        mean_anomaly = self.properties.mean_anomaly_from_eccentric_anomaly(eccentric_anomaly, eccentricity)
+        semi_latus_rectum = self.properties.semi_latus_rectum_from_momentum_vector(angular_momentum_vector, combined_mass)
+        semi_major_axis = self.properties.semi_major_axis_from_semi_latus_rectum_and_eccentricity(semi_latus_rectum, eccentricity)
         # TODO: what happens when orbit is hyperbolic? is this semi_major_axis < 0?
         return Elements(
             semi_major_axis,
@@ -35,11 +35,11 @@ class ElementsAndState:
         I = self.properties.vernal_equinox_direction
         K = self.properties.north_pole_direction
 
-        eccentric_anomaly = self.properties.solve_eccentric_anomaly_from_mean_anomaly(elements.mean_anomaly, elements.eccentricity)
-        true_anomaly = self.properties.get_true_anomaly_from_eccentric_anomaly(eccentric_anomaly, elements.eccentricity)
-        semi_latus_rectum = self.properties.get_semi_latus_rectum_from_semi_major_axis_and_eccentricity(elements.semi_major_axis, elements.eccentricity)
-        perifocal_position = self.properties.get_perifocal_position(semi_latus_rectum, elements.eccentricity, true_anomaly)
-        perifocal_velocity = self.properties.get_perifocal_velocity(semi_latus_rectum, elements.eccentricity, true_anomaly, combined_mass)
+        eccentric_anomaly = self.properties.eccentric_anomaly_from_mean_anomaly(elements.mean_anomaly, elements.eccentricity)
+        true_anomaly = self.properties.true_anomaly_from_eccentric_anomaly(eccentric_anomaly, elements.eccentricity)
+        semi_latus_rectum = self.properties.semi_latus_rectum_from_semi_major_axis_and_eccentricity(elements.semi_major_axis, elements.eccentricity)
+        perifocal_position = self.properties.perifocal_position(semi_latus_rectum, elements.eccentricity, true_anomaly)
+        perifocal_velocity = self.properties.perifocal_velocity(semi_latus_rectum, elements.eccentricity, true_anomaly, combined_mass)
 
         # PyGLM matrix rotation (mat4)
         perifocal_to_reference_matrix = glm.mat4(1.0)

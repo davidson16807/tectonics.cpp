@@ -195,7 +195,7 @@ elliptics = [
 # breakpoint()
 
 def test_group():
-	T = properties.get_period_from_semi_major_axis()
+	T = properties.period_from_semi_major_axis()
 	assert state_distance(propagator.state(orbit,T), State(orbit.initial_position, orbit.initial_velocity)) < 1 # m/s
 
 '''

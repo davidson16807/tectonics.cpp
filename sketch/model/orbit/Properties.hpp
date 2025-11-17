@@ -85,22 +85,22 @@ namespace orbit {
 			north_pole_direction(glm::normalize(north_pole_direction)),
 			standard_gravitational_parameter(standard_gravitational_parameter)
 		{}
-		scalar get_period_from_semi_major_axis(const scalar semi_major_axis, const scalar combined_mass) const
+		scalar period_from_semi_major_axis(const scalar semi_major_axis, const scalar combined_mass) const
 		{
 			const scalar a = semi_major_axis;
 	        const scalar pi = 3.141592653589793238462;
 			const scalar mu = standard_gravitational_parameter * combined_mass;
         	return 2*pi*std::sqrt(a*a*a/mu);
 		}
-		vec3 get_angular_momentum_vector_from_position_and_velocity(const vec3 position, const vec3 velocity) const
+		vec3 angular_momentum_vector_from_position_and_velocity(const vec3 position, const vec3 velocity) const
 		{
 			return glm::cross(position, velocity);
 		}
-		vec3 get_node_vector_from_momentum_vector(const vec3 momentum) const
+		vec3 node_vector_from_momentum_vector(const vec3 momentum) const
 		{
 			return glm::cross(north_pole_direction, momentum);
 		}
-		vec3 get_eccentricity_vector_from_position_and_velocity(
+		vec3 eccentricity_vector_from_position_and_velocity(
 			const vec3 position, const vec3 velocity, const scalar combined_mass
 		) const {
 			const scalar mu = standard_gravitational_parameter * combined_mass;
@@ -110,64 +110,64 @@ namespace orbit {
 			) / mu;
 		}
 		// "i"
-		scalar get_inclination_from_momentum_vector(const vec3 momentum) const
+		scalar inclination_from_momentum_vector(const vec3 momentum) const
 		{
 			return std::acos(glm::dot(momentum, north_pole_direction) / glm::length(momentum));
 		}
 		// "Ω"
-		scalar get_longitude_of_ascending_node_from_node_vector(const vec3 node) const
+		scalar longitude_of_ascending_node_from_node_vector(const vec3 node) const
 		{
 			return std::acos(glm::dot(node, vernal_equinox_direction) / glm::length(node));
 		}
 		// "ω"
-		scalar get_argument_of_periapsis_from_node_and_eccentricity(const vec3 node, const vec3 eccentricity) const
+		scalar argument_of_periapsis_from_node_and_eccentricity(const vec3 node, const vec3 eccentricity) const
 		{
 			return std::acos(glm::dot(node, eccentricity) / (glm::length(node)*glm::length(eccentricity)));
 		}
 		// "ν₀"
-		scalar get_true_anomaly_from_position_and_eccentricity(const vec3 position, const vec3 eccentricity) const
+		scalar true_anomaly_from_position_and_eccentricity(const vec3 position, const vec3 eccentricity) const
 		{
 			return std::acos(glm::dot(position, eccentricity) / (glm::length(position)*glm::length(eccentricity)));
 		}
 		// "u₀"
-		scalar get_argument_of_latitude_from_position_and_node(const vec3 position, const vec3 node) const
+		scalar argument_of_latitude_from_position_and_node(const vec3 position, const vec3 node) const
 		{
 			return std::acos(glm::dot(position, node) / (glm::length(position)*glm::length(node)));
 		}
 		// "ℓ₀"
-		scalar get_true_longitude(const scalar longitude_of_ascending_node, const scalar argument_of_latitude) const
+		scalar true_longitude(const scalar longitude_of_ascending_node, const scalar argument_of_latitude) const
 		{
 			return longitude_of_ascending_node + argument_of_latitude;
 		}
 		// "p"
-		scalar get_semi_latus_rectum_from_momentum_vector(const vec3 momentum_vector, const scalar combined_mass) const
+		scalar semi_latus_rectum_from_momentum_vector(const vec3 momentum_vector, const scalar combined_mass) const
 		{
 			const scalar mu = standard_gravitational_parameter * combined_mass;
 			return glm::length2(momentum_vector) / mu;
 		}
 		// "p"
-		scalar get_semi_latus_rectum_from_semi_major_axis_and_eccentricity(const scalar semi_major_axis, const scalar eccentricity) const
+		scalar semi_latus_rectum_from_semi_major_axis_and_eccentricity(const scalar semi_major_axis, const scalar eccentricity) const
 		{
 			return semi_major_axis * (1.0 - eccentricity*eccentricity);
 		}
 		// "a"
-		scalar get_semi_major_axis_from_semi_latus_rectum_and_eccentricity(const scalar semi_latus_rectum, const scalar eccentricity) const
+		scalar semi_major_axis_from_semi_latus_rectum_and_eccentricity(const scalar semi_latus_rectum, const scalar eccentricity) const
 		{
 			return semi_latus_rectum / (1.0 - eccentricity*eccentricity);
 		}
 		// "E"
-		scalar get_eccentric_anomaly_from_true_anomaly(const scalar true_anomaly, const scalar eccentricity, const int iterations = 10) const
+		scalar eccentric_anomaly_from_true_anomaly(const scalar true_anomaly, const scalar eccentricity, const int iterations = 10) const
 		{
 	        const scalar pi = 3.141592653589793238462;
 			return std::acos(-(std::cos(pi - true_anomaly) - eccentricity) / (1.0 - eccentricity * std::cos(pi - true_anomaly)));
 		}
 		// "ν₀"
-		scalar get_true_anomaly_from_eccentric_anomaly(const scalar eccentric_anomaly, const scalar eccentricity) const
+		scalar true_anomaly_from_eccentric_anomaly(const scalar eccentric_anomaly, const scalar eccentricity) const
 		{
 			return std::acos((std::cos(eccentric_anomaly) - eccentricity) / (1.0 - eccentricity * std::cos(eccentric_anomaly)));
 		}
 		// "E"
-		scalar solve_eccentric_anomaly_from_mean_anomaly(const scalar mean_anomaly, const scalar eccentricity, const int iterations = 10) const
+		scalar eccentric_anomaly_from_mean_anomaly(const scalar mean_anomaly, const scalar eccentricity, const int iterations = 10) const
 		{
 	        scalar e = eccentricity;
 	        scalar E = mean_anomaly;
@@ -185,19 +185,19 @@ namespace orbit {
 	        return E;
 		}
 		// "M"
-		scalar get_mean_anomaly_from_eccentric_anomaly(const scalar eccentric_anomaly, const scalar eccentricity) const
+		scalar mean_anomaly_from_eccentric_anomaly(const scalar eccentric_anomaly, const scalar eccentricity) const
 		{
 			return eccentric_anomaly - eccentricity * std::sin(eccentric_anomaly);
 		}
 		
-		vec3 get_perifocal_position(const scalar semi_latus_rectum, const scalar eccentricity, const scalar true_anomaly) const
+		vec3 perifocal_position(const scalar semi_latus_rectum, const scalar eccentricity, const scalar true_anomaly) const
 		{
 			const vec3 P = vernal_equinox_direction;
 			const vec3 Q = glm::cross(north_pole_direction,vernal_equinox_direction);
 			const scalar radius = semi_latus_rectum / (1.0 + eccentricity*std::cos(true_anomaly));
 			return radius * (std::cos(true_anomaly) * P + std::sin(true_anomaly) * Q);
 		}
-		vec3 get_perifocal_velocity(
+		vec3 perifocal_velocity(
 			const scalar semi_latus_rectum, const scalar eccentricity, const scalar true_anomaly, const scalar combined_mass
 		) const {
 			const vec3 P = vernal_equinox_direction;
