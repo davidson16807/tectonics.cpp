@@ -126,10 +126,9 @@ def test_nth_period_congruence_modulo_n():
 	# also checks Stepanov's "circular orbit" property, determinism, and an identity
 	n = 10 # samples of orbit
 	for k in range(n): # starting position
-		# TODO: vary starting position in the orbit
 		for (mass, elements) in elliptics:
 			elements.mean_anomaly = 2*pi*k/n
-			# TODO: FIX DIV0 WHERE I=0
+			# TODO: FIX DIV0 WHERE t=0
 			for i in range(1,n+1):
 				T = properties.period_from_semi_major_axis(elements.semi_major_axis, mass)
 				universals = Universals.from_state(mass, converter.get_state_from_elements(elements, mass))
@@ -142,10 +141,10 @@ def test_nth_period_congruence_modulo_n():
 def test_apsis_extrema(): 
 	# TODO: vary starting position in the orbit
 	for (mass, elements) in elliptics:
-		elements.mean_anomaly = 0 # always periapsis
 		T = properties.period_from_semi_major_axis(elements.semi_major_axis, mass)
+		elements.mean_anomaly = 0 # periapsis
 		universals = Universals.from_state(mass, converter.get_state_from_elements(elements, mass))
-		e = 0.02
+		e = 0.03
 		for sign in [1,-1]:
 			# apoapsis position
 			assert (
@@ -157,7 +156,7 @@ def test_apsis_extrema():
 				glm.length(propagator.state(universals,(T/2)).velocity) <
 				glm.length(propagator.state(universals,(T/2)*(1+sign*e)).velocity)
 			)
-			# TODO: FIX DIV0 WHERE I=0
+			# TODO: FIX DIV0 WHERE t=0
 			# # periapsis position
 			# assert (
 			# 	glm.length(propagator.state(universals,0).position) <
@@ -166,6 +165,31 @@ def test_apsis_extrema():
 			# # periapsis velocity
 			# assert (
 			# 	glm.length(propagator.state(universals,0).velocity) >
+			# 	glm.length(propagator.state(universals,sign*T*e).velocity)
+			# )
+		elements.mean_anomaly = pi # apoapsis
+		universals = Universals.from_state(mass, converter.get_state_from_elements(elements, mass))
+		e = 0.03
+		for sign in [1,-1]:
+			# periapsis position
+			assert (
+				glm.length(propagator.state(universals,(T/2)).position) <
+				glm.length(propagator.state(universals,(T/2)*(1+sign*e)).position)
+			)
+			# periapsis velocity
+			assert (
+				glm.length(propagator.state(universals,(T/2)).velocity) >
+				glm.length(propagator.state(universals,(T/2)*(1+sign*e)).velocity)
+			)
+			# TODO: FIX DIV0 WHERE t=0
+			# # apoapsis position
+			# assert (
+			# 	glm.length(propagator.state(universals,0).position) >
+			# 	glm.length(propagator.state(universals,sign*T*e).position)
+			# )
+			# # apoapsis velocity
+			# assert (
+			# 	glm.length(propagator.state(universals,0).velocity) <
 			# 	glm.length(propagator.state(universals,sign*T*e).velocity)
 			# )
 
