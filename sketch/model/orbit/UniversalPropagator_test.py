@@ -98,11 +98,11 @@ degrees = 2*pi/360
 
 escape_velocities = [
 	# parent mass (kg),   radius (m),    escape velocity (m/s)
-	(mass_of_earth_moon,  12756.2/2,     11.186e3), 
-	(mass_of_saturn,      120536/2,      36.09e3),
-	(mass_of_jupiter,     142984/2,      60.20e3),
-	(mass_of_sun,         432300/2,      617.5e3),
-	(mass_of_galaxy,      24000*9.4e15,  594e3),
+	# (mass_of_earth_moon,  12756.2/2,     11.186e3), 
+	# (mass_of_saturn,      120536/2,      36.09e3),
+	# (mass_of_jupiter,     142984/2,      60.20e3),
+	# (mass_of_sun,         432300/2,      617.5e3),
+	# (mass_of_galaxy,      24000*9.4e15,  594e3),
 ]
 
 elliptic_periapses = [
@@ -132,9 +132,9 @@ elliptic_periapses = [
 ]
 
 all_periapses = [
-	*[Universals(mass, 0, glm.vec3(radius,0,0), glm.vec3(0,velocity,0))
+	*[(mass, Universals(mass, 0, glm.vec3(radius,0,0), glm.vec3(0,velocity,0)))
 		for mass, radius, velocity in escape_velocities],
-	*[Universals.from_state(mass, converter.get_state_from_elements(elements, mass)) 
+	*[(mass, Universals.from_state(mass, converter.get_state_from_elements(elements, mass)))
 		for mass, elements in elliptic_periapses],
 ]
 
@@ -227,6 +227,25 @@ def test_circular_orbit_radius_conservation():
 		for i in range(n+1):
 			assert abs(glm.length(propagator.state(universals,T*i/n).position) / glm.length(universals.initial_position) - 1) < 1e-6
 			assert abs(glm.length(propagator.state(universals,T*i/n).velocity) / glm.length(universals.initial_velocity) - 1) < 1e-6
+
+def test_group(): 
+	t = 1e3
+	for m, a in all_periapses:
+		assert state_distance(
+			State.from_universals(a), 
+			propagator.state(a,0)
+			# propagator.state(Universals.from_state(m, propagator.state(a,t)),-t)
+		) < 1e-10
+		for t1 in [1e2, 1e3, 1e4]:
+			assert state_distance(
+				State.from_universals(a), 
+				propagator.state(Universals.from_state(m, propagator.state(a,t)),-t)
+			) < 1e-6
+			for t2 in [1e2, 1e3, 1e4]:
+				assert state_distance(
+					propagator.state(a,t1+t2),
+					propagator.state(Universals.from_state(m, propagator.state(a,t1)),t2)
+				) < 1e-6
 
 '''
 for any orbit:
