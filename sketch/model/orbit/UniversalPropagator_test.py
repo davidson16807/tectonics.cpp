@@ -96,6 +96,10 @@ test cases:
 pi = 3.141592653589793238462643383279
 degrees = 2*pi/360
 
+hyperbolic_periapses = [
+	
+]
+
 elliptic_periapses = [
 	(mass_of_earth_moon, Elements(384e6,  0.0549, 0.0*degrees, 0.0, 0.0, 0.0)), # Moon
 	(mass_of_saturn, Elements(186e6,    0.0196, 1.53*degrees, 0.0, 0.0, 0.0)), # Mimas
@@ -191,6 +195,18 @@ def test_apsis_extrema():
 			# 	glm.length(propagator.state(universals,0).velocity) <
 			# 	glm.length(propagator.state(universals,sign*T*e).velocity)
 			# )
+
+def test_circular_orbit_radius_conservation():
+	for (mass, elements) in elliptic_periapses:
+		elements = elements.copy()
+		elements.eccentricity = 0 # circular orbits only
+		T = properties.period_from_semi_major_axis(elements.semi_major_axis, mass)
+		universals = Universals.from_state(mass, converter.get_state_from_elements(elements, mass))
+		n = 10 # orbit samples
+		# TODO: FIX DIV0 WHERE t=0
+		for i in range(1,n+1):
+			assert abs(glm.length(propagator.state(universals,T*i/n).position) / glm.length(universals.initial_position) - 1) < 1e-6
+			assert abs(glm.length(propagator.state(universals,T*i/n).velocity) / glm.length(universals.initial_velocity) - 1) < 1e-6
 
 '''
 for any orbit:

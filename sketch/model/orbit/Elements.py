@@ -9,6 +9,8 @@ class Elements:
     longitude_of_ascending_node: int;
     argument_of_periapsis: int;
     mean_anomaly: int;
+    def copy(self) -> 'Elements':
+        return Elements(**self.__dict__)
     def advance(self, anomaly_offset):
         return Elements(
             self.semi_major_axis, 
