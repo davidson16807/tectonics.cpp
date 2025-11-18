@@ -98,10 +98,6 @@ degrees = 2*pi/360
 
 elliptics = [
 	(mass_of_earth_moon, Elements(384e6,  0.0549, 0.0*degrees, 0.0, 0.0, 0.0)), # Moon
-	(mass_of_jupiter, Elements(421.8e6,   0.0041, 0.050*degrees, 0.0, 0.0, 0.0)), # Io
-	(mass_of_jupiter, Elements(671.1e6,   0.0090, 0.470*degrees, 0.0, 0.0, 0.0)), # Europa
-	(mass_of_jupiter, Elements(1070.4e6,  0.0013, 0.200*degrees, 0.0, 0.0, 0.0)), # Ganymede
-	(mass_of_jupiter, Elements(1882.7e6,  0.0074, 0.192*degrees, 0.0, 0.0, 0.0)), # Callisto
 	(mass_of_saturn, Elements(186e6,    0.0196, 1.53*degrees, 0.0, 0.0, 0.0)), # Mimas
 	(mass_of_saturn, Elements(238.4e6,  0.0047, 0.02*degrees, 0.0, 0.0, 0.0)), # Enceladus
 	(mass_of_saturn, Elements(295e6,    0.0001, 1.09*degrees, 0.0, 0.0, 0.0)), # Tethys
@@ -110,6 +106,10 @@ elliptics = [
 	(mass_of_saturn, Elements(1221.9e6, 0.0288, 0.33*degrees, 0.0, 0.0, 0.0)), # Titan
 	(mass_of_saturn, Elements(1481.5e6, 0.0274, 0.43*degrees, 0.0, 0.0, 0.0)), # Hyperion
 	(mass_of_saturn, Elements(3561.7e6, 0.0283, 157*degrees,  0.0, 0.0, 0.0)), # Iapetus
+	(mass_of_jupiter, Elements(421.8e6,   0.0041, 0.050*degrees, 0.0, 0.0, 0.0)), # Io
+	(mass_of_jupiter, Elements(671.1e6,   0.0090, 0.470*degrees, 0.0, 0.0, 0.0)), # Europa
+	(mass_of_jupiter, Elements(1070.4e6,  0.0013, 0.200*degrees, 0.0, 0.0, 0.0)), # Ganymede
+	(mass_of_jupiter, Elements(1882.7e6,  0.0074, 0.192*degrees, 0.0, 0.0, 0.0)), # Callisto
     (mass_of_sun, Elements(5.790905e10,   0.2056, 7.005*degrees, 0.0, 0.0, 0.0)), # Mercury
     (mass_of_sun, Elements(1.082080e11,   0.0068, 3.3947*degrees, 0.0, 0.0, 0.0)), # Venus
     (mass_of_sun, Elements(1.49598023e11, 0.0167, 0.000*degrees, 0.0, 0.0, 0.0)), # Earth
@@ -122,7 +122,8 @@ elliptics = [
     # mass_of_galaxy, Elements(), # sun around galaxy
 ]
 
-def test_nth_period_congruence_modulo_n(): # also checks Stepanov's "circular orbit" property and an identity
+def test_nth_period_congruence_modulo_n(): 
+	# also checks Stepanov's "circular orbit" property, determinism, and an identity
 	n = 10 # samples of orbit
 	for k in range(n): # starting position
 		# TODO: vary starting position in the orbit
@@ -137,6 +138,36 @@ def test_nth_period_congruence_modulo_n(): # also checks Stepanov's "circular or
 						propagator.state(universals,T*(i/n)),
 						propagator.state(universals,T*(i/n+j)), 
 					) < 3e-5
+
+def test_apsis_extrema(): 
+	# TODO: vary starting position in the orbit
+	for (mass, elements) in elliptics:
+		elements.mean_anomaly = 0 # always periapsis
+		T = properties.period_from_semi_major_axis(elements.semi_major_axis, mass)
+		universals = Universals.from_state(mass, converter.get_state_from_elements(elements, mass))
+		e = 0.02
+		for sign in [1,-1]:
+			# apoapsis position
+			assert (
+				glm.length(propagator.state(universals,(T/2)).position) >
+				glm.length(propagator.state(universals,(T/2)*(1+sign*e)).position)
+			)
+			# apoapsis velocity
+			assert (
+				glm.length(propagator.state(universals,(T/2)).velocity) <
+				glm.length(propagator.state(universals,(T/2)*(1+sign*e)).velocity)
+			)
+			# TODO: FIX DIV0 WHERE I=0
+			# # periapsis position
+			# assert (
+			# 	glm.length(propagator.state(universals,0).position) <
+			# 	glm.length(propagator.state(universals,sign*T*e).position)
+			# )
+			# # periapsis velocity
+			# assert (
+			# 	glm.length(propagator.state(universals,0).velocity) >
+			# 	glm.length(propagator.state(universals,sign*T*e).velocity)
+			# )
 
 '''
 for any orbit:
@@ -169,17 +200,20 @@ for any orbit:
 	angular momentum is conserved
 		angular momentum(advance(o,t)) == angular momentum(o)
 
-	t=0 minimizes glm.length(o↦state(periapsis,t).position)
-	t=0 maximizes glm.length(o↦state(periapsis,t).velocity)
+	t=0 minimizes o↦glm.length(state(periapsis,t).position)
+	t=0 maximizes o↦glm.length(state(periapsis,t).velocity)
 
 for known elliptic orbits:
 x	congruence:
 		state(o,n*T) = o for any n∈ℕ
 x	orbit/involute/identity: 
 		advance(advance(advance(o, T/n), T/n), T/n) = o etc.
-	state(periapsis,T/2).position = apoapsis
-	t=0 maximizes glm.length(o↦state(apoapsis,t).position)
-	t=0 minimizes glm.length(o↦state(apoapsis,t).velocity)
+	t=T/2 maximizes o↦glm.length(state(periapsis,t).position)
+	t=T/2 minimizes o↦glm.length(state(periapsis,t).velocity)
+	t=0 maximizes o↦glm.length(state(apoapsis,t).position)
+	t=0 minimizes o↦glm.length(state(apoapsis,t).velocity)
+	t=T/2 minimizes o↦glm.length(state(apoapsis,t).position)
+	t=T/2 maximizes o↦glm.length(state(apoapsis,t).velocity)
 
 for circular orbits:
 	glm.length(advance(o,t).position) is constant for any t
