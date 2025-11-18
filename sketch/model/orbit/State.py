@@ -8,6 +8,13 @@ class State:
     velocity: glm.vec3
     def __str__(self):
         return "{"+f"r={list(self.position)}, v={list(self.velocity)}"+"}"
+    @staticmethod
+    def from_universals(universals):
+        return State(
+            universals.initial_position, 
+            universals.initial_velocity
+        )
+
 
 '''
 `sape` returns "symmetric absolute percent error" for vectors

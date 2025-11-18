@@ -87,27 +87,31 @@ test cases:
 		hyperbolic solar satellite
 '''
 
-solar_elliptics = [
-	Elements(1.49598023e11, 0.0167, 0.0, 0.0, 0.0, 0.0), # Earth
-    # Universals.from_state(m_sun, converter.get_state_from_elements(Elements(5.790905e10,   0.2056, 0.0, 0.0, 0.0, 0.0), m_sun)), # Mercury
-    # Universals.from_state(m_sun, converter.get_state_from_elements(Elements(1.082080e11,   0.0068, 0.0, 0.0, 0.0, 0.0), m_sun)), # Venus
-    # Universals.from_state(m_sun, converter.get_state_from_elements(Elements(1.49598023e11, 0.0167, 0.0, 0.0, 0.0, 0.0), m_sun)), # Earth
-    # Universals.from_state(m_sun, converter.get_state_from_elements(Elements(2.279392e11,   0.0934, 0.0, 0.0, 0.0, 0.0), m_sun)), # Mars
-    # Universals.from_state(m_sun, converter.get_state_from_elements(Elements(7.78570e11,    0.0489, 0.0, 0.0, 0.0, 0.0), m_sun)), # Jupiter
-    # Universals.from_state(m_sun, converter.get_state_from_elements(Elements(1.43353e12,    0.0565, 0.0, 0.0, 0.0, 0.0), m_sun)), # Saturn
-    # Universals.from_state(m_sun, converter.get_state_from_elements(Elements(2.87246e12,    0.046,  0.0, 0.0, 0.0, 0.0), m_sun)), # Uranus
-    # Universals.from_state(m_sun, converter.get_state_from_elements(Elements(4.49506e12,    0.009,  0.0, 0.0, 0.0, 0.0), m_sun)), # Neptune
-    # Universals.from_state(m_galaxy, converter.get_state_from_elements(Elements(4.49506e12,    0.009,  0.0, 0.0, 0.0, 0.0), m_sun)), # Neptune
-
+elliptics = [
+    (m_sun, Elements(5.790905e10,   0.2056, 0.0, 0.0, 0.0, 0.0)), # Mercury
+    (m_sun, Elements(1.082080e11,   0.0068, 0.0, 0.0, 0.0, 0.0)), # Venus
+    (m_sun, Elements(1.49598023e11, 0.0167, 0.0, 0.0, 0.0, 0.0)), # Earth
+    (m_sun, Elements(2.279392e11,   0.0934, 0.0, 0.0, 0.0, 0.0)), # Mars
+    (m_sun, Elements(7.78570e11,    0.0489, 0.0, 0.0, 0.0, 0.0)), # Jupiter
+    (m_sun, Elements(1.43353e12,    0.0565, 0.0, 0.0, 0.0, 0.0)), # Saturn
+    (m_sun, Elements(2.87246e12,    0.046,  0.0, 0.0, 0.0, 0.0)), # Uranus
+    (m_sun, Elements(4.49506e12,    0.009,  0.0, 0.0, 0.0, 0.0)), # Neptune
+    # m_galaxy, Elements(), # sun around galaxy
 ]
 
-# breakpoint()
-
-def test_involute():
-	for elements in solar_elliptics:
-		T = properties.period_from_semi_major_axis(elements.semi_major_axis, m_sun)
-		universals = Universals.from_state(m_sun, converter.get_state_from_elements(elements, m_sun))
-		assert state_distance(propagator.state(universals,T), State(universals.initial_position, universals.initial_velocity)) < 2e-6
+'''
+"circular orbit" here is in reference to Stepanov's mathematical "orbit" property from "Elements of Programming",
+and should not be confused with physically circular orbits.
+'''
+def test_nth_period_circular_orbit_of_n():
+	for (mass, elements) in elliptics:
+		for n in range(1,2):
+			T = properties.period_from_semi_major_axis(elements.semi_major_axis, mass)
+			original = Universals.from_state(mass, converter.get_state_from_elements(elements, mass))
+			updated = original
+			for i in range(n):
+				updated = Universals.from_state(mass, propagator.state(updated,T/n))
+		assert state_distance(State.from_universals(updated), State.from_universals(original)) < 1e-5
 
 '''
 for any orbit:
