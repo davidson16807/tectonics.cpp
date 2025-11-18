@@ -102,8 +102,14 @@ elliptics = [
 	(mass_of_jupiter, Elements(671.1e6,   0.0090, 0.470*degrees, 0.0, 0.0, 0.0)), # Europa
 	(mass_of_jupiter, Elements(1070.4e6,  0.0013, 0.200*degrees, 0.0, 0.0, 0.0)), # Ganymede
 	(mass_of_jupiter, Elements(1882.7e6,  0.0074, 0.192*degrees, 0.0, 0.0, 0.0)), # Callisto
-	# TODO: saturnian moons
-	# (mass_of_saturn, Elements(421.8e6,   0.0041, 0.050*degrees, 0.0, 0.0, 0.0)), # Io
+	(mass_of_saturn, Elements(186e6,    0.0196, 1.53*degrees, 0.0, 0.0, 0.0)), # Mimas
+	(mass_of_saturn, Elements(238.4e6,  0.0047, 0.02*degrees, 0.0, 0.0, 0.0)), # Enceladus
+	(mass_of_saturn, Elements(295e6,    0.0001, 1.09*degrees, 0.0, 0.0, 0.0)), # Tethys
+	(mass_of_saturn, Elements(377.7e6,  0.0022, 0.02*degrees, 0.0, 0.0, 0.0)), # Dione
+	(mass_of_saturn, Elements(527.2e6,  0.001,  0.35*degrees, 0.0, 0.0, 0.0)), # Rhea
+	(mass_of_saturn, Elements(1221.9e6, 0.0288, 0.33*degrees, 0.0, 0.0, 0.0)), # Titan
+	(mass_of_saturn, Elements(1481.5e6, 0.0274, 0.43*degrees, 0.0, 0.0, 0.0)), # Hyperion
+	(mass_of_saturn, Elements(3561.7e6, 0.0283, 157*degrees,  0.0, 0.0, 0.0)), # Iapetus
     (mass_of_sun, Elements(5.790905e10,   0.2056, 7.005*degrees, 0.0, 0.0, 0.0)), # Mercury
     (mass_of_sun, Elements(1.082080e11,   0.0068, 3.3947*degrees, 0.0, 0.0, 0.0)), # Venus
     (mass_of_sun, Elements(1.49598023e11, 0.0167, 0.000*degrees, 0.0, 0.0, 0.0)), # Earth
