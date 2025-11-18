@@ -96,8 +96,13 @@ test cases:
 pi = 3.141592653589793238462643383279
 degrees = 2*pi/360
 
-hyperbolic_periapses = [
-	
+escape_velocities = [
+	# parent mass (kg),   radius (m),    escape velocity (m/s)
+	(mass_of_earth_moon,  12756.2/2,     11.186e3), 
+	(mass_of_saturn,      120536/2,      36.09e3),
+	(mass_of_jupiter,     142984/2,      60.20e3),
+	(mass_of_sun,         432300/2,      617.5e3),
+	(mass_of_galaxy,      24000*9.4e15,  594e3),
 ]
 
 elliptic_periapses = [
@@ -126,14 +131,20 @@ elliptic_periapses = [
     # mass_of_galaxy, Elements(), # sun around galaxy
 ]
 
+all_periapses = [
+	*[Universals(mass, 0, glm.vec3(radius,0,0), glm.vec3(0,velocity,0))
+		for mass, radius, velocity in escape_velocities],
+	*[Universals.from_state(mass, converter.get_state_from_elements(elements, mass)) 
+		for mass, elements in elliptic_periapses],
+]
+
 def test_nth_period_congruence_modulo_n(): 
 	# also checks Stepanov's "circular orbit" property, determinism, and an identity
 	n = 10 # samples of orbit
 	for k in range(n): # starting position
 		for (mass, elements) in elliptic_periapses:
 			elements = elements.advance(2*pi*k/n)
-			# TODO: FIX DIV0 WHERE t=0
-			for i in range(1,n+1):
+			for i in range(n+1):
 				T = properties.period_from_semi_major_axis(elements.semi_major_axis, mass)
 				universals = Universals.from_state(mass, converter.get_state_from_elements(elements, mass))
 				for j in range(0,3+1):
@@ -143,7 +154,19 @@ def test_nth_period_congruence_modulo_n():
 					) < 3e-5
 
 def test_apsis_extrema(): 
-	# TODO: vary starting position in the orbit
+	# for universals in all_periapses:
+	# 	e = 1e2
+	# 	for sign in [1,-1]:
+	# 		# periapsis position
+	# 		assert (
+	# 			glm.length(propagator.state(universals,0).position) <
+	# 			glm.length(propagator.state(universals,e).position)
+	# 		)
+	# 		# periapsis velocity
+	# 		assert (
+	# 			glm.length(propagator.state(universals,0).velocity) >
+	# 			glm.length(propagator.state(universals,e).velocity)
+	# 		)
 	for (mass, elements) in elliptic_periapses:
 		T = properties.period_from_semi_major_axis(elements.semi_major_axis, mass)
 		universals = Universals.from_state(mass, converter.get_state_from_elements(elements, mass))
@@ -159,17 +182,16 @@ def test_apsis_extrema():
 				glm.length(propagator.state(universals,(T/2)).velocity) <
 				glm.length(propagator.state(universals,(T/2)*(1+sign*e)).velocity)
 			)
-			# TODO: FIX DIV0 WHERE t=0
-			# # periapsis position
-			# assert (
-			# 	glm.length(propagator.state(universals,0).position) <
-			# 	glm.length(propagator.state(universals,sign*T*e).position)
-			# )
-			# # periapsis velocity
-			# assert (
-			# 	glm.length(propagator.state(universals,0).velocity) >
-			# 	glm.length(propagator.state(universals,sign*T*e).velocity)
-			# )
+			# periapsis position
+			assert (
+				glm.length(propagator.state(universals,0).position) <
+				glm.length(propagator.state(universals,sign*T*e).position)
+			)
+			# periapsis velocity
+			assert (
+				glm.length(propagator.state(universals,0).velocity) >
+				glm.length(propagator.state(universals,sign*T*e).velocity)
+			)
 		elements.mean_anomaly = pi # apoapsis
 		universals = Universals.from_state(mass, converter.get_state_from_elements(elements, mass))
 		e = 0.03
@@ -184,17 +206,16 @@ def test_apsis_extrema():
 				glm.length(propagator.state(universals,(T/2)).velocity) >
 				glm.length(propagator.state(universals,(T/2)*(1+sign*e)).velocity)
 			)
-			# TODO: FIX DIV0 WHERE t=0
-			# # apoapsis position
-			# assert (
-			# 	glm.length(propagator.state(universals,0).position) >
-			# 	glm.length(propagator.state(universals,sign*T*e).position)
-			# )
-			# # apoapsis velocity
-			# assert (
-			# 	glm.length(propagator.state(universals,0).velocity) <
-			# 	glm.length(propagator.state(universals,sign*T*e).velocity)
-			# )
+			# apoapsis position
+			assert (
+				glm.length(propagator.state(universals,0).position) >
+				glm.length(propagator.state(universals,sign*T*e).position)
+			)
+			# apoapsis velocity
+			assert (
+				glm.length(propagator.state(universals,0).velocity) <
+				glm.length(propagator.state(universals,sign*T*e).velocity)
+			)
 
 def test_circular_orbit_radius_conservation():
 	for (mass, elements) in elliptic_periapses:
@@ -203,8 +224,7 @@ def test_circular_orbit_radius_conservation():
 		T = properties.period_from_semi_major_axis(elements.semi_major_axis, mass)
 		universals = Universals.from_state(mass, converter.get_state_from_elements(elements, mass))
 		n = 10 # orbit samples
-		# TODO: FIX DIV0 WHERE t=0
-		for i in range(1,n+1):
+		for i in range(n+1):
 			assert abs(glm.length(propagator.state(universals,T*i/n).position) / glm.length(universals.initial_position) - 1) < 1e-6
 			assert abs(glm.length(propagator.state(universals,T*i/n).velocity) / glm.length(universals.initial_velocity) - 1) < 1e-6
 
@@ -239,8 +259,8 @@ for any orbit:
 	angular momentum is conserved
 		angular momentum(advance(o,t)) == angular momentum(o)
 
-	t=0 minimizes o↦glm.length(state(periapsis,t).position)
-	t=0 maximizes o↦glm.length(state(periapsis,t).velocity)
+x	t=0 minimizes o↦glm.length(state(periapsis,t).position)
+x	t=0 maximizes o↦glm.length(state(periapsis,t).velocity)
 
 for known elliptic orbits:
 x	congruence:
@@ -255,7 +275,7 @@ x	t=T/2 minimizes o↦glm.length(state(apoapsis,t).position)
 x	t=T/2 maximizes o↦glm.length(state(apoapsis,t).velocity)
 
 for circular orbits:
-	glm.length(advance(o,t).position) is constant for any t
+x	glm.length(advance(o,t).position) is constant for any t
 
 given: 
 	o 	orbit

@@ -62,6 +62,8 @@ class UniversalPropagator:
 		return x
 
 	def state(self, orbit, t):
+		if t==0:
+			return State.from_universals(orbit)
 		t0 = orbit.time_offset
 		R0 = orbit.initial_position
 		V0 = orbit.initial_velocity
