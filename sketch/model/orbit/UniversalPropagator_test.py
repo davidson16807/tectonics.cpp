@@ -105,13 +105,26 @@ and should not be confused with physically circular orbits.
 '''
 def test_nth_period_circular_orbit_of_n():
 	for (mass, elements) in elliptics:
-		for n in range(1,2):
+		for n in range(1,9):
 			T = properties.period_from_semi_major_axis(elements.semi_major_axis, mass)
 			original = Universals.from_state(mass, converter.get_state_from_elements(elements, mass))
 			updated = original
 			for i in range(n):
 				updated = Universals.from_state(mass, propagator.state(updated,T/n))
 		assert state_distance(State.from_universals(updated), State.from_universals(original)) < 1e-5
+
+def test_nth_period_congruence_modulo_n():
+	for (mass, elements) in elliptics:
+		n = 10
+		# TODO: FIX DIV0 WHERE I=0
+		for i in range(1,n+1):
+			T = properties.period_from_semi_major_axis(elements.semi_major_axis, mass)
+			universals = Universals.from_state(mass, converter.get_state_from_elements(elements, mass))
+			for j in range(1,5+1):
+				assert state_distance(
+					propagator.state(universals,T*(i/n)),
+					propagator.state(universals,T*(i/n+j)), 
+				) < 3e-5
 
 '''
 for any orbit:
