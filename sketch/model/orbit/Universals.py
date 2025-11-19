@@ -8,6 +8,8 @@ class Universals:
         self.time_offset = time_offset
         self.initial_position = initial_position
         self.initial_velocity = initial_velocity
+    def angular_momentum_vector(self):
+        return glm.cross(self.initial_position, self.initial_velocity)
     def __repr__(self):
         return (f"Universals("
                 f"{self.combined_mass}, "

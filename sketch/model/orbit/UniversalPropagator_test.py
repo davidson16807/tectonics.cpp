@@ -3,7 +3,7 @@ import math
 
 from pyglm import glm
 
-from State import State, state_distance
+from State import State, sape, state_distance
 from Properties import Properties
 from ElementsAndState import ElementsAndState
 from Elements import Elements
@@ -106,6 +106,7 @@ escape_velocities = [
 ]
 
 elliptic_periapses = [
+	# TODO: add didymos/dimorphos
 	(mass_of_earth_moon, Elements(384e6,  0.0549, 0.0*degrees, 0.0, 0.0, 0.0)), # Moon
 	(mass_of_saturn, Elements(186e6,    0.0196, 1.53*degrees, 0.0, 0.0, 0.0)), # Mimas
 	(mass_of_saturn, Elements(238.4e6,  0.0047, 0.02*degrees, 0.0, 0.0, 0.0)), # Enceladus
@@ -132,10 +133,12 @@ elliptic_periapses = [
 ]
 
 all_periapses = [
-	*[(mass, Universals(mass, 0, glm.vec3(radius,0,0), glm.vec3(0,velocity,0)))
-		for mass, radius, velocity in escape_velocities],
 	*[(mass, Universals.from_state(mass, converter.get_state_from_elements(elements, mass)))
-		for mass, elements in elliptic_periapses],
+		for mass, elements in elliptic_periapses], # elliptics
+	*[(mass, Universals(mass, 0, glm.vec3(radius,0,0), glm.vec3(0,velocity,0)))
+		for mass, radius, velocity in escape_velocities], # parabolics
+	*[(mass, Universals(mass, 0, glm.vec3(radius,0,0), glm.vec3(0,velocity*1.5,0)))
+		for mass, radius, velocity in escape_velocities], # hyperbolics
 ]
 
 def test_nth_period_congruence_modulo_n(): 
@@ -228,6 +231,24 @@ def test_circular_orbit_radius_conservation():
 			assert abs(glm.length(propagator.state(universals,T*i/n).position) / glm.length(universals.initial_position) - 1) < 1e-6
 			assert abs(glm.length(propagator.state(universals,T*i/n).velocity) / glm.length(universals.initial_velocity) - 1) < 1e-6
 
+def test_continuity(): 
+	for m, o in all_periapses:
+		for e in [1, 1e1, 1e2, 1e3]:
+			for sign in [1,-1]:
+				# periapsis position
+				assert (
+					state_distance(propagator.state(o,0), propagator.state(o,sign*e)) <
+					state_distance(propagator.state(o,0), propagator.state(o,sign*e*2))
+				)
+
+def test_angular_momentum_conservation(): 
+	for m, o in all_periapses:
+		for e in [1, 1e1, 1e2, 1e3, 1e4, 1e5]:
+			for sign in [1,-1]:
+				# periapsis position
+				assert sape(o.angular_momentum_vector(), 
+					Universals.from_state(m, propagator.state(o,e)).angular_momentum_vector()) < 1e-6
+
 def test_group(): 
 	t = 1e3
 	for m, a in all_periapses:
@@ -243,6 +264,10 @@ def test_group():
 			) < 1e-6
 			for t2 in [1e2, 1e3, 1e4]:
 				assert state_distance(
+					propagator.state(Universals.from_state(m, propagator.state(a,t2)),t1),
+					propagator.state(Universals.from_state(m, propagator.state(a,t1)),t2)
+				) < 1e-6
+				assert state_distance(
 					propagator.state(a,t1+t2),
 					propagator.state(Universals.from_state(m, propagator.state(a,t1)),t2)
 				) < 1e-6
@@ -251,27 +276,17 @@ def test_group():
 for any orbit:
 
 	group:
-		advance(o,0) = o
-		advance(advance(o,a),b) = advance(advance(o,b),a) 
-		advance(advance(o,a),-a) = o
+x		advance(o,0) = o
+x		advance(advance(o,a),b) = advance(advance(o,b),a) 
+x		advance(advance(o,a),-a) = o
 	commutativity:
-		advance(advance(o,a),b) = advance(o,a+b)
-	behavioral equality (trivial):
-		advance(o,0) = state(o)
+x		advance(advance(o,a),b) = advance(o,a+b)
 
-	identity:
-		state(o,0) = o
-	state continuity:
-		d(state(o,ε), state(o,0)) < d(state(o,2ε), state(o,0))
-	invariance under reference time:
-		state(o,t) ≈ state(tare(o),t)
+	continuity:
+x		d(state(o,ε), state(o,0)) < d(state(o,2ε), state(o,0))
 
 	tare idempotence:
 		tare(tare(o)) = tare(o)
-
-	gravitational parameter preservation:
-		advance(o,t).gravitational_parameter == orbit.gravitational_parameter
-		tare(o).gravitational_parameter == orbit.gravitational_parameter
 
 	energy is conserved:
 		energy(advance(o,t)) == energy(o)
