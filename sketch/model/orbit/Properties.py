@@ -9,6 +9,11 @@ class Properties:
         self.north_pole_direction = glm.normalize(north_pole_direction)
         self.standard_gravitational_parameter = standard_gravitational_parameter
 
+    def specific_orbial_energy(self, semi_major_axis, combined_mass:float):
+        a = semi_major_axis
+        mu = self.standard_gravitational_parameter * combined_mass
+        return -mu/(2*a)
+
     def period_from_semi_major_axis(self, semi_major_axis, combined_mass:float):
         a = semi_major_axis
         pi = math.pi
