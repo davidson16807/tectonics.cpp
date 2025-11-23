@@ -10,14 +10,15 @@
 
 namespace orbit {
 
+
 	template <typename scalar>
-	class UniversalPropagator
-	{
+	class UniversalPropagator {
 		using vec3 = glm::vec<3,scalar,glm::defaultp>;
 
-		static constexpr scalar s1 = scalar(0);
+		static constexpr scalar s0 = scalar(0);
 		static constexpr scalar s1 = scalar(1);
 		static constexpr scalar s2 = scalar(2);
+		static constexpr scalar s3 = scalar(3);
 
 		scalar C(const scalar y) const
 		{
@@ -35,73 +36,129 @@ namespace orbit {
 		}
 
 	public:
+	    scalar standard_gravitational_parameter;
+	    int    max_refinement_count;
+	    scalar max_precision;
+	    int    laguerre_method_n;
 
-		const scalar laguerre_method_n;
-		const int refinement_count;
+	    UniversalPropagator(
+	        scalar standard_gravitational_parameter,
+	        int   max_refinement_count = 10,
+	        scalar max_precision       = 1e-10,
+	        int   laguerre_method_n    = 5
+	    ) : 
+	    	standard_gravitational_parameter(standard_gravitational_parameter),
+	    	max_refinement_count(max_refinement_count),
+	    	max_precision(max_precision),
+	    	laguerre_method_n(laguerre_method_n)
+	    {
+	    }
 
-		UniversalPropagator():
-			laguerre_method_n(6),
-			refinement_count(5)
-		{
+	    scalar refine(
+    		const scalar x, 
+			const scalar a, 
+			const scalar r0, 
+			const scalar sigma0, 
+			const scalar dtsqrtmu
+		) const {
+	        const scalar x2   = x * x;
+	        const scalar x3   = x * x2;
+	        const scalar ax2  = a * x2;
+	        const scalar Cax2 = C(ax2);
+	        const scalar Sax2 = S(ax2);
+	        const scalar one_r0a = s1 - r0 * a;
 
-		}
+	        const scalar F    = sigma0 * x2 * Cax2 + one_r0a * x3 * Sax2 + r0 * x - dtsqrtmu;
+	        const scalar dFdx = sigma0 * x * (s1 - ax2 * Sax2) + one_r0a * x2 * Cax2 + r0;
 
-		State<scalar> state(const Orbit<scalar> orbit, const scalar t) const
-		{
-			const auto t0 = orbit.time_offset;
-			const auto mu = standard_gravitation_parameter * orbit.combined_mass;
-			const auto sqrt_mu = std::sqrt(mu);
-			const auto R0 = orbit.initial_position;
-			const auto V0 = orbit.initial_velocity;
-			const auto r0 = glm::length(R0);
-			const auto v0 = glm::length(V0);
-			const auto sigma0 = glm::dot(R0, V0) / sqrt_mu;
-			const auto dt = t - t0;
-			const auto a = s2/r0 - v0*v0/mu;
-			// const auto n = laguerre_method_n;
-			// const auto n_1 = n-s1;
+	        const int n   = this->laguerre_method_n;
+	        const int n_1 = n - 1;
 
-			/*
-			Conway & Prussing suggest that any value within upper and lower bounds is appropriate
-			upper (r⁺) and lower (r⁻) bounds are each defined by r± = sqrt_mu*dt/r∓.
-			We do know that r0 is guaranteed to be between upper and lower bounds for r,
-			so we suffice to choose an x based on r0.
-			*/
-			scalar x = sqrt_mu*dt/r0;
-			// temporary variables to improve performance:
-			scalar x2, x3, ax2, Cax2, Sax2, one_r0a, F, dFdx;//, d2Fdx2;
-			for (int i = 0; i < refinement_count; ++i)
-			{
-				x2 = x*x;
-				x3 = x*x2;
-				ax2 = a*x2;
-				Cax2 = C(ax2);
-				Sax2 = S(ax2);
-				one_r0a = s1-r0*a;
-				F      = sigma0 * x2 * Cax2 + one_r0a*x3 * Sax2 + r0*x - sqrt_mu*dt;
-				dFdx   = sigma0*x*(s1-ax2*Sax2) + one_r0a*x2*Cax2 + r0;
-				// Newton's method:
-				x -= F/dFdx;
-				// Laguerre method:
-				// d2Fdx2 = sigma0 - sigma0*ax2*(Cax2 - 3*Sax2) + (one_r0a/x)*(s1 - ax2*Sax2 - 2*Cax2);
-				// x -= n*F / 
-				// 	(dFdx + math::sign(dFdx) * std::sqrt(std::abs(n_1*n_1*dFdx*dFdx - n*n_1*F*d2Fdx2)));
-			}
+	        const scalar d2Fdx2 =
+	            sigma0 - sigma0 * ax2 * (Cax2 - s3 * Sax2) +
+	            (one_r0a / x) *
+	                (s1 - ax2 * Sax2 - s2 * Cax2);
 
-			x2 = x*x;
-			x3 = x*x2;
-			vec3 r  = (s1 - x2/r0 * Cax2) * R0 + 
-			          ((t-t0) - x3/sqrt_mu * Sax2) * V0;
-			vec3 v  = (x*sqrt_mu/(r*r0) * (ax2 * Sax2 - 1.0)) * R0 +
-			                                      (1.0 - x2/r * Cax2) * V0;
-			return State<scalar>(r,v);
-		}
+	        const scalar radicand = n_1 * n_1 * dFdx * dFdx - (n * n_1) * F * d2Fdx2;
 
-		Orbit<scalar> tare(const Orbit<scalar> orbit) const
-		{
-			return Orbit<scalar>(orbit.combined_mass, state(orbit, orbit.time_offset));
-		}
+	        return -scalar(n) * F / // Laguerre method
+	        	(dFdx + math::sign(dFdx) * std::sqrt(std::abs(radicand)));
+	    }
 
+	    scalar solve(
+    		const scalar x0, 
+			const scalar a, 
+			const scalar r0, 
+			const scalar sigma0, 
+			const scalar dtsqrtmu
+		) const {
+	        scalar x = x0;
+	        for (int i = 0; i < this->max_refinement_count; ++i) {
+	            const scalar dxdi = this->refine(x, a, r0, sigma0, dtsqrtmu);
+	            if (dxdi != s0) {
+	                x += dxdi;
+	            }
+	            if (std::abs(dxdi) < this->max_precision) {
+	                return x;
+	            }
+	        }
+	        return x;
+	    }
+
+	    State<scalar> state(const orbit::Universals<scalar>& orbit, scalar t) const {
+	        if (t == s0) {
+	            return State(orbit.initial_position, orbit.initial_velocity);
+	        }
+	        const scalar t0 = orbit.time_offset;
+	        const vec3  R0  = orbit.initial_position;
+	        const vec3  V0  = orbit.initial_velocity;
+	        const scalar mu      = this->standard_gravitational_parameter * orbit.combined_mass;
+	        const scalar sqrt_mu = std::sqrt(mu);
+	        const scalar r0 = glm::length(R0);
+	        const scalar v0 = glm::length(V0);
+	        const scalar a = s2 / r0 - (v0 * v0) / mu;
+	        const scalar dt = t - t0;
+	        scalar x0;
+	        if (a > s0) { // elliptic
+	            x0 = dt * sqrt_mu * a;
+	        } else {             // hyperbolic
+	            x0 = math::sign(dt) * std::sqrt(-a) *
+	                 std::log(
+	                     -s2 * mu * dt /
+	                     (a * (glm::dot(R0, V0) +
+	                           math::sign(dt) * std::sqrt(-mu * a) * (s1 - r0 / a)))
+	                 );
+	        }
+	        const scalar sigma0    = glm::dot(R0, V0) / sqrt_mu;
+	        const scalar dtsqrtmu  = dt * sqrt_mu;
+	        const scalar x         = this->solve(x0, a, r0, sigma0, dtsqrtmu);
+	        const scalar x2   = x * x;
+	        const scalar x3   = x * x2;
+	        const scalar ax2  = a * x2;
+	        const scalar Cax2 = C(ax2);
+	        const scalar Sax2 = S(ax2);
+	        const vec3 R =
+	            (s1 - x2 / r0 * Cax2) * R0 +
+	            (dt - x3 / sqrt_mu * Sax2) * V0;
+	        const scalar r = glm::length(R);
+	        const vec3 V =
+	            (x * sqrt_mu / (r * r0) * (ax2 * Sax2 - s1)) * R0 +
+	            (s1 - x2 / r * Cax2) * V0;
+	        return State<scalar>(R, V);
+	    }
+
+	    orbit::Universals<scalar> advance(const orbit::Universals<scalar>& orbit, const scalar t) const {
+	        State<scalar> state_ = this->state(orbit, t);
+	        return orbit::Universals<scalar>(
+	        	orbit.combined_mass,
+            	s0,
+            	state_.position,
+            	state_.velocity);
+	    }
+
+	    orbit::Universals<scalar> tare(const orbit::Universals<scalar>& orbit) const {
+	        return this->advance(orbit, orbit.time_offset);
+	    }
 	};
 
 }

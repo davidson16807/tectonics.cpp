@@ -916,7 +916,7 @@ namespace si{
   constexpr mass<double>         jupiter_mass         ( 1.898e27 );
   constexpr length<double>       jupiter_radius       ( 71e6 ); 
 
-  constexpr mass<double>         solar_mass           ( 1.9891e30 );
+  constexpr mass<double>         solar_mass           ( 1.988475e30 );
   constexpr length<double>       solar_radius         ( 695.7e6 );
   constexpr power<double>        solar_luminosity     ( 3.828e26 );
   constexpr temperature<double>  solar_temperature    ( 5772.0 );

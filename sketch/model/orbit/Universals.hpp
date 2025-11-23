@@ -51,9 +51,9 @@ namespace orbit {
 
 		Universals(
 			const scalar combined_mass,
+			const scalar time_offset,
 			const vec3 initial_position,
-			const vec3 initial_velocity,
-			const scalar time_offset
+			const vec3 initial_velocity
 		) : 
 			combined_mass(combined_mass),
 			initial_position(initial_position),

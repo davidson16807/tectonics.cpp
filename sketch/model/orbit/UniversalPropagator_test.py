@@ -19,7 +19,7 @@ mass_of_uranus = 8.681e25 # kg
 mass_of_neptune = 1.024e26 # kg
 mass_of_pluto_charon = 1.3e22 + 1.5e21 # kg
 mass_of_sun = 1.32712440018e20/G # kg
-mass_of_galaxy = 1.262e41 * G # kg, back calculated to achieve period of 250 million years
+mass_of_galaxy = 1.262e41 # kg, back calculated to achieve period of 250 million years
 au = 1.5e11
 
 propagator = UniversalPropagator(G, max_refinement_count=100, laguerre_method_n = 5)
