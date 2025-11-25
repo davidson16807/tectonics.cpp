@@ -25,15 +25,16 @@ namespace orbit {
 	template<typename scalar>
 	struct Adapter{
 		using vec3 = glm::vec<3,scalar,glm::defaultp>;
-		using Propagator = orbit::UniversalPropagator<double>;
-		using State = orbit::State<double>;
+		using Propagator = orbit::UniversalPropagator<scalar>;
+		using State = orbit::State<scalar>;
 
 	    static constexpr scalar s0 = scalar(0);
 
 		Propagator propagator;
 	    scalar threshold;
 
-	    Adapter(const scalar threshold):
+	    Adapter(const Propagator propagator, const scalar threshold):
+	    	propagator(propagator),
 	        threshold(threshold)
 	    {}
 
@@ -46,7 +47,7 @@ namespace orbit {
 	    }
 
 	    std::string print(const Universals<scalar>& orbit) const {
-	        return std::to_string(orbit.gravitational_parameter) + " " +
+	        return std::to_string(orbit.combined_mass) + " " +
 	        	std::to_string(orbit.time_offset) + " " +
 	        	glm::to_string(orbit.initial_position) + " " +
 	        	glm::to_string(orbit.initial_velocity) + " ";
@@ -66,9 +67,9 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 
 	using vec3 = glm::vec<3,double,glm::defaultp>;
 
-	const auto meter3 = si::meter3;
-	const auto kilogram = si::kilogram;
-	const auto second = si::second;
+	constexpr auto meter3 = si::meter3;
+	constexpr auto kilogram = si::kilogram;
+	constexpr auto second = si::second;
 
 	using mass = si::mass<double>;
 
@@ -79,19 +80,19 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 	using Properties = orbit::Properties<double>;
 	using EscapeVelocity = orbit::EscapeVelocity;
 
-	constexpr auto G = si::gravitational_constant;
-	constexpr auto au = si::astronomical_unit;
+	constexpr auto G = si::gravitational_constant / (meter3/(kilogram*second*second));
+	// constexpr auto au = si::astronomical_unit;
 	const auto mass_of_didymos_dimorphos = 5.4e11 * si::kilogram;      
 	const auto mass_of_earth_moon       = 6.0457e24 * si::kilogram;    
 	const auto mass_of_jupiter          = si::jupiter_mass;     
 	const auto mass_of_saturn           = 5.683e26 * si::kilogram;     
-	const auto mass_of_uranus           = 8.681e25 * si::kilogram;     
-	const auto mass_of_neptune          = 1.024e26 * si::kilogram;     
-	const auto mass_of_pluto_charon     = (1.3e22 + 1.5e21) * si::kilogram; 
+	// const auto mass_of_uranus           = 8.681e25 * si::kilogram;     
+	// const auto mass_of_neptune          = 1.024e26 * si::kilogram;     
+	// const auto mass_of_pluto_charon     = (1.3e22 + 1.5e21) * si::kilogram; 
 	const auto mass_of_sun              = si::solar_mass; 
-	const auto mass_of_galaxy           = 1.262e41 * si::kilogram; // back calculated to achieve period of 250 million years
+	// const auto mass_of_galaxy           = 1.262e41 * si::kilogram; // back calculated to achieve period of 250 million years
 
-	ElementsAndState converter(Properties(vec3(1,0,0), vec3(0,0,1), G/(meter3/(kilogram*second*second))));
+	ElementsAndState converter(Properties(vec3(1,0,0), vec3(0,0,1), G));
 
 	// parent mass (kg), radius (m), escape velocity (m/s)
 	std::vector<EscapeVelocity> escape_velocities = {
@@ -127,7 +128,7 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 	    { mass_of_sun, Elements(1.43353e12,   0.0565, 2.484  * si::degree, 0.0, 0.0, 0.0) }, // Saturn
 	    { mass_of_sun, Elements(2.87246e12,   0.046,  0.770  * si::degree, 0.0, 0.0, 0.0) }, // Uranus
 	    { mass_of_sun, Elements(4.49506e12,   0.009,  1.769  * si::degree, 0.0, 0.0, 0.0) }, // Neptune
-	    { mass_of_sun, Elements(39.482,  0.2488, 17.14  * si::degree, 0.0, 0.0, 0.0) }, // Pluto
+	    { mass_of_sun, Elements(39.482,       0.2488, 17.14  * si::degree, 0.0, 0.0, 0.0) }, // Pluto
 	    // { mass_of_galaxy, Elements(...)} // sun around galaxy
 	};
 
@@ -167,14 +168,14 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 
     SECTION("tare") {
 
-    	orbit::Adapter<double> adapter(1e-5);
-
 		using vec3 = glm::vec<3,double,glm::defaultp>;
 
 		using Universals = orbit::Universals<double>;
 		using Propagator = orbit::UniversalPropagator<double>;
 
-		Propagator propagator;
+    	orbit::Adapter<double> adapter(Propagator(G), 1e-5);
+
+		Propagator propagator(G);
 		// `Orbit` is compatible with any unit system as long as it is used consistently
 		// here, we defined everything in mks base units.
 		Universals earth(1.32712440018e20, 

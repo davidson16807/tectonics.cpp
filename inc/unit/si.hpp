@@ -643,7 +643,7 @@ namespace si{
   constexpr units<2, 1,-2,-1,-1, 0, 0, double> universal_gas_constant     (8.314472);       // joule/kelvin/mole
   constexpr units<0, 1,-3,-4, 0, 0, 0, double> stephan_boltzmann_constant (5.670373e-8);    // watt/(meter²*kelvin⁴)
   constexpr units<2, 1,-1, 0, 0, 0, 0, double> planck_constant            (6.62607015e-34); // joule*second
-  constexpr units<3,-1,-2, 0, 0, 0, 0, double> gravitational_constant     (6.6743015e-11);    // meter³/(kilogram*second²)
+  constexpr units<3,-1,-2, 0, 0, 0, 0, double> gravitational_constant     (6.6743015e-11);  // meter³/(kilogram*second²)
 
 
   // NON SI UNITS MENTIONED IN THE SI

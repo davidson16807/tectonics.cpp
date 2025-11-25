@@ -36,18 +36,18 @@ namespace orbit {
 		}
 
 	public:
-	    scalar standard_gravitational_parameter;
+	    scalar gravitational_constant;
 	    int    max_refinement_count;
 	    scalar max_precision;
 	    int    laguerre_method_n;
 
 	    UniversalPropagator(
-	        scalar standard_gravitational_parameter,
+	        scalar gravitational_constant,
 	        int   max_refinement_count = 10,
 	        scalar max_precision       = 1e-10,
 	        int   laguerre_method_n    = 5
 	    ) : 
-	    	standard_gravitational_parameter(standard_gravitational_parameter),
+	    	gravitational_constant(gravitational_constant),
 	    	max_refinement_count(max_refinement_count),
 	    	max_precision(max_precision),
 	    	laguerre_method_n(laguerre_method_n)
@@ -112,7 +112,7 @@ namespace orbit {
 	        const scalar t0 = orbit.time_offset;
 	        const vec3  R0  = orbit.initial_position;
 	        const vec3  V0  = orbit.initial_velocity;
-	        const scalar mu      = this->standard_gravitational_parameter * orbit.combined_mass;
+	        const scalar mu      = this->gravitational_constant * orbit.combined_mass;
 	        const scalar sqrt_mu = std::sqrt(mu);
 	        const scalar r0 = glm::length(R0);
 	        const scalar v0 = glm::length(V0);
