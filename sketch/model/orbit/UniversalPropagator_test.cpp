@@ -23,30 +23,52 @@
 namespace orbit {
 
 	template<typename scalar>
-	struct Adapter{
+	class Adapter{
 		using vec3 = glm::vec<3,scalar,glm::defaultp>;
 		using Propagator = orbit::UniversalPropagator<scalar>;
+		using Universals = orbit::Universals<scalar>;
 		using State = orbit::State<scalar>;
 
 	    static constexpr scalar s0 = scalar(0);
+	    static constexpr scalar s2 = scalar(2);
+
+		// `sape` returns "symmetric absolute percent error" for vectors
+		scalar sape(const vec3 a, const vec3 b) const {
+		    const scalar average = (glm::length(a)+glm::length(b)) / s2;
+		    return average > s0? glm::length(a-b)/average : s0;
+		}
 
 		Propagator propagator;
-	    scalar threshold;
+	    scalar position_threshold;
+	    scalar velocity_threshold;
 
-	    Adapter(const Propagator propagator, const scalar threshold):
+	public:
+
+	    Adapter(
+			const Propagator propagator, 
+			const scalar position_threshold, 
+			const scalar velocity_threshold
+		):
 	    	propagator(propagator),
-	        threshold(threshold)
+	        position_threshold(position_threshold),
+	        velocity_threshold(velocity_threshold)
 	    {}
 
-	    bool equal(const Universals<scalar>& a, const Universals<scalar>& b) const {
+	    bool equal(const Universals& a, const Universals& b) const {
 	    	State a0(propagator.state(a,s0));
 	    	State b0(propagator.state(b,s0));
 	    	return 
-	    		glm::distance(a0.position, b0.position) < threshold &&
-	    		glm::distance(a0.velocity, b0.velocity) < threshold;
+	    		glm::distance(a0.position, b0.position) < position_threshold &&
+	    		glm::distance(a0.velocity, b0.velocity) < velocity_threshold;
 	    }
 
-	    std::string print(const Universals<scalar>& orbit) const {
+	    bool equal(const State& a, const State& b) const {
+	    	return 
+	    		sape(a.position, b.position) < position_threshold &&
+	    		sape(a.velocity, b.velocity) < velocity_threshold;
+	    }
+
+	    std::string print(const Universals& orbit) const {
 	        return std::to_string(orbit.combined_mass) + " " +
 	        	std::to_string(orbit.time_offset) + " " +
 	        	glm::to_string(orbit.initial_position) + " " +
@@ -67,9 +89,9 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 
 	using vec3 = glm::vec<3,double,glm::defaultp>;
 
-	constexpr auto meter3 = si::meter3;
-	constexpr auto kilogram = si::kilogram;
-	constexpr auto second = si::second;
+	constexpr auto m3 = si::meter3;
+	constexpr auto kg = si::kilogram;
+	constexpr auto s = si::second;
 
 	using mass = si::mass<double>;
 
@@ -80,7 +102,7 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 	using Properties = orbit::Properties<double>;
 	using EscapeVelocity = orbit::EscapeVelocity;
 
-	constexpr auto G = si::gravitational_constant / (meter3/(kilogram*second*second));
+	constexpr auto G = si::gravitational_constant / (m3/(kg*s*s));
 	// constexpr auto au = si::astronomical_unit;
 	const auto mass_of_didymos_dimorphos = 5.4e11 * si::kilogram;      
 	const auto mass_of_earth_moon       = 6.0457e24 * si::kilogram;    
@@ -92,7 +114,8 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 	const auto mass_of_sun              = si::solar_mass; 
 	// const auto mass_of_galaxy           = 1.262e41 * si::kilogram; // back calculated to achieve period of 250 million years
 
-	ElementsAndState converter(Properties(vec3(1,0,0), vec3(0,0,1), G));
+	Properties properties(vec3(1,0,0), vec3(0,0,1), G);
+	ElementsAndState converter(properties);
 
 	// parent mass (kg), radius (m), escape velocity (m/s)
 	std::vector<EscapeVelocity> escape_velocities = {
@@ -104,7 +127,7 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 	};
 
 	// (parent_mass, Elements)
-	std::vector<std::pair<mass, Elements>> elliptic_periapses = {
+	std::vector<std::pair<mass, Elements>> elliptic_periapsides = {
 	    // TODO: add didymos/dimorphos
 	    { mass_of_didymos_dimorphos, Elements(1.144e3, 0.0247, 169.3 * si::degree, 0.0, 0.0, 0.0) }, // Didymos, post-impact
 	    { mass_of_earth_moon, Elements(384e6, 0.0549, 0.0   * si::degree, 0.0, 0.0, 0.0) }, // Moon
@@ -133,20 +156,20 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 	};
 
 	// (mass, Universals)
-	std::vector<std::pair<mass, Universals>> all_periapses;
+	std::vector<std::pair<mass, Universals>> all_periapsides;
 
     // Elliptics
-    for (const auto& me : elliptic_periapses) {
+    for (const auto& me : elliptic_periapsides) {
         mass m = me.first;
         const Elements& elements = me.second;
-        State state = converter.get_state_from_elements(elements, m/kilogram);
-        Universals u = Universals(m/kilogram, state);
-        all_periapses.emplace_back(m, u);
+        State state = converter.get_state_from_elements(elements, m/kg);
+        Universals u = Universals(m/kg, state);
+        all_periapsides.emplace_back(m, u);
     }
 
 	// Parabolics
     for (const auto& mrv : escape_velocities) {
-        all_periapses.emplace_back(mrv.mass, 
+        all_periapsides.emplace_back(mrv.mass, 
         	Universals(
 	            mrv.mass,
 	            0.0,
@@ -157,7 +180,7 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 
 	// Hyperbolics
     for (const auto& mrv : escape_velocities) {
-        all_periapses.emplace_back(mrv.mass, 
+        all_periapsides.emplace_back(mrv.mass, 
         	Universals(
 	            mrv.mass,
 	            0.0,
@@ -166,14 +189,55 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 	        ));
     }
 
-    SECTION("tare") {
+    SECTION("orbit.advance() nth period congruence modulo n") {
+	    // also checks Stepanov's "circular orbit" property, determinism, and an identity
+	    const int n = 10; // samples of orbit
+	    constexpr double pi = std::acos(-1.0);
+
+		using Universals = orbit::Universals<double>;
+		using Propagator = orbit::UniversalPropagator<double>;
+		Propagator propagator(G);
+    	orbit::Adapter<double> adapter(Propagator(G), 1e-13, 1e-13);
+
+	    for (int k = 0; k < n; ++k) { // starting position
+	        for (auto &entry : elliptic_periapsides) {
+	            double m = entry.first/kg;
+	            auto elements = entry.second;
+
+	            elements = elements.advance(2.0 * pi * double(k) / double(n));
+
+	            for (int i = 0; i <= n; ++i) {
+	                double T = properties.period_from_semi_major_axis(elements.semi_major_axis, m);
+	                auto universals = Universals(
+	                    m, converter.get_state_from_elements(elements, m)
+	                );
+
+	                for (int j = 0; j <= 3; ++j) {
+	                    double t1 = T * (double(i) / double(n));
+	                    double t2 = T * (double(i) / double(n) + double(j));
+
+	                    std::cout << std::to_string(k) << std::to_string(i) << std::to_string(j) << std::endl;
+
+	                    REQUIRE(
+	                        adapter.equal(
+	                            propagator.state(universals, t1),
+	                            propagator.state(universals, t2)
+	                        )
+	                    );
+	                }
+	            }
+	        }
+	    }
+    }
+
+    SECTION("tare idempotence") {
 
 		using vec3 = glm::vec<3,double,glm::defaultp>;
 
 		using Universals = orbit::Universals<double>;
 		using Propagator = orbit::UniversalPropagator<double>;
 
-    	orbit::Adapter<double> adapter(Propagator(G), 1e-5);
+    	orbit::Adapter<double> adapter(Propagator(G), 1e-5, 1e-5);
 
 		Propagator propagator(G);
 		// `Orbit` is compatible with any unit system as long as it is used consistently
