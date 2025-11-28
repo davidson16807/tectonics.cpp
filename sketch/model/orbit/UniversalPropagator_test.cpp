@@ -101,6 +101,9 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 	using ElementsAndState = orbit::ElementsAndState<double>;
 	using Properties = orbit::Properties<double>;
 	using EscapeVelocity = orbit::EscapeVelocity;
+	using Propagator = orbit::UniversalPropagator<double>;
+
+    constexpr double pi = std::acos(-1.0);
 
 	constexpr auto G = si::gravitational_constant / (m3/(kg*s*s));
 	// constexpr auto au = si::astronomical_unit;
@@ -192,10 +195,7 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
     SECTION("orbit.advance() nth period congruence modulo n") {
 	    // also checks Stepanov's "circular orbit" property, determinism, and an identity
 	    const int n = 10; // samples of orbit
-	    constexpr double pi = std::acos(-1.0);
 
-		using Universals = orbit::Universals<double>;
-		using Propagator = orbit::UniversalPropagator<double>;
 		Propagator propagator(G);
     	orbit::Adapter<double> adapter(Propagator(G), 1e-13, 1e-13);
 
@@ -216,8 +216,6 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 	                    double t1 = T * (double(i) / double(n));
 	                    double t2 = T * (double(i) / double(n) + double(j));
 
-	                    std::cout << std::to_string(k) << std::to_string(i) << std::to_string(j) << std::endl;
-
 	                    REQUIRE(
 	                        adapter.equal(
 	                            propagator.state(universals, t1),
@@ -229,6 +227,131 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 	        }
 	    }
     }
+
+    SECTION("orbit.advance() apsides extrema")
+	{
+
+		Propagator propagator(G);
+
+	    // for universals in all_periapsides:
+	    //     e = 1e2
+	    //     for sign in [1,-1]:
+	    //         # periapsis position
+	    //         assert (
+	    //             glm.length(propagator.state(universals,0).position) <
+	    //             glm.length(propagator.state(universals,e).position)
+	    //         )
+	    //         # periapsis velocity
+	    //         assert (
+	    //             glm.length(propagator.state(universals,0).velocity) >
+	    //             glm.length(propagator.state(universals,e).velocity)
+	    //         )
+
+	    for (const auto& periapsis : elliptic_periapsides)
+	    {
+	        const double mass = periapsis.first/kg;
+	        Elements elements = periapsis.second;
+
+	        const double T = properties.period_from_semi_major_axis(elements.semi_major_axis, mass);
+
+	        {
+		        Universals universals(mass, converter.get_state_from_elements(elements, mass));
+	            const double e = 1e-6;
+
+	            for (const double sign : { 1.0, -1.0 })
+	            {
+	                // apoapsis position
+	                REQUIRE(
+	                    glm::length(propagator.state(universals, T / 2.0).position) >=
+	                    glm::length(
+	                        propagator
+	                            .state(
+	                                universals,
+	                                (T / 2.0) *
+	                                    (1.0 + sign * e))
+	                            .position));
+
+	                // apoapsis velocity
+	                REQUIRE(
+	                    glm::length(propagator.state(universals, T / 2.0).velocity) <=
+	                    glm::length(
+	                        propagator
+	                            .state(
+	                                universals,
+	                                (T / 2.0) *
+	                                    (1.0 + sign * e))
+	                            .velocity));
+
+	                // periapsis position
+	                REQUIRE(
+	                    glm::length(
+	                        propagator.state(universals, 0.0).position) <=
+	                    glm::length(
+	                        propagator
+	                            .state(universals, sign * T * e)
+	                            .position));
+
+	                // periapsis velocity
+	                REQUIRE(
+	                    glm::length(
+	                        propagator.state(universals, 0.0).velocity) >=
+	                    glm::length(
+	                        propagator
+	                            .state(universals, sign * T * e)
+	                            .velocity));
+	            }
+	        }
+
+	        elements.mean_anomaly = pi; // apoapsis
+	        {
+		        Universals universals(mass, converter.get_state_from_elements(elements, mass));
+	            const double e = 3e-5;
+
+	            for (const double sign : { 1.0, -1.0 })
+	            {
+	                // periapsis position
+	                REQUIRE(
+	                    glm::length(propagator.state(universals, T / 2.0).position) <=
+	                    glm::length(
+	                        propagator
+	                            .state(
+	                                universals,
+	                                (T / 2.0) *
+	                                    (1.0 + sign * e))
+	                            .position));
+
+	                // periapsis velocity
+	                REQUIRE(
+	                    glm::length(propagator.state(universals, T / 2.0).velocity) >=
+	                    glm::length(
+	                        propagator
+	                            .state(
+	                                universals,
+	                                (T / 2.0) *
+	                                    (1.0 + sign * e))
+	                            .velocity));
+
+	                // apoapsis position
+	                REQUIRE(
+	                    glm::length(
+	                        propagator.state(universals, 0.0).position) >=
+	                    glm::length(
+	                        propagator
+	                            .state(universals, sign * T * e)
+	                            .position));
+
+	                // apoapsis velocity
+	                REQUIRE(
+	                    glm::length(
+	                        propagator.state(universals, 0.0).velocity) <=
+	                    glm::length(
+	                        propagator
+	                            .state(universals, sign * T * e)
+	                            .velocity));
+	            }
+	        }
+	    }
+	}
 
     SECTION("tare idempotence") {
 

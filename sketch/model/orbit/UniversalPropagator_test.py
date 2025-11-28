@@ -38,7 +38,7 @@ escape_velocities = [
 	# (mass_of_galaxy,      24000*9.4e15,  594e3),
 ]
 
-elliptic_periapses = [
+elliptic_periapsides = [
 	# TODO: add didymos/dimorphos
 	(mass_of_didymos_dimorphos, Elements(1.144e3, 0.0247, 169.3*degrees, 0.0, 0.0, 0.0)), # Didymos, post-impact
 	(mass_of_earth_moon, Elements(384e6,  0.0549, 0.0*degrees, 0.0, 0.0, 0.0)), # Moon
@@ -66,9 +66,9 @@ elliptic_periapses = [
     # mass_of_galaxy, Elements(), # sun around galaxy
 ]
 
-all_periapses = [
+all_periapsides = [
 	*[(mass, Universals.from_state(mass, converter.get_state_from_elements(elements, mass)))
-		for mass, elements in elliptic_periapses], # elliptics
+		for mass, elements in elliptic_periapsides], # elliptics
 	*[(mass, Universals(mass, 0, glm.vec3(radius,0,0), glm.vec3(0,velocity,0)))
 		for mass, radius, velocity in escape_velocities], # parabolics
 	*[(mass, Universals(mass, 0, glm.vec3(radius,0,0), glm.vec3(0,velocity*1.5,0)))
@@ -79,7 +79,7 @@ def test_nth_period_congruence_modulo_n():
 	# also checks Stepanov's "circular orbit" property, determinism, and an identity
 	n = 10 # samples of orbit
 	for k in range(n): # starting position
-		for (mass, elements) in elliptic_periapses:
+		for (mass, elements) in elliptic_periapsides:
 			elements = elements.advance(2*pi*k/n)
 			for i in range(n+1):
 				T = properties.period_from_semi_major_axis(elements.semi_major_axis, mass)
@@ -90,8 +90,8 @@ def test_nth_period_congruence_modulo_n():
 						propagator.state(universals,T*(i/n+j)), 
 					) < 3e-5
 
-def test_apsis_extrema(): 
-	# for universals in all_periapses:
+def test_apsides_extrema(): 
+	# for universals in all_periapsides:
 	# 	e = 1e2
 	# 	for sign in [1,-1]:
 	# 		# periapsis position
@@ -104,7 +104,7 @@ def test_apsis_extrema():
 	# 			glm.length(propagator.state(universals,0).velocity) >
 	# 			glm.length(propagator.state(universals,e).velocity)
 	# 		)
-	for (mass, elements) in elliptic_periapses:
+	for (mass, elements) in elliptic_periapsides:
 		T = properties.period_from_semi_major_axis(elements.semi_major_axis, mass)
 		universals = Universals.from_state(mass, converter.get_state_from_elements(elements, mass))
 		e = 0.03
@@ -155,7 +155,7 @@ def test_apsis_extrema():
 			)
 
 def test_circular_orbit_radius_conservation():
-	for (mass, elements) in elliptic_periapses:
+	for (mass, elements) in elliptic_periapsides:
 		elements = elements.copy()
 		elements.eccentricity = 0 # circular orbits only
 		T = properties.period_from_semi_major_axis(elements.semi_major_axis, mass)
@@ -166,7 +166,7 @@ def test_circular_orbit_radius_conservation():
 			assert abs(glm.length(propagator.state(universals,T*i/n).velocity) / glm.length(universals.initial_velocity) - 1) < 1e-6
 
 # def test_specific_orbital_energy_conservation(): 
-# 	for m, elements in elliptic_periapses:
+# 	for m, elements in elliptic_periapsides:
 # 		for e in [1, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7]:
 # 			for sign in [1,-1]:
 # 				assert abs(
@@ -181,7 +181,7 @@ def test_circular_orbit_radius_conservation():
 # 					) < 1e-6
 
 def test_continuity(): 
-	for m, o in all_periapses:
+	for m, o in all_periapsides:
 		for e in [1, 1e1, 1e2, 1e3]:
 			for sign in [1,-1]:
 				# periapsis position
@@ -191,7 +191,7 @@ def test_continuity():
 				)
 
 def test_angular_momentum_conservation(): 
-	for m, o in all_periapses:
+	for m, o in all_periapsides:
 		for e in [1, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7]:
 			for sign in [1,-1]:
 				# periapsis position
@@ -200,7 +200,7 @@ def test_angular_momentum_conservation():
 
 def test_group(): 
 	t = 1e3
-	for m, a in all_periapses:
+	for m, a in all_periapsides:
 		assert state_distance(
 			State.from_universals(a), 
 			propagator.state(a,0)
