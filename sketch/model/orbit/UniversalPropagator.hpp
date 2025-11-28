@@ -14,6 +14,8 @@ namespace orbit {
 	template <typename scalar>
 	class UniversalPropagator {
 		using vec3 = glm::vec<3,scalar,glm::defaultp>;
+		using Universals = orbit::Universals<scalar>;
+		using State = orbit::State<scalar>;
 
 		static constexpr scalar s0 = scalar(0);
 		static constexpr scalar s1 = scalar(1);
@@ -71,7 +73,7 @@ namespace orbit {
 	        const scalar F    = sigma0 * x2 * Cax2 + one_r0a * x3 * Sax2 + r0 * x - dtsqrtmu;
 	        const scalar dFdx = sigma0 * x * (s1 - ax2 * Sax2) + one_r0a * x2 * Cax2 + r0;
 
-	        const int n   = this->laguerre_method_n;
+	        const int n   = laguerre_method_n;
 	        const int n_1 = n - 1;
 
 	        const scalar d2Fdx2 =
@@ -93,26 +95,26 @@ namespace orbit {
 			const scalar dtsqrtmu
 		) const {
 	        scalar x = x0;
-	        for (int i = 0; i < this->max_refinement_count; ++i) {
-	            const scalar dxdi = this->refine(x, a, r0, sigma0, dtsqrtmu);
+	        for (int i = 0; i < max_refinement_count; ++i) {
+	            const scalar dxdi = refine(x, a, r0, sigma0, dtsqrtmu);
 	            if (dxdi != s0) {
 	                x += dxdi;
 	            }
-	            if (std::abs(dxdi) < this->max_precision) {
+	            if (std::abs(dxdi) < max_precision) {
 	                return x;
 	            }
 	        }
 	        return x;
 	    }
 
-	    State<scalar> state(const orbit::Universals<scalar>& orbit, scalar t) const {
+	    State state(const Universals& orbit, scalar t) const {
 	        if (t == s0) {
 	            return State(orbit.initial_position, orbit.initial_velocity);
 	        }
 	        const scalar t0 = orbit.time_offset;
 	        const vec3  R0  = orbit.initial_position;
 	        const vec3  V0  = orbit.initial_velocity;
-	        const scalar mu      = this->gravitational_constant * orbit.combined_mass;
+	        const scalar mu      = gravitational_constant * orbit.combined_mass;
 	        const scalar sqrt_mu = std::sqrt(mu);
 	        const scalar r0 = glm::length(R0);
 	        const scalar v0 = glm::length(V0);
@@ -131,7 +133,7 @@ namespace orbit {
 	        }
 	        const scalar sigma0    = glm::dot(R0, V0) / sqrt_mu;
 	        const scalar dtsqrtmu  = dt * sqrt_mu;
-	        const scalar x         = this->solve(x0, a, r0, sigma0, dtsqrtmu);
+	        const scalar x         = solve(x0, a, r0, sigma0, dtsqrtmu);
 	        const scalar x2   = x * x;
 	        const scalar x3   = x * x2;
 	        const scalar ax2  = a * x2;
@@ -144,20 +146,20 @@ namespace orbit {
 	        const vec3 V =
 	            (x * sqrt_mu / (r * r0) * (ax2 * Sax2 - s1)) * R0 +
 	            (s1 - x2 / r * Cax2) * V0;
-	        return State<scalar>(R, V);
+	        return State(R, V);
 	    }
 
-	    orbit::Universals<scalar> advance(const orbit::Universals<scalar>& orbit, const scalar t) const {
-	        State<scalar> state_ = this->state(orbit, t);
-	        return orbit::Universals<scalar>(
+	    Universals advance(const Universals& orbit, const scalar t) const {
+	        State state_ = state(orbit, t);
+	        return Universals(
 	        	orbit.combined_mass,
             	s0,
             	state_.position,
             	state_.velocity);
 	    }
 
-	    orbit::Universals<scalar> tare(const orbit::Universals<scalar>& orbit) const {
-	        return this->advance(orbit, orbit.time_offset);
+	    Universals tare(const Universals& orbit) const {
+	        return advance(orbit, orbit.time_offset);
 	    }
 	};
 

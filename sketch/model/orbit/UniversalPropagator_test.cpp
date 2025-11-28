@@ -32,15 +32,15 @@ namespace orbit {
 	    static constexpr scalar s0 = scalar(0);
 	    static constexpr scalar s2 = scalar(2);
 
+		Propagator propagator;
+	    scalar position_threshold;
+	    scalar velocity_threshold;
+
 		// `sape` returns "symmetric absolute percent error" for vectors
 		scalar sape(const vec3 a, const vec3 b) const {
 		    const scalar average = (glm::length(a)+glm::length(b)) / s2;
 		    return average > s0? glm::length(a-b)/average : s0;
 		}
-
-		Propagator propagator;
-	    scalar position_threshold;
-	    scalar velocity_threshold;
 
 	public:
 
@@ -58,14 +58,14 @@ namespace orbit {
 	    	State a0(propagator.state(a,s0));
 	    	State b0(propagator.state(b,s0));
 	    	return 
-	    		glm::distance(a0.position, b0.position) < position_threshold &&
-	    		glm::distance(a0.velocity, b0.velocity) < velocity_threshold;
+	    		glm::distance(a0.position, b0.position) <= position_threshold &&
+	    		glm::distance(a0.velocity, b0.velocity) <= velocity_threshold;
 	    }
 
 	    bool equal(const State& a, const State& b) const {
 	    	return 
-	    		sape(a.position, b.position) < position_threshold &&
-	    		sape(a.velocity, b.velocity) < velocity_threshold;
+	    		sape(a.position, b.position) <= position_threshold &&
+	    		sape(a.velocity, b.velocity) <= velocity_threshold;
 	    }
 
 	    std::string print(const Universals& orbit) const {
@@ -102,6 +102,7 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 	using Properties = orbit::Properties<double>;
 	using EscapeVelocity = orbit::EscapeVelocity;
 	using Propagator = orbit::UniversalPropagator<double>;
+	using Adapter = orbit::Adapter<double>;
 
     constexpr double pi = std::acos(-1.0);
 
@@ -119,6 +120,7 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 
 	Properties properties(vec3(1,0,0), vec3(0,0,1), G);
 	ElementsAndState converter(properties);
+	Propagator propagator(G);
 
 	// parent mass (kg), radius (m), escape velocity (m/s)
 	std::vector<EscapeVelocity> escape_velocities = {
@@ -197,7 +199,7 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 	    const int n = 10; // samples of orbit
 
 		Propagator propagator(G);
-    	orbit::Adapter<double> adapter(Propagator(G), 1e-13, 1e-13);
+    	Adapter adapter(Propagator(G), 1e-13, 1e-13);
 
 	    for (int k = 0; k < n; ++k) { // starting position
 	        for (auto &entry : elliptic_periapsides) {
@@ -231,7 +233,6 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
     SECTION("orbit.advance() apsides extrema")
 	{
 
-		Propagator propagator(G);
 
 	    // for universals in all_periapsides:
 	    //     e = 1e2
@@ -353,16 +354,69 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 	    }
 	}
 
-    SECTION("tare idempotence") {
+	SECTION("orbit.advance() circular orbit radius conservation")
+	{
+	    for (const auto& elliptic_entry : elliptic_periapsides)
+	    {
+	        const double mass = elliptic_entry.first/kg;
+	        Elements elements = elliptic_entry.second;
+
+	        elements.eccentricity = 0.0; // circular orbits only
+
+	        const double T = properties.period_from_semi_major_axis(elements.semi_major_axis, mass);
+	        const auto universals = Universals(mass, converter.get_state_from_elements(elements, mass));
+
+	        const double n = 10.0; // orbit samples
+	        for (int i = 0; i <= n; ++i)
+	        {
+	            const double t = T * double(i) / n;
+
+	            REQUIRE(
+	                std::abs(
+	                    glm::length(propagator.state(universals, t).position) /
+	                        glm::length(universals.initial_position) - 1.0
+	                ) < 1e-6
+	            );
+
+	            REQUIRE(
+	                std::abs(
+	                    glm::length(propagator.state(universals, t).velocity) /
+	                        glm::length(universals.initial_velocity) - 1.0
+	                ) < 1e-6
+	            );
+	        }
+	    }
+	}
+
+	SECTION("orbit.advance() continuity")
+	{
+	    for (const auto& [m, o] : all_periapsides)
+	    {
+	        const double es[] = {1e-1, 1e0, 1e1, 1e2};
+	        for (const double e : es)
+	        {
+	            const double signs[] = {1.0, -1.0};
+	            for (const double sign : signs)
+	            {
+	                const auto s0e = propagator.state(o, sign * 1.0 * e);
+	                const auto s1e = propagator.state(o, sign * 2.0 * e);
+	                const auto s2e = propagator.state(o, sign * 3.0 * e);
+	                REQUIRE(glm::distance(s0e.position, s1e.position) < glm::distance(s0e.position, s2e.position));
+	                // REQUIRE(glm::distance(s0e.velocity, s1e.velocity) < glm::distance(s0e.velocity, s2e.velocity));
+	            }
+	        }
+	    }
+	}
+
+    SECTION("orbit.tare() idempotence") {
 
 		using vec3 = glm::vec<3,double,glm::defaultp>;
 
 		using Universals = orbit::Universals<double>;
 		using Propagator = orbit::UniversalPropagator<double>;
 
-    	orbit::Adapter<double> adapter(Propagator(G), 1e-5, 1e-5);
+    	Adapter adapter(Propagator(G), 0.0, 0.0);
 
-		Propagator propagator(G);
 		// `Orbit` is compatible with any unit system as long as it is used consistently
 		// here, we defined everything in mks base units.
 		Universals earth(1.32712440018e20, 
