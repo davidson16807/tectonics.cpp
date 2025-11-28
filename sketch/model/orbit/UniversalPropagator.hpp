@@ -25,16 +25,16 @@ namespace orbit {
 		scalar C(const scalar y) const
 		{
 			scalar abs_y = std::abs(y);
-			return y > s0? (s1 - std::cos(std::sqrt(abs_y)))  / abs_y:
-			               (std::cosh(std::sqrt(abs_y)) - s1) / abs_y;
+			return (y > s0? (s1 - std::cos(std::sqrt(abs_y))) 
+			              : (std::cosh(std::sqrt(abs_y)) - s1)) / abs_y;
 		}
 
 		scalar S(const scalar y) const
 		{
 			scalar sqrt_abs_y = std::sqrt(std::abs(y));
 			scalar sqrt_abs_y3 = sqrt_abs_y*sqrt_abs_y*sqrt_abs_y;
-			return y > s0? (sqrt_abs_y - std::sin(sqrt_abs_y))  / sqrt_abs_y3 :
-			                      (std::sinh(sqrt_abs_y) - sqrt_abs_y) / sqrt_abs_y3;
+			return (y > s0? (sqrt_abs_y - std::sin(sqrt_abs_y))
+	                      : (std::sinh(sqrt_abs_y) - sqrt_abs_y)) / sqrt_abs_y3;
 		}
 
 	public:
@@ -45,8 +45,8 @@ namespace orbit {
 
 	    UniversalPropagator(
 	        scalar gravitational_constant,
-	        int   max_refinement_count = 10,
-	        scalar max_precision       = 1e-10,
+	        int   max_refinement_count = 5,
+	        scalar max_precision       = 1e-15,
 	        int   laguerre_method_n    = 5
 	    ) : 
 	    	gravitational_constant(gravitational_constant),
@@ -73,18 +73,15 @@ namespace orbit {
 	        const scalar F    = sigma0 * x2 * Cax2 + one_r0a * x3 * Sax2 + r0 * x - dtsqrtmu;
 	        const scalar dFdx = sigma0 * x * (s1 - ax2 * Sax2) + one_r0a * x2 * Cax2 + r0;
 
-	        const int n   = laguerre_method_n;
-	        const int n_1 = n - 1;
+	        const scalar n   = laguerre_method_n;
+	        const scalar n_1 = n - s1;
 
 	        const scalar d2Fdx2 =
-	            sigma0 - sigma0 * ax2 * (Cax2 - s3 * Sax2) +
-	            (one_r0a / x) *
-	                (s1 - ax2 * Sax2 - s2 * Cax2);
-
-	        const scalar radicand = n_1 * n_1 * dFdx * dFdx - (n * n_1) * F * d2Fdx2;
+	            sigma0 - (sigma0 * ax2 * (Cax2 - s3 * Sax2)) +
+	            (one_r0a / x) * (s1 - ax2 * Sax2 - s2 * Cax2);
 
 	        return -scalar(n) * F / // Laguerre method
-	        	(dFdx + math::sign(dFdx) * std::sqrt(std::abs(radicand)));
+	        	(dFdx + math::sign(dFdx) * std::sqrt(std::abs(n_1 * n_1 * dFdx * dFdx - (n * n_1 * F * d2Fdx2))));
 	    }
 
 	    scalar solve(
@@ -107,33 +104,32 @@ namespace orbit {
 	        return x;
 	    }
 
-	    State state(const Universals& orbit, scalar t) const {
+	    State state(const Universals& orbit, const scalar t) const {
 	        if (t == s0) {
 	            return State(orbit.initial_position, orbit.initial_velocity);
 	        }
 	        const scalar t0 = orbit.time_offset;
 	        const vec3  R0  = orbit.initial_position;
 	        const vec3  V0  = orbit.initial_velocity;
-	        const scalar mu      = gravitational_constant * orbit.combined_mass;
+	        const scalar mu = gravitational_constant * orbit.combined_mass;
 	        const scalar sqrt_mu = std::sqrt(mu);
 	        const scalar r0 = glm::length(R0);
 	        const scalar v0 = glm::length(V0);
-	        const scalar a = s2 / r0 - (v0 * v0) / mu;
+	        const scalar a  = s2 / r0 - (v0 * v0) / mu;
 	        const scalar dt = t - t0;
-	        scalar x0;
-	        if (a > s0) { // elliptic
-	            x0 = dt * sqrt_mu * a;
-	        } else {             // hyperbolic
-	            x0 = math::sign(dt) * std::sqrt(-a) *
-	                 std::log(
-	                     -s2 * mu * dt /
-	                     (a * (glm::dot(R0, V0) +
-	                           math::sign(dt) * std::sqrt(-mu * a) * (s1 - r0 / a)))
-	                 );
-	        }
-	        const scalar sigma0    = glm::dot(R0, V0) / sqrt_mu;
-	        const scalar dtsqrtmu  = dt * sqrt_mu;
-	        const scalar x         = solve(x0, a, r0, sigma0, dtsqrtmu);
+	        const scalar x = solve(
+	        	/* x0 */ a > s0? 
+	        		  dt*sqrt_mu*a // elliptic
+	        		: math::sign(dt) * std::sqrt(-a) *
+		                 std::log(
+		                     -s2 * mu * dt /
+		                     (a * (glm::dot(R0, V0) +
+		                           math::sign(dt) * std::sqrt(-mu * a) * (s1 - r0 / a)))
+		                 ), // hyperbolic
+	        	a, r0, 
+	        	/* sigma0 */    glm::dot(R0, V0) / sqrt_mu, 
+	        	/* dtsqrtmu */  dt * sqrt_mu 
+	        );
 	        const scalar x2   = x * x;
 	        const scalar x3   = x * x2;
 	        const scalar ax2  = a * x2;
@@ -151,11 +147,7 @@ namespace orbit {
 
 	    Universals advance(const Universals& orbit, const scalar t) const {
 	        State state_ = state(orbit, t);
-	        return Universals(
-	        	orbit.combined_mass,
-            	s0,
-            	state_.position,
-            	state_.velocity);
+	        return Universals(orbit.combined_mass, s0, state_.position, state_.velocity);
 	    }
 
 	    Universals tare(const Universals& orbit) const {

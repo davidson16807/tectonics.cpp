@@ -55,11 +55,7 @@ namespace orbit {
 		}
 
 	    bool equal(const Universals& a, const Universals& b) const {
-	    	State a0(propagator.state(a,s0));
-	    	State b0(propagator.state(b,s0));
-	    	return 
-	    		glm::distance(a0.position, b0.position) <= position_threshold &&
-	    		glm::distance(a0.velocity, b0.velocity) <= velocity_threshold;
+	    	return equal(propagator.state(a,s0), propagator.state(b,s0));
 	    }
 
 	    bool equal(const State& a, const State& b) const {
@@ -85,13 +81,9 @@ namespace orbit {
 
 }
 
-TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
+TEST_CASE("UniversalPropagator::state()", "[body]") {
 
 	using vec3 = glm::vec<3,double,glm::defaultp>;
-
-	constexpr auto m3 = si::meter3;
-	constexpr auto kg = si::kilogram;
-	constexpr auto s = si::second;
 
 	using mass = si::mass<double>;
 
@@ -105,6 +97,12 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 	using Adapter = orbit::Adapter<double>;
 
     constexpr double pi = std::acos(-1.0);
+
+	constexpr auto m = si::meter;
+	constexpr auto au = si::astronomical_unit;
+	constexpr auto m3 = si::meter3;
+	constexpr auto kg = si::kilogram;
+	constexpr auto s = si::second;
 
 	constexpr auto G = si::gravitational_constant / (m3/(kg*s*s));
 	// constexpr auto au = si::astronomical_unit;
@@ -156,7 +154,7 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 	    { mass_of_sun, Elements(1.43353e12,   0.0565, 2.484  * si::degree, 0.0, 0.0, 0.0) }, // Saturn
 	    { mass_of_sun, Elements(2.87246e12,   0.046,  0.770  * si::degree, 0.0, 0.0, 0.0) }, // Uranus
 	    { mass_of_sun, Elements(4.49506e12,   0.009,  1.769  * si::degree, 0.0, 0.0, 0.0) }, // Neptune
-	    { mass_of_sun, Elements(39.482,       0.2488, 17.14  * si::degree, 0.0, 0.0, 0.0) }, // Pluto
+	    { mass_of_sun, Elements(39.482*au/m,  0.2488, 17.14  * si::degree, 0.0, 0.0, 0.0) }, // Pluto
 	    // { mass_of_galaxy, Elements(...)} // sun around galaxy
 	};
 
@@ -198,7 +196,6 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 	    // also checks Stepanov's "circular orbit" property, determinism, and an identity
 	    const int n = 10; // samples of orbit
 
-		Propagator propagator(G);
     	Adapter adapter(Propagator(G), 1e-13, 1e-13);
 
 	    for (int k = 0; k < n; ++k) { // starting position
@@ -232,7 +229,6 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 
     SECTION("orbit.advance() apsides extrema")
 	{
-
 
 	    // for universals in all_periapsides:
 	    //     e = 1e2
@@ -392,27 +388,27 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 	{
 	    for (const auto& [m, o] : all_periapsides)
 	    {
-	        const double es[] = {1e-1, 1e0, 1e1, 1e2};
-	        for (const double e : es)
+	        const double nonzero[] = {1e-1, 1e0, 1e1, 1e2, 1e3};
+	        for (const double e : nonzero)
 	        {
 	            const double signs[] = {1.0, -1.0};
 	            for (const double sign : signs)
 	            {
-	                const auto s0e = propagator.state(o, sign * 1.0 * e);
-	                const auto s1e = propagator.state(o, sign * 2.0 * e);
-	                const auto s2e = propagator.state(o, sign * 3.0 * e);
+	                const auto s0e = propagator.state(o, 0.0);
+	                const auto s1e = propagator.state(o, sign * 1.0 * e);
+	                const auto s2e = propagator.state(o, sign * 2.0 * e);
 	                REQUIRE(glm::distance(s0e.position, s1e.position) < glm::distance(s0e.position, s2e.position));
-	                // REQUIRE(glm::distance(s0e.velocity, s1e.velocity) < glm::distance(s0e.velocity, s2e.velocity));
+	                REQUIRE(glm::distance(s0e.velocity, s1e.velocity) < glm::distance(s0e.velocity, s2e.velocity));
 	            }
 	        }
 	    }
 	}
 
-	SECTION("test_angular_momentum_conservation")
+	SECTION("state() angular momentum conservation")
 	{
     	Adapter adapter(Propagator(G), 0.0, 0.0);
 	    for (const auto& [m, o] : all_periapsides) {
-	        const double es[] = {1.0, 1e1, 1e2, 1e3, 1e3};
+	        const double es[] = {0.0, 1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10};
 	        for (const double e : es) {
 	            const double signs[] = {1.0, -1.0};
 	            for (const double sign : signs) {
@@ -421,6 +417,49 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 	                        o.angular_momentum_vector(),
 	                        Universals(m/kg, propagator.state(o, sign*e)).angular_momentum_vector()
 	                    ) < 1e-5
+	                );
+	            }
+	        }
+	    }
+	}
+
+	SECTION("state() is a group") {
+    	Adapter coarse(Propagator(G), 1e-11, 1e-11);
+    	Adapter exact(Propagator(G), 0.0, 0.0);
+
+	    for (const auto& [m, a] : all_periapsides) {
+	    	// IDENTITY
+	        REQUIRE(
+	            exact.equal(
+	                a.state(),
+	                propagator.state(a, 0.0)
+	            )
+	        );
+
+	        for (const double t1 : {0.0, 1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6}) {
+	    		// INVERSE
+	            REQUIRE(
+	                coarse.equal(
+	                    a.state(),
+	                    propagator.state(Universals(m/kg, propagator.state(a, t1)), -t1)
+	                )
+	            );
+
+	    		// COMMUTATIVITY
+	            for (const double t2 : {0.0, 1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6}) {
+	                REQUIRE(
+	                    coarse.equal(
+	                        propagator.state(Universals(m/kg, propagator.state(a, t2)), t1),
+	                        propagator.state(Universals(m/kg, propagator.state(a, t1)), t2)
+	                    )
+	                );
+
+	    			// COMMUTATIVITY
+	                REQUIRE(
+	                    coarse.equal(
+	                        propagator.state(a, t1 + t2),
+	                        propagator.state(Universals(m/kg, propagator.state(a, t1)), t2)
+	                    )
 	                );
 	            }
 	        }

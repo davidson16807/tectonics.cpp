@@ -193,12 +193,11 @@ def test_group():
 		assert state_distance(
 			State.from_universals(a), 
 			propagator.state(a,0)
-			# propagator.state(Universals.from_state(m, propagator.state(a,t)),-t)
 		) < 1e-10
 		for t1 in [1e2, 1e3, 1e4]:
 			assert state_distance(
 				State.from_universals(a), 
-				propagator.state(Universals.from_state(m, propagator.state(a,t)),-t)
+				propagator.state(Universals.from_state(m, propagator.state(a,t1)),-t1)
 			) < 1e-6
 			for t2 in [1e2, 1e3, 1e4]:
 				assert state_distance(

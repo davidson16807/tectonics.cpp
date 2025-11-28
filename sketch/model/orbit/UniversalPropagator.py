@@ -28,13 +28,13 @@ def S(y):
 class UniversalPropagator:
 
 	def __init__(self, 
-		standard_gravitational_parameter,
+		gravitational_constant,
 		max_refinement_count = 10, max_precision = 1e-10, laguerre_method_n = 5
 	):
-		self.standard_gravitational_parameter = standard_gravitational_parameter
-		self.max_refinement_count = 10
-		self.max_precision = 1e-10
-		self.laguerre_method_n = 5
+		self.gravitational_constant = gravitational_constant
+		self.max_refinement_count = max_refinement_count
+		self.max_precision = max_precision
+		self.laguerre_method_n = laguerre_method_n
 
 	def refine(self, x, a, r0, sigma0, dtsqrtmu):
 		x2 = x*x
@@ -67,7 +67,7 @@ class UniversalPropagator:
 		t0 = orbit.time_offset
 		R0 = orbit.initial_position
 		V0 = orbit.initial_velocity
-		mu = self.standard_gravitational_parameter * orbit.combined_mass
+		mu = self.gravitational_constant * orbit.combined_mass
 		sqrt_mu = math.sqrt(mu)
 		r0 = glm.length(R0)
 		v0 = glm.length(V0)
@@ -101,4 +101,3 @@ class UniversalPropagator:
 
 	def tare(self, orbit):
 		return self.advance(orbit, orbit.time_offset)
-
