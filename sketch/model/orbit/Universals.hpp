@@ -72,6 +72,10 @@ namespace orbit {
 			time_offset(time_offset)
 		{}
 
+		vec3 angular_momentum_vector() const {
+			return glm::cross(initial_position, initial_velocity);
+		}
+
 		Universals<scalar> advance(const scalar time_step) const
 		{
 			return Universals<scalar>(combined_mass, initial_position, initial_velocity, time_offset+time_step);

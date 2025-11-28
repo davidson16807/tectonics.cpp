@@ -36,12 +36,6 @@ namespace orbit {
 	    scalar position_threshold;
 	    scalar velocity_threshold;
 
-		// `sape` returns "symmetric absolute percent error" for vectors
-		scalar sape(const vec3 a, const vec3 b) const {
-		    const scalar average = (glm::length(a)+glm::length(b)) / s2;
-		    return average > s0? glm::length(a-b)/average : s0;
-		}
-
 	public:
 
 	    Adapter(
@@ -53,6 +47,12 @@ namespace orbit {
 	        position_threshold(position_threshold),
 	        velocity_threshold(velocity_threshold)
 	    {}
+
+		// `sape` returns "symmetric absolute percent error" for vectors
+		scalar sape(const vec3 a, const vec3 b) const {
+		    const scalar average = (glm::length(a)+glm::length(b)) / s2;
+		    return average > s0? glm::length(a-b)/average : s0;
+		}
 
 	    bool equal(const Universals& a, const Universals& b) const {
 	    	State a0(propagator.state(a,s0));
@@ -403,6 +403,25 @@ TEST_CASE("Orbit nth period congruence modulo n", "[body]") {
 	                const auto s2e = propagator.state(o, sign * 3.0 * e);
 	                REQUIRE(glm::distance(s0e.position, s1e.position) < glm::distance(s0e.position, s2e.position));
 	                // REQUIRE(glm::distance(s0e.velocity, s1e.velocity) < glm::distance(s0e.velocity, s2e.velocity));
+	            }
+	        }
+	    }
+	}
+
+	SECTION("test_angular_momentum_conservation")
+	{
+    	Adapter adapter(Propagator(G), 0.0, 0.0);
+	    for (const auto& [m, o] : all_periapsides) {
+	        const double es[] = {1.0, 1e1, 1e2, 1e3, 1e3};
+	        for (const double e : es) {
+	            const double signs[] = {1.0, -1.0};
+	            for (const double sign : signs) {
+	                REQUIRE(
+	                    adapter.sape(
+	                        o.angular_momentum_vector(),
+	                        Universals(m/kg, propagator.state(o, sign*e)).angular_momentum_vector()
+	                    ) < 1e-5
+	                );
 	            }
 	        }
 	    }

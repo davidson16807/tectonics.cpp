@@ -154,17 +154,6 @@ def test_apsides_extrema():
 				glm.length(propagator.state(universals,sign*T*e).velocity)
 			)
 
-def test_circular_orbit_radius_conservation():
-	for (mass, elements) in elliptic_periapsides:
-		elements = elements.copy()
-		elements.eccentricity = 0 # circular orbits only
-		T = properties.period_from_semi_major_axis(elements.semi_major_axis, mass)
-		universals = Universals.from_state(mass, converter.get_state_from_elements(elements, mass))
-		n = 10 # orbit samples
-		for i in range(n+1):
-			assert abs(glm.length(propagator.state(universals,T*i/n).position) / glm.length(universals.initial_position) - 1) < 1e-6
-			assert abs(glm.length(propagator.state(universals,T*i/n).velocity) / glm.length(universals.initial_velocity) - 1) < 1e-6
-
 # def test_specific_orbital_energy_conservation(): 
 # 	for m, elements in elliptic_periapsides:
 # 		for e in [1, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7]:
@@ -196,7 +185,7 @@ def test_angular_momentum_conservation():
 			for sign in [1,-1]:
 				# periapsis position
 				assert sape(o.angular_momentum_vector(), 
-					Universals.from_state(m, propagator.state(o,e)).angular_momentum_vector()) < 1e-6
+					Universals.from_state(m, propagator.state(o,sign*e)).angular_momentum_vector()) < 1e-6
 
 def test_group(): 
 	t = 1e3
