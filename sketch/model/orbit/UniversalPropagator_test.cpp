@@ -110,11 +110,11 @@ TEST_CASE("UniversalPropagator::state()", "[body]") {
 	const auto mass_of_earth_moon       = 6.0457e24 * si::kilogram;    
 	const auto mass_of_jupiter          = si::jupiter_mass;     
 	const auto mass_of_saturn           = 5.683e26 * si::kilogram;     
-	// const auto mass_of_uranus           = 8.681e25 * si::kilogram;     
-	// const auto mass_of_neptune          = 1.024e26 * si::kilogram;     
+	const auto mass_of_uranus           = 8.681e25 * si::kilogram;     
+	const auto mass_of_neptune          = 1.024e26 * si::kilogram;     
 	// const auto mass_of_pluto_charon     = (1.3e22 + 1.5e21) * si::kilogram; 
 	const auto mass_of_sun              = si::solar_mass; 
-	// const auto mass_of_galaxy           = 1.262e41 * si::kilogram; // back calculated to achieve period of 250 million years
+	const auto mass_of_galaxy           = 1.262e41 * si::kilogram; // back calculated to achieve period of 250 million years
 
 	Properties properties(vec3(1,0,0), vec3(0,0,1), G);
 	ElementsAndState converter(properties);
@@ -122,11 +122,13 @@ TEST_CASE("UniversalPropagator::state()", "[body]") {
 
 	// parent mass (kg), radius (m), escape velocity (m/s)
 	std::vector<EscapeVelocity> escape_velocities = {
-	    EscapeVelocity {si::earth_mass/kg,       si::earth_radius/m,  11.186e3},
+	    EscapeVelocity {si::earth_mass/kg,       si::earth_radius/m,   11.186e3},
+	    EscapeVelocity {mass_of_uranus/kg,       25362e3,              21.38e3},
+	    EscapeVelocity {mass_of_neptune/kg,      24622e3,              23.56e3},
 	    EscapeVelocity {mass_of_saturn/kg,       58232e3,              36.09e3},
 	    EscapeVelocity {si::jupiter_mass/kg,     si::jupiter_radius/m, 60.20e3},
 	    EscapeVelocity {si::solar_mass/kg,       si::solar_radius/m,   617.5e3},
-	    // EscapeVelocity {mass_of_galaxy/kg,      24000 * 9.4e15, 594e3},
+	    EscapeVelocity {mass_of_galaxy/kg,      24000 * 9.4e15, 594e3},
 	};
 
 	// (parent_mass, Elements)
@@ -155,7 +157,7 @@ TEST_CASE("UniversalPropagator::state()", "[body]") {
 	    { mass_of_sun, Elements(2.87246e12,   0.046,  0.770  * si::degree, 0.0, 0.0, 0.0) }, // Uranus
 	    { mass_of_sun, Elements(4.49506e12,   0.009,  1.769  * si::degree, 0.0, 0.0, 0.0) }, // Neptune
 	    { mass_of_sun, Elements(39.482*au/m,  0.2488, 17.14  * si::degree, 0.0, 0.0, 0.0) }, // Pluto
-	    // { mass_of_galaxy, Elements(...)} // sun around galaxy
+	    // { mass_of_galaxy, Elements(26*si::kilolightyear/m, 0.0, 0.0, 0.0, 0.0, 0.0)} // sun around galaxy
 	};
 
 	// (mass, Universals)

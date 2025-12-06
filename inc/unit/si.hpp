@@ -923,6 +923,8 @@ namespace si{
 
   constexpr length<double>       lightyear            ( 9460730472580800.0 );
   constexpr length<double>       parsec               ( 3.0857e16 );
+  SI_MODERN_PREFIXED_UNITS(length<double>, lightyear)
+  SI_MODERN_PREFIXED_UNITS(length<double>, parsec   )
 
   constexpr time<double>         observable_universe_age          ( 13.787e9 * year );
   constexpr length<double>       observable_universe_radius       ( 4.4e26 );
