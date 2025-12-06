@@ -24,17 +24,82 @@ namespace orbit {
 
 		scalar C(const scalar y) const
 		{
-			scalar abs_y = std::abs(y);
-			return (y > s0? (s1 - std::cos(std::sqrt(abs_y))) 
-			              : (std::cosh(std::sqrt(abs_y)) - s1)) / abs_y;
+			scalar Ay = std::abs(y);
+			scalar SAy = std::sqrt(Ay);
+			return (y >= s0? (s1 - cos(SAy)) 
+			              : (cosh(SAy) - s1)) / Ay;
 		}
 
 		scalar S(const scalar y) const
 		{
-			scalar sqrt_abs_y = std::sqrt(std::abs(y));
-			scalar sqrt_abs_y3 = sqrt_abs_y*sqrt_abs_y*sqrt_abs_y;
-			return (y > s0? (sqrt_abs_y - std::sin(sqrt_abs_y))
-	                      : (std::sinh(sqrt_abs_y) - sqrt_abs_y)) / sqrt_abs_y3;
+			scalar SAy = std::sqrt(std::abs(y));
+			scalar SAy3 = SAy*SAy*SAy;
+			return (y >= s0? (SAy - sin(SAy))
+	                      : (sinh(SAy) - SAy)) / SAy3;
+		}
+
+		scalar dCax2dx(const scalar a, const scalar x) const
+		{
+			const scalar Ax = std::abs(x);
+			const scalar Aa = std::abs(a);
+			const scalar SAa = std::sqrt(Aa);
+			const scalar sx = math::sign(x);
+	        const scalar x2  = x*x;
+	        const scalar x3  = x*x2;
+	        const scalar ax2  = a * x2;
+			return (ax2 >= s0? 
+			     std::sin(SAa*Ax)*sx/(x2*SAa) - s2*(s1  - std::cos(SAa*Ax))/(x3*Aa)
+			  : std::sinh(SAa*Ax)*sx/(x2*SAa) - s2*(-s1 + std::cosh(SAa*Ax))/(x3*Aa)
+			);
+		}
+
+		scalar dSax2dx(const scalar a, const scalar x) const
+		{
+			const scalar Ax = std::abs(x);
+			const scalar Aa = std::abs(a);
+			const scalar SAa = std::sqrt(Aa);
+			const scalar SAa3 = SAa*SAa*SAa;
+			const scalar sx = math::sign(x);
+	        const scalar x2  = x*x;
+	        const scalar x3  = x*x2;
+	        const scalar x4  = x*x3;
+	        const scalar x5  = x*x4;
+	        const scalar ax2  = a * x2;
+			return (ax2 >= s0? 
+			    ((-std::cos(SAa*Ax)*SAa*sx + SAa*sx)*Ax/(x4*SAa3) + (-std::sin(SAa*Ax) + SAa*Ax)*sx/(x4*SAa3) - 4*(-std::sin(SAa*Ax) + SAa*Ax)*Ax/(x5*SAa3))
+			  : ((std::cosh(SAa*Ax)*SAa*sx - SAa*sx)*Ax/(x4*SAa3) + (std::sinh(SAa*Ax) - SAa*Ax)*sx/(x4*SAa3) - 4*(std::sinh(SAa*Ax) - SAa*Ax)*Ax/(x5*SAa3))
+			);
+		}
+
+		scalar d2Cax2dx2(const scalar a, const scalar x) const
+		{
+			const scalar Ax = std::abs(x);
+			const scalar Aa = std::abs(a);
+			const scalar SAa = std::sqrt(Aa);
+			const scalar sx = math::sign(x);
+	        const scalar x2  = x*x;
+	        const scalar ax2  = a * x2;
+			return (ax2 >= s0? 
+		        (std::cos(SAa*Ax)*sx*sx  - 4*std::sin(SAa*Ax)*sx/(x*SAa)  + 6*(s1 - std::cos (SAa*Ax))/(x2*Aa))/x2
+   			  : (std::cosh(SAa*Ax)*sx*sx - 4*std::sinh(SAa*Ax)*sx/(x*SAa) - 6*(s1 - std::cosh(SAa*Ax))/(x2*Aa))/x2 
+			);
+		}
+
+		scalar d2Sax2dx2(const scalar a, const scalar x) const
+		{
+			const scalar Ax = std::abs(x);
+			const scalar Aa = std::abs(a);
+			const scalar SAa = std::sqrt(Aa);
+			const scalar SAa3 = SAa*SAa*SAa;
+			const scalar sx = math::sign(x);
+	        const scalar x2  = x*x;
+	        const scalar x3  = x*x2;
+	        const scalar x4  = x*x3;
+	        const scalar ax2  = a * x2;
+			return (ax2 >= s0? 
+			      (- 2*(std::cos(SAa*Ax)  - 1)*sx*sx/Aa + (std::sin(SAa*Ax)*Aa*sx*sx )*Ax/SAa3 + 8*(std::sin(SAa*Ax)  - SAa*Ax)*sx/(x*SAa3) + 8*(std::cos(SAa*Ax)  - 1)*Ax*sx/(x*Aa) - 20*(std::sin(SAa*Ax)  - SAa*Ax)*Ax/(x2*SAa3))/x4
+			    : (+ 2*(std::cosh(SAa*Ax) - 1)*sx*sx/Aa + (std::sinh(SAa*Ax)*Aa*sx*sx)*Ax/SAa3 - 8*(std::sinh(SAa*Ax) - SAa*Ax)*sx/(x*SAa3) - 8*(std::cosh(SAa*Ax) - 1)*Ax*sx/(x*Aa) + 20*(std::sinh(SAa*Ax) - SAa*Ax)*Ax/(x2*SAa3))/x4
+			);
 		}
 
 	public:
@@ -45,7 +110,7 @@ namespace orbit {
 
 	    UniversalPropagator(
 	        scalar gravitational_constant,
-	        int   max_refinement_count = 5,
+	        int   max_refinement_count = 100,
 	        scalar max_precision       = 1e-15,
 	        int   laguerre_method_n    = 5
 	    ) : 
@@ -65,20 +130,41 @@ namespace orbit {
 		) const {
 	        const scalar x2   = x * x;
 	        const scalar x3   = x * x2;
+	        // const scalar x4   = x * x3;
+	        // const scalar x5   = x * x4;
+	        // const scalar x4   = x * x3;
+	        // const scalar a2   = a * a;
 	        const scalar ax2  = a * x2;
+	        const scalar one_r0a = s1 - r0 * a;
 	        const scalar Cax2 = C(ax2);
 	        const scalar Sax2 = S(ax2);
-	        const scalar one_r0a = s1 - r0 * a;
+	        const scalar dCax2dx_ = dCax2dx(a,x);
+	        const scalar dSax2dx_ = dSax2dx(a,x);
+	        const scalar d2Cax2dx2_ = d2Cax2dx2(a,x);
+	        const scalar d2Sax2dx2_ = d2Sax2dx2(a,x);
 
 	        const scalar F    = sigma0 * x2 * Cax2 + one_r0a * x3 * Sax2 + r0 * x - dtsqrtmu;
-	        const scalar dFdx = sigma0 * x * (s1 - ax2 * Sax2) + one_r0a * x2 * Cax2 + r0;
+	        const scalar dFdx = 
+        	(
+        		   r0
+        		 + sigma0*x2*dCax2dx_
+        		 + s2*sigma0*x*Cax2
+        		 + x3*(-a*r0 + s1)*dSax2dx_
+        		 + s3*x2*(-a*r0 + s1)*Sax2
+        	);
 
 	        const scalar n   = laguerre_method_n;
 	        const scalar n_1 = n - s1;
 
-	        const scalar d2Fdx2 =
-	            sigma0 - (sigma0 * ax2 * (Cax2 - s3 * Sax2)) +
-	            (one_r0a / x) * (s1 - ax2 * Sax2 - s2 * Cax2);
+	        const scalar d2Fdx2 = 
+			(
+				  sigma0*x2*d2Cax2dx2_
+				+ 4*sigma0*x*dCax2dx_
+				+ 2*sigma0*Cax2
+				+ x3*one_r0a*d2Sax2dx2_
+				+ 6*x2*one_r0a*dSax2dx_ 
+				+ 6*x*one_r0a*Sax2
+			);
 
 	        return -scalar(n) * F / // Laguerre method
 	        	(dFdx + math::sign(dFdx) * std::sqrt(std::abs(n_1 * n_1 * dFdx * dFdx - (n * n_1 * F * d2Fdx2))));
@@ -116,15 +202,16 @@ namespace orbit {
 	        const scalar r0 = glm::length(R0);
 	        const scalar v0 = glm::length(V0);
 	        const scalar a  = s2 / r0 - (v0 * v0) / mu;
+	        const scalar sma  = s1/a; // semi-major axis
 	        const scalar dt = t - t0;
 	        const scalar x = solve(
-	        	/* x0 */ a > s0? 
+	        	/* x0 */ a >= s0? 
 	        		  dt*sqrt_mu*a // elliptic
-	        		: math::sign(dt) * std::sqrt(-a) *
+	        		: math::sign(dt) * std::sqrt(-sma) *
 		                 std::log(
-		                     -s2 * mu * dt /
-		                     (a * (glm::dot(R0, V0) +
-		                           math::sign(dt) * std::sqrt(-mu * a) * (s1 - r0 / a)))
+		                     -s2 * dt * mu /
+		                     (sma*(glm::dot(R0, V0) +
+		                       math::sign(dt) * std::sqrt(-mu*sma) * (s1 - r0 * a)))
 		                 ), // hyperbolic
 	        	a, r0, 
 	        	/* sigma0 */    glm::dot(R0, V0) / sqrt_mu, 

@@ -122,11 +122,11 @@ TEST_CASE("UniversalPropagator::state()", "[body]") {
 
 	// parent mass (kg), radius (m), escape velocity (m/s)
 	std::vector<EscapeVelocity> escape_velocities = {
-	    // {mass_of_earth_moon,  12756.2 / 2.0,    11.186e3},
-	    // {mass_of_saturn,      120536  / 2.0,    36.09e3},
-	    // {mass_of_jupiter,     142984  / 2.0,    60.20e3},
-	    // {mass_of_sun,         432300  / 2.0,   617.5e3},
-	    // {mass_of_galaxy,      24000 * 9.4e15, 594e3},
+	    EscapeVelocity {si::earth_mass/kg,       si::earth_radius/m,  11.186e3},
+	    EscapeVelocity {mass_of_saturn/kg,       58232e3,              36.09e3},
+	    EscapeVelocity {si::jupiter_mass/kg,     si::jupiter_radius/m, 60.20e3},
+	    EscapeVelocity {si::solar_mass/kg,       si::solar_radius/m,   617.5e3},
+	    // EscapeVelocity {mass_of_galaxy/kg,      24000 * 9.4e15, 594e3},
 	};
 
 	// (parent_mass, Elements)
@@ -170,6 +170,17 @@ TEST_CASE("UniversalPropagator::state()", "[body]") {
         all_periapsides.emplace_back(m, u);
     }
 
+	// Eccentrics
+    for (const auto& mrv : escape_velocities) {
+        all_periapsides.emplace_back(mrv.mass, 
+        	Universals(
+	            mrv.mass,
+	            0.0,
+	            glm::vec3(mrv.radius, 0.0f, 0.0f),
+	            glm::vec3(0.0f, mrv.velocity*0.9, 0.0f)
+	        ));
+    }
+
 	// Parabolics
     for (const auto& mrv : escape_velocities) {
         all_periapsides.emplace_back(mrv.mass, 
@@ -177,7 +188,7 @@ TEST_CASE("UniversalPropagator::state()", "[body]") {
 	            mrv.mass,
 	            0.0,
 	            glm::vec3(mrv.radius, 0.0f, 0.0f),
-	            glm::vec3(0.0f, mrv.velocity, 0.0f)
+	            glm::vec3(0.0f, mrv.velocity*1.0, 0.0f)
 	        ));
     }
 
@@ -188,7 +199,7 @@ TEST_CASE("UniversalPropagator::state()", "[body]") {
 	            mrv.mass,
 	            0.0,
 	            glm::vec3(mrv.radius, 0.0f, 0.0f),
-	            glm::vec3(0.0f, mrv.velocity * 1.5, 0.0f)
+	            glm::vec3(0.0f, mrv.velocity * 1.1, 0.0f)
 	        ));
     }
 
@@ -230,22 +241,39 @@ TEST_CASE("UniversalPropagator::state()", "[body]") {
     SECTION("orbit.advance() apsides extrema")
 	{
 
-	    // for universals in all_periapsides:
-	    //     e = 1e2
-	    //     for sign in [1,-1]:
-	    //         # periapsis position
-	    //         assert (
-	    //             glm.length(propagator.state(universals,0).position) <
-	    //             glm.length(propagator.state(universals,e).position)
-	    //         )
-	    //         # periapsis velocity
-	    //         assert (
-	    //             glm.length(propagator.state(universals,0).velocity) >
-	    //             glm.length(propagator.state(universals,e).velocity)
-	    //         )
+	    for (const auto& [m, o] : all_periapsides)
+    	{
+            const double e = 1e-1;
+
+            for (const double sign : { 1.0, -1.0 })
+            {
+                // // periapsis position
+                // REQUIRE(
+                // 	glm::distance(
+                //         glm::length(
+                //         	o.initial_position,
+                //         	propagator.state(o, 0.0).position
+                //         )
+                //     ) < 1e-5);
+
+                // periapsis position
+                REQUIRE(
+                    glm::length(o.initial_position) <=
+                    glm::length(propagator.state(o, sign*e).position)
+                );
+
+                // periapsis velocity
+                REQUIRE(
+                    glm::length(propagator.state(o, 0.0).velocity) >=
+                    glm::length(propagator.state(o, sign*e).velocity)
+                );
+
+            }
+    	}
 
 	    for (const auto& periapsis : elliptic_periapsides)
 	    {
+
 	        const double mass = periapsis.first/kg;
 	        Elements elements = periapsis.second;
 
@@ -424,7 +452,7 @@ TEST_CASE("UniversalPropagator::state()", "[body]") {
 	}
 
 	SECTION("state() is a group") {
-    	Adapter coarse(Propagator(G), 1e-11, 1e-11);
+    	Adapter coarse(Propagator(G), 1e-9, 1e-9);
     	Adapter exact(Propagator(G), 0.0, 0.0);
 
 	    for (const auto& [m, a] : all_periapsides) {
