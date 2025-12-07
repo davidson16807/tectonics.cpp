@@ -112,6 +112,7 @@ TEST_CASE("UniversalPropagator::state()", "[body]") {
 	const auto mass_of_saturn           = 5.683e26 * si::kilogram;     
 	const auto mass_of_uranus           = 8.681e25 * si::kilogram;     
 	const auto mass_of_neptune          = 1.024e26 * si::kilogram;     
+	const auto mass_of_pluto            = 1.3e22 * si::kilogram; 
 	// const auto mass_of_pluto_charon     = (1.3e22 + 1.5e21) * si::kilogram; 
 	const auto mass_of_sun              = si::solar_mass; 
 	const auto mass_of_galaxy           = 1.262e41 * si::kilogram; // back calculated to achieve period of 250 million years
@@ -123,6 +124,7 @@ TEST_CASE("UniversalPropagator::state()", "[body]") {
 	// parent mass (kg), radius (m), escape velocity (m/s)
 	std::vector<EscapeVelocity> escape_velocities = {
 	    EscapeVelocity {si::earth_mass/kg,       si::earth_radius/m,   11.186e3},
+	    EscapeVelocity {mass_of_pluto/kg,        1188.3e3,             1.212e3},
 	    EscapeVelocity {mass_of_uranus/kg,       25362e3,              21.38e3},
 	    EscapeVelocity {mass_of_neptune/kg,      24622e3,              23.56e3},
 	    EscapeVelocity {mass_of_saturn/kg,       58232e3,              36.09e3},
@@ -136,6 +138,12 @@ TEST_CASE("UniversalPropagator::state()", "[body]") {
 	    // TODO: add didymos/dimorphos
 	    { mass_of_didymos_dimorphos, Elements(1.144e3, 0.0247, 169.3 * si::degree, 0.0, 0.0, 0.0) }, // Didymos, post-impact
 	    { mass_of_earth_moon, Elements(384e6, 0.0549, 0.0   * si::degree, 0.0, 0.0, 0.0) }, // Moon
+	    { mass_of_uranus, Elements(129846e3,  0.0014, 4.421 * si::degree, 0.0, 0.0, 0.0) }, // Miranda
+	    { mass_of_uranus, Elements(190929e3,  0.0014, 0.026 * si::degree, 0.0, 0.0, 0.0) }, // Ariel
+	    { mass_of_uranus, Elements(265986e3,  0.0039, 0.083 * si::degree, 0.0, 0.0, 0.0) }, // Umbriel
+	    { mass_of_uranus, Elements(265986e3,  0.0016, 0.114 * si::degree, 0.0, 0.0, 0.0) }, // Titania
+	    { mass_of_uranus, Elements(583511e3,  0.0016, 0.125 * si::degree, 0.0, 0.0, 0.0) }, // Oberon
+	    // { mass_of_neptune, Elements(354759e3, 0.0000, 156.865*si::degree, 0.0, 0.0, 0.0) }, // Triton
 	    { mass_of_saturn, Elements(186e6,     0.0196, 1.53  * si::degree, 0.0, 0.0, 0.0) }, // Mimas
 	    { mass_of_saturn, Elements(238.4e6,   0.0047, 0.02  * si::degree, 0.0, 0.0, 0.0) }, // Enceladus
 	    { mass_of_saturn, Elements(295e6,     0.0001, 1.09  * si::degree, 0.0, 0.0, 0.0) }, // Tethys
