@@ -106,17 +106,19 @@ TEST_CASE("UniversalPropagator::state()", "[body]") {
 
 	constexpr auto G = si::gravitational_constant / (m3/(kg*s*s));
 	// constexpr auto au = si::astronomical_unit;
+	const auto mass_of_dimorphos         = 1.33e9 * si::kilogram;      
+	// const auto mass_of_didymos           = 5.2e11 * si::kilogram;      
 	const auto mass_of_didymos_dimorphos = 5.4e11 * si::kilogram;      
-	const auto mass_of_earth_moon       = 6.0457e24 * si::kilogram;    
-	const auto mass_of_jupiter          = si::jupiter_mass;     
-	const auto mass_of_saturn           = 5.683e26 * si::kilogram;     
-	const auto mass_of_uranus           = 8.681e25 * si::kilogram;     
-	const auto mass_of_neptune          = 1.024e26 * si::kilogram;     
-	const auto mass_of_pluto            = 1.3e22 * si::kilogram; 
-	const auto mass_of_charon           = 1.5e21 * si::kilogram; 
-	const auto mass_of_pluto_charon     = mass_of_pluto + mass_of_charon;
-	const auto mass_of_sun              = si::solar_mass; 
-	const auto mass_of_galaxy           = 1.262e41 * si::kilogram; // back calculated to achieve period of 250 million years
+	const auto mass_of_earth_moon        = 6.0457e24 * si::kilogram;    
+	const auto mass_of_jupiter           = si::jupiter_mass;     
+	const auto mass_of_saturn            = 5.683e26 * si::kilogram;     
+	const auto mass_of_uranus            = 8.681e25 * si::kilogram;     
+	const auto mass_of_neptune           = 1.024e26 * si::kilogram;     
+	const auto mass_of_pluto             = 1.3e22 * si::kilogram; 
+	const auto mass_of_charon            = 1.5e21 * si::kilogram; 
+	const auto mass_of_pluto_charon      = mass_of_pluto + mass_of_charon;
+	const auto mass_of_sun               = si::solar_mass; 
+	const auto mass_of_galaxy            = 1.262e41 * si::kilogram; // back calculated to achieve period of 250 million years
 
 	Properties properties(vec3(1,0,0), vec3(0,0,1), G);
 	ElementsAndState converter(properties);
@@ -124,20 +126,22 @@ TEST_CASE("UniversalPropagator::state()", "[body]") {
 
 	// parent mass (kg), radius (m), escape velocity (m/s)
 	std::vector<EscapeVelocity> escape_velocities = {
-	    EscapeVelocity {si::earth_mass/kg,       si::earth_radius/m,   11.186e3},
-	    EscapeVelocity {mass_of_pluto/kg,        1188.3e3,             1.212e3},
-	    EscapeVelocity {mass_of_uranus/kg,       25362e3,              21.38e3},
-	    EscapeVelocity {mass_of_neptune/kg,      24622e3,              23.56e3},
-	    EscapeVelocity {mass_of_saturn/kg,       58232e3,              36.09e3},
-	    EscapeVelocity {si::jupiter_mass/kg,     si::jupiter_radius/m, 60.20e3},
-	    EscapeVelocity {si::solar_mass/kg,       si::solar_radius/m,   617.5e3},
-	    EscapeVelocity {mass_of_galaxy/kg,       24000 * 9.4e15, 594e3},
+	    EscapeVelocity {mass_of_dimorphos/kg, 75.5,                 0.1}, // ESA 2024
+	    // EscapeVelocity {mass_of_didymos/kg,   765/2.0,              0.24}, // Langner 2023
+	    EscapeVelocity {mass_of_pluto/kg,     1188.3e3,             1.212e3},
+	    EscapeVelocity {si::earth_mass/kg,    si::earth_radius/m,   11.186e3},
+	    EscapeVelocity {mass_of_uranus/kg,    25362e3,              21.38e3},
+	    EscapeVelocity {mass_of_neptune/kg,   24622e3,              23.56e3},
+	    EscapeVelocity {mass_of_saturn/kg,    58232e3,              36.09e3},
+	    EscapeVelocity {si::jupiter_mass/kg,  si::jupiter_radius/m, 60.20e3},
+	    EscapeVelocity {si::solar_mass/kg,    si::solar_radius/m,   617.5e3},
+	    EscapeVelocity {mass_of_galaxy/kg,    24000 * 9.4e15, 594e3},
 	};
 
 	// (parent_mass, Elements)
 	std::vector<std::pair<mass, Elements>> elliptic_periapsides = {
 	    // TODO: add didymos/dimorphos
-	    { mass_of_didymos_dimorphos, Elements(1.144e3, 0.0247, 169.3 * si::degree, 0.0, 0.0, 0.0) }, // Didymos, post-impact
+	    { mass_of_didymos_dimorphos, Elements(1.144e3, 0.0247, 169.3 * si::degree, 0.0, 0.0, 0.0) }, // Dimorphos, post-impact
 	    // { mass_of_pluto_charon, Elements(2126e3,  0.0, 0.0 * si::degree, 0.0, 0.0, 0.0) }, // Pluto
 	    { mass_of_pluto_charon, Elements(17470e3, 0.0, 0.0 * si::degree, 0.0, 0.0, 0.0) }, // Charon
 	    { mass_of_earth_moon, Elements(384e6, 0.0549, 0.0   * si::degree, 0.0, 0.0, 0.0) }, // Moon
