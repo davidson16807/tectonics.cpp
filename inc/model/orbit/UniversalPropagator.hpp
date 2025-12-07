@@ -110,7 +110,7 @@ namespace orbit {
 
 	    UniversalPropagator(
 	        scalar gravitational_constant,
-	        int   max_refinement_count = 100,
+	        int   max_refinement_count = 35,
 	        scalar max_precision       = 1e-15,
 	        int   laguerre_method_n    = 5
 	    ) : 

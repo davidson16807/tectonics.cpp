@@ -113,7 +113,8 @@ TEST_CASE("UniversalPropagator::state()", "[body]") {
 	const auto mass_of_uranus           = 8.681e25 * si::kilogram;     
 	const auto mass_of_neptune          = 1.024e26 * si::kilogram;     
 	const auto mass_of_pluto            = 1.3e22 * si::kilogram; 
-	// const auto mass_of_pluto_charon     = (1.3e22 + 1.5e21) * si::kilogram; 
+	const auto mass_of_charon           = 1.5e21 * si::kilogram; 
+	const auto mass_of_pluto_charon     = mass_of_pluto + mass_of_charon;
 	const auto mass_of_sun              = si::solar_mass; 
 	const auto mass_of_galaxy           = 1.262e41 * si::kilogram; // back calculated to achieve period of 250 million years
 
@@ -130,13 +131,15 @@ TEST_CASE("UniversalPropagator::state()", "[body]") {
 	    EscapeVelocity {mass_of_saturn/kg,       58232e3,              36.09e3},
 	    EscapeVelocity {si::jupiter_mass/kg,     si::jupiter_radius/m, 60.20e3},
 	    EscapeVelocity {si::solar_mass/kg,       si::solar_radius/m,   617.5e3},
-	    EscapeVelocity {mass_of_galaxy/kg,      24000 * 9.4e15, 594e3},
+	    EscapeVelocity {mass_of_galaxy/kg,       24000 * 9.4e15, 594e3},
 	};
 
 	// (parent_mass, Elements)
 	std::vector<std::pair<mass, Elements>> elliptic_periapsides = {
 	    // TODO: add didymos/dimorphos
 	    { mass_of_didymos_dimorphos, Elements(1.144e3, 0.0247, 169.3 * si::degree, 0.0, 0.0, 0.0) }, // Didymos, post-impact
+	    // { mass_of_pluto_charon, Elements(2126e3,  0.0, 0.0 * si::degree, 0.0, 0.0, 0.0) }, // Pluto
+	    { mass_of_pluto_charon, Elements(17470e3, 0.0, 0.0 * si::degree, 0.0, 0.0, 0.0) }, // Charon
 	    { mass_of_earth_moon, Elements(384e6, 0.0549, 0.0   * si::degree, 0.0, 0.0, 0.0) }, // Moon
 	    { mass_of_uranus, Elements(129846e3,  0.0014, 4.421 * si::degree, 0.0, 0.0, 0.0) }, // Miranda
 	    { mass_of_uranus, Elements(190929e3,  0.0014, 0.026 * si::degree, 0.0, 0.0, 0.0) }, // Ariel
