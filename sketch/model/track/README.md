@@ -1,0 +1,1 @@
+`track::` contains callable objects that map times to positions or rotations of a space. This can be used to represent an object moving along a predefined trajectory, or "track". 
