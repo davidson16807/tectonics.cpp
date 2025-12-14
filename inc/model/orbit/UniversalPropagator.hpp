@@ -21,6 +21,7 @@ namespace orbit {
 		static constexpr scalar s1 = scalar(1);
 		static constexpr scalar s2 = scalar(2);
 		static constexpr scalar s3 = scalar(3);
+		static constexpr scalar pi = scalar(3.141592653589793238462);
 
 		scalar C(const scalar y) const
 		{
@@ -103,21 +104,24 @@ namespace orbit {
 		}
 
 	public:
-	    scalar gravitational_constant;
-	    int    max_refinement_count;
-	    scalar max_precision;
-	    int    laguerre_method_n;
+	    const scalar gravitational_constant;
+	    const int    max_refinement_count;
+	    const scalar max_precision;
+	    const int    laguerre_method_n;
+	    const bool   force_congruence;
 
 	    UniversalPropagator(
 	        scalar gravitational_constant,
 	        int   max_refinement_count = 35,
 	        scalar max_precision       = 1e-15,
-	        int   laguerre_method_n    = 5
+	        int   laguerre_method_n    = 5,
+	        bool  force_congruence   = false
 	    ) : 
 	    	gravitational_constant(gravitational_constant),
 	    	max_refinement_count(max_refinement_count),
 	    	max_precision(max_precision),
-	    	laguerre_method_n(laguerre_method_n)
+	    	laguerre_method_n(laguerre_method_n),
+	    	force_congruence(force_congruence)
 	    {
 	    }
 
@@ -130,10 +134,6 @@ namespace orbit {
 		) const {
 	        const scalar x2   = x * x;
 	        const scalar x3   = x * x2;
-	        // const scalar x4   = x * x3;
-	        // const scalar x5   = x * x4;
-	        // const scalar x4   = x * x3;
-	        // const scalar a2   = a * a;
 	        const scalar ax2  = a * x2;
 	        const scalar one_r0a = s1 - r0 * a;
 	        const scalar Cax2 = C(ax2);
@@ -153,8 +153,8 @@ namespace orbit {
         		 + s3*x2*(-a*r0 + s1)*Sax2
         	);
 
-	        const scalar n   = laguerre_method_n;
-	        const scalar n_1 = n - s1;
+	        const scalar n   (laguerre_method_n);
+	        const scalar n_1 (n - s1);
 
 	        const scalar d2Fdx2 = 
 			(
@@ -190,6 +190,14 @@ namespace orbit {
 	        return x;
 	    }
 
+	    bool is_elliptic(const Universals& orbit) const {
+	        const scalar mu = gravitational_constant * orbit.combined_mass;
+	        const scalar r0 = glm::length(orbit.initial_position);
+	        const scalar v0 = glm::length(orbit.initial_velocity);
+	        const scalar a  = s2 / r0 - (v0 * v0) / mu;
+	        return a > s0;
+	    }
+
 	    State state(const Universals& orbit, const scalar t) const {
 	        if (t == s0) {
 	            return State(orbit.initial_position, orbit.initial_velocity);
@@ -203,10 +211,11 @@ namespace orbit {
 	        const scalar v0 = glm::length(V0);
 	        const scalar a  = s2 / r0 - (v0 * v0) / mu;
 	        const scalar sma  = s1/a; // semi-major axis
-	        const scalar dt = t - t0;
+	        const scalar p = s2*pi*std::sqrt(a*a*a/mu); // period
+	        const scalar dt = (a >=s0 && force_congruence? t%p:t) - t0;
 	        const scalar x = solve(
 	        	/* x0 */ a >= s0? 
-	        		  dt*sqrt_mu*a // elliptic
+	        		  dt*sqrt_mu*a // elliptic or parabolic
 	        		: math::sign(dt) * std::sqrt(-sma) *
 		                 std::log(
 		                     -s2 * dt * mu /
@@ -240,6 +249,7 @@ namespace orbit {
 	    Universals tare(const Universals& orbit) const {
 	        return advance(orbit, orbit.time_offset);
 	    }
+
 	};
 
 }
@@ -254,7 +264,7 @@ We need Orbit to do the following:
 time t must be selected according to phase outside of logic for `Orbit`. This behavior is still acceptable.
 
 2) is accomplished such that, when applying a change in velocity Δv, 
-the new state s+Δv is used to create an orbit Orbit(s+Δv, -t₀), where t₀ is time since the epoch started 
+the new state s+Δv is used to create an orbit Orbit(s+Δv, t₀), where t₀ is time since the epoch started 
 time t₀ is tracked outside the Orbits so that Orbits do not need update every timestep. 
 
 
