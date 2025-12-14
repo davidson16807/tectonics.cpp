@@ -73,6 +73,8 @@ namespace orbit {
 	{
 		using vec3 = glm::vec<3,scalar,glm::defaultp>;
 
+		constexpr scalar pi = 3.141592653589793238462;
+
 		const vec3 vernal_equinox_direction;
 		const vec3 north_pole_direction;
 		const scalar standard_gravitational_parameter;
@@ -88,7 +90,6 @@ namespace orbit {
 		scalar period_from_semi_major_axis(const scalar semi_major_axis, const scalar combined_mass) const
 		{
 			const scalar a = semi_major_axis;
-	        const scalar pi = 3.141592653589793238462;
 			const scalar mu = standard_gravitational_parameter * combined_mass;
         	return 2*pi*std::sqrt(a*a*a/mu);
 		}
@@ -158,7 +159,6 @@ namespace orbit {
 		// "E"
 		scalar eccentric_anomaly_from_true_anomaly(const scalar true_anomaly, const scalar eccentricity, const int iterations = 10) const
 		{
-	        const scalar pi = 3.141592653589793238462;
 			return std::acos(-(std::cos(pi - true_anomaly) - eccentricity) / (1.0 - eccentricity * std::cos(pi - true_anomaly)));
 		}
 		// "ν₀"

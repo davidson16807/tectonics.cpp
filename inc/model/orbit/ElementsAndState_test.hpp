@@ -66,11 +66,11 @@ namespace orbit {
 		}
 		*/
 	}
-	TEST_CASE( "get_state_from_elements() inclination congruence", "[orbit]" ) {
+	TEST_CASE( "get_state_from_elements() inclination congruence modulo T", "[orbit]" ) {
 		orbit::Properties<double> properties(glm::vec3(1,0,0), glm::vec3(0,0,1), 
 			si::gravitational_constant / (si::meter3/si::kilogram/si::second2));
 		ElementsAndState<double> conversion(properties);
-	    SECTION("For a given function there exists another function that negates its effect"){
+	    SECTION("Results of a given function repeat for a period of T"){
 			const double m = si::solar_mass / si::kilogram;
 	    	const double max_samples = 3.0;
 	    	const double pi = 3.1415926;
