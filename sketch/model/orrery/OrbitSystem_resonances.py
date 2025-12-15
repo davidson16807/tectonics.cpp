@@ -9,6 +9,22 @@ def residue(pq):
 '''
 Resonance is expressed as a ratio p:p+q where p is the "index" and q is the "order".
 Index and order reflect the most important aspects of the resonance to astronomers.
+The largest order q of any resonance of serious interest to astronomers appears to be 4.
+The index p can be anything, but it determines how often the planets assume the same absolute positions in space,
+and we have to track absolute positions to accurately estimate insolation (not just relative positions, determined by the order),
+so it affects the sample count of the resonance, and therefore it must be held low for performance reasons.
+'''
+def closest_resonance_index(fraction):
+	resonances = sorted([(p,p+q) for p in range(1,4) for q in range(0,4+1)], key=lambda p:p[0]/p[1])
+	fractions = [pq[0]/pq[1] for pq in resonances]
+	return (
+		resonances[bisect.bisect_left(fractions, fraction)] if fraction<1.0 else 
+		reversed(resonances[bisect.bisect_left(fractions, 1.0/fraction)])
+	)
+
+'''
+Resonance is expressed as a ratio p:p+q where p is the "index" and q is the "order".
+Index and order reflect the most important aspects of the resonance to astronomers.
 p+q determines the number of times the larger cycle must repeat for all positions to reset.
 '''
 def closest_resonance_index(fraction, max_index):
@@ -43,8 +59,9 @@ def periods(periods, resonances, resonance_count, max_index):
 			min(period_range[resonance][0], periods[node]), 
 			max(period_range[resonance][1], periods[node])
 		)
-	p = closest_resonance_index(fraction, max_index)
-	residue(p*fraction)
+
+	for i, (lo, hi) in enumerate(period_range):
+		p = closest_resonance_index(lo/hi, max_index)
 
 phi = 1.618033
 pi = 3.14159265358979
