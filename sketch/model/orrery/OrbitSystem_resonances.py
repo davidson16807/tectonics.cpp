@@ -52,19 +52,23 @@ def resonances(periods, max_index):
 				resonances[j] = resonance_id
 	return resonances, resonance_count
 
-def periods(periods, resonances, resonance_count, max_index):
+def periods(periods_, resonances_, resonance_count, max_index):
 	period_range = [(float('inf'),0)]*resonance_count
-	for node, resonance in resonances.items():
+	for node, resonance in resonances_.items():
 		period_range[resonance] = (
-			min(period_range[resonance][0], periods[node]), 
-			max(period_range[resonance][1], periods[node])
+			min(period_range[resonance][0], periods_[node]), 
+			max(period_range[resonance][1], periods_[node])
 		)
-
-	for i, (lo, hi) in enumerate(period_range):
-		p = closest_resonance_index(lo/hi, max_index)
+	resonance_periods = [closest_resonance_index(lo/hi, max_index)*lo
+		for (lo, hi) in period_range]
+	return resonance_periods
 
 phi = 1.618033
 pi = 3.14159265358979
-periods = [1.0, 2.0*pi, phi, 2.0, pi, 2.0*phi, 3.0*pi]
-resonances, resonance_count = resonances(periods, 10)
+periods_ = [1.0, 2.0*pi, phi, 2.0, pi, 2.0*phi, 3.0*pi]
+resonances_, resonance_count = resonances(periods_, 10)
+for i in range(len(periods_)):
+	print(i, resonances_[i])
+
+resonance_periods = periods(periods_, resonances_, resonance_count, 20)
 print(resonances, resonance_count)
