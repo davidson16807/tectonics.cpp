@@ -83,7 +83,7 @@ namespace analytic {
     constexpr Gaussian<T> compose(const Gaussian<T>& f, const analytic::Scaling<T> g)
     {
         return Gaussian<T>(
-            f.mean * g.factor,
+            f.mean / g.factor,
             f.standard_deviation / g.factor,
             f.amplitude
         );
