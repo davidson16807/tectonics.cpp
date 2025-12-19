@@ -1,5 +1,8 @@
 #pragma once
 
+// C libraries
+#include <cmath>
+
 #include "Gaussian.hpp"
 
 namespace analytic {
@@ -25,9 +28,9 @@ namespace analytic {
         {}
         // zero constructor
         constexpr explicit Error():
-            mean(0.0f),
-            standard_deviation(1.0f),
-            amplitude(0.0f)
+            mean(0),
+            standard_deviation(1),
+            amplitude(0)
         {}
         constexpr Error(const Error<T>& f):
             mean(f.mean),
@@ -40,7 +43,7 @@ namespace analytic {
             const T b(1.1295);
             const T u((x-mean)/(standard_deviation*std::sqrt(T(2))));
             // Approximation for erf() is accurate to within 2⋅10⁻⁴ over the range [-10,10].
-            return (amplitude/(T(1)/(standard_deviation*std::sqrt(T(2)*pi)))) * T(0.5) * (T(1) + std::tanh(a*u*u*u + b*u));
+            return (amplitude*(standard_deviation*std::sqrt(T(2)*pi))) * T(0.5) * (T(1) + std::tanh(a*u*u*u + b*u));
         }
         constexpr Error<T>& operator*=(const T k)
         {
@@ -96,13 +99,12 @@ namespace analytic {
         );
     }
 
+
     template<typename T>
     constexpr T maximum(const Error<T>& f, const T lo, const T hi)
     {
         // function is monotonic, so solution must be either lo or hi
-        return
-            lo < f.mean && f.mean < hi? f.mean
-          : f(hi) > f(lo)? hi : lo;
+        return f(hi) > f(lo)? hi : lo;
     }
 
     template<typename T>

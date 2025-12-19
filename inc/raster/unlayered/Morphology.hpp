@@ -116,8 +116,6 @@ namespace unlayered
 			}
 		}
 
-
-
     	template<typename Grid, typename In, typename Out>
 		void opening(const Grid& grid, const In& mask, Out& out, Out& scratch1) const
 		{

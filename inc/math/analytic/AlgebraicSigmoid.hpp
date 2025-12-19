@@ -1,5 +1,11 @@
 #pragma once
 
+// C headers
+#include <cmath>     // std::sqrt, std::abs
+
+// standard headers
+#include <algorithm> // std::max
+
 namespace analytic {
 
     template <typename T>
@@ -16,43 +22,43 @@ namespace analytic {
         {}
         // zero constructor
         constexpr explicit AlgebraicSigmoid():
-            xscale(0.0f),
-            xoffset(0.0f),
-            ymax(0.0f)
+            xscale(0),
+            xoffset(0),
+            ymax(0)
         {}
-        constexpr T operator()(const T x) const
+        T operator()(const T x) const
         {
             T u = xscale * x + xoffset;
-            return ymax * u / std::sqrt(1.0f + u*u);
+            return ymax * u / std::sqrt(T(1) + u*u);
         }
-        constexpr AlgebraicSigmoid<T>& operator*=(const T scalar)
+        constexpr AlgebraicSigmoid<T>& operator*=(const T k)
         {
-            ymax *= scalar;
+            ymax *= k;
             return *this;
         }
-        constexpr AlgebraicSigmoid<T>& operator/=(const T scalar)
+        constexpr AlgebraicSigmoid<T>& operator/=(const T k)
         {
-            ymax /= scalar;
+            ymax /= k;
             return *this;
         }
     };
 
     template<typename T>
-    constexpr AlgebraicSigmoid<T> operator*(const AlgebraicSigmoid<T>& relation, const T scalar)
+    constexpr AlgebraicSigmoid<T> operator*(const AlgebraicSigmoid<T>& relation, const T k)
     {
-        return AlgebraicSigmoid(relation.xscale, relation.xoffset, relation.ymax*scalar);
+        return AlgebraicSigmoid(relation.xscale, relation.xoffset, relation.ymax*k);
     }
 
     template<typename T>
-    constexpr AlgebraicSigmoid<T> operator*(const T scalar, const AlgebraicSigmoid<T>& relation)
+    constexpr AlgebraicSigmoid<T> operator*(const T k, const AlgebraicSigmoid<T>& relation)
     {
-        return AlgebraicSigmoid(relation.xscale, relation.xoffset, relation.ymax*scalar);
+        return AlgebraicSigmoid(relation.xscale, relation.xoffset, relation.ymax*k);
     }
 
     template<typename T>
-    constexpr AlgebraicSigmoid<T> operator/(const AlgebraicSigmoid<T>& relation, const T scalar)
+    constexpr AlgebraicSigmoid<T> operator/(const AlgebraicSigmoid<T>& relation, const T k)
     {
-        return AlgebraicSigmoid(relation.xscale, relation.xoffset, relation.ymax/scalar);
+        return AlgebraicSigmoid(relation.xscale, relation.xoffset, relation.ymax/k);
     }
 
 

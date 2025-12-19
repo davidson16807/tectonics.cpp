@@ -1,5 +1,9 @@
 #pragma once
 
+// C libraries
+#include <cmath>
+
+// in-house libraries
 #include "Scaling.hpp"
 #include "Shifting.hpp"
 
@@ -10,7 +14,7 @@ namespace analytic {
     struct Gaussian {
         using value_type = T;
 
-        static constexpr T pi = 3.141592653589793238462643383279;
+        static constexpr T pi = T(3.141592653589793238462643383279);
 
         T mean;
         T standard_deviation;
@@ -27,9 +31,9 @@ namespace analytic {
         {}
         // zero constructor
         constexpr explicit Gaussian():
-            mean(0.0f),
-            standard_deviation(1.0f),
-            amplitude(0.0f)
+            mean(0),
+            standard_deviation(1),
+            amplitude(0)
         {}
         constexpr Gaussian(const Gaussian<T>& f):
             mean(f.mean),
@@ -80,7 +84,7 @@ namespace analytic {
     {
         return Gaussian<T>(
             f.mean * g.factor,
-            f.standard_deviation/g.factor,
+            f.standard_deviation / g.factor,
             f.amplitude
         );
     }

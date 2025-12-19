@@ -1,7 +1,11 @@
-#pragma once
+
+// C libraries
+#include <cmath>
 
 // std libraries
-#include <cmath>
+#include <vector>
+#include <array>
+#include <cstdint>
 
 // 3rd party libraries
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide p main() - only do this in one cpp file

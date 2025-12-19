@@ -19,7 +19,7 @@ namespace analytic {
         // zero constructor
         constexpr ScaledComplement<T,F>():
             f(),
-            scale()
+            scale(T(1))
         {}
         // constant constructor
         constexpr ScaledComplement<T,F>(T k):
@@ -31,13 +31,13 @@ namespace analytic {
             return f(T(1)-x/scale);
         }
 
-        ScaledComplement<T,F>& operator+=(const ScaledComplement<T,F> g)
+        ScaledComplement<T,F>& operator+=(const ScaledComplement<T,F>& g)
         {
             f += g.f;
             return *this;
         }
 
-        ScaledComplement<T,F>& operator-=(const ScaledComplement<T,F> g)
+        ScaledComplement<T,F>& operator-=(const ScaledComplement<T,F>& g)
         {
             f -= g.f;
             return *this;
@@ -121,14 +121,9 @@ namespace analytic {
 
     // operators with reals that are closed under ScaledComplement<T,F> relations
     template<typename T, typename F>
-    constexpr ScaledComplement<T,F> operator+(const ScaledComplement<T,F>& f, const ScaledComplement<T,F> g)
+    constexpr auto operator+(const ScaledComplement<T,F>& f, const ScaledComplement<T,F>& g)
     {
-        return f.f+g.f;
-    }
-    template<typename T, typename F>
-    constexpr ScaledComplement<T,F> operator+(const ScaledComplement<T,F>& f, const ScaledComplement<T,F>& g)
-    {
-        return f.f+g.f;
+        return ScaledComplement<T>(f.f+g.f);
     }
 
     /*
@@ -153,9 +148,9 @@ namespace analytic {
     Given functions f∘g and h, return the composite function h∘f∘g.
     */
     template<typename T, typename F, typename H>
-    constexpr ScaledComplement<T,F> compose(const H h, const ScaledComplement<T,F>& fg)
+    constexpr auto compose(const H h, const ScaledComplement<T,F>& fg)
     {
-        return ScaledComplement<T,F>(fg.scale, compose(h, fg.f));
+        return ScaledComplement<T>(fg.scale, compose(h, fg.f));
     }
 
 }

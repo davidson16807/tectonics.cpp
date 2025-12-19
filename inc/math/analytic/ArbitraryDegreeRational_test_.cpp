@@ -1,4 +1,3 @@
-#pragma once
 
 // std libraries
 #include <cmath>

@@ -72,3 +72,4 @@ for i in range(len(periods_)):
 
 resonance_periods = periods(periods_, resonances_, resonance_count, 20)
 print(resonances, resonance_count)
+
