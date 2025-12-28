@@ -4,6 +4,9 @@
 #include <cmath>
 
 // std libraries
+#include <string>      // string
+#include <ostream>     // operator<<
+#include <vector>      // vector
 #include <array>       // array
 #include <algorithm>   // clamp, min_element, fill, copy
 #include <complex>     // complex
@@ -179,8 +182,7 @@ namespace analytic {
         return Polynomial<T,0,0>(k2);
     }
 
-    template <typename T, int Nlo, int Nhi, 
-        typename = std::enable_if_t<(Nlo <= Nlo&&Nhi <= Nhi)>> 
+    template <typename T, int Nlo, int Nhi> 
     constexpr Polynomial<T,Nlo,Nhi> polynomial(const Polynomial<T,Nlo,Nhi>& p)
     {
         return Polynomial<T,Nlo,Nhi>(p);
@@ -261,7 +263,7 @@ namespace analytic {
     constexpr Polynomial<T,std::min(Plo,0),std::max(Phi,0)> operator-(const T k, const Polynomial<T,Plo,Phi>& p)
     {
         Polynomial<T,std::min(Plo,0),std::max(Phi,0)> y(p);
-        y *=-1.0f;
+        y *=T(-1);
         y[0] += k;
         return y;
     }
@@ -302,7 +304,7 @@ namespace analytic {
     constexpr Polynomial<T,Plo,Phi> operator-(const Polynomial<T,Plo,Phi>& p)
     {
         Polynomial<T,Plo,Phi> y(p);
-        y *=-1.0f;
+        y *=T(-1);
         return y;
     }
 
@@ -859,7 +861,7 @@ namespace analytic {
     {
         // we know:        y=ax
         // therefore:      y/a=x
-        Polynomial<T,0,1> x;
+        Polynomial<T,1,1> x;
         x[1] = T(1)/y[1];
         return x;
     }
@@ -900,7 +902,7 @@ namespace analytic {
     template<typename T, int Plo, int Phi>
     T derivative(const Polynomial<T,Plo,Phi>& p, const T x)
     {
-        T dydx(0.0f);
+        T dydx(0);
         T xi(std::pow(x, Plo-1));
         for (int i=Plo; i < Phi; ++i)
         {
@@ -935,7 +937,7 @@ namespace analytic {
     template<typename T, int Plo, int Phi>
     T integral(const Polynomial<T,Plo,Phi>& p, const T x)
     {
-        T I(0.0f);
+        T I(0);
 
         for (int i = Plo; i < -1; ++i)
         {
@@ -944,8 +946,8 @@ namespace analytic {
             I += p[i] * std::pow(x, i+1) / (i+1);
         }
 
-        I += p[-1] * (p[-1] != T(0.0f) && Plo < 0? 
-            std::log(std::abs(x)) : T(0.0f));
+        I += p[-1] * (p[-1] != T(0) && Plo < 0? 
+            std::log(std::abs(x)) : T(0));
 
         for (int i = 0; i <= Phi; ++i)
         {
@@ -964,7 +966,7 @@ namespace analytic {
     template<typename T, int Plo, int Phi>
     T integral(const Polynomial<T,Plo,Phi>& p, const T lo, const T hi)
     {
-        T I(0.0f);
+        T I(0);
 
         for (int i = Plo; i < -1; ++i)
         {
@@ -972,8 +974,8 @@ namespace analytic {
                         - std::pow(lo, i+1) / (i+1));
         }
 
-        I += p[-1] * (p[-1] != T(0.0f) && Plo < 0? 
-            std::log(std::abs(hi)) - std::log(std::abs(lo)) : T(0.0f));
+        I += p[-1] * (p[-1] != T(0) && Plo < 0? 
+            std::log(std::abs(hi)) - std::log(std::abs(lo)) : T(0));
 
         for (int i = 0; i <= Phi; ++i)
         {
@@ -1075,8 +1077,8 @@ namespace analytic {
         // the quadratic formula
         const std::complex<T> sqrt_argument = p[1]*p[1] - T(4)*(p[0]-y)*p[2];
         return std::array<std::complex<T>, 2>{
-            -p[1]+std::sqrt(sqrt_argument) / p[2],
-            -p[1]-std::sqrt(sqrt_argument) / p[2]
+            (-p[1]+std::sqrt(sqrt_argument)) / (T(2)*p[2]),
+            (-p[1]-std::sqrt(sqrt_argument)) / (T(2)*p[2])
         };
     }
 
@@ -1092,20 +1094,20 @@ namespace analytic {
         const std::complex<T> s1 = std::pow(r+std::sqrt(q*q*q+r*r), T(1)/T(3));
         const std::complex<T> s2 = std::pow(r-std::sqrt(q*q*q+r*r), T(1)/T(3));
 
-        const std::complex<T> z1 =  (s1+s2) - a[2]/T(3);
-        const std::complex<T> z2 = -(s1+s2)/T(2) - a[2]/T(3) + (s1-s2)*std::cbrt(T(3))/T(2); // *i
-        const std::complex<T> z3 = -(s1+s2)/T(2) - a[2]/T(3) - (s1-s2)*std::cbrt(T(3))/T(2); // *i
+        const std::complex<T> z1 = {(s1+s2) - a[2]/T(3), T(0)};
+        const std::complex<T> z2 = {T(0), -(s1+s2)/T(2) - a[2]/T(3) + (s1-s2)*std::cbrt(T(3))/T(2)}; // i
+        const std::complex<T> z3 = {T(0), -(s1+s2)/T(2) - a[2]/T(3) - (s1-s2)*std::cbrt(T(3))/T(2)}; // i
 
         return std::array<std::complex<T>, 3>{z1,z2,z3};
     }
 
     /*
     `reals()` is a convenience function that accepts iterators for a container of complex values 
-    and returns an iterator containing only those values which are strictly real.
+    and returns an iterator containing only those values that are strictly real.
     This can be useful when condensing solutions to polynomial equations.
     */
-    template<typename T, typename TInputIterator, typename TOutputIterator>
-    TOutputIterator reals(
+    template<typename T>
+    void reals(
         TInputIterator first, 
         TInputIterator last, 
         TOutputIterator result
@@ -1121,19 +1123,18 @@ namespace analytic {
                 ++first;
             }
         }
-        return result;
     }
 
     template<typename T, int Plo>
     constexpr auto extremum(const Polynomial<T,Plo,2>& p) 
     {
-        return solution(derivative(p), 0.0f);
+        return solution(derivative(p), T(0));
     }
 
     template<typename T, int Plo, int Phi>
     constexpr auto extrema(const Polynomial<T,Plo,Phi>& p) 
     {
-        return solutions(derivative(p), 0.0f);
+        return solutions(derivative(p), T(0));
     }
 
     /*
@@ -1171,7 +1172,7 @@ namespace analytic {
     template<typename T, int Plo, int Phi>
     T maximum(const Polynomial<T,Plo,Phi>& p, const T lo, const T hi) 
     {
-        auto candidates = extremum(p);
+        auto candidates = extrema(p);
         candidates.push_back(lo);
         candidates.push_back(hi);
         return *std::max_element(candidates.begin(), candidates.end(), 
@@ -1181,7 +1182,7 @@ namespace analytic {
     template<typename T, int Plo, int Phi>
     T minimum(const Polynomial<T,Plo,Phi>& p, const T lo, const T hi) 
     {
-        auto candidates = extremum(p);
+        auto candidates = extrema(p);
         candidates.push_back(lo);
         candidates.push_back(hi);
         return *std::min_element(candidates.begin(), candidates.end(), 
@@ -1210,19 +1211,19 @@ namespace analytic {
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr T distance(const Polynomial<T,Plo,Phi> p, const Polynomial<T,Qlo,Qhi> q, const T lo, const T hi)
     {
-        return std::sqrt(integral((p-q)*(p-q), lo, hi)) / (hi-lo);
+        return std::sqrt(integral((p-q)*(p-q), lo, hi) / (hi-lo));
     }
 
     template<typename T, int Plo, int Phi>
     constexpr T distance(const Polynomial<T,Plo,Phi> p, const T k, const T lo, const T hi)
     {
-        return std::sqrt(integral((p-k)*(p-k), lo, hi)) / (hi-lo);
+        return std::sqrt(integral((p-k)*(p-k), lo, hi) / (hi-lo));
     }
 
     template<typename T, int Plo, int Phi>
     constexpr T distance(const T k, const Polynomial<T,Plo, Phi> p, const T lo, const T hi)
     {
-        return std::sqrt(integral((p-k)*(p-k), lo, hi)) / (hi-lo);
+        return std::sqrt(integral((p-k)*(p-k), lo, hi) / (hi-lo));
     }
 
     template<typename T, int Plo, int Phi>
@@ -1274,7 +1275,7 @@ namespace analytic {
         Polynomial<T,Plo,Phi> pg = p;
         for (int i = Plo; i <= Phi; ++i)
         {
-            pg[i] *= std::pow(g.factor, T(i));
+            pg[i] *= std::pow(g.factor, i);
         }
         return pg;
     }
@@ -1484,7 +1485,7 @@ namespace analytic {
         return compose(
             Polynomial<T,0,2>{f(x), 
                 inspected::derivative_by_central_finite_difference(f, x, dx, 1) / dx, 
-                inspected::derivative_by_central_finite_difference(f, x, dx, 2) /(dx2*2.0f)},
+                inspected::derivative_by_central_finite_difference(f, x, dx, 2) /(dx2*T(2))},
             Shifting<T>(-x)
         );
     }
@@ -1498,8 +1499,8 @@ namespace analytic {
             compose(
                 Polynomial<T,0,3>(f(x), 
                     inspected::derivative_by_central_finite_difference(f, x, dx, 1) / dx, 
-                    inspected::derivative_by_central_finite_difference(f, x, dx, 2) /(dx2*2.0f), 
-                    inspected::derivative_by_central_finite_difference(f, x, dx, 3) /(dx3*6.0f)),
+                    inspected::derivative_by_central_finite_difference(f, x, dx, 2) /(dx2*T(2)), 
+                    inspected::derivative_by_central_finite_difference(f, x, dx, 3) /(dx3*T(6))),
                 Shifting<T>(-x)
             );
     }
