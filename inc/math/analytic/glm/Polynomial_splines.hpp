@@ -1,5 +1,8 @@
 #pragma once
 
+// C libraries
+#include <cmath>
+
 // 3rd party libraries
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
@@ -16,7 +19,7 @@ namespace analytic {
     namespace {
 
         template<typename T, glm::qualifier Q>
-        glm::vec2<T,Q> spline_sample_factors(glm::vec2<T,Q> exponents, float x)
+        glm::vec2<T,Q> spline_sample_factors(glm::vec2<T,Q> exponents, T x)
         {
             return glm::vec2<T,Q>(
                 pow(x, exponents.x),
@@ -25,7 +28,7 @@ namespace analytic {
         }
 
         template<typename T, glm::qualifier Q>
-        glm::vec2<T,Q> spline_derivative_factors(glm::vec2<T,Q> exponents, float x)
+        glm::vec2<T,Q> spline_derivative_factors(glm::vec2<T,Q> exponents, T x)
         {
             return glm::vec2<T,Q>(
                 exponents.x * pow(x, exponents.x-T(1)),
@@ -34,7 +37,7 @@ namespace analytic {
         }
 
         template<typename T, glm::qualifier Q>
-        glm::vec2<T,Q> spline_2nd_derivative_factors(glm::vec2<T,Q> exponents, float x)
+        glm::vec2<T,Q> spline_2nd_derivative_factors(glm::vec2<T,Q> exponents, T x)
         {
             return glm::vec2<T,Q>(
                 (exponents.x-T(1)) * exponents.x * pow(x, exponents.x-T(2)),
@@ -43,7 +46,7 @@ namespace analytic {
         }
 
         template<typename T, glm::qualifier Q>
-        glm::vec2<T,Q> spline_integral_factors(glm::vec2<T,Q> exponents, float x)
+        glm::vec2<T,Q> spline_integral_factors(glm::vec2<T,Q> exponents, T x)
         {
             return glm::vec2<T,Q>(
                 pow(x, exponents.x+T(1)) / (exponents.x+T(1)),
@@ -53,7 +56,7 @@ namespace analytic {
 
 
         template<typename T, glm::qualifier Q>
-        glm::vec3<T,Q> spline_sample_factors(glm::vec3<T,Q> exponents, float x)
+        glm::vec3<T,Q> spline_sample_factors(glm::vec3<T,Q> exponents, T x)
         {
             return glm::vec3<T,Q>(
                 pow(x, exponents.x),
@@ -63,7 +66,7 @@ namespace analytic {
         }
 
         template<typename T, glm::qualifier Q>
-        glm::vec3<T,Q> spline_derivative_factors(glm::vec3<T,Q> exponents, float x)
+        glm::vec3<T,Q> spline_derivative_factors(glm::vec3<T,Q> exponents, T x)
         {
             return glm::vec3<T,Q>(
                 exponents.x * pow(x, exponents.x-T(1)),
@@ -73,7 +76,7 @@ namespace analytic {
         }
 
         template<typename T, glm::qualifier Q>
-        glm::vec3<T,Q> spline_2nd_derivative_factors(glm::vec3<T,Q> exponents, float x)
+        glm::vec3<T,Q> spline_2nd_derivative_factors(glm::vec3<T,Q> exponents, T x)
         {
             return glm::vec3<T,Q>(
                 (exponents.x-T(1)) * exponents.x * pow(x, exponents.x-T(2)),
@@ -83,7 +86,7 @@ namespace analytic {
         }
 
         template<typename T, glm::qualifier Q>
-        glm::vec3<T,Q> spline_integral_factors(glm::vec3<T,Q> exponents, float x)
+        glm::vec3<T,Q> spline_integral_factors(glm::vec3<T,Q> exponents, T x)
         {
             return glm::vec3<T,Q>(
                 pow(x, exponents.x+T(1)) / (exponents.x+T(1)),
@@ -93,7 +96,7 @@ namespace analytic {
         }
 
         template<typename T, glm::qualifier Q>
-        glm::vec4<T,Q> spline_sample_factors(glm::vec4<T,Q> exponents, float x)
+        glm::vec4<T,Q> spline_sample_factors(glm::vec4<T,Q> exponents, T x)
         {
             return glm::vec4<T,Q>(
                 pow(x, exponents.x),
@@ -104,7 +107,7 @@ namespace analytic {
         }
 
         template<typename T, glm::qualifier Q>
-        glm::vec4<T,Q> spline_derivative_factors(glm::vec4<T,Q> exponents, float x)
+        glm::vec4<T,Q> spline_derivative_factors(glm::vec4<T,Q> exponents, T x)
         {
             return glm::vec4<T,Q>(
                 exponents.x * pow(x, exponents.x-T(1)),
@@ -115,7 +118,7 @@ namespace analytic {
         }
 
         template<typename T, glm::qualifier Q>
-        glm::vec4<T,Q> spline_2nd_derivative_factors(glm::vec4<T,Q> exponents, float x)
+        glm::vec4<T,Q> spline_2nd_derivative_factors(glm::vec4<T,Q> exponents, T x)
         {
             return glm::vec4<T,Q>(
                 (exponents.x-T(1)) * exponents.x * pow(x, exponents.x-T(2)),
@@ -126,7 +129,7 @@ namespace analytic {
         }
 
         template<typename T, glm::qualifier Q>
-        glm::vec4<T,Q> spline_integral_factors(glm::vec4<T,Q> exponents, float x)
+        glm::vec4<T,Q> spline_integral_factors(glm::vec4<T,Q> exponents, T x)
         {
             return glm::vec4<T,Q>(
                 pow(x, exponents.x+T(1)) / (exponents.x+T(1)),
@@ -144,7 +147,7 @@ Polynomial<T,0,1> linear_spline(
         const T xa,     const T xb,
         const T ya,     const T yb){
     const T dfdx = (yb-ya) / (xb-xa);
-    return ya + Polynomial<T,0,1>{ya, dfdx};
+    return (Identity<T>()-xa) * dfdx + ya;
 }
 
 template<typename T>
@@ -152,20 +155,22 @@ Polynomial<T,0,3> cubic_spline(
         const T xa,     const T xb,
         const T ya,     const T yb,
         const T ya_ddx, const T yb_ddx){
+    using mat2 = glm::mat<2,2,T,glm::defaultp>;
+    using vec2 = glm::vec<2,T,glm::defaultp>;
     T b = xb-xa;
-    glm::vec2<T,glm::defaultp> exponents = glm::vec2<T,glm::defaultp>(2,3);
-    glm::vec2<T,glm::defaultp> known_outputs = glm::vec2<T,glm::defaultp>(
+    vec2 exponents = vec2(2,3);
+    vec2 known_outputs = vec2(
         yb - ya - ya_ddx*b,
         yb_ddx  - ya_ddx
     );
-    glm::mat2x2<T,glm::defaultp> known_factors = glm::transpose(
+    mat2 known_factors = glm::transpose(
         glm::mat2x2<T,glm::defaultp>(
             spline_sample_factors    (exponents, b),
             spline_derivative_factors(exponents, b)
         )
     );
-    glm::vec2<T,glm::defaultp> k2k3 = glm::inverse(known_factors) * known_outputs;
-    return Polynomial<T,0,3>{ya, ya_ddx, k2k3.x, k2k3.y};
+    vec2 k2k3 = glm::inverse(known_factors) * known_outputs;
+    return compose(Polynomial<T,0,3>{ya, ya_ddx, k2k3.x, k2k3.y}, Shifting<T>{-xa});
 }
 
 template<typename T>
@@ -173,10 +178,12 @@ Polynomial<T,0,4> quartic_spline_with_known_midpoint(
         const T xa,     const T xb, const T xc,
         const T ya,     const T yb, const T yc,
         const T ya_ddx,             const T yc_ddx){
+    using mat3 = glm::mat<3,3,T,glm::defaultp>;
+    using vec3 = glm::vec<3,T,glm::defaultp>;
     T b = xb-xa;
     T c = xc-xa;
-    glm::vec3<T,glm::defaultp> exponents = glm::vec3<T,glm::defaultp>(2,3,4);
-    glm::vec3<T,glm::defaultp> known_outputs = glm::vec3<T,glm::defaultp>(
+    vec3 exponents = vec3(2,3,4);
+    vec3 known_outputs = vec3(
         yb - ya - ya_ddx*b,
         yc - ya - ya_ddx*c,
         yc_ddx  - ya_ddx
@@ -188,8 +195,8 @@ Polynomial<T,0,4> quartic_spline_with_known_midpoint(
             spline_derivative_factors(exponents, c)
         )
     );
-    glm::vec3<T,glm::defaultp> k2k3k4 = glm::inverse(known_factors) * known_outputs;
-    return Polynomial<T,0,4>{ya, ya_ddx, k2k3k4.x, k2k3k4.y, k2k3k4.z};
+    vec3 k2k3k4 = glm::inverse(known_factors) * known_outputs;
+    return compose(Polynomial<T,0,4>{ya, ya_ddx, k2k3k4.x, k2k3k4.y, k2k3k4.z}, Shifting<T>{-xa});
 }
 
 template<typename T>
@@ -197,11 +204,13 @@ Polynomial<T,0,5> quintic_spline_with_2_known_midpoints(
         const T xa,     const T xb, const T xc, const T xd,
         const T ya,     const T yb, const T yc, const T yd,
         const T ya_ddx,                         const T yd_ddx){
+    using mat4 = glm::mat<4,4,T,glm::defaultp>;
+    using vec4 = glm::vec<4,T,glm::defaultp>;
     T b = xb-xa;
     T c = xc-xa;
     T d = xd-xa;
-    glm::vec4<T,glm::defaultp> exponents = glm::vec4<T,glm::defaultp>(2,3,4,5);
-    glm::vec4<T,glm::defaultp> known_outputs = glm::vec4<T,glm::defaultp>(
+    vec4 exponents = vec4(2,3,4,5);
+    vec4 known_outputs = vec4(
         yb - ya - ya_ddx*b,
         yc - ya - ya_ddx*c,
         yd - ya - ya_ddx*d,
@@ -215,10 +224,9 @@ Polynomial<T,0,5> quintic_spline_with_2_known_midpoints(
             spline_derivative_factors(exponents, d)
         )
     );
-    glm::vec4<T,glm::defaultp> k2k3k4k5 = glm::inverse(known_factors) * known_outputs;
-    return Polynomial<T,0,5>{ya, ya_ddx, k2k3k4k5.x, k2k3k4k5.y, k2k3k4k5.z, k2k3k4k5.w};
+    vec4 k2k3k4k5 = glm::inverse(known_factors) * known_outputs;
+    return compose(Polynomial<T,0,5>{ya, ya_ddx, k2k3k4k5.x, k2k3k4k5.y, k2k3k4k5.z, k2k3k4k5.w}, Shifting<T>{-xa});
 }
-
 
 template<typename T>
 Polynomial<T,0,5> quintic_spline(
@@ -226,12 +234,14 @@ Polynomial<T,0,5> quintic_spline(
         const T ya,       const T yb,
         const T ya_ddx,   const T yb_ddx,
         const T ya_d2dx2, const T yb_d2dx){
+    using mat3 = glm::mat<3,3,T,glm::defaultp>;
+    using vec3 = glm::vec<3,T,glm::defaultp>;
     T b = xb-xa;
-    glm::vec3<T,glm::defaultp> exponents = glm::vec3<T,glm::defaultp>(3,4,5);
-    glm::vec3<T,glm::defaultp> known_outputs = glm::vec3<T,glm::defaultp>(
+    vec3 exponents = vec3(3,4,5);
+    vec3 known_outputs = vec3(
         yb      - ya - ya_ddx*b -      ya_d2dx2*b*b,
         yb_ddx       - ya_ddx   - T(2)*ya_d2dx2*b,
-        yb_d2dx      -          -      ya_d2dx2
+        yb_d2dx                 -      ya_d2dx2
     );
     mat3 known_factors = glm::transpose(
         mat3(
@@ -240,8 +250,8 @@ Polynomial<T,0,5> quintic_spline(
             spline_2nd_derivative_factors(exponents, b)
         )
     );
-    glm::vec3<T,glm::defaultp> k3k4k5 = glm::inverse(known_factors) * known_outputs;
-    return Polynomial<T,0,5>{ya, ya_ddx, ya_d2dx2, k3k4k5.x, k3k4k5.y, k3k4k5.z};
+    vec3 k3k4k5 = glm::inverse(known_factors) * known_outputs;
+    return compose(Polynomial<T,0,5>{ya, ya_ddx, ya_d2dx2, k3k4k5.x, k3k4k5.y, k3k4k5.z}, Shifting<T>{-xa});
 }
 
 template<typename T>
@@ -249,10 +259,12 @@ Polynomial<T,0,5> quintic_spline_with_known_midpoint(
         const T xa,     const T xb,     const T xc,
         const T ya,     const T yb,     const T yc,
         const T ya_ddx, const T yb_ddx, const T yc_ddx){
+    using mat4 = glm::mat<4,4,T,glm::defaultp>;
+    using vec4 = glm::vec<4,T,glm::defaultp>;
     T b = xb-xa;
     T c = xc-xa;
-    glm::vec4<T,glm::defaultp> exponents = glm::vec4<T,glm::defaultp>(2,3,4,5);
-    glm::vec4<T,glm::defaultp> known_outputs = glm::vec4<T,glm::defaultp>(
+    vec4 exponents = vec4(2,3,4,5);
+    vec4 known_outputs = vec4(
         yb - ya - ya_ddx*b,
         yc - ya - ya_ddx*c,
         yb_ddx  - ya_ddx,
@@ -266,13 +278,12 @@ Polynomial<T,0,5> quintic_spline_with_known_midpoint(
             spline_derivative_factors(exponents, c)
         )
     );
-    glm::vec4<T,glm::defaultp> k2k3k4k5 = glm::inverse(known_factors) * known_outputs;
-    return Polynomial<T,0,5>{ya, ya_ddx, k2k3k4k5.x, k2k3k4k5.y, k2k3k4k5.z, k2k3k4k5.w};
+    vec4 k2k3k4k5 = glm::inverse(known_factors) * known_outputs;
+    return compose(Polynomial<T,0,5>{ya, ya_ddx, k2k3k4k5.x, k2k3k4k5.y, k2k3k4k5.z, k2k3k4k5.w}, Shifting<T>{-xa});
 }
 
 
 
-
-
-
 }
+
+

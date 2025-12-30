@@ -1,11 +1,15 @@
 #pragma once
 
+// std libraries
+#include <string>
+#include <ostream>
+
 #include "Identity.hpp"
 
 namespace analytic {
 
     /* 
-    `Shifting` is a trivial class that represents the function f(x)=ax,
+    `Shifting` is a trivial class that represents the function f(x)=x+k,
     it was needed to provide an idiomatic way to request that input to other functions be scaled using compose() - 
     some functions may only be closed under composition with scalar addition and subtraction,
     so there was need for a function that restricted users to these kinds of operations.

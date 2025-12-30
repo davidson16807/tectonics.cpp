@@ -1,5 +1,9 @@
 #pragma once
 
+// C libraries
+
+#include <cmath> // std::sqrt
+
 // std libraries
 #include <vector>    // vector
 #include <algorithm> // copy, back_inserter
@@ -42,11 +46,11 @@ namespace analytic {
             }
         }
 
-        Sum(const std::vector<F> terms_) : terms(terms_) 
+        Sum(const std::vector<F>& terms_) : terms(terms_) 
         {
         }
 
-        Sum(std::initializer_list<F> ts)
+        Sum(std::initializer_list<F>& ts)
         {
             std::copy(ts.begin(), ts.end(), std::back_inserter(terms));
         }
@@ -57,7 +61,7 @@ namespace analytic {
 
         T operator()(const T x) const
         {
-            T y(0.0);
+            T y(0);
             for (auto term : terms)
             {
                 y += term(x);
@@ -111,7 +115,7 @@ namespace analytic {
 
         Sum<T,F>& operator-=(const F& term)
         {
-            terms.push_back(-term);
+            terms.push_back(T(-1)*term);
             return *this;
         }
 
@@ -119,7 +123,7 @@ namespace analytic {
         {
             for (auto term : sum.terms)
             {
-                terms.push_back(-term);
+                terms.push_back(T(-1)*term);
             }
             return *this;
         }
@@ -265,7 +269,7 @@ namespace analytic {
 
 
     /*
-    NOTE: we cannot support multiplication between arbitrary railyards, even of the same type.
+    NOTE: we cannot support multiplication between arbitrary sums, even of the same type.
     This is because we cannot determine the return type in the general case, 
     and specializations that can determine the return type will collide with templates for the general case
     */ 
@@ -288,26 +292,25 @@ namespace analytic {
         return f;
     }
 
-    template<typename T, typename F, typename G>
-    constexpr Sum<T,F> compose(const Sum<T,F>& f, const G& g)
-    {
-        std::vector<F> terms;
-        for (auto term: f.terms)
-        {
-            terms.push_back( compose(term, g) );
-        }
-        return Sum<T,F>(terms);
-    }
-
+    // template<typename T, typename F, typename G>
+    // constexpr Sum<T,F> compose(const Sum<T,F>& f, const G& g)
+    // {
+    //     std::vector<F> terms;
+    //     for (auto term: f.terms)
+    //     {
+    //         terms.push_back( compose(term, g) );
+    //     }
+    //     return Sum<T,F>(terms);
+    // }
 
     /*
-    `derivative` returns the derivative of a railyard at a point.
+    `derivative` returns the derivative of a sum at a point.
     It is meant to compliment the method signature for integral(sum, lo, hi)
     */
     template<typename T, typename F>
     T derivative(const Sum<T,F>& sum, const T x)
     {
-        T dydx(0.0f);
+        T dydx(0);
         for (std::size_t i=0; i<sum.terms.size(); i++)
         {
             dydx += derivative(sum.terms[i], x);
@@ -316,7 +319,7 @@ namespace analytic {
     }
 
     /*
-    `integral` returns the definite integral of a railyard 
+    `integral` returns the definite integral of a sum 
     without representing the integral as its own function object.
     This is meant to be used as a fallback in the event the function is 
     not closed under integration. 
@@ -324,7 +327,7 @@ namespace analytic {
     template<typename T, typename F>
     T integral(const Sum<T,F>& sum, const T x)
     {
-        T I(0.0f);
+        T I(0);
         for (std::size_t i=0; i<sum.terms.size(); i++)
         {
             I += integral(sum.terms[i], x); 
@@ -333,7 +336,7 @@ namespace analytic {
     }
 
     /*
-    `integral` returns the definite integral of a railyard 
+    `integral` returns the definite integral of a sum 
     without representing the integral as its own function object.
     This is meant to be used as a fallback in the event the function is 
     not closed under integration. 
@@ -341,7 +344,7 @@ namespace analytic {
     template<typename T, typename F>
     T integral(const Sum<T,F>& sum, const T lo, const T hi)
     {
-        T I(0.0f);
+        T I(0);
         for (auto term : sum.terms)
         {
             I += integral(term, lo, hi);
@@ -349,48 +352,48 @@ namespace analytic {
         return I;
     }
 
-    /*
-    `dot` is the integral of the product between the output of two functions.
-    It is analogous to the dot product of vectors
-    however it treats functions as vectors in a function space with infinitely many dimensions.
-    */
-    template<typename T, typename F>
-    constexpr T dot(
-        const Sum<T,F>& sum1, 
-        const Sum<T,F>& sum2, 
-        const T lo, 
-        const T hi
-    ){
-        return integral(sum1*sum2, lo, hi);
-    }
+    // /*
+    // `dot` is the integral of the product between the output of two functions.
+    // It is analogous to the dot product of vectors
+    // however it treats functions as vectors in a function space with infinitely many dimensions.
+    // */
+    // template<typename T, typename F>
+    // constexpr T dot(
+    //     const Sum<T,F>& sum1, 
+    //     const Sum<T,F>& sum2, 
+    //     const T lo, 
+    //     const T hi
+    // ){
+    //     return integral(sum1*sum2, lo, hi);
+    // }
 
-    /*
-    `length` is the root of the dot product of a function with itself.
-    It is analogous to the Euclidean length of a vector, 
-    however it treats functions as vectors in a function space with infinitely many dimensions.
-    */
-    template<typename T, typename F>
-    constexpr T length(
-        const Sum<T,F>& sum, 
-        const T lo, 
-        const T hi
-    ){
-        return std::sqrt(integral(sum*sum, lo, hi));
-    }
+    // /*
+    // `length` is the root of the dot product of a function with itself.
+    // It is analogous to the Euclidean length of a vector, 
+    // however it treats functions as vectors in a function space with infinitely many dimensions.
+    // */
+    // template<typename T, typename F>
+    // constexpr T length(
+    //     const Sum<T,F>& sum, 
+    //     const T lo, 
+    //     const T hi
+    // ){
+    //     return std::sqrt(integral(sum*sum, lo, hi));
+    // }
 
-    /*
-    `similarity` is dot product of two functions divided by their lengths.
-    It is analogous to the cosine similarity between two vectors,
-    however it treats functions as vectors in a function space with infinitely many dimensions.
-    */
-    template<typename T, typename F>
-    constexpr T similarity(
-        const Sum<T,F>& sum1, 
-        const Sum<T,F>& sum2, 
-        const T lo, 
-        const T hi
-    ){
-        return dot(sum1,sum2,lo,hi) / (length(sum1,lo,hi)*length(sum2,lo,hi));
-    }
+    // /*
+    // `similarity` is dot product of two functions divided by their lengths.
+    // It is analogous to the cosine similarity between two vectors,
+    // however it treats functions as vectors in a function space with infinitely many dimensions.
+    // */
+    // template<typename T, typename F>
+    // constexpr T similarity(
+    //     const Sum<T,F>& sum1, 
+    //     const Sum<T,F>& sum2, 
+    //     const T lo, 
+    //     const T hi
+    // ){
+    //     return dot(sum1,sum2,lo,hi) / (length(sum1,lo,hi)*length(sum2,lo,hi));
+    // }
 
 }
