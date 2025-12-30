@@ -1,5 +1,9 @@
 #pragma once
 
+// std libraries
+#include <vector>    // std::vector
+#include <algorithm> // std::min, std::max
+
 // in-house libraries
 #include "../Identity.hpp"
 #include "../Scaling.hpp"
@@ -835,20 +839,17 @@ namespace analytic {
     since not all equations are closed under derivatives and integrals,
     and such methods would complicate the order with which classes must be declared
     */
-    template<typename T>
-    constexpr T derivative(const RationalTrain<T,0,1,0,0> r) 
-    {
-        return r.p[0];
-    }
-    template<typename T>
-    constexpr T derivative(const RationalTrain<T,1,1,0,0> r) 
-    {
-        return T(0);
-    }
+
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    auto derivative(const RationalTrain<T,Plo,Phi,Qlo,Qhi>& r)
+    constexpr auto derivative(const RationalTrain<T,Plo,Phi,Qlo,Qhi>& r)
     {
-        return (r.p.derivative()*r.q + r.q.derivative()*r.p) / (r.q*r.q);
+        using R = Rational<T,Plo,Phi,Qlo,Qhi>;
+        std::vector<R> contents;
+        for (auto ri : r.contents)
+        {
+            contents.push_back(derivative(ri));
+        }
+        return Train<T,R>(contents, r.couplers);
     }
 
 
@@ -868,49 +869,49 @@ namespace analytic {
     template<typename T, int Plo, int Phi, int Qlo, int Qhi, typename F>
     constexpr RationalTrain<T,Plo,Phi,Qlo,Qhi> compose(const RationalTrain<T,Plo,Phi,Qlo,Qhi>& r, const Shifting<T> f)
     {
-        using R = RationalTrain<T,0,Phi,0,Qhi>;
-        Railyard<T,R> y;
-        for (auto ri: r.cars)
+        using R = Rational<T,Plo,Phi,Qlo,Qhi>;
+        std::vector<R> contents;
+        for (auto ri : r.contents)
         {
-            y += compose(ri,f);
+            contents.push_back(compose(ri, f));
         }
-        return y;
+        return Train<T,R>(contents, r.couplers);
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi, typename F>
     constexpr RationalTrain<T,Plo,Phi,Qlo,Qhi> compose(const RationalTrain<T,Plo,Phi,Qlo,Qhi>& r, const Scaling<T> f)
     {
-        using R = RationalTrain<T,Plo,Phi,Qlo,Qhi>;
-        Railyard<T,R> y;
-        for (auto ri: r.cars)
+        using R = Rational<T,Plo,Phi,Qlo,Qhi>;
+        std::vector<R> contents;
+        for (auto ri : r.contents)
         {
-            y += compose(ri,f);
+            contents.push_back(compose(ri, f));
         }
-        return y;
+        return Train<T,R>(contents, r.couplers);
     }
 
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi>
     constexpr RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi> compose(const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r, const Polynomial<T,P2lo,P2hi> p)
     {
         using R = RationalTrain<T,P1lo*P2lo,P1hi*P2hi,Q1lo+P2lo,Q1hi+P2hi>;
-        Railyard<T,R> y;
-        for (auto ri: r.cars)
+        std::vector<R> contents;
+        for (auto ri : r.contents)
         {
-            y += compose(ri,p);
+            contents.push_back(compose(ri, p));
         }
-        return y;
+        return Train<T,R>(contents, r.couplers);
     }
 
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi, int Q2lo, int Q2hi>
     constexpr RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi> compose(const RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>& r, const RationalTrain<T,P2lo,P2hi,Q2lo,Q2hi> s)
     {
         using R = RationalTrain<T,P1lo*P2lo,P1hi*P2hi,Q1lo*Q2lo,Q1hi*Q2hi>;
-        Railyard<T,R> y;
-        for (auto ri: r.cars)
+        std::vector<R> contents;
+        for (auto ri : r.contents)
         {
-            y += compose(ri,s);
+            contents.push_back(compose(ri, p));
         }
-        return y;
+        return RationalTrain<T,P1lo,P1hi,Q1lo,Q1hi>(contents, r.couplers);
     }
 
 

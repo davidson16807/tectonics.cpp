@@ -1,9 +1,15 @@
 #pragma once
 
+// C libraries
+#include <cmath>  // std::sqrt
+
 // std libraries
 #include <algorithm> // copy, back_inserter
-#include <initializer_list>
-#include <iostream>
+#include <initializer_list> // std::initializer_list
+#include <iostream> // std::iostream
+#include <vector> // std::vector
+#include <limits> // std::numeric_limits
+#include <string> // std::string
 
 // in-house libraries
 #include "../Identity.hpp"
@@ -70,7 +76,11 @@ namespace analytic {
         {
             for (auto car : train.contents)
             {
-                contents.push_back(car);
+                contents.emplace_back(car);
+            }
+            for (auto coupler : train.couplers)
+            {
+                couplers.emplace_back(coupler);
             }
         }
 
@@ -103,7 +113,7 @@ namespace analytic {
             T y(0.0);
             for (std::size_t i=0; i<contents.size(); i++)
             {
-                if (couplers[i] < x&&x < couplers[i+1])
+                if (couplers[i] < x&&x <= couplers[i+1])
                 {
                     return contents[i](x);
                 }
@@ -113,10 +123,8 @@ namespace analytic {
 
         Railcar<T,F> operator[](const std::size_t i) const
         {
-            const T oo = std::numeric_limits<double>::max();
-            return i<0? 
-                    Railcar<T,F>(-oo,oo,F(0)) 
-              : i>=contents.size()? 
+            const T oo = std::numeric_limits<T>::max();
+            return i>=contents.size()? 
                     Railcar<T,F>(oo,oo,F(0)) 
               : 
                     Railcar<T,F>(couplers[i], couplers[i+1], contents[i]);
@@ -609,6 +617,10 @@ namespace analytic {
     template<typename T, typename F>
     constexpr Train<T,F> restriction(const Train<T,F>& train, const T lo, const T hi)
     {
+        if (lo < train[0].lo && train[train.size()-1].hi < hi)
+        {
+            return train;
+        }
         std::vector<F> contents;
         std::vector<T> couplers;
         const T oo(std::numeric_limits<T>::max());
@@ -626,7 +638,7 @@ namespace analytic {
                 couplers.push_back(train[i].hi);
             }
         }
-        contents.push_back(train.contents[train.size()-1](train.hi(train.size()-1)));
+        contents.push_back(train.contents[train.size()-1](train[train.size()-1].hi));
         couplers.push_back(oo);
         return Train(contents, couplers);
     }

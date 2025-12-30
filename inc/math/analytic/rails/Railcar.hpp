@@ -1,7 +1,9 @@
 #pragma once
 
 // std libraries
-#include <string> // string
+#include <string>  // std::string
+#include <limits>  // std::numeric_limits
+#include <ostream> // std::ostream
 
 // in-house libraries
 #include "Boxcar.hpp"
@@ -69,7 +71,7 @@ namespace analytic {
 
         constexpr T operator()(const T x) const
         {
-            return T(lo<x&&x<=hi? content(x) : 0.0);
+            return T(lo<x&&x<=hi? content(x) : T(0));
         }
 
         Railcar<T,F>& operator=(const T k)
@@ -173,7 +175,7 @@ namespace analytic {
     template<typename T, typename F>
     constexpr auto operator/(const T k, const Railcar<T,F>& car)
     {
-        return Railcar(car.lo, car.hi, k/car.content);
+        return Railcar<T,F>(car.lo, car.hi, k/car.content);
     }
 
 
@@ -182,25 +184,25 @@ namespace analytic {
     template<typename T, typename F>
     constexpr auto operator*(const Railcar<T,F>& car, const F& k)
     {
-        return Railcar(car.lo, car.hi, car.content*k);
+        return Railcar<T,F>(car.lo, car.hi, car.content*k);
     }
 
     template<typename T, typename F>
     constexpr auto operator*(const F& k, const Railcar<T,F>& car)
     {
-        return Railcar(car.lo, car.hi, k*car.content);
+        return Railcar<T,F>(car.lo, car.hi, k*car.content);
     }
 
     template<typename T, typename F>
     constexpr auto operator/(const Railcar<T,F>& car, const F& k)
     {
-        return Railcar(car.lo, car.hi, car.content/k);
+        return Railcar<T,F>(car.lo, car.hi, car.content/k);
     }
 
     template<typename T, typename F>
     constexpr auto operator/(const F& k, const Railcar<T,F>& car)
     {
-        return Railcar(car.lo, car.hi, k/car.content);
+        return Railcar<T,F>(car.lo, car.hi, k/car.content);
     }
 
 
@@ -231,7 +233,7 @@ namespace analytic {
     template<typename T, typename F>
     auto derivative(const Railcar<T,F>& car)
     {
-        return Railcar(car.lo, car.hi, derivative(car.content));
+        return Railcar<T,F>(car.lo, car.hi, derivative(car.content));
     }
 
     /*
@@ -241,7 +243,7 @@ namespace analytic {
     template<typename T, typename F>
     T derivative(const Railcar<T,F>& car, const T x)
     {
-        return (car.lo < x && x < car.hi)?
+        return (car.lo < x && x <= car.hi)?
             derivative(car.content, x) : T(0);
     }
 
