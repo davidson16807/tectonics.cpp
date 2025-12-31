@@ -1,5 +1,12 @@
 #pragma once
 
+// C libraries
+#include <cmath> // std::sqrt
+
+// std libraries
+#include <algorithm> // std::clamp
+
+// 3rd-party libraries
 #include <glm/vec3.hpp>      // *vec3
 #include <glm/geometric.hpp> // length
 
@@ -16,8 +23,11 @@ namespace geometric
   template<int N, typename Axis, typename scalar>
   struct Cylinderlike
   {
+
+    using vector = glm::vec<N,scalar,quality>;
+
     const Axis axis;
-    const Line<N,scalar> line;
+    const Lines<N,scalar> line;
     const scalar pi;
 
     Cylinderlike(const Axis& axis, const scalar pi):
@@ -41,10 +51,10 @@ namespace geometric
 
     template<glm::qualifier quality=glm::defaultp>
     scalar surface_distance_to_point(
-      const glm::vec<N,scalar,quality> capsule_reference, 
-      const glm::vec<N,scalar,quality> capsule_direction, 
+      const vector capsule_reference, 
+      const vector capsule_direction, 
       const scalar capsule_radius, 
-      const glm::vec<N,scalar,quality> point
+      const vector point
     ) const {
       scalar radial_distance(line.nearest_distance_to_point(capsule_reference, glm::normalize(capsule_direction), point));
       scalar nearest_distance(axis.nearest_distance_to_point(capsule_reference, capsule_direction, point));
@@ -54,10 +64,10 @@ namespace geometric
 
     // template<glm::qualifier quality=glm::defaultp>
     // inline scalar surface_normal_at_point(
-    //   const glm::vec<N,scalar,quality> capsule_reference, 
-    //   const glm::vec<N,scalar,quality> capsule_direction, 
+    //   const vector capsule_reference, 
+    //   const vector capsule_direction, 
     //   const scalar capsule_radius, 
-    //   const glm::vec<N,scalar,quality> point
+    //   const vector point
     // ) const {
     //   scalar radial_distance(line.nearest_distance_to_point(capsule_reference, glm::normalize(capsule_direction), point));
     //   scalar nearest_distance(axis.nearest_distance_to_point(capsule_reference, capsule_direction, point));
@@ -67,9 +77,9 @@ namespace geometric
 
     template<glm::qualifier quality=glm::defaultp>
     inline bool is_point_inside(
-      const glm::vec<N,scalar,quality> point, 
-      const glm::vec<N,scalar,quality> capsule_reference, 
-      const glm::vec<N,scalar,quality> capsule_direction, 
+      const vector point, 
+      const vector capsule_reference, 
+      const vector capsule_direction, 
       const scalar capsule_radius
     ) const {
       return surface_distance_to_point(capsule_reference, capsule_direction, capsule_radius, point) < scalar(0);
@@ -78,10 +88,10 @@ namespace geometric
     /*
     template<glm::qualifier quality=glm::defaultp>
     bool distance_along_line_nearest_to_line(
-      const glm::vec<3,scalar,quality> reference1, 
-      const glm::vec<3,scalar,quality> direction1, 
-      const glm::vec<3,scalar,quality> reference2, 
-      const glm::vec<3,scalar,quality> direction2
+      const glm::vector<3,scalar,quality> reference1, 
+      const glm::vector<3,scalar,quality> direction1, 
+      const glm::vector<3,scalar,quality> reference2, 
+      const glm::vector<3,scalar,quality> direction2
     ) const {
       const vec3 A = direction1;
       const vec3 B = direction2;

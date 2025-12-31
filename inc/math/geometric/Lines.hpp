@@ -1,5 +1,9 @@
 #pragma once
 
+// std libraries
+#include <algorithm> // std::clamp
+
+// 3rd-party libraries
 #include <glm/vec3.hpp>      // *vec3
 #include <glm/geometric.hpp> // length
 
@@ -14,8 +18,12 @@ namespace geometric
   template<int N, typename scalar>
   struct Lines
   {
+
+    using vector = glm::vec<N,scalar,quality>;
+
     Lines()
     {}
+
     template<glm::qualifier quality=glm::defaultp>
     inline scalar distance_along_direction_nearest_to_point(
       const glm::vec<N,scalar,quality> line_reference, 
@@ -26,7 +34,7 @@ namespace geometric
     }
 
     template<glm::qualifier quality=glm::defaultp>
-    scalar nearest_offset_to_point(
+    vector nearest_offset_to_point(
       const glm::vec<N,scalar,quality> line_reference, 
       const glm::vec<N,scalar,quality> line_direction, 
       const glm::vec<N,scalar,quality> point
@@ -72,12 +80,5 @@ namespace geometric
 
   };
 
-  template<typename scalar>
-  Lines<scalar> lines(const scalar pi)
-  {
-    return Lines<scalar>(pi);
-  }
-
 }
-
 
