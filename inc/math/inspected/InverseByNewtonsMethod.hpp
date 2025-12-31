@@ -25,7 +25,7 @@ namespace inspected {
         {
             T x(x0);
             // solve using Newton's method
-            for (int i = 0; i < iteration_count; i++) {
+            for (std::size_t i = 0; i < iteration_count; i++) {
                 x += (y - f(x))/dfdx(x);
             }
             return x;

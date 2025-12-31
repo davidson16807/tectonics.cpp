@@ -5,17 +5,17 @@
 namespace inspected {
 
     template<typename T, typename F>
-    struct DerivativeByForwardFiniteDifference {
+    struct ForwardFiniteDifference {
         using value_type = T;
         const F f;
         const T dx;
         const int order;
-        constexpr explicit DerivativeByForwardFiniteDifference(const F f, const T dx, const int order):
+        constexpr explicit ForwardFiniteDifference(const F f, const T dx, const int order):
             f(f),
             dx(dx),
             order(order)
         {}
-        constexpr DerivativeByForwardFiniteDifference(const DerivativeByForwardFiniteDifference<T,F>& dfdx):
+        constexpr ForwardFiniteDifference(const ForwardFiniteDifference<T,F>& dfdx):
             f(dfdx.f),
             dx(dfdx.dx),
             order(dfdx.order)
@@ -24,29 +24,29 @@ namespace inspected {
         {
             T df(0);
             T weight(1);
-            for (int i = 0; i < order; ++i)
+            for (int i = 0; i <= order; ++i)
             {
                 df += weight * combinatoric::combination(order, i) * f(x+i*dx);
-                weight *= -1;
+                weight *= T(-1);
             }
             return df;
         }
     };
 
     /*
-    `derivative_by_forward_finite_difference()` is used to approximate the derivative of a function for the parameter value, x.
+    `forward_finite_difference()` is used to approximate the derivative of a function for the parameter value, x.
     It does so using the finite difference method. 
     */
     template<typename T, typename F>
-    constexpr auto derivative_by_forward_finite_difference(const F& f, const T x, const T dx, const int order)
+    constexpr auto forward_finite_difference(const F& f, const T x, const T dx, const int order)
     {
-        return DerivativeByForwardFiniteDifference<T,F>(f,dx,order)(x);
+        return ForwardFiniteDifference<T,F>(f,dx,order)(x);
     }
 
     template<typename T, typename F>
-    constexpr auto derivative_by_forward_finite_difference(const F& f, const T dx, const int order)
+    constexpr auto forward_finite_difference(const F& f, const T dx, const int order)
     {
-        return DerivativeByForwardFiniteDifference<T,F>(f,dx,order);
+        return ForwardFiniteDifference<T,F>(f,dx,order);
     }
 
 }

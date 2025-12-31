@@ -18,7 +18,7 @@
 #include "Shifting.hpp"
 #include "ScaledComplement.hpp"
 
-#include <math/inspected/DerivativeByCentralFiniteDifference.hpp>
+#include <math/inspected/CentralFiniteDifference.hpp>
 #include <math/combinatorics.hpp>
 
 namespace analytic {
@@ -1473,7 +1473,7 @@ namespace analytic {
         const T dx2 = dx*dx;
         return compose(
             Polynomial<T,0,1>(f(x), 
-                inspected::derivative_by_central_finite_difference(f, x, dx, 1) / dx),
+                inspected::central_finite_difference(f, x, dx, 1) / dx),
             Shifting<T>(-x)
         );
     }
@@ -1484,8 +1484,8 @@ namespace analytic {
         const T dx2 = dx*dx;
         return compose(
             Polynomial<T,0,2>{f(x), 
-                inspected::derivative_by_central_finite_difference(f, x, dx, 1) / dx, 
-                inspected::derivative_by_central_finite_difference(f, x, dx, 2) /(dx2*T(2))},
+                inspected::central_finite_difference(f, x, dx, 1) / dx, 
+                inspected::central_finite_difference(f, x, dx, 2) /(dx2*T(2))},
             Shifting<T>(-x)
         );
     }
@@ -1498,9 +1498,9 @@ namespace analytic {
         return 
             compose(
                 Polynomial<T,0,3>(f(x), 
-                    inspected::derivative_by_central_finite_difference(f, x, dx, 1) / dx, 
-                    inspected::derivative_by_central_finite_difference(f, x, dx, 2) /(dx2*T(2)), 
-                    inspected::derivative_by_central_finite_difference(f, x, dx, 3) /(dx3*T(6))),
+                    inspected::central_finite_difference(f, x, dx, 1) / dx, 
+                    inspected::central_finite_difference(f, x, dx, 2) /(dx2*T(2)), 
+                    inspected::central_finite_difference(f, x, dx, 3) /(dx3*T(6))),
                 Shifting<T>(-x)
             );
     }
