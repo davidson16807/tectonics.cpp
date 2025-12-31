@@ -1,5 +1,14 @@
 #pragma once
 
+// C libraries
+#include <cmath> // pow
+
+// C libraries
+#include <algorithm> // max
+
+#include "Identity.hpp"
+#include "Scaling.hpp"
+
 namespace analytic {
 
     template<typename T>

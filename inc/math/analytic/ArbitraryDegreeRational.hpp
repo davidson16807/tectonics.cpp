@@ -1,5 +1,10 @@
 #pragma once
 
+// std libraries
+#include <string> // string
+#include <ostream> // ostream
+#include <algorithm> // max
+
 // in-house libraries
 #include "Identity.hpp"
 #include "Scaling.hpp"
@@ -423,23 +428,23 @@ namespace analytic {
     template<typename T, typename I, int P2>
     constexpr auto operator*(const ArbitraryDegreeRational<T,I>& r, const Polynomial<T,P2,P2> p)
     {
-        return r.p/(r.q/p);
+        return (r.p*p)/r.q;
     }
     template<typename T, typename I, int P2>
     constexpr auto operator/(const ArbitraryDegreeRational<T,I>& r, const Polynomial<T,P2,P2> p)
     {
-        return (r.p/p)/r.q;
+        return r.p/(r.q*p);
     }
 
     template<typename T, typename I, int P2>
     constexpr auto operator*(const Polynomial<T,P2,P2> p, const ArbitraryDegreeRational<T,I>& r)
     {
-        return r.q/(r.p/p);
+        return (p*r.p)/r.q;
     }
     template<typename T, typename I, int P2>
     constexpr auto operator/(const Polynomial<T,P2,P2> p, const ArbitraryDegreeRational<T,I>& r)
     {
-        return (r.q/p)/r.p;
+        return (p*r.q)/r.p;
     }
 
 
@@ -767,7 +772,7 @@ namespace analytic {
     template<typename T, typename I>
     constexpr auto operator/(const ArbitraryDegreePolynomial<T,I>& p, const Shifting<T> g)
     {
-        return Polynomial<T,0,1>(p) / Polynomial<T,0,1>(g);
+        return p / Polynomial<T,0,1>(g);
     }
 
 
@@ -807,7 +812,7 @@ namespace analytic {
     template<typename T, typename I>
     auto derivative(const ArbitraryDegreeRational<T,I>& r)
     {
-        return (r.p.derivative()*r.q + r.q.derivative()*r.p) / (r.q*r.q);
+        return (r.p.derivative()*r.q - r.q.derivative()*r.p) / (r.q*r.q);
     }
 
 

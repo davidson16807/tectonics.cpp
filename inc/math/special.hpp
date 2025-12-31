@@ -23,7 +23,6 @@ namespace math{
 	MATH_UNARY_STD_WRAPPER(log10)
 	MATH_UNARY_STD_WRAPPER(sqrt)
 	MATH_UNARY_STD_WRAPPER(cbrt)
-	MATH_UNARY_STD_WRAPPER(pow)
 	MATH_UNARY_STD_WRAPPER(sin)
 	MATH_UNARY_STD_WRAPPER(cos)
 	MATH_UNARY_STD_WRAPPER(tan)
@@ -65,7 +64,7 @@ namespace math{
 	regardless of whether that whole number is bigger or smaller.
 	*/
 	template<typename In1, typename In2>
-	inline constexpr auto remainder(const In1& a, const In2& b)
+	inline auto remainder(const In1& a, const In2& b)
 	{
 	    return a - b * std::round(a / b);
 	}
@@ -75,7 +74,7 @@ namespace math{
 	i.e. the amount that is left unaccounted for after dividing by the next smallest whole number
 	*/
 	template<typename In1, typename In2>
-	inline constexpr auto residue(const In1& a, const In2& b)
+	inline auto residue(const In1& a, const In2& b)
 	{
 	    return a - b * std::floor(a / b);
 	}
@@ -85,13 +84,13 @@ namespace math{
 	this is equivalent to the % operator in python
 	*/
 	template<typename In1, typename In2>
-	inline constexpr auto modulus(const In1& a, const In2& b)
+	inline auto modulus(const In1& a, const In2& b)
 	{
 	    return residue(residue(a,b) + b, b);
 	}
 
 	template<typename T>
-	inline constexpr T maxabs(const T& a, const T& b)
+	inline T maxabs(const T& a, const T& b)
 	{
 	    return std::max(-std::min(a,b), std::max(a,b));
 	}
@@ -102,7 +101,7 @@ namespace math{
 	}
 
 	template <typename T>
-	inline constexpr T bitsign(const T x) {
+	inline T bitsign(const T x) {
 		return std::signbit(x)? T(-1):T(1);
 	}
 
@@ -115,7 +114,7 @@ namespace math{
 	template <typename In1> inline auto fract(const In1 a) { return a-floor(a); }
 	template <typename In1> inline auto inversesqrt(const In1 a) { return In1(1)/std::sqrt(a); }
 	template <typename In1> inline auto negate(const In1 a) { return -a; }
-	template <typename In1> inline auto exp10(const In1 a) { return std::pow(a,In1(10)); }
+	template <typename In1> inline auto exp10(const In1 a) { return std::pow(In1(10),a); }
 	template <typename In1> inline auto sec(const In1 a){ return In1(1)/std::cos(a);}
 	template <typename In1> inline auto csc(const In1 a){ return In1(1)/std::sin(a);}
 	template <typename In1> inline auto cot(const In1 a){ return In1(1)/std::tan(a);}
@@ -136,7 +135,7 @@ namespace math{
 	It is accurate to within 2⋅10⁻⁴ over the range [-10,10].
 	*/
 	template <typename T>
-	constexpr auto erf(const T x) {
+	auto erf(const T x) {
 		const T a(0.1);
 		const T b(1.1295);
 	    return std::tanh(a*x*x*x + b*x);
@@ -147,7 +146,7 @@ namespace math{
 	It is accurate to within 02⋅10⁻³ over its entire range. From Winitzki (2008).
 	*/
 	template <typename T>
-	constexpr T erfinv(const T x) {
+	T erfinv(const T x) {
 		T a(0.147);
 		T f(std::log(T(1)-x*x));
 		T g(T(2)/(pi*a) + f/T(2));
@@ -160,7 +159,7 @@ namespace math{
 	It returns the value that's associated for a given quantile of the normal distribution.
 	*/
 	template <typename T>
-	constexpr auto probit(const T p) {
+	auto probit(const T p) {
 		return std::sqrt(T(2)) * erfinv(T(2)*p-1);
 	}
 
@@ -188,7 +187,7 @@ namespace math{
     constexpr auto linearstep(const Tin edge0, const Tin edge1, const Tin x) 
     {
         double fraction = double((x - edge0) / (edge1 - edge0));
-        return fraction > 1.0? 1 : fraction < 0.0? 0 : fraction;
+        return fraction > T(1)? 1 : fraction < T(0)? 0 : fraction;
     }
 
     /*
@@ -197,8 +196,8 @@ namespace math{
     template <typename Tin>
     constexpr auto smoothstep(const Tin edge0, const Tin edge1, const Tin x) 
     {
-	    auto t = clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
-	    return t * t * (3.0 - 2.0 * t);
+	    auto t = clamp((x - edge0) / (edge1 - edge0), T(0), T(1));
+	    return t * t * (T(3) - T(2) * t);
     }
 
     /*
@@ -208,8 +207,8 @@ namespace math{
     */
     template <typename Tx, typename Ty>
     constexpr typename Ty::value_type lerp(
-        const Tx control_points_x, 
-        const Ty control_points_y, 
+        const Tx& control_points_x, 
+        const Ty& control_points_y, 
         const typename Tx::value_type x
     ) {
         typename Ty::value_type result = control_points_y[0];

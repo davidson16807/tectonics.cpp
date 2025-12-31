@@ -1,7 +1,14 @@
 #pragma once
 
+// C libraries
+#include <cmath> // sqrt
+
 // std libraries
-#include <algorithm> // copy, back_inserter
+#include <vector> // vector
+#include <limits> // numeric_limits
+#include <string> // string
+#include <algorithm> // copy, back_inserter, min, max
+#include <type_traits> // enable_if_t
 #include <iostream> 
 
 // in-house libraries
@@ -20,7 +27,7 @@ namespace analytic {
     using PolynomialRailyard = Railyard<T,Polynomial<T,Plo,Phi>>;
 
 
-    // operations that are closed under Rationals
+    // operations that are closed under PolynomialRailyards
     template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
     constexpr auto operator+(const PolynomialRailyard<T,P1lo,P1hi>& p, const PolynomialRailyard<T,P2lo,P2hi>& q)
     {
@@ -39,7 +46,7 @@ namespace analytic {
         return y;
     }
 
-    // operations that are closed under Rationals
+    // operations that are closed under PolynomialRailyards
     template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
     constexpr auto operator*(const PolynomialRailyard<T,P1lo,P1hi>& p, const PolynomialRailyard<T,P2lo,P2hi>& q)
     {
@@ -484,27 +491,27 @@ namespace analytic {
         const T lo, 
         const T hi
     ){
-        return std::sqrt((std::max(T(0), integral(pow<2>(p-q), lo, hi))) / (hi-lo));
+        return std::sqrt((std::max(T(0), integral(pow<2>(p-q), lo, hi)) / (hi-lo)));
     }
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr T distance(const PolynomialRailyard<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi> q, const T lo, const T hi)
     {
-        return std::sqrt(std::max(T(0), integral(pow<2>(p-q), lo, hi))) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(pow<2>(p-q), lo, hi)) / (hi-lo));
     }
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr T distance(const Polynomial<T,Plo,Phi> p, const PolynomialRailyard<T,Qlo,Qhi> q, const T lo, const T hi)
     {
-        return std::sqrt(std::max(T(0), integral(pow<2>(p-q), lo, hi))) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(pow<2>(p-q), lo, hi)) / (hi-lo));
     }
     template<typename T, int Plo, int Phi>
     constexpr T distance(const PolynomialRailyard<T,Plo,Phi>& p, const T k, const T lo, const T hi)
     {
-        return std::sqrt(std::max(T(0), integral(pow<2>(p-k), lo, hi))) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(pow<2>(p-k), lo, hi)) / (hi-lo));
     }
     template<typename T, int Plo, int Phi>
     constexpr T distance(const T k, const PolynomialRailyard<T,Plo, Phi> p, const T lo, const T hi)
     {
-        return std::sqrt(std::max(T(0), integral(pow<2>(p-k), lo, hi))) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(pow<2>(p-k), lo, hi)) / (hi-lo));
     }
 
 

@@ -1,6 +1,12 @@
 #pragma once
 
+// C libraries
+#include <cmath> // std::sqrt
+
 // std libraries
+#include <vector> // std::vector
+#include <limits> // std::numeric_limits
+#include <string> // std::string
 #include <algorithm> // copy, back_inserter
 #include <initializer_list>
 #include <iostream>
@@ -122,9 +128,7 @@ namespace analytic {
         Railcar<T,F> operator[](const std::size_t i) const
         {
             const T oo = std::numeric_limits<double>::max();
-            return i<0? 
-                    Railcar<T,F>(-oo,oo,F(0)) 
-              : i>=cars.size()? 
+            return i>=cars.size()? 
                     Railcar<T,F>(oo,oo,F(0)) 
               : 
                     cars[i];
@@ -268,6 +272,7 @@ namespace analytic {
         std::sort(pq_couplers.begin(), pq_couplers.end());
         auto last = std::unique(pq_couplers.begin(), pq_couplers.end());
         pq_couplers.erase(last, pq_couplers.end());
+        return pq_couplers;
     }
 
 

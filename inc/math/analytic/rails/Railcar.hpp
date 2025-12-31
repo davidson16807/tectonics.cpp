@@ -279,6 +279,12 @@ namespace analytic {
           - integral(car.content, std::max(lo, car.lo)) : T(0);
     }
 
+    template<typename T, typename F>
+    Railcar<T,F> railcar(const T lo, const T hi, const F& content)
+    {
+        return Railcar<T,F>(lo, hi, content);
+    }
+
 }
 
 

@@ -76,7 +76,6 @@ namespace math {
 	MATH_BINARY_GLM_WRAPPER(distance)
 	MATH_BINARY_GLM_WRAPPER(mod)  
 	MATH_BINARY_GLM_WRAPPER(step)
-	MATH_BINARY_GLM_WRAPPER(fma)
 	MATH_BINARY_GLM_WRAPPER(equal)
 	MATH_BINARY_GLM_WRAPPER(notEqual)
 	MATH_BINARY_GLM_WRAPPER(greaterThan)
@@ -86,19 +85,19 @@ namespace math {
 
 	#undef MATH_BINARY_GLM_WRAPPER
 
+	template<typename glm::length_t L, typename T1, typename T2, typename T3, glm::qualifier Q>
+	inline auto smoothstep(const glm::vec<L,T1,Q> a, const glm::vec<L,T2,Q> b, const T3 c){ return glm::smoothstep(a,b,c); }
+	template<typename glm::length_t L, typename T1, typename T2, typename T3, glm::qualifier Q>
+	inline auto smoothstep(const glm::vec<L,T1,Q> a, const glm::vec<L,T2,Q> b, const T3 c){ return glm::smoothstep(a,b,c); }
+	template<typename glm::length_t L, typename T1, typename T2, typename T3, glm::qualifier Q>
+	inline auto fma(const glm::vec<L,T1,Q> a, const glm::vec<L,T2,Q> b, const glm::vec<L,T3,Q> c){ return glm::fma(a,b,c); }
 
-	#define MATH_BINARY_GLM_WRAPPER(NAME) \
-	template <glm::length_t L, typename T1, typename T2, glm::qualifier Q> \
-		inline auto NAME(const glm::vec<L,T1,Q> a, const glm::vec<L,T2,Q> b, const glm::vec<L,T2,Q> c){ return glm::NAME(a,b,c); }
-	MATH_BINARY_GLM_WRAPPER(smoothstep)
-	#undef MATH_BINARY_GLM_WRAPPER
-
-	template<int L, typename T, glm::qualifier Q>
+	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline constexpr bool isinf(const glm::vec<L,T,Q> V){
 		return glm::any(glm::isinf(V));
 	}
 
-	template<int L, typename T, glm::qualifier Q>
+	template<glm::length_t L, typename T, glm::qualifier Q>
 	inline constexpr bool isnan(const glm::vec<L,T,Q> V){
 		return glm::any(glm::isnan(V));
 	}

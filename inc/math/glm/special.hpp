@@ -11,6 +11,7 @@
 #include <glm/mat2x2.hpp>
 #include <glm/mat3x3.hpp>
 #include <glm/mat4x4.hpp>
+#include <glm/geometric.hpp>  // dot, length, normalize
 #include <glm/gtx/component_wise.hpp> 
 
 namespace math{
@@ -44,13 +45,13 @@ namespace math{
 	*/
 
 	template<typename T, glm::qualifier Q>
-	inline constexpr T permutation(const glm::mat<2,2,T,Q> A)
+	inline constexpr auto permutation(const glm::mat<2,2,T,Q> A)
 	{
 	    return glm::mat<2,2,T,Q>(0,-1,1,0) * A;
 	}
 
 	template<typename T, glm::qualifier Q>
-	inline constexpr T permutation(const glm::mat<3,3,T,Q> A)
+	inline constexpr auto permutation(const glm::mat<3,3,T,Q> A)
 	{
 	    return glm::vec<3,T,Q>(
 		    glm::dot(
@@ -87,19 +88,22 @@ namespace math{
 	template <int L, typename T, glm::qualifier Q>
 	inline constexpr auto vector_projection (const glm::vec<L,T,Q> a, const glm::vec<L,T,Q> b)
 	{
-		return glm::dot(a, glm::normalize(b)) * b;
+		auto bhat = glm::normalize(b);
+		return glm::dot(a, glm::normalize(bhat)) * bhat;
 	}
 
 	template <int L, typename T, glm::qualifier Q>
 	inline constexpr auto scalar_rejection (const glm::vec<L,T,Q> a, const glm::vec<L,T,Q> b)
 	{
-		return glm::length(a - glm::dot(a, glm::normalize(b)) * b);
+		auto bhat = glm::normalize(b);
+		return glm::length(a - glm::dot(a, bhat) * bhat);
 	}
 
 	template <int L, typename T, glm::qualifier Q>
 	inline constexpr auto vector_rejection (const glm::vec<L,T,Q> a, const glm::vec<L,T,Q> b)
 	{
-		return a - glm::dot(a, glm::normalize(b)) * b;
+		auto bhat = glm::normalize(b);
+		return a - glm::dot(a, glm::normalize(bhat)) * bhat;
 	}
 
 	/*

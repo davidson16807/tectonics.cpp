@@ -2,6 +2,7 @@
 
 // std libraries
 #include <algorithm> // copy, back_inserter
+#include <limits> // numeric_limits
 
 // in-house libraries
 #include "../Identity.hpp"
@@ -123,7 +124,7 @@ namespace analytic {
 
 
     template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
-    constexpr auto compose(const PolynomialRailcar<T,P1lo,P1hi>& p, const Polynomial<T,P2lo,P2hi> q)
+    constexpr auto compose(const PolynomialRailcar<T,P1lo,P1hi>& p, const Polynomial<T,P2lo,P2hi>& q)
     {
         using F = Polynomial<T,std::min(P1lo*P2lo,P1hi*P2hi),std::max(P1lo*P2lo,P1hi*P2hi)>;
         return Railcar<T,F>(p.lo, p.hi, compose(p.content, q));
@@ -165,30 +166,30 @@ namespace analytic {
 
 
     template<typename T, int P1lo, int P1hi>
-    constexpr T maximum(const PolynomialRailcar<T,P1lo,P1hi> p, const T lo, const T hi) 
+    constexpr T maximum(const PolynomialRailcar<T,P1lo,P1hi>& p, const T lo, const T hi) 
     {
-        return maximum(p, std::max(lo, p.lo), std::min(hi, p.hi));
+        return maximum(p.content, std::max(lo, p.lo), std::min(hi, p.hi));
     }
     template<typename T, int P1lo, int P1hi>
-    constexpr T minimum(const PolynomialRailcar<T,P1lo,P1hi> p, const T lo, const T hi) 
+    constexpr T minimum(const PolynomialRailcar<T,P1lo,P1hi>& p, const T lo, const T hi) 
     {
-        return minimum(p, std::max(lo, p.lo), std::min(hi, p.hi));
+        return minimum(p.content, std::max(lo, p.lo), std::min(hi, p.hi));
     }
 
 
 
 
     template<typename T, typename F>
-    constexpr PolynomialRailcar<T,0,1> linear_newton_polynomial(const Railcar<T,F> f){
+    constexpr PolynomialRailcar<T,0,1> linear_newton_polynomial(const Railcar<T,F>& f){
         const T x1 = f.lo;
         const T x2 = f.hi;
-        return PolynomialRailcar<T,0,2>(f.lo, f.hi,
+        return PolynomialRailcar<T,0,1>(f.lo, f.hi,
             linear_newton_polynomial(x1,x2, f.content(x1),f.content(x2))
         );
     }
 
     template<typename T, typename F>
-    constexpr PolynomialRailcar<T,0,2> quadratic_newton_polynomial(const Railcar<T,F> f){
+    constexpr PolynomialRailcar<T,0,2> quadratic_newton_polynomial(const Railcar<T,F>& f){
         const T x1 = f.lo;
         const T x3 = f.hi;
         const T x2 = x1 + T(1.0/2.0)*(x3-x1);
@@ -198,7 +199,7 @@ namespace analytic {
     }
 
     template<typename T, typename F>
-    constexpr PolynomialRailcar<T,0,3> cubic_newton_polynomial(const Railcar<T,F> f){
+    constexpr PolynomialRailcar<T,0,3> cubic_newton_polynomial(const Railcar<T,F>& f){
         const T x1 = f.lo;
         const T x4 = f.hi;
         const T x2 = x1 + T(1.0/3.0)*(x4-x1);
@@ -210,7 +211,7 @@ namespace analytic {
 
 
     template<typename T, typename F>
-    constexpr PolynomialRailcar<T,0,3> cubic_spline(const Railcar<T,F> f){
+    constexpr PolynomialRailcar<T,0,3> cubic_spline(const Railcar<T,F>& f){
         const T x0 = f.lo;
         const T x1 = f.hi;
         return PolynomialRailcar<T,0,3>(f.lo, f.hi,

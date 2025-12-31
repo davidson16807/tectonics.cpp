@@ -1,7 +1,10 @@
 #pragma once
 
+// std libraries
+#include <string>
+#include <ostream>
+
 #include "Identity.hpp"
-#include "Scaling.hpp"
 
 namespace analytic {
 
@@ -79,7 +82,7 @@ namespace analytic {
     constexpr Scaling<T> operator-(const Scaling<T> f, const Scaling<T> g)
     {
         Scaling y = f;
-        y += g;
+        y -= g;
         return y;
     }
     template<typename T>
@@ -119,23 +122,23 @@ namespace analytic {
     template<typename T>
     constexpr Scaling<T> operator/(const Identity<T> f, const T k)
     {
-        return Scaling<T>(1.0f / k);
+        return Scaling<T>(T(1) / k);
     }
     template<typename T>
     constexpr Scaling<T> operator-(const Identity<T> e)
     {
-        return Scaling<T>(-1.0f);
+        return Scaling<T>(T(-1));
     }
 
     template<typename T>
     constexpr auto operator+(const Identity<T> e, const Scaling<T> f)
     {
-        return Scaling<T>(e) + Scaling<T>(f);
+        return Scaling<T>(f.factor+T(1));
     }
     template<typename T>
     constexpr auto operator+(const Scaling<T> f, const Identity<T> e)
     {
-        return Scaling<T>(f) + Scaling<T>(e);
+        return Scaling<T>(f.factor+T(1));
     }
     template<typename T>
     constexpr auto operator-(const Identity<T> e, const Scaling<T> f)
@@ -157,7 +160,7 @@ namespace analytic {
     template<typename T>
     constexpr T operator/(const Identity<T> e, const Scaling<T> f)
     {
-        return 1.0f/f.factor;
+        return T(1)/f.factor;
     }
     template<typename T>
     constexpr T operator/(const Scaling<T> f, const Identity<T> e)

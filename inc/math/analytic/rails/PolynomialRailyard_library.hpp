@@ -1,6 +1,14 @@
 #pragma once
 
+// C libraries
 #include <cmath>
+#include <cassert>
+
+// std libraries
+#include <vector>
+#include <limits> // numeric_limits
+
+#include "PolynomialRailyard.hpp"
 
 namespace analytic {
 namespace spline {
@@ -14,8 +22,8 @@ namespace spline {
 
     template<typename T, typename Xs, typename Ys> 
     PolynomialRailyard<T,0,1> linear_spline(
-        const Xs x,
-        const Ys y
+        const Xs& x,
+        const Ys& y
     ){
         assert(x.size() == y.size());
         assert(x.size() >= 1);
@@ -67,8 +75,8 @@ namespace spline {
 
     template<typename T, typename T2> 
     PolynomialRailyard<T,-1,0> inverse_linear_spline(
-        const std::vector<T2> x,
-        const std::vector<T2> y
+        const std::vector<T2>& x,
+        const std::vector<T2>& y
     ){
         assert(x.size() == y.size());
         assert(x.size() >= 1);
@@ -223,3 +231,4 @@ namespace spline {
         };
     }
 }}
+

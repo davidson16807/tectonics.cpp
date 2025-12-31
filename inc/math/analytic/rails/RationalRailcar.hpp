@@ -10,7 +10,7 @@
 #include "../Polynomial.hpp"
 #include "../Rational.hpp"
 
-#include "Railcar.hpp"
+#include "PolynomialRailcar.hpp"
 #include "Railyard.hpp"
 
 namespace analytic {
@@ -48,20 +48,20 @@ namespace analytic {
     constexpr auto operator*(const RationalRailcar<T,P1lo,P1hi,Q1lo,Q1hi>& p, const PolynomialRailcar<T,P2lo,P2hi> q)
     {
         using F = RationalRailcar<T,P1lo+P2lo,P1hi+P2hi,Q1lo,Q1hi>;
-        return Railcar<T,F>(p.lo, p.hi, p.content*q);
+        return Railcar<T,F>(p.lo, p.hi, p.content*q.content);
     }
 
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi>
     constexpr auto operator*(const PolynomialRailcar<T,P2lo,P2hi> q, const RationalRailcar<T,P1lo,P1hi,Q1lo,Q1hi>& p)
     {
         using F = RationalRailcar<T,P1lo+P2lo,P1hi+P2hi,Q1lo,Q1hi>;
-        return Railcar<T,F>(p.lo, p.hi, q*p.content);
+        return Railcar<T,F>(p.lo, p.hi, q.content*p.content);
     }
 
     // template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi>
     // constexpr auto operator/(const RationalRailcar<T,P1lo,P1hi,Q1lo,Q1hi>& p, const PolynomialRailcar<T,P2lo,P2hi>& q)
     // {
-    //     using F = RationalRailcar<T,P1lo+P2lo,P1hi+P2hi,Q1lo,Q1hi>;
+    //     using F = RationalRailcar<T,P1lo,P1hi,Q1lo+P2lo,Q1hi+P2hi>;
     //     return Railcar<T,F>(p.lo, p.hi, p.content/q.content);
     // }
     /*
@@ -76,22 +76,22 @@ namespace analytic {
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi, int Q2lo, int Q2hi>
     constexpr auto operator*(const RationalRailcar<T,P1lo,P1hi,Q1lo,Q1hi>& p, const Rational<T,P2lo,P2hi,Q2lo,Q2hi> q)
     {
-        using F = RationalRailcar<T,P1lo+P2lo,P1hi+P2hi,Q1lo,Q1hi>;
+        using F = RationalRailcar<T,P1lo+P2lo,P1hi+P2hi,Q1lo+Q2lo,Q1hi+Q2hi>;
         return Railcar<T,F>(p.lo, p.hi, p.content*q);
     }
 
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi, int Q2lo, int Q2hi>
     constexpr auto operator*(const Rational<T,P2lo,P2hi,Q2lo,Q2hi> q, const RationalRailcar<T,P1lo,P1hi,Q1lo,Q1hi>& p)
     {
-        using F = RationalRailcar<T,P1lo+P2lo,P1hi+P2hi,Q1lo,Q1hi>;
+        using F = RationalRailcar<T,P1lo+P2lo,P1hi+P2hi,Q1lo+Q2lo,Q1hi+Q2hi>;
         return Railcar<T,F>(p.lo, p.hi, q*p.content);
     }
 
     template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi, int Q2lo, int Q2hi>
     constexpr auto operator/(const RationalRailcar<T,P1lo,P1hi,Q1lo,Q1hi>& p, const Rational<T,P2lo,P2hi,Q2lo,Q2hi>& q)
     {
-        using F = RationalRailcar<T,P1lo+P2lo,P1hi+P2hi,Q1lo,Q1hi>;
-        return Railcar<T,F>(p.lo, p.hi, p.content/q.content);
+        using F = RationalRailcar<T,P1lo+Q2lo,P1hi+Q2hi,Q1lo+P2lo,Q1hi+P2hi>;
+        return Railcar<T,F>(p.lo, p.hi, p.content/q);
     }
     /*
     NOTE: we cannot support division by railcars.
@@ -119,7 +119,7 @@ namespace analytic {
     constexpr auto operator/(const RationalRailcar<T,P1lo,P1hi,Q1lo,Q1hi>& p, const Polynomial<T,P2lo,P2hi>& q)
     {
         using F = RationalRailcar<T,P1lo+P2lo,P1hi+P2hi,Q1lo,Q1hi>;
-        return Railcar<T,F>(p.lo, p.hi, p.content/q.content);
+        return Railcar<T,F>(p.lo, p.hi, p.content/q);
     }
 
 
@@ -213,7 +213,7 @@ namespace analytic {
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     auto derivative(const RationalRailcar<T,Plo,Phi,Qlo,Qhi>& r)
     {
-        return RationalRailcar(r.lo, r.hi, derivative(r.content));
+        return railcar(r.lo, r.hi, derivative(r.content));
     }
 
 

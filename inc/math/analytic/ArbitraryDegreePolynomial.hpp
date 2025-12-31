@@ -1,7 +1,15 @@
 #pragma once
 
-#include <map>         // map
-#include <algorithm>   // clamp, min_element, fill, copy
+// C libraries
+#include <cmath>      // pow, sqrt, log, abs
+#include <cstdint>    // int8_t
+
+// std libraries
+#include <algorithm>  // clamp, min_element, fill, copy
+#include <limits>     // numeric_limits
+#include <map>        // map
+#include <string>     // string, to_string
+#include <ostream>    // ostream
 
 // in-house libraries
 #include "Identity.hpp"
@@ -74,6 +82,11 @@ namespace analytic {
         template<int Plo, int Phi>
         constexpr ArbitraryDegreePolynomial& operator=(const Polynomial<T,Plo,Phi>& p)
         {
+            k.clear();
+            for (int i=Plo; i<Phi; i++)
+            {
+                k[i] = p[i];
+            }
             return *this;
         }
         constexpr T operator()(const T x) const
@@ -89,10 +102,7 @@ namespace analytic {
         constexpr T& operator[](const I2 i)
         {
             auto found = k.find(I(i));
-            if (found == k.end())
-            {
-                found->second = T(0);
-            }
+            assert (found == k.end());
             return found->second;
         }
         template<typename I2>
@@ -123,7 +133,7 @@ namespace analytic {
             for (int i=Plo; i<=Phi; i++)
             {
                 I i2(i);
-                k[i2] = k.find(i2) != k.cend()? k[i2] + p.k[i] : p.k[i];
+                k[i2] = k.find(i2) != k.cend()? k[i2] + p[i] : p[i];
             }
             return *this;
         }
@@ -133,7 +143,7 @@ namespace analytic {
             for (int i=Plo; i<=Phi; i++)
             {
                 I i2(i);
-                k[i2] = k.find(i2) != k.cend()? k[i2] - p.k[i] : p.k[i];
+                k[i2] = k.find(i2) != k.cend()? k[i2] - p[i] : p[i];
             }
             return *this;
         }
@@ -216,7 +226,7 @@ namespace analytic {
     constexpr ArbitraryDegreePolynomial<T,I> operator-(const T k, const ArbitraryDegreePolynomial<T,I>& p)
     {
         ArbitraryDegreePolynomial<T,I> y(p);
-        y *=-1.0f;
+        y *=T(-1);
         y[0] += k;
         return y;
     }
@@ -245,7 +255,7 @@ namespace analytic {
     constexpr ArbitraryDegreePolynomial<T,I> operator-(const ArbitraryDegreePolynomial<T,I>& p)
     {
         ArbitraryDegreePolynomial<T,I> y(p);
-        y *=-1.0f;
+        y *=T(-1);
         return y;
     }
 
@@ -531,7 +541,7 @@ namespace analytic {
             // rather than repeated multiplication, to avoid precision errors
             integral += i != -1? 
                 p[i] * std::pow(x, i+1) / (i+1)
-              : p[i] * (p[i] != T(0.0)? std::log(std::abs(x)) : T(0));
+              : p[i] * (p[i] != T(0)? std::log(std::abs(x)) : T(0));
         }
         return integral;
     }
@@ -556,7 +566,7 @@ namespace analytic {
             integral += i != -1? 
                 p[i] * (std::pow(hi, i+1) / (i+1) 
                       - std::pow(lo, i+1) / (i+1))
-              : p[i] * (p[i] != T(0.0)? std::log(std::abs(hi)) - std::log(std::abs(lo)) : T(0));
+              : p[i] * (p[i] != T(0)? std::log(std::abs(hi)) - std::log(std::abs(lo)) : T(0));
         }
 
         return integral;
@@ -587,17 +597,17 @@ namespace analytic {
     template<typename T, typename I>
     constexpr T distance(const ArbitraryDegreePolynomial<T,I> p, const ArbitraryDegreePolynomial<T,I> q, const T lo, const T hi)
     {
-        return std::sqrt(integral((p-q)*(p-q), lo, hi)) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral((p-q)*(p-q), lo, hi)) / (hi-lo));
     }
     template<typename T, typename I>
     constexpr T distance(const ArbitraryDegreePolynomial<T,I> p, const T k, const T lo, const T hi)
     {
-        return std::sqrt(integral((p-k)*(p-k), lo, hi)) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral((p-k)*(p-k), lo, hi)) / (hi-lo));
     }
     template<typename T, typename I>
     constexpr T distance(const T k, const ArbitraryDegreePolynomial<T,I> p, const T lo, const T hi)
     {
-        return std::sqrt(integral((p-k)*(p-k), lo, hi)) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral((p-k)*(p-k), lo, hi)) / (hi-lo));
     }
 
     template<typename T, typename I>
@@ -628,7 +638,7 @@ namespace analytic {
             for (auto pair2 = p.k.cbegin(); pair2 != p.k.cend(); ++pair2)
             {
                 I j = pair2->first;
-                pq[i] += p[j]*combination(j,j-i)*std::pow(g.offset, j-i);
+                pq[i] += p[j]*combinatoric::combination(j,j-i)*std::pow(g.offset, j-i);
             }
         }
         return pq;

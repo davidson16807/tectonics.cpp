@@ -20,7 +20,7 @@ namespace analytic {
         {}
         constexpr T operator()(const T x) const
         {
-            return T(lo<x && x<=hi);
+            return lo<x && x<=hi? T(1):T(0);
         }
     };
 

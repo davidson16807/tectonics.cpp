@@ -1,11 +1,12 @@
 #pragma once
 
 // standard libraries
-#include <algorithm>
+#include <algorithm> // max
+#include <limits>    // numeric_limits
 
 // in-house libraries
-#include <math/analytic/Scaling.hpp>
-#include <math/analytic/Shifting.hpp>
+#include "Scaling.hpp"
+#include "Shifting.hpp"
 #include "Identity.hpp"
 
 namespace analytic {
@@ -81,6 +82,11 @@ namespace analytic {
         }
     };
 
+    constexpr auto compose(const T lo, const T hi, const F f)
+    {
+        return Clamped<T,F>(lo, hi, f);
+    }
+
     // operators with reals that are closed under Clamped<T,F> relations
     template<typename T, typename F>
     constexpr Clamped<T,F> operator+(const Clamped<T,F>& f, const T k)
@@ -128,7 +134,7 @@ namespace analytic {
     constexpr Clamped<T,F> operator-(const Clamped<T,F>& f)
     {
         Clamped<T,F> y(f);
-        y.f *= -1;
+        y.f *= T(-1);
         return y;
     }
 
@@ -155,6 +161,7 @@ namespace analytic {
         fclampg.f = compose(fclamp.f,g);
         fclampg.lo /= g.factor;
         fclampg.hi /= g.factor;
+        if (fclampg.hi < fclampg.lo) std::swap(fclampg.lo, fclampg.hi);
         return fclampg;
     }
 
@@ -162,9 +169,9 @@ namespace analytic {
     Given functions f∘clamp and h, return the composite function h∘f∘clamp.
     */
     template<typename T, typename F, typename H>
-    constexpr Clamped<T,F> compose(const H h, const Clamped<T,F>& fclamp)
+    constexpr auto compose(const H h, const Clamped<T,F>& fclamp)
     {
-        return Clamped<T,F>(fclamp.lo, fclamp.hi, compose(h, fclamp.f));
+        return clamped(fclamp.lo, fclamp.hi, compose(h, fclamp.f));
     }
 
 

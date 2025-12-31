@@ -1,8 +1,13 @@
 #pragma once
 
+// C libraries
+#include <cmath> // sqrt
+
 // std libraries
 #include <algorithm> // copy, back_inserter
-#include <iostream> 
+#include <limits> // numeric_limits
+#include <iostream> // iostream
+#include <vector> // vector
 
 // in-house libraries
 #include "../Identity.hpp"
@@ -18,8 +23,6 @@ namespace analytic {
 
     template<typename T, int Plo, int Phi>
     using PolynomialTrain = Train<T,Polynomial<T,Plo,Phi>>;
-
-
 
     // operations that are closed under trains
 
@@ -657,7 +660,7 @@ namespace analytic {
         const T lo, 
         const T hi
     ){
-        return std::sqrt(std::max(T(0), integral(pow<2>(p-q), lo, hi))) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(pow<2>(p-q), lo, hi)) / (hi-lo));
     }
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr T distance(const PolynomialTrain<T,Plo,Phi>& p, const PolynomialRailyard<T,Qlo,Qhi> q, const T lo, const T hi)
@@ -672,22 +675,22 @@ namespace analytic {
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr T distance(const PolynomialTrain<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi> q, const T lo, const T hi)
     {
-        return std::sqrt(std::max(T(0), integral(pow<2>(p-q), lo, hi))) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(pow<2>(p-q), lo, hi)) / (hi-lo));
     }
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr T distance(const Polynomial<T,Plo,Phi> p, const PolynomialTrain<T,Qlo,Qhi>& q, const T lo, const T hi)
     {
-        return std::sqrt(std::max(T(0), integral(pow<2>(p-q), lo, hi))) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(pow<2>(p-q), lo, hi)) / (hi-lo));
     }
     template<typename T, int Plo, int Phi>
     constexpr T distance(const PolynomialTrain<T,Plo,Phi>& p, const T k, const T lo, const T hi)
     {
-        return std::sqrt(std::max(T(0), integral(pow<2>(p-k), lo, hi))) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(pow<2>(p-k), lo, hi)) / (hi-lo));
     }
     template<typename T, int Plo, int Phi>
     constexpr T distance(const T k, const PolynomialTrain<T,Plo, Phi>& p, const T lo, const T hi)
     {
-        return std::sqrt(std::max(T(0), integral(pow<2>(p-k), lo, hi))) / (hi-lo);
+        return std::sqrt(std::max(T(0), integral(pow<2>(p-k), lo, hi)) / (hi-lo));
     }
 
 
@@ -695,11 +698,11 @@ namespace analytic {
     template<typename T, int Plo, int Phi>
     constexpr T maximum(const PolynomialTrain<T,Plo,Phi> p, const T lo, const T hi) 
     {
-        T result = p.cars[0];
+        T result = std::numeric_limits<T>::max();
         T candidate;
-        for (auto pi : p.cars)
+        for (std::size_t i=0; i<p.contents.size(); i++)
         {
-            candidate = maximum(pi, lo, hi);
+            candidate = maximum(pi, std::min(lo, p.couplers[i]), std::max(hi, p.couplers[i+1]));
             result = candidate > result? candidate : result;
         }
         return result;
@@ -707,11 +710,11 @@ namespace analytic {
     template<typename T, int Plo, int Phi>
     constexpr T minimum(const PolynomialTrain<T,Plo,Phi> p, const T lo, const T hi) 
     {
-        T result = p.cars[0];
+        T result = -std::numeric_limits<T>::max();
         T candidate;
-        for (auto pi : p.cars)
+        for (std::size_t i=0; i<p.contents.size(); i++)
         {
-            candidate = minimum(pi, lo, hi);
+            candidate = minimum(pi, std::min(lo, p.couplers[i]), std::max(hi, p.couplers[i+1]));
             result = candidate < result? candidate : result;
         }
         return result;
@@ -719,53 +722,9 @@ namespace analytic {
 
 
 
-    template<typename T, typename F>
-    PolynomialTrain<T,0,1> linear_newton_polynomial(
-        const Train<T,F>& train
-    ){
-        std::vector<Polynomial<T,0,1>> contents;
-        for (auto car : train.cars)
-        {
-            contents.push_back(linear_newton_polynomial(car));
-        }
-        return PolynomialTrain<T,0,1>(contents, train.couplers);
-    }
-
-    template<typename T, typename F>
-    PolynomialTrain<T,0,2> quadratic_newton_polynomial(
-        const Train<T,F>& train
-    ){
-        std::vector<Polynomial<T,0,2>> contents;
-        for (auto car : train.cars)
-        {
-            contents.push_back(quadratic_newton_polynomial(car));
-        }
-        return PolynomialTrain<T,0,2>(contents, train.couplers);
-    }
-
-    template<typename T, typename F>
-    PolynomialTrain<T,0,3> cubic_newton_polynomial(
-        const Train<T,F>& train
-    ){
-        std::vector<Polynomial<T,0,3>> contents;
-        for (auto car : train.cars)
-        {
-            contents.push_back(cubic_newton_polynomial(car));
-        }
-        return PolynomialTrain<T,0,3>(contents, train.couplers);
-    }
-
-    template<typename T, typename F>
-    PolynomialTrain<T,0,3> cubic_spline(
-        const Train<T,F>& train
-    ){
-        std::vector<Polynomial<T,0,3>> contents;
-        for (auto car : train.cars)
-        {
-            contents.push_back(cubic_spline(car));
-        }
-        return PolynomialTrain<T,0,3>(contents, train.couplers);
-    }
+    // linear_newton_polynomial
+    // quadratic_newton_polynomial
+    // cubic_newton_polynomial
 
     // a convenience function that converts an arbitrary function to a train
     template<typename T, typename F, typename DFDX>

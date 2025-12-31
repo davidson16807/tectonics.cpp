@@ -1,8 +1,13 @@
 #pragma once
 
-// std libraries
-#include <string> // string
+// C libraries
 #include <cmath>  // log10
+
+// std libraries
+#include <string>  // string
+#include <ostream> // ostream
+#include <algorithm> // max
+#include <type_traits> // enable_if_t
 
 // in-house libraries
 #include "Identity.hpp"
@@ -444,7 +449,7 @@ namespace analytic {
     template<typename T, int Plo, int Phi>
     constexpr auto operator/(const Polynomial<T,Plo,Phi> p, const Shifting<T> g)
     {
-        return Polynomial<T,0,1>(p) / Polynomial<T,0,1>(g);
+        return p / Polynomial<T,0,1>(g);
     }
 
 
@@ -521,17 +526,22 @@ namespace analytic {
     template<typename T>
     constexpr T derivative(const Rational<T,0,1,0,0> r) 
     {
+        return T(0);
+    }
+    template<typename T>
+    constexpr T derivative(const Rational<T,0,1,0,0> r) 
+    {
         return r.p[0];
     }
     template<typename T>
     constexpr T derivative(const Rational<T,1,1,0,0> r) 
     {
-        return T(0);
+        return r.p[0];
     }
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     auto derivative(const Rational<T,Plo,Phi,Qlo,Qhi>& r)
     {
-        return (r.p.derivative()*r.q + r.q.derivative()*r.p) / (r.q*r.q);
+        return (r.p.derivative()*r.q - r.q.derivative()*r.p) / (r.q*r.q);
     }
 
 
