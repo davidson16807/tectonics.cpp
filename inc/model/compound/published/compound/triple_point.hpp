@@ -21,8 +21,8 @@ namespace published {
         {compounds::helium,           point<double>(5.048e3 * si::pascal,     2.1768 * si::kelvin)},
         {compounds::hydrogen,         point<double>(7.042 * si::kilopascal,   13.8 * si::kelvin)},
         {compounds::ammonia,          point<double>(6.060e3 * si::pascal,     195.30 * si::kelvin)},
-        {compounds::ozone,            point<double>(7.346e-6 * si::bar,       -193.0 * si::celcius)}, //encyclopedia.airliquide.com
-        {compounds::nitrous_oxide,    point<double>(87.85 * si::kilopascal,   -90.82 * si::celcius)},   // wikipedia
+        {compounds::ozone,            point<double>(7.346e-6 * si::bar,       -193.0 * si::celsius)}, //encyclopedia.airliquide.com
+        {compounds::nitrous_oxide,    point<double>(87.85 * si::kilopascal,   -90.82 * si::celsius)},   // wikipedia
         {compounds::sulfur_dioxide,   point<double>(1.67e3 * si::pascal,      197.69 * si::kelvin)},
         {compounds::nitric_oxide,     point<double>(87.85e3 * si::pascal,     182.34 * si::kelvin)},
         {compounds::carbon_monoxide,  point<double>(15.35 * si::kilopascal,   68.15 * si::kelvin)},     // PubChem

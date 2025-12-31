@@ -139,7 +139,7 @@ namespace relation {
     // 175 uses
     template<typename Ty>
     GenericRelation<si::temperature<double>, si::pressure<double>> get_vapor_pressure_exponential_interpolated_temperature_function(
-        const si::celcius_type<double> Tunits, const Ty yunits,
+        const si::celsius_type<double> Tunits, const Ty yunits,
         const std::vector<double>xs, 
         const std::vector<double>ys,
         const si::temperature<double> xmin,
@@ -189,7 +189,7 @@ namespace relation {
     // 3 uses, for liquid surface tension
     template<typename Ty>
     GenericRelation<si::temperature<double>,Ty> get_linear_interpolation_anonymous_temperature_relation( 
-        const si::celcius_type<double> Tunits, const Ty yunits,
+        const si::celsius_type<double> Tunits, const Ty yunits,
         const std::vector<double>xs, 
         const std::vector<double>ys,
         const double xmin,

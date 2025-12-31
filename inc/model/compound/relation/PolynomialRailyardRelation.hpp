@@ -18,7 +18,7 @@ namespace relation {
     // TODO: rename `spectral_linear_yard`
     template<typename T, typename Ty>
     relation::PolynomialRailyardRelation<si::temperature<T>,Ty,0,1> get_linear_interpolation_function(
-        const si::celcius_type<T> celcius, const Ty yunits,
+        const si::celsius_type<T> celsius, const Ty yunits,
         const std::vector<double>xs, 
         const std::vector<double>ys
     ){

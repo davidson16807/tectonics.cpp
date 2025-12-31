@@ -170,7 +170,7 @@ namespace relation {
     // 175 uses
     template<typename Ty>
     ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,0,1> get_left_unbounded_exponential_interpolated_temperature_function(
-        const si::celcius_type<double> Tunits, const Ty yunits,
+        const si::celsius_type<double> Tunits, const Ty yunits,
         const std::vector<double>xs, 
         const std::vector<double>ys
     ){
@@ -205,7 +205,7 @@ namespace relation {
     // 175 uses
     template<typename Ty>
     ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,0,1> get_exponential_interpolated_temperature_function(
-        const si::celcius_type<double> Tunits, const Ty yunits,
+        const si::celsius_type<double> Tunits, const Ty yunits,
         const std::vector<double>xs, 
         const std::vector<double>ys
     ){

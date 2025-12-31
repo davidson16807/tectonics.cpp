@@ -13,11 +13,11 @@ namespace published {
     table::PartialTable<LiquidVaporPressureTemperatureRelation> vapor_pressure_as_liquid {
         { compounds::water,         
                 // relation::get_antoine_vapor_pressure_function(
-                //     si::celcius, si::millimeter_mercury, 
+                //     si::celsius, si::millimeter_mercury, 
                 //     7.94917, 1657.462, 1474.68, 213.69), // Physical and Chemical Equilibrium for Chemical Engineers, Second Edition. 
                 // relation::StateFunction<si::pressure<double>>([](const si::pressure<double> p, const si::temperature<double> T) {
                 //     // Buck equation
-                //     double C = T/si::celcius;
+                //     double C = T/si::celsius;
                 //     return 0.61121*exp((18.678-C/234.5) * (C/(257.14+C))) * si::kilopascal; 
                 // }),
                 relation::get_dippr_liquid_vapor_pressure_temperature_relation_101
@@ -148,32 +148,32 @@ namespace published {
         // { compounds::pyrimidine,   },
         { compounds::quartz,         
                 relation::get_vapor_pressure_exponential_interpolated_temperature_function
-                    (si::celcius, si::pascal,
+                    (si::celsius, si::pascal,
                      std::vector<double>{1966.0,     2149.0,     2368.0}, 
                      std::vector<double>{1.0 ,       10.0,       100.0 },
-                     1966.0*si::celcius, 2368.0*si::celcius),
+                     1966.0*si::celsius, 2368.0*si::celsius),
             },
         { compounds::halite,         
                 relation::get_vapor_pressure_exponential_interpolated_temperature_function
-                    (si::celcius, si::pascal,
+                    (si::celsius, si::pascal,
                       std::vector<double>{835.0,     987.0,     1461.0}, 
                      std::vector<double>{100.0 ,     1e3,       100e3 },
-                     835.0*si::celcius, 1461.0*si::celcius),
+                     835.0*si::celsius, 1461.0*si::celsius),
             },
         { compounds::corundum,     
                 relation::get_vapor_pressure_exponential_interpolated_temperature_function
-                    (si::celcius, si::millimeter_mercury,
+                    (si::celsius, si::millimeter_mercury,
                      std::vector<double>{2360.0,    2490.0,     2580.0}, 
                      std::vector<double>{   6.0,      22.0,       53.0},
-                     2360.0*si::celcius, 2580.0*si::celcius),
+                     2360.0*si::celsius, 2580.0*si::celsius),
             }, // Ruff & Konshak, from Pavlushkin (1963)
         // { compounds::apatite,      },
         { compounds::carbon,         
                 relation::get_vapor_pressure_exponential_interpolated_temperature_function
-                    (si::celcius, si::pascal,
+                    (si::celsius, si::pascal,
                      std::vector<double>{2566.0,     3016.0,     3635.0}, 
                      std::vector<double>{1.0 ,       1e3,        100e3 },
-                     2566.0*si::celcius, 3635.0*si::celcius),
+                     2566.0*si::celsius, 3635.0*si::celsius),
             }, // TOOD: autocomplete vapor pressure for solids/liquids if function is present for other phase
         // { compounds::calcite,      },
         // { compounds::orthoclase,   },
@@ -185,24 +185,24 @@ namespace published {
         // { compounds::hematite,     },
         { compounds::gold,         
                 relation::get_vapor_pressure_exponential_interpolated_temperature_function
-                    (si::celcius, si::pascal,
+                    (si::celsius, si::pascal,
                      std::vector<double>{1373.0,     2008.0,     2805.0}, 
                      std::vector<double>{1.0 ,       1e3,        100e3 },
-                     1373.0*si::celcius, 2805.0*si::celcius),
+                     1373.0*si::celsius, 2805.0*si::celsius),
             },
         { compounds::silver,         
                 relation::get_vapor_pressure_exponential_interpolated_temperature_function
-                    (si::celcius, si::pascal,
+                    (si::celsius, si::pascal,
                      std::vector<double>{1010.0,     1509.0,     2160.0}, 
                      std::vector<double>{1.0 ,       1e3,        100e3 },
-                     1010.0*si::celcius, 2160.0*si::celcius),
+                     1010.0*si::celsius, 2160.0*si::celsius),
             },
         { compounds::copper,         
                 relation::get_vapor_pressure_exponential_interpolated_temperature_function
-                    (si::celcius, si::pascal,
+                    (si::celsius, si::pascal,
                      std::vector<double>{1236.0,     1816.0,     2563.0}, 
                      std::vector<double>{1.0 ,       1e3,        100e3 },
-                     1236.0*si::celcius, 2563.0*si::celcius),
+                     1236.0*si::celsius, 2563.0*si::celsius),
             },
         // { compounds::magnetite,    },
         // { compounds::chalcocite,   },

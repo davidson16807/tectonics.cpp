@@ -274,25 +274,25 @@ table::PartialTable<PhaseDiagram> phase{
             // triple point between solid, liquid, and gas
             const point<double> slg_triple (0.0003 * si::pascal, 1983.0 * si::kelvin);
             // triple point between alpha, beta, and coesite
-            const point<double> abc_triple (3.1 * si::gigapascal, 1190.0 * si::celcius);
+            const point<double> abc_triple (3.1 * si::gigapascal, 1190.0 * si::celsius);
             // sample point between solid and liquid
-            const point<double> freezing   (si::atmosphere, 1425.0 * si::celcius);
+            const point<double> freezing   (si::atmosphere, 1425.0 * si::celsius);
             // sample point between stishovite and coesite
-            const point<double> sc0_sample (7.75 * si::gigapascal, 0.0 * si::celcius);
+            const point<double> sc0_sample (7.75 * si::gigapascal, 0.0 * si::celsius);
             // sample point between stishovite and coesite
-            const point<double> sc1_sample (11.0 * si::gigapascal, 1400.0 * si::celcius);
+            const point<double> sc1_sample (11.0 * si::gigapascal, 1400.0 * si::celsius);
             // sample point between alpha and coesite
-            const point<double> ac_sample  (1.8 * si::gigapascal, 0.0 * si::celcius);
+            const point<double> ac_sample  (1.8 * si::gigapascal, 0.0 * si::celsius);
             // sample point between beta and coesite
-            const point<double> bc_sample  (4.3 * si::gigapascal, 2200.0 * si::celcius);
+            const point<double> bc_sample  (4.3 * si::gigapascal, 2200.0 * si::celsius);
             // sample point between alpha and beta
-            const point<double> ab_sample  (0.0 * si::gigapascal, 573.0 * si::celcius);
+            const point<double> ab_sample  (0.0 * si::gigapascal, 573.0 * si::celsius);
             // sample point between beta and cristobalite alpha
-            const point<double> bca_sample (0.0 * si::gigapascal, 870.0 * si::celcius);
+            const point<double> bca_sample (0.0 * si::gigapascal, 870.0 * si::celsius);
             // sample point between beta and cristobalite beta
-            const point<double> bcb_sample (1.0 * si::gigapascal, 1705.0 * si::celcius);
+            const point<double> bcb_sample (1.0 * si::gigapascal, 1705.0 * si::celsius);
             // sample point between cristobalite alpha and cristobalite beta
-            const si::temperature<double>     Tcacb = 1470.0 * si::celcius;
+            const si::temperature<double>     Tcacb = 1470.0 * si::celsius;
             // latent heat of vaporization and molar mass
             const si::specific_energy<double> L  = 11770e3 * si::joule / si::kilogram;
             const si::molar_mass<double>      M  = 60.08 * si::gram/si::mole;
@@ -339,7 +339,7 @@ table::PartialTable<PhaseDiagram> phase{
             const double diamond = 1;
             const point<double> carbon   (2200.0 * si::atmosphere, 6810.0 * si::kelvin); // Leider (1973)
             const point<double> triple   (107e5 * si::pascal,      4765.0 * si::kelvin);
-            const point<double> freezing (si::atmosphere,          3500.0 *si::celcius); // Perry, lower bound
+            const point<double> freezing (si::atmosphere,          3500.0 *si::celsius); // Perry, lower bound
             const     double M (0.012);               // molar mass, kg/mol
             const     double L (355.8*si::kilojoule/(12.011*si::gram) /(si::joule/si::kilogram)); // specific latent heat of vaporization (J/kg)
             constexpr double bv(1/t0 - mv * std::log(p0)); // intercept for clapeyron equation for vaporus

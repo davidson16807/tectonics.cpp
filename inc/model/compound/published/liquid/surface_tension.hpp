@@ -100,7 +100,7 @@ namespace published {
             },
         // { compounds::hydrogen_cyanide,        
         //         relation::get_quadratic_liquid_surface_tension_temperature_function
-        //             (si::celcius, si::dyne/si::centimeter, 
+        //             (si::celsius, si::dyne/si::centimeter, 
         //             20.62, -0.1155, 7e-5, 
         //             -13.3, 25.0), 
         //     },
@@ -114,7 +114,7 @@ namespace published {
             },
         { compounds::formic_acid,        
                 relation::get_linear_interpolation_anonymous_temperature_relation
-                    (si::celcius, si::millinewton/si::meter,
+                    (si::celsius, si::millinewton/si::meter,
                      std::vector<double>{ 25.0,  50.0,  75.0 }, 
                      std::vector<double>{37.13, 34.38, 31.64 },
                       25.0, 75.0), 
@@ -128,7 +128,7 @@ namespace published {
             },
         { compounds::pyrimidine,        
                 relation::get_linear_interpolation_anonymous_temperature_relation
-                    (si::celcius, si::millinewton/si::meter,
+                    (si::celsius, si::millinewton/si::meter,
                      std::vector<double>{ 25.0,  50.0,  75.0, 100.0 }, 
                      std::vector<double>{30.33, 27.80, 25.28, 22.75 },
                       25.0, 100.0), 
@@ -137,7 +137,7 @@ namespace published {
             },
         { compounds::halite,        
                 relation::get_linear_interpolation_anonymous_temperature_relation
-                    (si::celcius, si::dyne/si::centimeter,
+                    (si::celsius, si::dyne/si::centimeter,
                      std::vector<double>{ 1080.0, 1250.0 },
                      std::vector<double>{  112.5,  102.5 },
                       1080.0, 1250.0), // Sato (1990)
@@ -149,21 +149,21 @@ namespace published {
         // { compounds::orthoclase,       },
         { compounds::andesine,        
                 relation::get_linear_interpolation_anonymous_temperature_relation
-                    (si::celcius, si::dyne/si::centimeter,
+                    (si::celsius, si::dyne/si::centimeter,
                      std::vector<double>{ 1300.0, 1600.0 },
                      std::vector<double>{  400.0,  300.0 },
                       1300.0, 1600.0), // from Taniguchi (1988), for Anorthite
             },
         { compounds::augite,        
                 relation::get_linear_interpolation_anonymous_temperature_relation
-                    (si::celcius, si::dyne/si::centimeter,
+                    (si::celsius, si::dyne/si::centimeter,
                      std::vector<double>{ 1228.0, 1438.0 },
                      std::vector<double>{  388.5,  364.4 },
                       1228.0, 1438.0), // from Walker (1981), for Basalt
             },
         { compounds::forsterite,        
                 relation::get_linear_interpolation_anonymous_temperature_relation
-                    (si::celcius, si::dyne/si::centimeter,
+                    (si::celsius, si::dyne/si::centimeter,
                      std::vector<double>{ 1246.0, 1450.0 },
                      std::vector<double>{  380.0,  350.0 },
                       1246.0, 1450.0), // from Walker (1981), for Limburgite

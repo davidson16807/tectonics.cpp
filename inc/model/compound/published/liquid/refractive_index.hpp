@@ -39,7 +39,7 @@ namespace published {
             },
         { compounds::ammonia,           1.3944,
                 // get_interpolated_temperature_function
-                //     (si::celcius, 1.0,
+                //     (si::celsius, 1.0,
                 //      std::vector<double>{ -20.0,  40.0}, 
                 //      std::vector<double>{1.3475, 1.321}), // Francis (1960)
             },
@@ -49,7 +49,7 @@ namespace published {
             },
         { compounds::sulfur_dioxide,    1.3396,
                 // get_interpolated_temperature_function
-                //     (si::celcius, 1.0,
+                //     (si::celsius, 1.0,
                 //      std::vector<double>{-20.0, 40.0}, 
                 //      std::vector<double>{ 1.37, 1.33}), // Francis (1960)
             },

@@ -129,7 +129,7 @@ namespace published {
         // { polymorphs::crystoballite_beta,        },
         { polymorphs::halite,                    5.55 * si::watt / ( si::meter * si::kelvin ), // Wilkens (2011)
             },
-        { polymorphs::corundum,                  // field::StateSample<si::thermal_conductivity<double>>(37.0*si::watt/(si::meter * si::kelvin), si::atmosphere, 20.0*si::celcius),//azom.com/article.aspx?ArticleId=1948
+        { polymorphs::corundum,                  // field::StateSample<si::thermal_conductivity<double>>(37.0*si::watt/(si::meter * si::kelvin), si::atmosphere, 20.0*si::celsius),//azom.com/article.aspx?ArticleId=1948
                 relation::get_linear_interpolation_function
                     (si::kelvin, si::watt / (si::meter * si::kelvin),
                      std::vector<double>{10.0, 60.0,  300.0, 400.0, 1400.0}, 

@@ -1,9 +1,11 @@
+
 #pragma once
 
 #include <cmath>       /* log10, floor, pow, abs, sqrt */
 #include <algorithm>   // std::min
 #include <array>       // std::array<std::string, ...>
 #include <string>      // std::array<std::string, ...>
+#include <ostream>     // std::ostream
 
 namespace si{
   /*
@@ -169,7 +171,7 @@ namespace si{
       return units<M1*N,KG1*N,S1*N,K1*N,MOL1*N,A1*N,CD1*N,T1>(std::pow(raw, N));
     }
     template<int N>
-    constexpr units<M1/N,KG1/N,S1/N,K1/N,MOL1/N,A1/N,CD1/N,T1> root() const
+    units<M1/N,KG1/N,S1/N,K1/N,MOL1/N,A1/N,CD1/N,T1> root() const
     {
       return units<M1/N,KG1/N,S1/N,K1/N,MOL1/N,A1/N,CD1/N,T1>(std::pow(raw,1.0/double(N)));
     }
@@ -297,7 +299,7 @@ namespace si{
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
   constexpr auto sign(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
   {
-    return a/abs(a);
+    return a==units<M1,KG1,S1,K1,MOL1,A1,CD1,T1>(0)? T1(0) : a/abs(a);
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
@@ -933,17 +935,17 @@ namespace si{
 
 
   template<typename T>
-  struct celcius_type {};
+  struct celsius_type {};
 
-  constexpr celcius_type<double> celcius;
+  constexpr celsius_type<double> celsius;
 
   template<typename T1, typename T2>
-  constexpr temperature<T1> operator*(const T1 C, const celcius_type<T2>)
+  constexpr temperature<T1> operator*(const T1 C, const celsius_type<T2>)
   {
     return C*kelvin + standard_temperature;
   }
   template<typename T1, typename T2>
-  constexpr T1 operator/(const temperature<T1> K, const celcius_type<T2>)
+  constexpr T1 operator/(const temperature<T1> K, const celsius_type<T2>)
   {
     return ((K - standard_temperature) / kelvin);
   }
@@ -970,7 +972,7 @@ namespace si{
     // customize formatting for area and volume, which follow separate rules for prefix conversion
     if( M1 != 0 && (KG1|S1|K1|MOL1|A1|CD1) == 0)
     {
-      T1 logincrement = 3.0*M1;
+      T1 logincrement = std::abs(3.0*M1);
       T1 prefix_id = std::floor(std::log10(absraw)/logincrement); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
       std::string prefixed_value = std::to_string(raw / std::pow(10.0, logincrement*std::min(T1(N), prefix_id)));
       std::string prefix(prefixes[int(prefix_id)+N]);
@@ -979,16 +981,18 @@ namespace si{
     // customize formatting for mass, which must be converted to grams
     if( KG1 != 0 && (M1|S1|K1|MOL1|A1|CD1) == 0)
     {
-      T1 logincrement = 3.0*KG1;
-      T1 prefix_id = std::floor(std::log10(absraw)/logincrement); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
-      std::string prefixed_value = std::to_string(raw / std::pow(10.0, logincrement*std::min(T1(N), prefix_id)));
-      std::string prefix(prefixes[int(prefix_id)+KG1+N]);
+      T1 rawg = raw * std::pow(10.0, 3.0*KG1);
+      T1 absrawg = std::abs(raw);
+      T1 logincrement = std::abs(3.0*KG1);
+      T1 prefix_id = std::floor(std::log10(absrawg)/logincrement); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
+      std::string prefixed_value = std::to_string(rawg / std::pow(10.0, logincrement*std::min(T1(N), prefix_id)));
+      std::string prefix(prefixes[int(prefix_id)+N]);
       return prefixed_value + " " + (KG1<0? "1/":"") + prefix + "g" + (std::abs(KG1)!=1? std::to_string(std::abs(KG1)) : "");
     }
     // customize formatting for temperature, which conventionally avoids the "kilo" suffix
     if( K1 == 1 && (M1|KG1|S1|MOL1|A1|CD1) == 0)
     {
-      T1 logincrement = 3.0*K1;
+      T1 logincrement = std::abs(3.0*K1);
       T1 prefix_id = std::floor(std::log10(absraw)/logincrement); prefix_id = std::abs(prefix_id) < N? prefix_id : 0;
       prefix_id = prefixes[int(prefix_id)+N] == "k"? prefix_id - 1 : prefix_id;
       std::string prefixed_value =  std::to_string(raw / std::pow(10.0, logincrement*std::min(T1(N), prefix_id)));
@@ -998,7 +1002,7 @@ namespace si{
     // customize formatting for time, which must be converted to years
     if( S1 == 1 && (M1|KG1|K1|MOL1|A1|CD1) == 0)
     {
-      T1 logincrement = 3.0*S1;
+      T1 logincrement = std::abs(3.0*S1);
       using pair = std::pair<T1, std::string>;
       std::array<pair, 3> named_intervals {
         pair(day/second,  "dy"),
@@ -1023,10 +1027,9 @@ namespace si{
     // customize formatting for common derived units for pretty printing
     std::array<pair, 10> named_mks {
       pair({ 1,1,-2}, "N"),
-      pair({ 2,1,-2}, "N*m"),
+      pair({ 2,1,-2}, "J"),
       pair({-1,1,-2}, "Pa"),
       pair({-1,1,-1}, "Pa*s"),
-      pair({ 2,1,-2}, "J"),
       pair({ 2,0,-2}, "J/kg"),
       pair({ 2,1,-3}, "W"),
       pair({ 1,1,-3}, "W/m"),
@@ -1058,7 +1061,9 @@ namespace si{
 
     // fall back on SI base units 
     std::string result = std::to_string(raw) + " ";
-    result += M1<0 && KG1<0 && S1<0 && K1<0 && MOL1<0 && A1<0 && CD1<0? "1" : "";
+    constexpr bool any_positive =  M1>0 || KG1>0 || S1>0 || K1>0 || MOL1>0 || A1>0 || CD1>0;
+    constexpr bool any_negative =  M1<0 || KG1<0 || S1<0 || K1<0 || MOL1<0 || A1<0 || CD1<0;
+    result += (!any_positive && any_negative)? "1" : "";
     result +=   M1>0? "m"  + (std::abs(  M1)>1? exponent(std::abs(M1  )) : "") : ""; 
     result +=  KG1>0? "kg" + (std::abs( KG1)>1? exponent(std::abs(KG1 )) : "") : ""; 
     result +=   S1>0? "s"  + (std::abs(  S1)>1? exponent(std::abs(S1  )) : "") : ""; 
@@ -1066,7 +1071,7 @@ namespace si{
     result += MOL1>0? "mol"+ (std::abs(MOL1)>1? exponent(std::abs(MOL1)) : "") : ""; 
     result +=   A1>0? "A"  + (std::abs(  A1)>1? exponent(std::abs(  A1)) : "") : ""; 
     result +=  CD1>0? "Cd" + (std::abs( CD1)>1? exponent(std::abs( CD1)) : "") : ""; 
-    result += M1<0 || KG1<0 || S1<0 || K1<0 || MOL1<0 || A1<0 || CD1<0? "/" : "";
+    result += any_negative? "/" : "";
     result +=   M1<0? "m"  + (std::abs(  M1)>1? exponent(std::abs(M1  )) : "") : ""; 
     result +=  KG1<0? "kg" + (std::abs( KG1)>1? exponent(std::abs(KG1 )) : "") : ""; 
     result +=   S1<0? "s"  + (std::abs(  S1)>1? exponent(std::abs(S1  )) : "") : ""; 
@@ -1078,7 +1083,7 @@ namespace si{
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr std::ostream& operator<<(std::ostream& stream, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+  std::ostream& operator<<(std::ostream& stream, const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
   {
     stream << to_string(a);
     return stream;

@@ -86,7 +86,7 @@ ACCOMPLISHED:
 	ensure that gas and liquid densities can be inferred by compressibility
 	ensure inference of absorption from refraction indices
 	redo refractive index and extinction coefficient for carbon dioxide
-	ensure celcius conversion does not produce garbage estimates
+	ensure celsius conversion does not produce garbage estimates
 	run through "The properties of gases and liquids" on internet archive and identify missing correlations (e.g. surface tension)
 	complex phase diagrams for:
 		water
