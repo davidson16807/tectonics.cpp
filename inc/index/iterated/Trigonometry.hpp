@@ -1,7 +1,6 @@
 #pragma once
 
 // C libraries
-#include <cmath>     /* std math */
 #include <assert.h>  /* assert */
 
 // in-house libraries
@@ -42,7 +41,7 @@ namespace iterated
 	template <typename In1, typename In2, typename In3, typename Out>\
 	void NAME (const In1& a, const In2& b, const In3& c, Out& out) const\
 	{\
-		assert(compatible(a,b,out));\
+		assert(compatible(a,b,c,out));\
 		auto size = out.size();\
 		for (auto i = 0*size; i < size; ++i)\
 		{\
@@ -61,12 +60,12 @@ namespace iterated
 		Trigonometry():
 			elements()
 		{}
-		ITERATED_UNARY_FUNCTION(elements.sin, sin)
-		ITERATED_UNARY_FUNCTION(elements.cos, cos)
-		ITERATED_UNARY_FUNCTION(elements.tan, tan)
-		ITERATED_UNARY_FUNCTION(elements.asinh, asinh)
-		ITERATED_UNARY_FUNCTION(elements.acosh, acosh)
-		ITERATED_UNARY_FUNCTION(elements.atanh, atanh)
+		ITERATED_UNARY_METHOD(elements.sin, sin)
+		ITERATED_UNARY_METHOD(elements.cos, cos)
+		ITERATED_UNARY_METHOD(elements.tan, tan)
+		ITERATED_UNARY_METHOD(elements.asinh, asinh)
+		ITERATED_UNARY_METHOD(elements.acosh, acosh)
+		ITERATED_UNARY_METHOD(elements.atanh, atanh)
 		ITERATED_UNARY_METHOD(elements.sec, sec)
 		ITERATED_UNARY_METHOD(elements.csc, csc)
 		ITERATED_UNARY_METHOD(elements.cot, cot)

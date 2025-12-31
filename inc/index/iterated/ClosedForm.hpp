@@ -1,7 +1,6 @@
 #pragma once
 
 // C libraries
-#include <cmath>     /* std math */
 #include <assert.h>  /* assert */
 
 // in-house libraries
@@ -42,7 +41,7 @@ namespace iterated
 	template <typename In1, typename In2, typename In3, typename Out>\
 	void NAME (const In1& a, const In2& b, const In3& c, Out& out) const\
 	{\
-		assert(compatible(a,b,out));\
+		assert(compatible(a,b,c,out));\
 		auto size = out.size();\
 		for (auto i = 0*size; i < size; ++i)\
 		{\
@@ -88,9 +87,9 @@ namespace iterated
 		ITERATED_UNARY_METHOD(elements.log10, log10)
 
 		ITERATED_TRINARY_METHOD(elements.mix,        mix)  
-		ITERATED_TRINARY_METHOD(elements.step,       step) 
 		ITERATED_TRINARY_METHOD(elements.smoothstep, smoothstep)
 		ITERATED_TRINARY_METHOD(elements.linearstep, linearstep)
+		ITERATED_BINARY_METHOD(elements.step,       step) 
 
 	};
 

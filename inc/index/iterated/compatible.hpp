@@ -1,8 +1,6 @@
 #pragma once
 
 // C libraries
-#include <cmath>     /* std math */
-#include <assert.h>  /* assert */
 
 // in-house libraries
 

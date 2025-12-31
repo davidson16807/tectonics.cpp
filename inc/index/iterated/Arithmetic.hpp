@@ -42,7 +42,7 @@ namespace iterated
 	template <typename In1, typename In2, typename In3, typename Out>\
 	void NAME (const In1& a, const In2& b, const In3& c, Out& out) const\
 	{\
-		assert(compatible(a,b,out));\
+		assert(compatible(a,b,c,out));\
 		auto size = out.size();\
 		for (auto i = 0*size; i < size; ++i)\
 		{\
