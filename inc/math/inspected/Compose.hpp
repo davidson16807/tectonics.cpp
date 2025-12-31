@@ -15,8 +15,8 @@ namespace inspected
     template<typename F, typename G>
     struct Compose
     {
-        F f;
-        G g;
+        const F f;
+        const G g;
         constexpr explicit Compose(const F& f, const G& g):
             f(f),
             g(g)

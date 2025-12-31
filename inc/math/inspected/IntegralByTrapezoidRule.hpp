@@ -13,7 +13,7 @@ namespace inspected {
             dx(dx),
             x0(x0)
         {}
-        constexpr IntegralByTrapezoidRule(const IntegralByTrapezoidRule<F>& I):
+        constexpr IntegralByTrapezoidRule(const IntegralByTrapezoidRule<T,F>& I):
             f(I.f),
             dx(I.dx),
             x0(I.x0)
@@ -25,22 +25,22 @@ namespace inspected {
             {
                 I += dx * T(0.5)*(f(xi)+f(xi+dx));
             }
-            return df;
+            return I;
         }
     };
 
     /*
     */
     template<typename T, typename F>
-    constexpr auto integral_by_trapezoid_rule(const F& f, const T x, const T dx, const int order)
+    constexpr auto integral_by_trapezoid_rule(const F& f, const T dx, const T x0, const T x1)
     {
-        return IntegralByTrapezoidRule<T,F>(f,dx,order)(x);
+        return IntegralByTrapezoidRule<T,F>(f,dx,x0)(x1);
     }
 
     template<typename T, typename F>
-    constexpr auto integral_by_trapezoid_rule(const F& f, const T dx, const int order)
+    constexpr auto integral_by_trapezoid_rule(const F& f, const T dx, const T x0)
     {
-        return IntegralByTrapezoidRule<T,F>(f,dx,order);
+        return IntegralByTrapezoidRule<T,F>(f,dx,x0);
     }
 
 }

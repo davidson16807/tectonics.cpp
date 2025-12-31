@@ -13,7 +13,7 @@ namespace inspected {
             dx(dx),
             x0(x0)
         {}
-        constexpr IntegralByRightRectangleRule(const IntegralByRightRectangleRule<F>& I):
+        constexpr IntegralByRightRectangleRule(const IntegralByRightRectangleRule<T,F>& I):
             f(I.f),
             dx(I.dx),
             x0(I.x0)
@@ -25,7 +25,7 @@ namespace inspected {
             {
                 I += dx * f(xi+dx);
             }
-            return df;
+            return I;
         }
     };
 
@@ -40,7 +40,7 @@ namespace inspected {
     template<typename T, typename F>
     constexpr auto integral_by_right_rectangle_rule(const F& f, const T dx, const T x0)
     {
-        return IntegralByRightRectangleRule(f,dx,x0)(x1);
+        return IntegralByRightRectangleRule(f,dx,x0);
     }
 
 }

@@ -13,7 +13,7 @@ namespace inspected {
             dx(dx),
             x0(x0)
         {}
-        constexpr IntegralByMidRectangleRule(const IntegralByMidRectangleRule<F>& I):
+        constexpr IntegralByMidRectangleRule(const IntegralByMidRectangleRule<T,F>& I):
             f(I.f),
             dx(I.dx),
             x0(I.x0)
@@ -23,9 +23,9 @@ namespace inspected {
             T I(0);
             for (T xi = x0; xi < x; xi+=dx)
             {
-                I += dx * T(0.5)*(f(xi)+f(xi+dx));
+                I += dx * f(xi + T(0.5)*dx);
             }
-            return df;
+            return I;
         }
     };
 
@@ -34,13 +34,13 @@ namespace inspected {
     template<typename T, typename F>
     constexpr auto integral_by_mid_rectangle_rule(const F& f, const T dx, const T x0, const T x1)
     {
-        return IntegralByMidRectangleRule(f,dx,x0)(x1);
+        return IntegralByMidRectangleRule<T,F>(f,dx,x0)(x1);
     }
 
     template<typename T, typename F>
     constexpr auto integral_by_mid_rectangle_rule(const F& f, const T dx, const T x0)
     {
-        return IntegralByMidRectangleRule(f,dx,x0)(x1);
+        return IntegralByMidRectangleRule<T,F>(f,dx,x0);
     }
 
 }
