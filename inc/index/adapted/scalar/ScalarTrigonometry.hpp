@@ -33,7 +33,10 @@ namespace adapted
 	template<typename scalar>
 	struct ScalarTrigonometry
 	{
-		ScalarTrigonometry(){}
+		const scalar pi;
+
+		ScalarTrigonometry(const scalar pi) : pi(pi)
+		{}
 
 		ADAPTER_UNARY_METHOD(std::sin, sin)
 		ADAPTER_UNARY_METHOD(std::cos, cos)
@@ -41,9 +44,6 @@ namespace adapted
 		ADAPTER_UNARY_METHOD(std::asinh, asinh)
 		ADAPTER_UNARY_METHOD(std::acosh, acosh)
 		ADAPTER_UNARY_METHOD(std::atanh, atanh)
-		ADAPTER_UNARY_METHOD(std::sec, sec)
-		ADAPTER_UNARY_METHOD(std::csc, csc)
-		ADAPTER_UNARY_METHOD(std::cot, cot)
 		ADAPTER_UNARY_METHOD(std::sinh, sinh)
 		ADAPTER_UNARY_METHOD(std::cosh, cosh)
 		ADAPTER_UNARY_METHOD(std::tanh, tanh)
@@ -54,8 +54,13 @@ namespace adapted
 		// ADAPTER_UNARY_METHOD(std::acsch, acsch)
 		// ADAPTER_UNARY_METHOD(std::acoth, acoth)
 		ADAPTER_BINARY_METHOD(std::atan2, atan2)
-		ADAPTER_UNARY_METHOD(std::radians, radians)
-		ADAPTER_UNARY_METHOD(std::degrees, degrees)
+
+		inline auto sec(scalar a) const { return scalar(1) / std::cos(a); }
+		inline auto csc(scalar a) const { return scalar(1) / std::sin(a); }
+		inline auto cot(scalar a) const { return std::cos(a) / std::sin(a); }
+
+		inline auto radians(scalar deg) const { return deg * scalar(pi) / scalar(180); }
+		inline auto degrees(scalar rad) const { return rad * scalar(180) / scalar(pi); }
 
 	};
 

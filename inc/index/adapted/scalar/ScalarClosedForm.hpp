@@ -63,9 +63,9 @@ namespace adapted
 		ADAPTED_BINARY_METHOD(math::modulus, modulus)
 		ADAPTED_BINARY_METHOD(math::residue, residue)
 		ADAPTED_BINARY_METHOD(math::remainder, remainder)
+		ADAPTED_BINARY_METHOD(math::step, step) 
 
 		ADAPTED_TRINARY_METHOD(math::mix, mix)  
-		ADAPTED_TRINARY_METHOD(math::step, step) 
 		ADAPTED_TRINARY_METHOD(math::smoothstep, smoothstep)
 		ADAPTED_TRINARY_METHOD(math::linearstep, linearstep)
 

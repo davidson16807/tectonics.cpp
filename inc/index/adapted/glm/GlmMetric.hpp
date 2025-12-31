@@ -4,8 +4,6 @@
 
 // 3rd-party libraries
 #include <glm/common.hpp>
-#include <glm/exponential.hpp>
-#include <glm/gtx/component_wise.hpp>
 #include <glm/geometric.hpp>
 
 // in-house libraries

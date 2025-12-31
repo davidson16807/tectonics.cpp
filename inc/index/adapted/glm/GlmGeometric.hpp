@@ -3,7 +3,7 @@
 // C libraries
 
 // in-house libraries
-#include <glm/trigonometric.hpp>
+#include <glm/geometric.hpp>
 
 // in-house libraries
 #include <math/glm/special.hpp>
@@ -60,19 +60,22 @@ namespace adapted
 		template <typename In1, typename In2>
 		inline constexpr auto vector_projection (const In1 a, const In2 b) const
 		{
-			return glm::dot(a, glm::normalize(b)) * b;
+			auto bhat = glm::normalize(bhat);
+			return glm::dot(a, bhat) * bhat;
 		}
 
 		template <typename In1, typename In2>
 		inline constexpr auto scalar_rejection (const In1 a, const In2 b) const
 		{
-			return glm::length(a - glm::dot(a, glm::normalize(b)) * b);
+			auto bhat = glm::normalize(bhat);
+			return glm::length(a - glm::dot(a, bhat) * bhat);
 		}
 
 		template <typename In1, typename In2>
 		inline constexpr auto vector_rejection (const In1 a, const In2 b) const
 		{
-			return a - glm::dot(a, glm::normalize(b)) * b;
+			auto bhat = glm::normalize(bhat);
+			return a - glm::dot(a, bhat) * bhat;
 		}
 
 	};

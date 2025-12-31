@@ -28,9 +28,9 @@ namespace adapted
 
 	#define ADAPTED_TRINARY_METHOD(METHOD, NAME) \
 	template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>\
-	inline auto NAME (const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b, const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> c) const\
+	inline auto NAME (const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a, const si::units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> b, const T1 t) const\
 	{\
-		return METHOD(a, b, c);\
+		return METHOD(a, b, t);\
 	}
 
 	struct SiClosedForm
@@ -55,8 +55,8 @@ namespace adapted
 		// ADAPTED_UNARY_METHOD(si::pow, pow)
 		// ADAPTED_UNARY_METHOD(si::inversesqrt, inversesqrt)
 
-		ADAPTED_TRINARY_METHOD(si::mix, mix)  
-		ADAPTED_TRINARY_METHOD(si::step, step) 
+		ADAPTED_BINARY_METHOD(si::step, step) 
+
 		ADAPTED_TRINARY_METHOD(si::smoothstep, smoothstep)
 		ADAPTED_TRINARY_METHOD(si::linearstep, linearstep)
 

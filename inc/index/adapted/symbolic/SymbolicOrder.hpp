@@ -18,13 +18,6 @@ namespace adapted
 		return (a SYMBOL b);\
 	}
 
-	#define ADAPTER_UNARY_METHOD(METHOD, NAME) \
-	template <typename In1>\
-	inline auto NAME (const In1 a) const\
-	{\
-		return METHOD(a);\
-	}
-
 	struct SymbolicOrder
 	{
 		SymbolicOrder(){}
@@ -47,8 +40,8 @@ namespace adapted
 			return a < b? a : b;
 		}
 
-		template <typename In1, typename In2>
-		inline auto clamp (const In1 a, const In2 lo, const In2 hi) const 
+		template <typename In1>
+		inline auto clamp (const In1 a, const In1 lo, const In1 hi) const 
 		{
 			return max(lo, min(hi, a));
 		}

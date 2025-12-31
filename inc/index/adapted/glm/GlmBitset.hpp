@@ -2,6 +2,9 @@
 
 // C libraries
 
+// 3rd-party libraries
+#include <glm/vector_relational.hpp> // any/all/not_
+
 // in-house libraries
 
 namespace adapted
@@ -36,9 +39,9 @@ namespace adapted
 	{
 		GlmBitset(){}
 
-		template <typename bool, typename bool> inline auto unite     (const bool a, const bool b) const {return a || b;}
-		template <typename bool, typename bool> inline auto intersect (const bool a, const bool b) const {return a && b;}
-		template <typename bool, typename bool> inline auto differ    (const bool a, const bool b) const {return a && glm::not_(b);}
+		template <typename In, typename In> inline auto unite     (const In a, const In b) const {return a || b;}
+		template <typename In, typename In> inline auto intersect (const In a, const In b) const {return a && b;}
+		template <typename In, typename In> inline auto differ    (const In a, const In b) const {return a && glm::not_(b);}
 
 		ADAPTER_UNARY_METHOD(glm::not_, negate)
 		ADAPTER_UNARY_METHOD(glm::any, any)

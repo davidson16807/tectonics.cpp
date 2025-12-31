@@ -37,8 +37,8 @@ namespace adapted
 	{
 		GlmOrderAggregation(){}
 
-		ADAPTER_BINARY_METHOD(glm::compMin, min)
-		ADAPTER_BINARY_METHOD(glm::compMax, max)
+		ADAPTER_UNARY_METHOD(glm::compMin, min)
+		ADAPTER_UNARY_METHOD(glm::compMax, max)
 	};
 
 	#undef ADAPTER_UNARY_METHOD

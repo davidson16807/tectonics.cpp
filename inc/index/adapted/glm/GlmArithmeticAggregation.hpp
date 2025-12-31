@@ -49,9 +49,9 @@ namespace adapted
 		}
 
 		template <typename In1, typename In2>
-		inline auto weighted_average (const In1 a, const In2 b) const
+		inline auto weighted_average (const In1 weights, const In2 values) const
 		{
-			return glm::dot(a, b) / glm::compAdd(a);
+			return glm::dot(weights, values) / glm::compAdd(weights);
 		}
 
 	};

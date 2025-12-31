@@ -36,7 +36,7 @@ namespace adapted
 		ADAPTER_SYMBOL_METHOD(*,  multiply)
 		ADAPTER_SYMBOL_METHOD(/,  divide)
 
-		template <typename In1, int N>
+		template <int N, typename In1>
 		inline auto pow (const In1 a) const
 		{
 			return 

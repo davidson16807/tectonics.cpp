@@ -3,7 +3,8 @@
 // C libraries
 
 // in-house libraries
-#include <glm/vector_relational.hpp>
+#include <glm/common.hpp>              // isnan, isinf, min, max, clamp
+#include <glm/vector_relational.hpp>   // equal, etc.
 
 namespace adapted
 {

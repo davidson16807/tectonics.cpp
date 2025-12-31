@@ -2,8 +2,9 @@
 
 // C libraries
 #include <cmath>     /* std math */
-#include <array>     /* std::array */
 #include <algorithm> /* std::clamp */
+#include <vector>    /* std::vector */
+#include <string>    /* std::string */
 
 // in-house libraries
 
@@ -12,7 +13,7 @@ namespace adapted
 
 	std::vector<std::string> integers {"0","1","2","3","4","5","6","7","8","9"};
 
-	template<typename id>
+	template<typename scalar>
 	class IdStrings
 	{
 
@@ -26,7 +27,7 @@ namespace adapted
 			characters(integers)
 		{}
 
-		std::string legend(const id sample, const id lo, const id hi) const 
+		std::string legend(const scalar sample, const scalar lo, const scalar hi) const 
 		{
 			std::string out("");
 			for (unsigned int i = 0; i < characters.size(); ++i)
@@ -39,7 +40,7 @@ namespace adapted
 			return out;
 		}
 
-		std::string character(const id a, const id lo, const id hi) const 
+		std::string character(const scalar a, const scalar lo, const scalar hi) const 
 		{
 			if (std::isnan(a))
 			{

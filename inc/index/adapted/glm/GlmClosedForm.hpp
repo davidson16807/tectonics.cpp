@@ -58,7 +58,6 @@ namespace adapted
 
 		ADAPTER_UNARY_METHOD(glm::sqrt, sqrt)
 		ADAPTER_UNARY_METHOD(glm::cbrt, cbrt)
-		ADAPTER_UNARY_METHOD(glm::pow, pow)
 		ADAPTER_UNARY_METHOD(glm::inversesqrt, inversesqrt)
 
 		ADAPTER_UNARY_METHOD(glm::exp, exp)
@@ -68,12 +67,13 @@ namespace adapted
 		ADAPTER_UNARY_METHOD(glm::log2, log2)
 		ADAPTER_UNARY_METHOD(glm::log10, log10)
 
+		ADAPTER_BINARY_METHOD(glm::pow, pow)
 		ADAPTER_BINARY_METHOD(glm::distance, distance)
+		ADAPTER_BINARY_METHOD(glm::step, step) 
 
 		ADAPTER_TRINARY_METHOD(glm::mix, mix)  
-		ADAPTER_TRINARY_METHOD(glm::step, step) 
 		ADAPTER_TRINARY_METHOD(glm::smoothstep, smoothstep)
-		ADAPTER_TRINARY_METHOD(glm::linearstep, linearstep)
+		// ADAPTER_TRINARY_METHOD(glm::linearstep, linearstep)
 
 	};
 

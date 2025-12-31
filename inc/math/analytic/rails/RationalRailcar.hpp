@@ -179,16 +179,10 @@ namespace analytic {
         return p / Polynomial<T,1,1>(e);
     }
 
-
-
-
     /*
     NOTE: we cannot support division by railcars.
     This is because the resulting function object would produce a division by 0 for the vast majority of its range.
     */ 
-
-
-
 
     // template<typename T, int P1lo, int P1hi, int Q1lo, int Q1hi, int P2lo, int P2hi>
     // constexpr auto compose(const RationalRailcar<T,P1lo,P1hi,Q1lo,Q1hi>& p, const Polynomial<T,P2lo,P2hi> q)
@@ -215,8 +209,6 @@ namespace analytic {
     {
         return railcar(r.lo, r.hi, derivative(r.content));
     }
-
-
 
 }
 

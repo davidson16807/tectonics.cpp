@@ -4,6 +4,8 @@
 #include <cmath>     /* std math */
 #include <array>     /* std::array */
 #include <algorithm> /* std::clamp */
+#include <vector>    /* std::vector */
+#include <string>    /* std::string */
 
 // in-house libraries
 #include <unit/si.hpp>

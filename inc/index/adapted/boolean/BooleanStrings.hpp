@@ -2,6 +2,9 @@
 
 // C libraries
 
+// std libraries
+#include <string>
+
 // in-house libraries
 
 namespace adapted
