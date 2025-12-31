@@ -3,6 +3,9 @@
 // C libraries
 #include <assert.h>  /* assert */
 
+// std libraries
+#include <stdexcept> /* std::out_of_range */
+
 // in-house libraries
 
 namespace aggregated

@@ -4,6 +4,7 @@
 #include <assert.h>  /* assert */
 
 // in-house libraries
+#include "compatible.hpp"  /* compatible */
 
 namespace aggregated
 {
@@ -37,7 +38,7 @@ namespace aggregated
 			auto out = elements.one;
 			for (auto i = 0*a.size(); i < a.size(); ++i)
 			{
-				out = elements.add(out, a[i]);
+				out = elements.multiply(out, a[i]);
 			}
 			return out;
 		}
@@ -50,13 +51,14 @@ namespace aggregated
 			{
 				out = elements.add(out, a[i]);
 			}
-			out = elements.divide(out, a.size());
+			out = elements.divide(out, T(a.size()));
 			return out;
 		}
 
 		template <typename T1, typename T2>
 		auto linear_combination(const T1& a, const T2& weights) const
 		{
+			assert(compatible(a,weights));
 			auto out = elements.zero;
 			for (auto i = 0*a.size(); i < a.size(); ++i)
 			{
@@ -68,6 +70,7 @@ namespace aggregated
 		template <typename T1, typename T2>
 		auto weighted_average(const T1& a, const T2& weights) const
 		{
+			assert(compatible(a,weights));
 			return elements.divide(linear_combination(a, weights), sum(weights));
 		}
 

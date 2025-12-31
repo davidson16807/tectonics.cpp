@@ -29,13 +29,14 @@ namespace aggregated
 		template <typename In1, typename In2>
 		bool equal(const In1& a, const In2& b) const
 		{
+			assert(compatible(a,b));
 			if (a.size() != b.size()){
 				return false;
 			}
 			auto size = a.size();
 			for (auto i = 0*size; i < size; ++i)
 			{
-				if (elements.equal(a[i], b[i])) {
+				if (elements.not_equal(a[i], b[i])) {
 					return false;
 				}
 			}
@@ -45,6 +46,7 @@ namespace aggregated
 		template <typename In1, typename In2>
 		bool not_equal(const In1& a, const In2& b) const
 		{
+			assert(compatible(a,b));
 			if (a.size() != b.size()){
 				return true;
 			}
@@ -52,10 +54,10 @@ namespace aggregated
 			for (auto i = 0*size; i < size; ++i)
 			{
 				if (elements.equal(a[i], b[i])) {
-					return true;
+					return false;
 				}
 			}
-			return false;
+			return true;
 		}
 
 	};

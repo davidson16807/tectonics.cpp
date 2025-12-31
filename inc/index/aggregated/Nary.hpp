@@ -1,7 +1,6 @@
 #pragma once
 
 // C libraries
-#include <assert.h>  /* assert */
 
 // in-house libraries
 
@@ -23,7 +22,7 @@ namespace aggregated
 		template <typename T>
 		auto operator() (const T& a) const
 		{
-			auto out = op.zero;
+			auto out = op.identity;
 			for (auto i = 0*a.size(); i < a.size(); ++i)
 			{
 				out = op(out, a[i]);
@@ -50,7 +49,7 @@ namespace aggregated
 		template <typename T>
 		auto operator() (const T& a) const
 		{
-			auto out = op.zero;
+			auto out = op.identity;
 			for (auto i = 0*a.size(); i < a.size(); ++i)
 			{
 				out = op(a[i], out);

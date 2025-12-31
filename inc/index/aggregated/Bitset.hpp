@@ -54,7 +54,7 @@ namespace aggregated
 		template <typename In1>
 		bool min(const In1& a) const
 		{
-			return !all(a);
+			return all(a);
 		}
 
 		template <typename In1>

@@ -1,6 +1,7 @@
 #pragma once
 
 // C libraries
+#include <stdexcept> /* std::out_of_range */
 #include <assert.h>  /* assert */
 
 // in-house libraries
@@ -32,10 +33,11 @@ namespace aggregated
 		template <typename In1, typename In2>
 		auto distance(const In1& a, const In2& b) const
 		{
+			assert(compatible(a,b));
 			auto size = a.size();
 			if (a.size() < 1)
 			{
-				throw std::out_of_range("cannot find the minimum value of an empty series");
+				throw std::out_of_range("cannot find the distance of an empty series");
 			}
 			auto out(elements.distance(a[0], b[0]));
 			for (auto i=0*size; i < size; ++i)

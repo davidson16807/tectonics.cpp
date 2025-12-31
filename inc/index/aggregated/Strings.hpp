@@ -1,6 +1,7 @@
 #pragma once
 
 // C libraries
+#include <string>    /* string */
 #include <assert.h>  /* assert */
 
 // in-house libraries

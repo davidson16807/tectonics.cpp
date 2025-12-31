@@ -50,7 +50,7 @@ namespace aggregated
 		{
 			if (a.size() < 1)
 			{
-				throw std::out_of_range("cannot find the minimum value of an empty series");
+				throw std::out_of_range("cannot find the maximum value of an empty series");
 			}
 			auto extremum = (a[0]);
 			for (auto i = 0*a.size()+1; i < a.size(); ++i)
@@ -87,13 +87,13 @@ namespace aggregated
 		{
 			if (a.size() < 1)
 			{
-				throw std::out_of_range("cannot find the minimum value of an empty series");
+				throw std::out_of_range("cannot find the maximum value of an empty series");
 			}
 			auto extremum = (lo);
 			for (auto i = 0*a.size(); i < a.size(); ++i)
 			{
 				auto ai = (a[i]);
-				extremum = elements.greater_than(ai, extremum) && elements.greater_than(ai, lo)? ai : extremum;
+				extremum = elements.greater_than(ai, extremum) && elements.less_than(lo, ai)? ai : extremum;
 			}
 			return extremum;
 		}
@@ -119,7 +119,7 @@ namespace aggregated
 		{
 			if (a.size() < 1)
 			{
-				throw std::out_of_range("cannot find the minimum value of an empty series");
+				throw std::out_of_range("cannot find the maximum value of an empty series");
 			}
 			auto extremum = (lo);
 			for (auto i = 0*a.size(); i < a.size(); ++i)
@@ -134,12 +134,16 @@ namespace aggregated
 		template <typename T>
 		typename T::size_type min_id(const T& a, const typename T::value_type lo, const typename T::value_type hi) const
 		{
-			typename T::value_type extremum = (a[0]);
-			typename T::size_type extremum_id = 0;
+			if (a.size() < 1)
+			{
+				throw std::out_of_range("cannot find the minimum value of an empty series");
+			}
+			typename T::value_type extremum = std::numeric_limits<T::value_type>::max();
+			typename T::size_type extremum_id = -1;
 			for (auto i = 0*a.size(); i < a.size(); ++i)
 			{
 				auto ai = (a[i]);
-				if (elements.less_than(ai, extremum) && elements.greater_than(lo, ai) && elements.less_than(ai, hi))
+				if (elements.less_than(ai, extremum) && elements.less_than(lo, ai) && elements.less_than(ai, hi))
 				{
 					extremum = ai;
 					extremum_id = i;
@@ -151,12 +155,16 @@ namespace aggregated
 		template <typename T>
 		typename T::size_type max_id(const T& a, const typename T::value_type lo, const typename T::value_type hi) const
 		{
-			typename T::value_type extremum = (a[0]);
-			typename T::size_type extremum_id = 0;
+			if (a.size() < 1)
+			{
+				throw std::out_of_range("cannot find the maximum value of an empty series");
+			}
+			typename T::value_type extremum = std::numeric_limits<T::value_type>::min();
+			typename T::size_type extremum_id = -1;
 			for (auto i = 0*a.size(); i < a.size(); ++i)
 			{
 				auto ai = (a[i]);
-				if (elements.greater_than(ai, extremum) && elements.greater_than(lo, ai) && elements.less_than(ai, hi))
+				if (elements.greater_than(ai, extremum) && elements.less_than(lo, ai) && elements.less_than(ai, hi))
 				{
 					extremum = ai;
 					extremum_id = i;
