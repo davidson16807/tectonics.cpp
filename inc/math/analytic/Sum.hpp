@@ -50,7 +50,7 @@ namespace analytic {
         {
         }
 
-        Sum(std::initializer_list<F>& ts)
+        Sum(std::initializer_list<F> ts)
         {
             std::copy(ts.begin(), ts.end(), std::back_inserter(terms));
         }
@@ -292,16 +292,16 @@ namespace analytic {
         return f;
     }
 
-    // template<typename T, typename F, typename G>
-    // constexpr Sum<T,F> compose(const Sum<T,F>& f, const G& g)
-    // {
-    //     std::vector<F> terms;
-    //     for (auto term: f.terms)
-    //     {
-    //         terms.push_back( compose(term, g) );
-    //     }
-    //     return Sum<T,F>(terms);
-    // }
+    template<typename T, typename F, typename G>
+    constexpr Sum<T,F> compose(const Sum<T,F>& f, const G& g)
+    {
+        std::vector<F> terms;
+        for (auto term: f.terms)
+        {
+            terms.push_back( compose(term, g) );
+        }
+        return Sum<T,F>(terms);
+    }
 
     /*
     `derivative` returns the derivative of a sum at a point.

@@ -90,7 +90,7 @@ namespace aggregated
 		template <typename T1, typename T2>
 		auto linear_combination(const T1& a, const T2& weights) const
 		{
-			assert(compatible(a,b));
+			assert(compatible(a,weights));
 			auto out = arithmetic.zero;
 			for (unsigned int i = 0; i < a.size(); ++i)
 			{
@@ -102,7 +102,7 @@ namespace aggregated
 		template <typename T1, typename T2>
 		auto weighted_average(const T1& a, const T2& weights) const
 		{
-			assert(compatible(a,b));
+			assert(compatible(a,weights));
 			return arithmetic.divide(linear_combination(a, weights), sum(weights));
 		}
 

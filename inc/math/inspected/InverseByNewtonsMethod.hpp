@@ -8,8 +8,8 @@ namespace inspected {
         const F f;
         const DFDX dfdx;
         const T x0;
-        const int iteration_count;
-        constexpr explicit InverseByNewtonsMethod(const F f, const DFDX dfdx, const T x0, const int iteration_count):
+        const std::size_t iteration_count;
+        constexpr explicit InverseByNewtonsMethod(const F f, const DFDX dfdx, const T x0, const std::size_t iteration_count):
             f(f),
             dfdx(dfdx),
             x0(x0),
@@ -36,7 +36,7 @@ namespace inspected {
     */
 
     template<typename T, typename F, typename DFDX>
-    constexpr auto inverse_by_newtons_method(const F& f, const DFDX& dfdx, const T x0, const int iteration_count)
+    constexpr auto inverse_by_newtons_method(const F& f, const DFDX& dfdx, const T x0, const std::size_t iteration_count)
     {
         return InverseByNewtonsMethod<T,F,DFDX>(f,dfdx,x0,iteration_count);
     }

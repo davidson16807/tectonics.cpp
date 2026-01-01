@@ -9,13 +9,13 @@ namespace inspected {
         const DFDX dfdx;
         const D2FDX2 d2fdx2;
         const T x0;
-        const int iteration_count;
+        const std::size_t iteration_count;
         constexpr explicit InverseByHalleysMethod(
             const F f, 
             const DFDX dfdx, 
             const D2FDX2 d2fdx2, 
             const T x0, 
-            const int iteration_count
+            const std::size_t iteration_count
         ):
             f(f),
             dfdx(dfdx),
@@ -37,7 +37,7 @@ namespace inspected {
             T dedx(0);
             T d2edx2(0);
             // solve using Halley's method
-            for (int i = 0; i < iteration_count; i++) {
+            for (std::size_t i = 0; i < iteration_count; i++) {
                 e = f(x)-y;
                 dedx = dfdx(x);
                 d2edx2 = d2fdx2(x);
@@ -56,7 +56,7 @@ namespace inspected {
             const DFDX dfdx, 
             const D2FDX2 d2fdx2, 
             const T x0, 
-            const int iteration_count
+            const std::size_t iteration_count
     ) {
         return InverseByHalleysMethod<T,F,DFDX,D2FDX2>(f,dfdx,d2fdx2,x0,iteration_count);
     }
