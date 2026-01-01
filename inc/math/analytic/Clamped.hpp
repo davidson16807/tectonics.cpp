@@ -82,6 +82,7 @@ namespace analytic {
         }
     };
 
+    template<typename T, typename F>
     constexpr auto compose(const T lo, const T hi, const F f)
     {
         return Clamped<T,F>(lo, hi, f);

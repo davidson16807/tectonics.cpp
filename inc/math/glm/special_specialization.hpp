@@ -86,9 +86,9 @@ namespace math {
 	#undef MATH_BINARY_GLM_WRAPPER
 
 	template<typename glm::length_t L, typename T1, typename T2, typename T3, glm::qualifier Q>
-	inline auto smoothstep(const glm::vec<L,T1,Q> a, const glm::vec<L,T2,Q> b, const T3 c){ return glm::smoothstep(a,b,c); }
-	template<typename glm::length_t L, typename T1, typename T2, typename T3, glm::qualifier Q>
-	inline auto smoothstep(const glm::vec<L,T1,Q> a, const glm::vec<L,T2,Q> b, const T3 c){ return glm::smoothstep(a,b,c); }
+	inline auto smoothstep(const glm::vec<L,T1,Q> a, const glm::vec<L,T2,Q> b, const glm::vec<L,T3,Q> c){ return glm::smoothstep(a,b,c); }
+	template<typename glm::length_t L, typename T1, glm::qualifier Q>
+	inline auto smoothstep(const glm::vec<L,T1,Q> a, const glm::vec<L,T1,Q> b, const T1 c){ return glm::smoothstep(a,b,c); }
 	template<typename glm::length_t L, typename T1, typename T2, typename T3, glm::qualifier Q>
 	inline auto fma(const glm::vec<L,T1,Q> a, const glm::vec<L,T2,Q> b, const glm::vec<L,T3,Q> c){ return glm::fma(a,b,c); }
 

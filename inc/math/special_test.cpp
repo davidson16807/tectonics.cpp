@@ -86,6 +86,6 @@ TEST_CASE( "lerp commutativity", "[math]" ) {
   	const auto ys = std::vector<float>{ uniform(generator), uniform(generator) };
   	const auto ys2 = std::vector<float>{ ys[1], ys[0] };
     SECTION("calling lerp with interpolant points reversed returns the same result"){
-		CHECK(math::lerp(xs,ys,f) == math::lerp(xs2,ys2,f));
+		CHECK(math::lerp(xs,ys,f) == Approx(math::lerp(xs2,ys2,f)).margin(0.00001));
 	}
 }

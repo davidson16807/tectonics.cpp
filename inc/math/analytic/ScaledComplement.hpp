@@ -123,7 +123,7 @@ namespace analytic {
     template<typename T, typename F>
     constexpr auto operator+(const ScaledComplement<T,F>& f, const ScaledComplement<T,F>& g)
     {
-        return ScaledComplement<T>(f.f+g.f);
+        return ScaledComplement<T,F>(f.f+g.f);
     }
 
     /*
@@ -150,7 +150,7 @@ namespace analytic {
     template<typename T, typename F, typename H>
     constexpr auto compose(const H h, const ScaledComplement<T,F>& fg)
     {
-        return ScaledComplement<T>(fg.scale, compose(h, fg.f));
+        return ScaledComplement<T,F>(fg.scale, compose(h, fg.f));
     }
 
 }

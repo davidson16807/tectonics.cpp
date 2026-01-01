@@ -607,7 +607,7 @@ namespace analytic {
     }
 
     template<typename T, int Phi, int Qhi>
-    constexpr RationalRailyard<T,Plo,Phi,Qlo,Qhi> compose(const RationalRailyard<T,0,Phi,0,Qhi>& r, const Shifting<T> f)
+    constexpr RationalRailyard<T,0,Phi,0,Qhi> compose(const RationalRailyard<T,0,Phi,0,Qhi>& r, const Shifting<T> f)
     {
         using R = Rational<T,0,Phi,0,Qhi>;
         Railyard<T,R> y;

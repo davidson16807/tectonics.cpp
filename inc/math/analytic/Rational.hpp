@@ -524,7 +524,7 @@ namespace analytic {
     and such methods would complicate the order with which classes must be declared
     */
     template<typename T>
-    constexpr T derivative(const Rational<T,0,1,0,0> r) 
+    constexpr T derivative(const Rational<T,1,0,0,0> r) 
     {
         return T(0);
     }

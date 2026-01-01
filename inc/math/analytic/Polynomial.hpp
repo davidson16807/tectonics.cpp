@@ -1106,17 +1106,16 @@ namespace analytic {
     and returns an iterator containing only those values that are strictly real.
     This can be useful when condensing solutions to polynomial equations.
     */
-    template<typename T>
+    template<typename TInputIterator, typename TOutputIterator>
     void reals(
         TInputIterator first, 
         TInputIterator last, 
         TOutputIterator result
     ){
-        std::complex<T> z;
         while(first != last)
         {
-            z = *first;
-            if (std::abs(z.imag()) > T(0))
+            auto z = *first;
+            if (std::abs(z.imag()) > 0*z.imag())
             {
                 *result = z.real();
                 ++result;

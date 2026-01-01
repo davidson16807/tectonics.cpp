@@ -186,8 +186,8 @@ namespace math{
     template <typename In>
     constexpr auto linearstep(const In edge0, const In edge1, const In x) 
     {
-        T fraction((x - edge0) / (edge1 - edge0));
-        return fraction > T(1)? T(1) : fraction < T(0)? T(0) : fraction;
+        In fraction((x - edge0) / (edge1 - edge0));
+        return fraction > In(1)? In(1) : fraction < In(0)? In(0) : fraction;
     }
 
     /*
@@ -196,8 +196,8 @@ namespace math{
     template <typename In>
     constexpr auto smoothstep(const In edge0, const In edge1, const In x) 
     {
-	    auto t = clamp((x - edge0) / (edge1 - edge0), T(0), T(1));
-	    return t * t * (T(3) - T(2) * t);
+	    auto t = clamp((x - edge0) / (edge1 - edge0), In(0), In(1));
+	    return t * t * (In(3) - In(2) * t);
     }
 
     /*

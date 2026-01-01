@@ -702,7 +702,7 @@ namespace analytic {
         T candidate;
         for (std::size_t i=0; i<p.contents.size(); i++)
         {
-            candidate = maximum(pi, std::min(lo, p.couplers[i]), std::max(hi, p.couplers[i+1]));
+            candidate = maximum(p.contents[i], std::min(lo, p.couplers[i]), std::max(hi, p.couplers[i+1]));
             result = candidate > result? candidate : result;
         }
         return result;
@@ -714,7 +714,7 @@ namespace analytic {
         T candidate;
         for (std::size_t i=0; i<p.contents.size(); i++)
         {
-            candidate = minimum(pi, std::min(lo, p.couplers[i]), std::max(hi, p.couplers[i+1]));
+            candidate = minimum(p.contents[i], std::min(lo, p.couplers[i]), std::max(hi, p.couplers[i+1]));
             result = candidate < result? candidate : result;
         }
         return result;
