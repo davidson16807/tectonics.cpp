@@ -2,9 +2,6 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include <catch/catch.hpp>
 
-#define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
-#define GLM_ENABLE_EXPERIMENTAL
-
 #include <math/analytic/Sum.hpp>
 #include <math/analytic/Gaussian.hpp>
 #include <math/inspected/InverseByNewtonsMethod.hpp>

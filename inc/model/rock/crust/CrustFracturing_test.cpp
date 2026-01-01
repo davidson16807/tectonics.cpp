@@ -4,9 +4,6 @@
 #include <catch/catch.hpp>
 
 // glm libraries
-#define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
-#define GLM_ENABLE_EXPERIMENTAL // needed for GlmMetric
-#define GLM_FORCE_SWIZZLE   // allow swizzle methods like .xy()
 
 // in-house libraries
 #include <index/adapted/symbolic/SymbolicArithmetic.hpp>

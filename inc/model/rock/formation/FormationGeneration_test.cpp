@@ -23,9 +23,6 @@ It does so by testing that this diagram commutes:
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include <catch/catch.hpp>
 
-#define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
-#define GLM_FORCE_SWIZZLE   // allow swizzle methods like .xy()
-
 // in house libraries
 #include <math/glm/special_specialization.hpp>
 #include <math/glm/special.hpp>

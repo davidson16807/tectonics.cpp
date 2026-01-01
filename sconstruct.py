@@ -23,10 +23,14 @@ using sconstruct.py under "{root}".
 ''')
 
 test = Environment()
+
+# GLM_FORCE_SWIZZLE       support swizzling in glm
+# GLM_FORCE_PURE          disable anonymous structs so we can build with ISO C++
+# GLM_ENABLE_EXPERIMENTAL disable anonymous structs so we can build with ISO C++
 environment = Environment(
     CCFLAGS=(
-        "/std:c++20 /D GLM_FORCE_SWIZZLE" if test['CC']=='cl' else 
-        "-std=c++20 -Wall -Werror -pedantic-errors -rdynamic -g -D GLM_FORCE_SWIZZLE"),
+        "/std:c++20 /D GLM_FORCE_SWIZZLE /D GLM_FORCE_PURE /D GLM_ENABLE_EXPERIMENTAL" if test['CC']=='cl' else 
+        "-std=c++20 -Wall -Werror -pedantic-errors -rdynamic -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL"),
     CPPPATH=[os.path.join(root,path) for path in 'inc lib src sketch'.split()],
     # LIBS='glfw GL GLEW'.split(),
 )

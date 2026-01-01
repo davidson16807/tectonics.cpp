@@ -15,9 +15,9 @@ LIBS-Linux    =-lglfw -lGL -lGLEW
 LIBS-Msys     =-lglfw3 -lopengl32 -lgdi32 -lglew32
 LIBS-Cygwin   =-lglfw3 -lopengl32 -lgdi32 -lglew32
 
-FLAGS-Linux   =-fopenmp -march=native -Wall -Werror -pedantic-errors -rdynamic -g -D GLM_FORCE_SWIZZLE
-FLAGS-Msys    =-fopenmp -march=native -Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE
-FLAGS-Cygwin  =-fopenmp -march=native -Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE
+FLAGS-Linux   =-fopenmp -march=native -Wall -Werror -pedantic-errors -rdynamic -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL
+FLAGS-Msys    =-fopenmp -march=native -Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL
+FLAGS-Cygwin  =-fopenmp -march=native -Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL
 
 all: $(TEST) ./Makefile
 	rm -f test.cpp && \

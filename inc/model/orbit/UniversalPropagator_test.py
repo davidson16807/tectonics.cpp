@@ -22,12 +22,12 @@ mass_of_sun = 1.32712440018e20/G # kg
 mass_of_galaxy = 1.262e41 # kg, back calculated to achieve period of 250 million years
 au = 1.5e11
 
-propagator = UniversalPropagator(G, max_refinement_count=100, laguerre_method_n = 5)
-properties = Properties(glm.vec3(1,0,0), glm.vec3(0,0,1), G)
-converter = ElementsAndState(properties)
-
 pi = 3.141592653589793238462643383279
 degrees = 2*pi/360
+
+propagator = UniversalPropagator(G, max_refinement_count=100, laguerre_method_n = 5)
+properties = Properties(glm.vec3(1,0,0), glm.vec3(0,0,1), G, pi)
+converter = ElementsAndState(properties)
 
 escape_velocities = [
 	# parent mass (kg),   radius (m),    escape velocity (m/s)

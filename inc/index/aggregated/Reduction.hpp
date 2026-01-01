@@ -30,8 +30,13 @@ namespace aggregated
 		template <typename As>
 		auto sum(const As& a) const
 		{
-			using A = typename As::value_type;
-			A out(arithmetic.zero);
+			return sum(a, arithmetic.zero);
+		}
+
+		template <typename As, typename A>
+		auto sum(const As& a, const A zero) const
+		{
+			A out(zero);
 			for (unsigned int i = 0; i < a.size(); ++i)
 			{
 				out = arithmetic.add(out, a[i]);
@@ -40,10 +45,15 @@ namespace aggregated
 		}
 
 		template <typename As>
-		auto product(const As& a) const
+		inline auto product(const As& a) const
 		{
-			using A = typename As::value_type;
-			A out(arithmetic.one);
+			return product(a, arithmetic.one);
+		}
+
+		template <typename As, typename A>
+		auto product(const As& a, const A one) const
+		{
+			A out(one);
 			for (unsigned int i = 0; i < a.size(); ++i)
 			{
 				out = arithmetic.multiply(out, a[i]);
@@ -54,8 +64,13 @@ namespace aggregated
 		template <typename As>
 		auto mean(const As& a) const
 		{
-			using A = typename As::value_type;
-			A out(arithmetic.zero);
+			return mean(a, arithmetic.zero);
+		}
+
+		template <typename As, typename A>
+		auto mean(const As& a, const A zero) const
+		{
+			A out(zero);
 			for (unsigned int i = 0; i < a.size(); ++i)
 			{
 				out = arithmetic.add(out, a[i]);
@@ -67,9 +82,14 @@ namespace aggregated
 		template <typename As, typename T2>
 		auto linear_combination(const As& a, const T2& weights) const
 		{
+			return linear_combination(a, weights, arithmetic.zero);
+		}
+
+		template <typename As, typename Bs, typename C>
+		auto linear_combination(const As& a, const Bs& weights, const C zero) const
+		{
 			assert(compatible(a,weights));
-			using A = typename As::value_type;
-			A out(arithmetic.zero);
+			C out(zero);
 			for (unsigned int i = 0; i < a.size(); ++i)
 			{
 				out = arithmetic.add(out, arithmetic.multiply(a[i], weights[i]));

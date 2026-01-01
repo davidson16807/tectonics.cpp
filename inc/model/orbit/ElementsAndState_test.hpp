@@ -18,7 +18,8 @@ namespace orbit {
 
 	TEST_CASE( "get_elements_from_state()/get_state_from_elements() invertibility", "[orbit]" ) {
 		orbit::Properties<double> properties(glm::vec3(1,0,0), glm::vec3(0,0,1), 
-			si::gravitational_constant / (si::meter3/si::kilogram/si::second2));
+			si::gravitational_constant / (si::meter3/si::kilogram/si::second2),
+			3.141592653589793238462643383279);
 		ElementsAndState<double> conversion(properties);
 	    SECTION("For a given function there exists another function that negates its effect") {
 			const double m = si::solar_mass / si::kilogram;
@@ -68,7 +69,8 @@ namespace orbit {
 	}
 	TEST_CASE( "get_state_from_elements() inclination congruence modulo T", "[orbit]" ) {
 		orbit::Properties<double> properties(glm::vec3(1,0,0), glm::vec3(0,0,1), 
-			si::gravitational_constant / (si::meter3/si::kilogram/si::second2));
+			si::gravitational_constant / (si::meter3/si::kilogram/si::second2),
+			3.141592653589793238462643383279);
 		ElementsAndState<double> conversion(properties);
 	    SECTION("Results of a given function repeat for a period of T"){
 			const double m = si::solar_mass / si::kilogram;

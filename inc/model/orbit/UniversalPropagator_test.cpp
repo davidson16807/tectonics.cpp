@@ -6,10 +6,8 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include <catch/catch.hpp>
 
-#define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 #include <glm/vec3.hpp>     // *vec3
 #include <glm/geometric.hpp>// glm::distance
-#define GLM_ENABLE_EXPERIMENTAL // needed for glm::to_string()
 #include <glm/gtx/string_cast.hpp>  // to_string
 
 // in-house libraries
@@ -120,7 +118,7 @@ TEST_CASE("UniversalPropagator::state()", "[body]") {
 	const auto mass_of_sun               = si::solar_mass; 
 	const auto mass_of_galaxy            = 1.262e41 * si::kilogram; // back calculated to achieve period of 250 million years
 
-	Properties properties(vec3(1,0,0), vec3(0,0,1), G);
+	Properties properties(vec3(1,0,0), vec3(0,0,1), G, 3.141592653589793238462643383279);
 	ElementsAndState converter(properties);
 	Propagator propagator(G);
 

@@ -7,8 +7,6 @@
 #include <algorithm> 	// max, min, clamp
 
 // 3rd party libraries
-#define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
-#define GLM_ENABLE_EXPERIMENTAL      // disable anonymous structs so we can build with ISO C++
 #include <glm/vec2.hpp>       	 // *vec3
 #include <glm/vec3.hpp>       	 // *vec3
 #include <glm/mat2x2.hpp>        // *mat2

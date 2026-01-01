@@ -11,7 +11,6 @@
 #include <GLFW/glfw3.h>
 
 // glm libraries
-#define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 
 #include <math/glm/special_specialization.hpp>
 #include <math/glm/special.hpp>

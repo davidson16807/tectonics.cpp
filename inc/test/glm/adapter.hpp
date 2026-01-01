@@ -1,8 +1,6 @@
 #pragma once
 
 // 3rd party libraries
-#define GLM_FORCE_PURE          // disable anonymous structs so we can build with ISO C++
-#define GLM_ENABLE_EXPERIMENTAL // disable anonymous structs so we can build with ISO C++
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>  // to_string
 

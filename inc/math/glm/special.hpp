@@ -4,7 +4,6 @@
 #include <cmath>
 
 // 3rd party libraries
-#define GLM_ENABLE_EXPERIMENTAL // needed to enable <glm/gtx/component_wise.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>

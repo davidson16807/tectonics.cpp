@@ -15,7 +15,8 @@
 namespace orbit {
 
 	TEST_CASE( "mean_anomaly_from_eccentric_anomaly()/eccentric_anomaly_from_mean_anomaly() invertibility", "[orbit]" ) {
-		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant * si::earth_mass / (si::meter3/si::second2));
+		const double pi = 3.141592653589793238462643383279;
+		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant * si::earth_mass / (si::meter3/si::second2), pi);
 	    SECTION("For every function there exists another function that negates its effect"){
 	    	const double max_i = 20.0;
 	    	const double max_j = 20.0;
@@ -37,7 +38,8 @@ namespace orbit {
 	}
 
 	TEST_CASE( "true_anomaly_from_eccentric_anomaly()/eccentric_anomaly_from_true_anomaly() invertibility", "[orbit]" ) {
-		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant/(si::meter3/si::kilogram/si::second2));
+		const double pi = 3.141592653589793238462643383279;
+		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant/(si::meter3/si::kilogram/si::second2), pi);
 	    SECTION("For every function there exists another function that negates its effect"){
 	    	// const double m = si::earth_mass / si::kilogram;
 	    	const double max_i = 10.0;
@@ -59,7 +61,8 @@ namespace orbit {
 		}
 	}
 	TEST_CASE( "semi_latus_rectum_from_semi_major_axis_and_eccentricity()/semi_major_axis_from_semi_latus_rectum_and_eccentricity() invertibility", "[orbit]" ) {
-		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant/(si::meter3/si::kilogram/si::second2));
+		const double pi = 3.141592653589793238462643383279;
+		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant/(si::meter3/si::kilogram/si::second2), pi);
 	    SECTION("For every function there exists another function that negates its effect"){
 	    	// const double m = si::earth_mass / si::kilogram;
 	    	const double max_i = 10.0;
@@ -81,7 +84,8 @@ namespace orbit {
 		}
 	}
 	TEST_CASE( "true_anomaly_from_eccentric_anomaly() congruence", "[orbit]" ) {
-		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant/(si::meter3/si::kilogram/si::second2));
+		const double pi = 3.141592653589793238462643383279;
+		Properties<double> properties(glm::dvec3(1,0,0), glm::dvec3(0,0,1), si::gravitational_constant/(si::meter3/si::kilogram/si::second2), pi);
 	    SECTION("Results of a function repeat after a certain offset"){
 	    	// const double m = si::earth_mass / si::kilogram;
 	    	const double max_i = 10.0;

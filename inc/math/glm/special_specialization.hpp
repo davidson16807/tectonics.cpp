@@ -1,8 +1,6 @@
 #pragma once
 
 // 3rd party libraries
-#define GLM_ENABLE_EXPERIMENTAL // needed to enable <glm/gtx/component_wise.hpp>
-#define GLM_FORCE_PURE          // disable anonymous structs so we can build with ISO C++
 #include <glm/common.hpp>
 #include <glm/exponential.hpp>
 #include <glm/geometric.hpp>

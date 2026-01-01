@@ -34,11 +34,11 @@ namespace sea
         using lengths = std::vector<length>;
         using scalars = std::vector<scalar>;
 
-        const iterated::Arithmetic<adapted::SymbolicArithmetic> arithmetic;
+        // const iterated::Arithmetic<adapted::SymbolicArithmetic> arithmetic;
         const aggregated::Order<adapted::SymbolicOrder> order;
         const iterated::Order<adapted::SymbolicOrder> orders;
-        const binned::Statistics<aggregated::Order<adapted::SymbolicOrder>, adapted::SymbolicArithmetic> binning;
-        const preceded::Statistics<adapted::SymbolicArithmetic> preceding;
+        // const binned::Statistics<aggregated::Order<adapted::SymbolicOrder>, adapted::SymbolicArithmetic> binning;
+        // const preceded::Statistics<adapted::SymbolicArithmetic> preceding;
         const aggregated::Reduction<adapted::SymbolicArithmetic> total;
 
         const length unit_length;
@@ -50,11 +50,11 @@ namespace sea
             const length unit_length,
             const scalar epsilon
         ):
-            arithmetic(),
+            // arithmetic(),
             order(),
             orders(),
-            binning(),
-            preceding(),
+            // binning(),
+            // preceding(),
             unit_length(unit_length),
             epsilon(epsilon)
         {}
@@ -114,7 +114,7 @@ namespace sea
 
             using area = typename length2::value_type;
             length min_displacement = order.min(displacement);
-            area global_surface_area(total.sum(vertex_areas));
+            area global_surface_area(total.sum(vertex_areas, area(0)));
             // the depth of the ocean if the entire globe is at a single height
             length uniform_ocean_depth(sea_volume / global_surface_area);
             // lowest possible value - the value sealevel takes if all but an infinitesimal point on the globe is at the lowest height observed

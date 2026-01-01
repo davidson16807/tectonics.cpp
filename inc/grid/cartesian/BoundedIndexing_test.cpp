@@ -4,7 +4,6 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include "catch/catch.hpp"
 
-#define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 #include <test/properties.hpp>
 #include <test/macros.hpp>
 #include <test/glm/adapter.hpp>

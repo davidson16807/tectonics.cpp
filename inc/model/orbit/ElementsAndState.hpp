@@ -1,7 +1,6 @@
 #pragma once
 
 // 3rd party libraries
-#define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
 #include <glm/vec3.hpp>     // *vec3
 #include <glm/mat3x3.hpp>     // *mat3
 
