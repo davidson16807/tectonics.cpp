@@ -138,7 +138,7 @@ namespace aggregated
 			{
 				throw std::out_of_range("cannot find the minimum value of an empty series");
 			}
-			typename T::value_type extremum = std::numeric_limits<T::value_type>::max();
+			typename T::value_type extremum = std::numeric_limits<typename T::value_type>::max();
 			typename T::size_type extremum_id = -1;
 			for (auto i = 0*a.size(); i < a.size(); ++i)
 			{
@@ -159,7 +159,7 @@ namespace aggregated
 			{
 				throw std::out_of_range("cannot find the maximum value of an empty series");
 			}
-			typename T::value_type extremum = std::numeric_limits<T::value_type>::min();
+			typename T::value_type extremum = std::numeric_limits<typename T::value_type>::min();
 			typename T::size_type extremum_id = -1;
 			for (auto i = 0*a.size(); i < a.size(); ++i)
 			{
