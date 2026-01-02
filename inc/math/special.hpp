@@ -1,7 +1,11 @@
 #pragma once
 
-#include <cmath>
-#include <algorithm>
+// C libraries
+#include <cmath>     // pow, etc.
+#include <cstdint>   // std::uint8_t
+
+// std libraries
+#include <algorithm> // max, clamp, etc.
 
 namespace math{
 
@@ -41,6 +45,22 @@ namespace math{
 	MATH_BINARY_STD_WRAPPER(pow)
 	MATH_BINARY_STD_WRAPPER(atan2)
 	#undef MATH_BINARY_STD_WRAPPER
+
+	template<typename I>
+	constexpr I ipow(const I b, const I e)
+	{
+	    I y(1);
+	    I c(b);
+	    for (I i = I(0); i < e; i++)
+	        y *= c; 
+	    return y;
+	}
+
+	template<typename I, std::uint8_t E>
+	inline constexpr I ipow(const I b)
+	{
+	    return (E == I(0)) ? I(1) : b * ipow<E-I(1)>(b);
+	}
 
 	#define MATH_TRINARY_STD_WRAPPER(NAME) \
 	template <typename In1, typename In2, typename In3> inline auto NAME(const In1 a, const In2 b, const In3 c){return std::NAME(a,b,c);}
@@ -110,7 +130,7 @@ namespace math{
 		return std::abs(a-b);
 	}
 
-	template <typename In1, int N> inline auto pow(const In1 a) { return std::pow(a,N); }
+	template <typename In1, int E> inline auto pow(const In1 a) { return std::pow(a,E); }
 	template <typename In1> inline auto fract(const In1 a) { return a-floor(a); }
 	template <typename In1> inline auto inversesqrt(const In1 a) { return In1(1)/std::sqrt(a); }
 	template <typename In1> inline auto negate(const In1 a) { return -a; }

@@ -27,8 +27,8 @@ namespace dymaxion
 
         using ivec2 = glm::vec<2,id2,glm::defaultp>;
         using vec2  = glm::vec<2,scalar,glm::defaultp>;
-        using ipoint = Point<id2,id>;
-        using point = Point<id2,scalar>;
+        using ipoint = Point<id,id>;
+        using point = Point<id,scalar>;
 
         static constexpr vec2 half_cell = vec2(0.5);
         static constexpr id i0 = 0;

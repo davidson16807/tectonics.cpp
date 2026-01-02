@@ -1,11 +1,12 @@
 #pragma once
 
 // C libraries
-#include <math.h>       // ceil, round 
+#include <cmath>        // ceil, round 
 
 // std libraries
 #include <algorithm> 	// max, min, clamp
 #include <string>       // to_string
+#include <ostream>      // ostream
 
 // 3rd party libraries
 #include <glm/vec2.hpp>       	 // *vec3
@@ -21,7 +22,7 @@ namespace dymaxion
     template<typename scalar>
 	glm::vec<3,scalar,glm::defaultp> cartesian_from_zlon(const scalar z, const scalar longitude)
 	{
-		scalar r(std::sqrt(scalar(1)-z*z));
+		scalar r(std::sqrt(std::max(scalar(0), scalar(1)-z*z)));
 		return glm::vec<3,scalar,glm::defaultp>(
 			r*std::cos(longitude),
 			r*std::sin(longitude),
@@ -32,19 +33,19 @@ namespace dymaxion
 	struct Point
 	{
         using vec2 = glm::vec<2,scalar,precision>;
-		id square_id;
 		vec2 square_position;
+		id square_id;
 
-		explicit Point(id i, vec2 V2):
-			square_id(i),
-            square_position(V2.x, V2.y)
+		explicit Point(const id i, const vec2 V2):
+            square_position(V2.x, V2.y),
+			square_id(i)
 		{}
 
         // cast constructor
         template<typename idB, typename scalarB, glm::qualifier Q2>
-        explicit Point(Point<idB,scalarB,Q2> p):
-            square_id(p.square_id),
-            square_position(p.square_position)
+        explicit Point(const Point<idB,scalarB,Q2> p):
+            square_position(p.square_position),
+            square_id(p.square_id)
         {}
 
         constexpr Point<id,scalar,precision>& operator+=(const vec2 k)
@@ -74,7 +75,7 @@ namespace dymaxion
 	};
 
     template<typename id, typename scalar, glm::qualifier precision>
-    constexpr std::string to_string(const Point<id,scalar,precision> point)
+    std::string to_string(const Point<id,scalar,precision> point)
     {
         return "Point(" + std::to_string(point.square_id) + "," +std::to_string(point.square_position.x) + "," +std::to_string(point.square_position.y) + ")";
     }
@@ -118,34 +119,10 @@ namespace dymaxion
     }
 
     template<typename id, typename scalar, glm::qualifier precision>
-    constexpr Point<id,scalar,precision> operator+(const scalar k, const Point<id, scalar>& p)
-    {
-        Point<id,scalar,precision> y(p);
-        y += k;
-        return y;
-    }
-
-    template<typename id, typename scalar, glm::qualifier precision>
-    constexpr Point<id,scalar,precision> operator-(const scalar k, const Point<id, scalar>& p)
-    {
-        Point<id,scalar,precision> y(p);
-        y -= k;
-        return y;
-    }
-
-    template<typename id, typename scalar, glm::qualifier precision>
-    constexpr Point<id,scalar,precision> operator*(const scalar k, const Point<id, scalar>& p)
+    constexpr Point<id,scalar,precision> operator*(const scalar k, const Point<id, scalar, precision>& p)
     {
         Point<id,scalar,precision> y(p);
         y *= k;
-        return y;
-    }
-
-    template<typename id, typename scalar, glm::qualifier precision>
-    constexpr Point<id,scalar,precision> operator/(const scalar k, const Point<id, scalar>& p)
-    {
-        Point<id,scalar,precision> y(p);
-        y /= k;
         return y;
     }
 

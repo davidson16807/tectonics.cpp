@@ -39,7 +39,7 @@ namespace dymaxion
         using vec3 = glm::vec<3,scalar,Q>;
         using mat3 = glm::mat<3,3,scalar,Q>;
 
-		static constexpr scalar pi = 3.141592652653589793f;
+		static constexpr scalar pi = scalar(3.141592653589793238462643383279502884L);
 		static constexpr id square_count = 10;
 		static constexpr scalar half_subgrid_longitude_arc_length = 2*pi/square_count;
 		static constexpr id i2 = 2;
@@ -75,7 +75,7 @@ namespace dymaxion
 		inline constexpr bool is_inverted_grid_position(
 			const vec2 V2
 		) const {
-			return V2.y > V2.x;;
+			return V2.y > V2.x;
 		}
 
 		inline constexpr vec3 origin(
@@ -101,13 +101,13 @@ namespace dymaxion
 			;
 		}
 
-		inline constexpr vec3 sphere_project(
+		inline vec3 sphere_project(
 			const vec3 V3
 		) const {
 			return glm::normalize(V3);
 		}
 
-		inline constexpr vec3 plane_project(
+		inline vec3 plane_project(
 			const vec3& V3,
 			const vec3& N,
 			const vec3& O

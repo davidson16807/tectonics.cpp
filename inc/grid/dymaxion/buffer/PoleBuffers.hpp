@@ -26,7 +26,7 @@ namespace dymaxion {
 	{
 
         using ivec2 = glm::vec<2,id,Q>;
-        using ipoint = Point<id2,id>;
+        using ipoint = Point<id,id>;
 
 		static constexpr id2 vertices_per_triangle = 3;
 		static constexpr id2 triangle_count = 3;

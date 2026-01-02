@@ -26,15 +26,15 @@ namespace dymaxion {
 	{
 
         using ivec2 = glm::vec<2,id,Q>;
-        using ipoint = Point<id2,id>;
+        using ipoint = Point<id,id>;
 
 		static constexpr id2 vertices_per_triangle = 3;
-		static constexpr id2 triangles_per_quad  = 2;
+		static constexpr id triangles_per_quad  = 2;
 		static constexpr id2 vertices_per_quad = triangles_per_quad * vertices_per_triangle;
-		static constexpr id2 vertices_per_strip_quad = 4;
+		static constexpr id vertices_per_strip_quad = 4;
 
         const Indexing<id,id2,scalar> vertices;
-        const id2 vertices_per_square_side;
+        const id vertices_per_square_side;
         const buffer::PrimitiveBuffers<id2,Q> primitives;
 
 	public:

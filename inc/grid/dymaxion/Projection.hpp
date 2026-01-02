@@ -45,7 +45,7 @@ namespace dymaxion
         using ivec2 = glm::vec<2,id,Q>;
         using bvec2 = glm::vec<2,bool,Q>;
         using mat3  = glm::mat<3,3,scalar,Q>;
-        using point = dymaxion::Point<id2,scalar>;
+        using point = dymaxion::Point<id,scalar>;
 
 		static constexpr vec2 I = vec2(1,0);
 		static constexpr vec2 J = vec2(0,1);
@@ -55,16 +55,15 @@ namespace dymaxion
 		static constexpr scalar s0 = 0;
 		static constexpr scalar s1 = 1;
 		static constexpr scalar s2 = 2;
-		static constexpr scalar pi = 3.141592652653589793f;
+		static constexpr scalar pi = scalar(3.141592653589793238462643383279502884L);
 		static constexpr scalar turn = s2*pi;
-		static constexpr id2 square_count = 10;
-		static constexpr id2 triangle_count = 20;
+		static constexpr id square_count = 10;
+		static constexpr id triangle_count = 20;
 		static constexpr scalar half_subgrid_fraction_of_turn = square_count/(2*pi);
         static constexpr vec2 half_cell = vec2(0.5);
 		static constexpr scalar half = 0.5;
-		static constexpr id2 i0 = 0;
-		static constexpr id2 i1 = 1;
-		static constexpr id2 i2 = 2;
+		static constexpr id i1 = 1;
+		static constexpr id i2 = 2;
 
 		struct GridIdCache {
 		    mat3   Binv_NO;
@@ -87,29 +86,29 @@ namespace dymaxion
 		std::array<scalar,8> padding;
 		std::array<SpherePositionCache,triangle_count*i2> sphere_positions;
 
-		const Triangles<id2,scalar,Q> triangles;
-		const Squares<id2,scalar,Q> squares;
+		const Triangles<id,scalar,Q> triangles;
+		const Squares<id,scalar,Q> squares;
 
-		constexpr vec3 west_halfspace_normal(const id2 EWid) const 
+		constexpr vec3 west_halfspace_normal(const id EWid) const 
 		{
-			id2     Nid (i2*std::round((EWid+half)/s2));
-			id2     Sid (i2*std::round(((EWid+half)-s1)/s2)+i1);
+			id     Nid (i2*std::round((EWid+half)/s2));
+			id     Sid (i2*std::round(((EWid+half)-s1)/s2)+i1);
 			return glm::cross(squares.westmost(Sid), squares.westmost(Nid)); // |S×N|
 		}
 
-		constexpr vec3 polar_halfspace_normal(const id2 i) const 
+		constexpr vec3 polar_halfspace_normal(const id i) const 
 		{
 			return glm::normalize(glm::cross(squares.westmost(i), squares.eastmost(i))); // W×E
 		}
 
-		constexpr vec3 origin(const id2 i, const bool is_polar) const 
+		constexpr vec3 origin(const id i, const bool is_polar) const 
 		{
-			id2     Oid (i+i1);
+			id     Oid (i+i1);
 			scalar square_polarity(squares.polarity(i));
 			return triangles.origin(Oid, square_polarity, is_polar);
 		}
 
-		constexpr mat3 basis(const id2 i, const bool is_polar) const 
+		constexpr mat3 basis(const id i, const bool is_polar) const 
 		{
 			vec3   W   (squares.westmost(i));    // W: westernmost triangle vertex
 			vec3   E   (squares.westmost(i+i2)); // E: easternmost triangle vertex
@@ -122,9 +121,9 @@ namespace dymaxion
 
 		explicit Projection()
 		{
-			for (id2 i = 0; i < square_count*i2; ++i)
+			for (id i = 0; i < square_count*i2; ++i)
 			{
-				for (id2 j = 0; j < 2; ++j)
+				for (id j = 0; j < 2; ++j)
 				{
 					/*
 					for sphere_position:
@@ -137,7 +136,7 @@ namespace dymaxion
 					*/
 					bool is_polar(j==1);
 					bool is_inverted(triangles.is_inverted_square_id(i, is_polar));
-					id2 triangle_id(triangles.triangle_id(i,is_polar));
+					id triangle_id(triangles.triangle_id(i,is_polar));
 					mat3 basis_(basis(i%square_count,is_polar));
 					sphere_positions[triangle_id].basis      = basis_;
 					sphere_positions[triangle_id].direction2 = is_inverted? flip:mirror;
@@ -156,7 +155,7 @@ namespace dymaxion
 		constexpr point standardize(const point& grid_id) const 
 		{
 			// return grid_id;
-			id2   i  (grid_id.square_id);
+			id    i  (grid_id.square_id);
 			vec2  V2 (grid_id.square_position);
 			vec2  U2 (V2-half);
 			bvec2 are_nonlocal   (std::abs(U2.x)>half, std::abs(U2.y)>half);
@@ -169,7 +168,7 @@ namespace dymaxion
 			vec2  modded         (V2-vec2(nonlocal_sign));
 			vec2  inverted       (!is_polar? modded : are_nonpolar*(s1-modded) + vec2(are_polar)*(modded));
 			vec2  flipped        (is_corner? modded : is_polar? inverted.yx() : inverted);
-			id2   di             (math::compMaxAbs((id(i1)+ivec2(are_polar)) * nonlocal_sign));
+			id    di             (math::compMaxAbs((id(i1)+ivec2(are_polar)) * nonlocal_sign));
 			/* NOTE: there is more than one possible solution if `is_pole`, 
 		    and these solutions do not represent the same point in space.
 		    However the case where `is_pole` is still valid and must be supported.
@@ -186,19 +185,21 @@ namespace dymaxion
 			EWid can be approximated using a lagrange polynomial but this either produces
 			a slight speedup or a dramatic slowdown, and its unclear if this can be relied on across platforms.
 			*/
-			id2    EWid((std::atan2(V3.y,V3.x)+turn)*half_subgrid_fraction_of_turn);
-			id2    i ((EWid - id2(glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
+			id    EWid((std::atan2(V3.y,V3.x)+turn)*half_subgrid_fraction_of_turn);
+			id    i ((EWid - id(glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
 			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0); 
-			GridIdCache triangle(grid_ids[i2*i + is_polar]);
+			// GridIdCache triangle(grid_ids[i2*i + is_polar]);
+			const GridIdCache& triangle =grid_ids[i2*i + is_polar];
 			vec2   triangle_position(triangle.Binv_NO * V3 * (s1/ glm::dot(triangle.normal,V3)));
 			return point(i, triangle.origin2 + triangle.direction2*triangle_position.yx());
 		}
 
 		constexpr vec3 sphere_position(const point& grid_id) const 
 		{
-			id2  i  (grid_id.square_id);
+			id   i  (grid_id.square_id);
 			vec2 V2 (grid_id.square_position.yx());
-			SpherePositionCache triangle(sphere_positions[i2*i + ((V2.y > V2.x) == (i&i1))]);
+			// SpherePositionCache triangle(sphere_positions[i2*i + ((V2.y > V2.x) == (i&i1))]);
+			const SpherePositionCache& triangle = sphere_positions[i2*i + ((V2.y > V2.x) == (i&i1))];
 			vec3 triangle_position((V2-triangle.origin2)*triangle.direction2, s1);
 			return glm::normalize(triangle.basis * triangle_position);
 		}

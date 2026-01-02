@@ -1,5 +1,7 @@
 #pragma once
 
+// C libraries
+
 // std libraries
 #include <limits>
 
@@ -8,7 +10,7 @@
 #include <glm/vec3.hpp>             // *vec3
 
 // in-house libraries
-#include <grid/cartesian/Interleaving.hpp>
+#include <math/special.hpp>
 
 namespace cartesian
 {
@@ -29,6 +31,9 @@ namespace cartesian
     {
         using ivec = glm::vec<L,id,precision>;
 
+        static constexpr id i0 = id(0);
+        static constexpr id i1 = id(1);
+
         const id side_length;
         const id size;
 
@@ -41,7 +46,7 @@ namespace cartesian
             id output(0);
             for (id i = 0; i < L; ++i)
             {
-                output += grid_id[i] * pow(L,i);
+                output += glm::clamp(grid_id[i], i0, side_length-i1) * math::ipow<id>(side_length,i);
             }
             return output;
         }
@@ -50,7 +55,7 @@ namespace cartesian
             ivec output(0);
             for (id i = 0; i < L; ++i)
             {
-                output[i] = id(memory_id/pow(side_length,i)) % side_length;
+                output[i] = (memory_id/math::ipow<id>(side_length,i)) % side_length;
             }
             return output;
         }

@@ -1,7 +1,7 @@
 #pragma once
 
 // C libraries
-#include <math.h>       // ceil, round 
+#include <cmath>        // ceil, round 
 
 // std libraries
 #include <algorithm> 	// max, min, clamp
@@ -36,8 +36,8 @@ namespace dymaxion
 	{
         using vec3 = glm::vec<3,scalar,Q>;
 
-		static constexpr scalar pi = 3.141592652653589793f;
-		static constexpr scalar half = 0.5f;
+		static constexpr scalar pi = scalar(3.141592653589793238462643383279502884L);
+		static constexpr scalar half = scalar(0.5);
 		static constexpr id i1 = 1;
 		static constexpr id i2 = 2;
 		static constexpr id square_count = 10;

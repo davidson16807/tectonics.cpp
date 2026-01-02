@@ -51,8 +51,7 @@ namespace test {
                 auto f1 = f(a);
                 auto f2 = f(a);
                 return Results(adapter.equal(f1, f2),
-                    "such that: \n  [the first call] = [the second call]\n" + 
-                    "a : " + indent(adapter.print(a), "  ")+"\n" +
+                    "such that: \n  [the first call] = [the second call]\n"
                     "[the first call]  : " + indent(adapter.print(f1), "  ")+"\n" +
                     "[the second call] : " + indent(adapter.print(f2), "  ")+"\n"
                 );
@@ -70,9 +69,7 @@ namespace test {
                 auto f1 = f(a, b);
                 auto f2 = f(a, b);
                 return Results(adapter.equal(f1, f2),
-                    "such that: \n  [the first call] = [the second call]\n" + 
-                    "a : " + indent(adapter.print(a), "  ")+"\n" +
-                    "b : " + indent(adapter.print(b), "  ")+"\n" +
+                    "such that: \n  [the first call] = [the second call]\n"
                     "[the first call]  : " + indent(adapter.print(f1), "  ")+"\n" +
                     "[the second call] : " + indent(adapter.print(f2), "  ")+"\n"
                 );
@@ -90,7 +87,7 @@ namespace test {
                 auto f1 = f(a, b, c);
                 auto f2 = f(a, b, c);
                 return Results(adapter.equal(f1, f2),
-                    "such that: \n  [the first call] = [the second call]\n" + 
+                    "such that: \n  [the first call] = [the second call]\n"
                     "[the first call]  : " + indent(adapter.print(f1), "  ")+"\n" +
                     "[the second call] : " + indent(adapter.print(f2), "  ")+"\n"
                 );

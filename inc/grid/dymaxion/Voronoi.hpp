@@ -27,19 +27,19 @@ namespace dymaxion
 
         using vec2  = glm::vec<2,scalar,glm::defaultp>;
         using vec3  = glm::vec<3,scalar,glm::defaultp>;
-        using ipoint = Point<id2,id>;
-        using point = Point<id2,scalar>;
+        using ipoint= Point<id,id>;
+        using point = Point<id,scalar>;
 
         static constexpr vec2 half_cell = vec2(0.5);
         static constexpr scalar s1 = 1;
         static constexpr scalar s2 = 2;
-        static constexpr id2 i1 = 1;
+        static constexpr id i1 = 1;
 
         const Projection<id,id2,scalar,Q> projection;
 
     public:
 
-        const id2 vertices_per_square_side;
+        const id vertices_per_square_side;
         const scalar vertices_per_square_side_inverse;
         const scalar vertices_per_meridian;
         const id2 vertices_per_square;
@@ -73,7 +73,7 @@ namespace dymaxion
 
         inline constexpr point grid_position(const ipoint& grid_id) const
         {
-            return grid_id;
+            return point(grid_id);
         }
         inline constexpr point grid_position(const vec3 normalized_sphere_position) const
         {
