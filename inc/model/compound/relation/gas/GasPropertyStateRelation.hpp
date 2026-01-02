@@ -35,7 +35,7 @@ namespace relation {
     Clamped<Exponent>s can be used to represent arbitrary polynomials,
     and Clamped<Sigmoid>s can be used to represent arbitrary lerp functions.
     */
-    template<typename Ty>
+    template<typename Y>
     class GasPropertyStateRelation
     {
 
@@ -46,13 +46,13 @@ namespace relation {
 
         si::pressure<double>    punits;
         si::temperature<double> Tunits;
-        Ty              yunits;
+        Y              yunits;
 
         float intercept;
 
     public:
         float known_max_fractional_error;
-        using value_type = Ty;
+        using value_type = Y;
 
         // zero constructor
         constexpr GasPropertyStateRelation():
@@ -78,7 +78,7 @@ namespace relation {
 
             const si::pressure<double>    punits,
             const si::temperature<double> Tunits,
-            const Ty              yunits,
+            const Y              yunits,
 
             const float intercept,
             const float known_max_fractional_error
@@ -97,7 +97,7 @@ namespace relation {
         {
         }
 
-        constexpr GasPropertyStateRelation(const Ty intercept):
+        constexpr GasPropertyStateRelation(const Y intercept):
             pexponents(),
             Texponents(),
             Tsigmoids(),
@@ -105,14 +105,14 @@ namespace relation {
 
             punits(si::standard_pressure),
             Tunits(si::standard_temperature),
-            yunits(Ty(1.0)),
+            yunits(Y(1.0)),
 
-            intercept(intercept/Ty(1.0)),
+            intercept(intercept/Y(1.0)),
             known_max_fractional_error(0.0)
         {
         }
 
-        constexpr GasPropertyStateRelation<Ty>& operator=(const GasPropertyStateRelation<Ty> other)
+        constexpr GasPropertyStateRelation<Y>& operator=(const GasPropertyStateRelation<Y> other)
         {
             pexponents = other.pexponents;
             Texponents = other.Texponents;
@@ -129,7 +129,7 @@ namespace relation {
             return *this;
         }
 
-        Ty operator()(const si::pressure<double> pressure, const si::temperature<double> temperature) const
+        Y operator()(const si::pressure<double> pressure, const si::temperature<double> temperature) const
         {
             const float p = float(pressure/punits);
             const float T = float(temperature/Tunits);
@@ -139,7 +139,7 @@ namespace relation {
             return (intercept + pexponents(p) + Texponents(T) + Tsigmoids(T) + Tdippr102s(T)) * yunits;
         }
 
-        Ty operator()(const si::temperature<double> temperature, const si::pressure<double> pressure) const
+        Y operator()(const si::temperature<double> temperature, const si::pressure<double> pressure) const
         {
             const float p = float(pressure/punits);
             const float T = float(temperature/Tunits);
@@ -149,7 +149,7 @@ namespace relation {
             return (intercept + pexponents(p) + Texponents(T) + Tsigmoids(T) + Tdippr102s(T)) * yunits;
         }
 
-        Ty operator()(const point<double> point) const
+        Y operator()(const point<double> point) const
         {
             const float p = float(point.pressure/punits);
             const float T = float(point.temperature/Tunits);
@@ -159,7 +159,7 @@ namespace relation {
             return (intercept + pexponents(p) + Texponents(T) + Tsigmoids(T) + Tdippr102s(T)) * yunits;
         }
 
-        GasPropertyStateRelation<Ty> restriction(
+        GasPropertyStateRelation<Y> restriction(
             const si::pressure<double> min_pressure, const si::pressure<double> max_pressure,
             const si::temperature<double> min_temperature, const si::temperature<double> max_temperature,
             const float known_max_fractional_error
@@ -169,7 +169,7 @@ namespace relation {
             const float Tlo = float(min_temperature/Tunits);
             const float phi = float(max_pressure/punits);
             const float Thi = float(max_temperature/Tunits);
-            GasPropertyStateRelation<Ty> restricted(*this);
+            GasPropertyStateRelation<Y> restricted(*this);
             bool is_removal_occurring(true);
             float float_precision_of_error = 1e-6;
             float least_useful_term_error;
@@ -237,19 +237,19 @@ namespace relation {
             return restricted;
         }
 
-        GasPropertyStateRelation<Ty>& operator+=(const Ty offset)
+        GasPropertyStateRelation<Y>& operator+=(const Y offset)
         {
             intercept += offset/yunits;
             return *this;
         }
 
-        GasPropertyStateRelation<Ty>& operator-=(const Ty offset)
+        GasPropertyStateRelation<Y>& operator-=(const Y offset)
         {
             intercept -= offset/yunits;
             return *this;
         }
 
-        GasPropertyStateRelation<Ty>& operator*=(const float scalar)
+        GasPropertyStateRelation<Y>& operator*=(const float scalar)
         {
             pexponents *= scalar;
             Texponents *= scalar;
@@ -259,7 +259,7 @@ namespace relation {
             return *this;
         }
 
-        GasPropertyStateRelation<Ty> operator/=(const float scalar)
+        GasPropertyStateRelation<Y>& operator/=(const float scalar)
         {
             pexponents /= scalar;
             Texponents /= scalar;
@@ -269,7 +269,7 @@ namespace relation {
             return *this;
         }
 
-        GasPropertyStateRelation<Ty>& operator+=(const GasPropertyStateRelation<Ty> other)
+        GasPropertyStateRelation<Y>& operator+=(const GasPropertyStateRelation<Y> other)
         {
             const float pscale = float(other.punits / punits);
             const float Tscale = float(other.Tunits / Tunits);
@@ -282,7 +282,7 @@ namespace relation {
             return *this;
         }
 
-        GasPropertyStateRelation<Ty>& operator-=(const GasPropertyStateRelation<Ty> other)
+        GasPropertyStateRelation<Y>& operator-=(const GasPropertyStateRelation<Y> other)
         {
             const float pscale = float(other.punits / punits);
             const float Tscale = float(other.Tunits / Tunits);
@@ -299,9 +299,9 @@ namespace relation {
 
     // Custom parameterization, offers high accuracy for most pure compounds
     // 36 uses, for dynamic_viscosity, isobaric_specific_heat_capacity, and thermal_conductivity of gases
-    template<typename Ty>
-    constexpr GasPropertyStateRelation<Ty> get_sigmoid_exponent_pressure_temperature_relation(
-        const si::temperature<double> Tunits, const si::pressure<double> punits, const Ty yunits,
+    template<typename Y>
+    constexpr GasPropertyStateRelation<Y> get_sigmoid_exponent_pressure_temperature_relation(
+        const si::temperature<double> Tunits, const si::pressure<double> punits, const Y yunits,
         const float pslope, const float pexponent,
         const float Tslope, const float Texponent,
         const float Tsigmoid_max, const float Tsigmoid_scale, const float Tsigmoid_center,
@@ -310,7 +310,7 @@ namespace relation {
         const float pmin, const float pmax,
         const float known_max_fractional_error
     ) {
-        return GasPropertyStateRelation<Ty>(
+        return GasPropertyStateRelation<Y>(
             ClampedExponentSum{ClampedExponent(pmin, pmax, analytic::Exponent<float>(pslope, pexponent))},
             ClampedExponentSum{ClampedExponent(Tmin, Tmax, analytic::Exponent<float>(Tslope, Texponent))},
             ClampedSigmoidSum{ClampedSigmoid(Tmin, Tmax, analytic::AlgebraicSigmoid<float>(1.0f/Tsigmoid_scale, -Tsigmoid_center/Tsigmoid_scale, Tsigmoid_max))},
@@ -323,9 +323,9 @@ namespace relation {
         );
     }
 
-    template<typename Ty>
-    constexpr GasPropertyStateRelation<Ty> get_exponent_pressure_temperature_relation(
-        const si::temperature<double> Tunits, const si::pressure<double> punits, const Ty yunits,
+    template<typename Y>
+    constexpr GasPropertyStateRelation<Y> get_exponent_pressure_temperature_relation(
+        const si::temperature<double> Tunits, const si::pressure<double> punits, const Y yunits,
         const float pslope, const float pexponent,
         const float Tslope, const float Texponent,
         const float intercept,
@@ -333,7 +333,7 @@ namespace relation {
         const float pmin, const float pmax,
         const float known_max_fractional_error
     ) {
-        return GasPropertyStateRelation<Ty>(
+        return GasPropertyStateRelation<Y>(
             ClampedExponentSum{ClampedExponent(pmin, pmax, analytic::Exponent<float>(pslope, pexponent))},
             ClampedExponentSum{ClampedExponent(Tmin, Tmax, analytic::Exponent<float>(Tslope, Texponent))},
             ClampedSigmoidSum{},
@@ -348,13 +348,13 @@ namespace relation {
 
     // Direct port from the DIPPR 102 equation
     // 9 uses, for viscosity and thermal conductivity of gas
-    template<typename Ty>
-    constexpr GasPropertyStateRelation<Ty> get_dippr_temperature_relation_102(
-        const si::temperature<double> Tunits, const Ty yunits,
+    template<typename Y>
+    constexpr GasPropertyStateRelation<Y> get_dippr_temperature_relation_102(
+        const si::temperature<double> Tunits, const Y yunits,
         const float c1, const float c2, const float c3, const float c4,
         const float Tmin, const float Tmax
     ) {
-        return GasPropertyStateRelation<Ty>(
+        return GasPropertyStateRelation<Y>(
             ClampedExponentSum(),
             ClampedExponentSum(),
             ClampedSigmoidSum(),
@@ -393,9 +393,9 @@ namespace relation {
     that is guaranteed to be found in constant time without using iterative optimization. 
     Error estimation is iterative, but the iterative method converges fast and can be done in inconsequential time.
     */
-    template<typename Ty, typename F>
-    constexpr GasPropertyStateRelation<Ty> approx_inferred_pressure_temperature_gas_relation(
-        const si::temperature<double> Tunits, const si::pressure<double> punits, const Ty yunits,
+    template<typename Y, typename F>
+    constexpr GasPropertyStateRelation<Y> approx_inferred_pressure_temperature_gas_relation(
+        const si::temperature<double> Tunits, const si::pressure<double> punits, const Y yunits,
         const F& f,
         const float Tmin, const float Tmax,
         const float pmin, const float pmax,
@@ -414,7 +414,7 @@ namespace relation {
             Tmin, float(f(pmin*punits,  Tmin*Tunits) / yunits), 
             Tmid, float(f(pmin*punits,  Tmid*Tunits) / yunits), 
             Tmax, float(f(pmin*punits,  Tmax*Tunits) / yunits));
-        auto fhat = GasPropertyStateRelation<Ty>(
+        auto fhat = GasPropertyStateRelation<Y>(
             analytic::Sum<float,ClampedExponent>{
                 ClampedExponent(pmin, pmax, analytic::Exponent<float>(fp[1], 1.0f)),
                 ClampedExponent(pmin, pmax, analytic::Exponent<float>(fp[2], 2.0f))
@@ -447,13 +447,13 @@ namespace relation {
 
     // Direct port from the Perry equation used for some gas properties
     // 1 use, for heat capacity of nitric oxide
-    template<typename Ty>
-    constexpr GasPropertyStateRelation<Ty> get_perry_temperature_gas_relation(
-        const si::temperature<double> Tunits, const Ty yunits,
+    template<typename Y>
+    constexpr GasPropertyStateRelation<Y> get_perry_temperature_gas_relation(
+        const si::temperature<double> Tunits, const Y yunits,
         const float intercept, const float linear, const float inverse_square, const float square,
         const float Tmin, const float Tmax
     ) {
-        return GasPropertyStateRelation<Ty>(
+        return GasPropertyStateRelation<Y>(
             analytic::Sum<float,ClampedExponent>(),
             analytic::Sum<float,ClampedExponent>{
                 ClampedExponent(Tmin, Tmax, analytic::Exponent<float>(linear, 1.0f)),
@@ -470,83 +470,83 @@ namespace relation {
         );
     }
 
-    template<typename Ty>
-    GasPropertyStateRelation<Ty> operator+(const GasPropertyStateRelation<Ty> relation, const GasPropertyStateRelation<Ty> other)
+    template<typename Y>
+    GasPropertyStateRelation<Y> operator+(const GasPropertyStateRelation<Y> relation, const GasPropertyStateRelation<Y> other)
     {
-        GasPropertyStateRelation<Ty> result = relation;
+        GasPropertyStateRelation<Y> result = relation;
         result += other;
         return result;
     }
 
-    template<typename Ty>
-    GasPropertyStateRelation<Ty> operator-(const GasPropertyStateRelation<Ty> relation, const GasPropertyStateRelation<Ty> other)
+    template<typename Y>
+    GasPropertyStateRelation<Y> operator-(const GasPropertyStateRelation<Y> relation, const GasPropertyStateRelation<Y> other)
     {
-        GasPropertyStateRelation<Ty> result = relation;
+        GasPropertyStateRelation<Y> result = relation;
         result -= other;
         return result;
     }
 
-    template<typename Ty>
-    GasPropertyStateRelation<Ty> operator+(const GasPropertyStateRelation<Ty> relation, const Ty offset)
+    template<typename Y>
+    GasPropertyStateRelation<Y> operator+(const GasPropertyStateRelation<Y> relation, const Y offset)
     {
-        GasPropertyStateRelation<Ty> result = relation;
+        GasPropertyStateRelation<Y> result = relation;
         result += offset;
         return result;
     }
 
-    template<typename Ty>
-    GasPropertyStateRelation<Ty> operator-(const GasPropertyStateRelation<Ty> relation, const Ty offset)
+    template<typename Y>
+    GasPropertyStateRelation<Y> operator-(const GasPropertyStateRelation<Y> relation, const Y offset)
     {
-        GasPropertyStateRelation<Ty> result = relation;
+        GasPropertyStateRelation<Y> result = relation;
         result -= offset;
         return result;
     }
 
-    template<typename Ty>
-    GasPropertyStateRelation<Ty> operator*(const GasPropertyStateRelation<Ty> relation, const float scalar)
+    template<typename Y>
+    GasPropertyStateRelation<Y> operator*(const GasPropertyStateRelation<Y> relation, const float scalar)
     {
-        GasPropertyStateRelation<Ty> result = relation;
+        GasPropertyStateRelation<Y> result = relation;
         result *= scalar;
         return result;
     }
 
-    template<typename Ty>
-    GasPropertyStateRelation<Ty> operator/(const GasPropertyStateRelation<Ty> relation, const float scalar)
+    template<typename Y>
+    GasPropertyStateRelation<Y> operator/(const GasPropertyStateRelation<Y> relation, const float scalar)
     {
-        GasPropertyStateRelation<Ty> result = relation;
+        GasPropertyStateRelation<Y> result = relation;
         result /= scalar;
         return result;
     }
 
-    template<typename Ty>
-    GasPropertyStateRelation<Ty> operator+(const Ty offset, const GasPropertyStateRelation<Ty> relation)
+    template<typename Y>
+    GasPropertyStateRelation<Y> operator+(const Y offset, const GasPropertyStateRelation<Y> relation)
     {
-        GasPropertyStateRelation<Ty> result = relation;
+        GasPropertyStateRelation<Y> result = relation;
         result += offset;
         return result;
     }
 
-    template<typename Ty>
-    GasPropertyStateRelation<Ty> operator-(const Ty offset, const GasPropertyStateRelation<Ty> relation)
+    template<typename Y>
+    GasPropertyStateRelation<Y> operator-(const Y offset, const GasPropertyStateRelation<Y> relation)
     {
-        GasPropertyStateRelation<Ty> result = relation;
+        GasPropertyStateRelation<Y> result = relation;
         result *= 1.0f;
         result += offset;
         return result;
     }
 
-    template<typename Ty>
-    GasPropertyStateRelation<Ty> operator-(const GasPropertyStateRelation<Ty> relation)
+    template<typename Y>
+    GasPropertyStateRelation<Y> operator-(const GasPropertyStateRelation<Y> relation)
     {
-        GasPropertyStateRelation<Ty> result = relation;
+        GasPropertyStateRelation<Y> result = relation;
         result *= 1.0f;
         return result;
     }
 
-    template<typename Ty>
-    GasPropertyStateRelation<Ty> operator*(const float scalar, const GasPropertyStateRelation<Ty> relation)
+    template<typename Y>
+    GasPropertyStateRelation<Y> operator*(const float scalar, const GasPropertyStateRelation<Y> relation)
     {
-        GasPropertyStateRelation<Ty> result = relation;
+        GasPropertyStateRelation<Y> result = relation;
         result *= scalar;
         return result;
     }

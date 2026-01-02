@@ -17,8 +17,8 @@
 namespace compound {
 namespace relation {
 
-    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    using RationalRailyardRelation = ::relation::RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi>;
+    template<typename X, typename Y, int Plo, int Phi, int Qlo, int Qhi>
+    using RationalRailyardRelation = ::relation::RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi>;
 
     // 5 uses, for heat capacities of liquids
     relation::RationalRailyardRelation<si::temperature<double>, si::specific_heat_capacity<double>, 0,6,0,1> get_dippr_liquid_heat_capacity_temperature_relation_114( 

@@ -58,10 +58,10 @@ namespace table {
 
 	};
 
-	template<typename F, typename Tx, typename Ty>
-	FullTable<Ty> apply(const FullTable<F>& f, Tx x)
+	template<typename F, typename X, typename Y>
+	FullTable<Y> apply(const FullTable<F>& f, X x)
 	{
-	    FullTable<Ty> y;
+	    FullTable<Y> y;
 	    for (std::size_t i = 0; i < f.size(); ++i)
 	    {
 	        y.rows.push_back(f[i](x));
@@ -69,11 +69,11 @@ namespace table {
 	    return y;
 	}
 
-	template<typename Ty, typename Tx1, typename F>
-	FullTable<Ty> derive(const F f, 
-		const FullTable<Tx1>& x1
+	template<typename Y, typename X1, typename F>
+	FullTable<Y> derive(const F f, 
+		const FullTable<X1>& x1
 	){
-	    FullTable<Ty> y;
+	    FullTable<Y> y;
 	    for (std::size_t i = 0; i < x1.size(); ++i)
 	    {
 	        y.rows.push_back(f(x1[i]));
@@ -81,13 +81,13 @@ namespace table {
 	    return y;
 	}
 
-	template<typename Ty, typename Tx1, typename Tx2, typename F>
-	FullTable<Ty> derive(const F f, 
-		const FullTable<Tx1>& x1, 
-		const FullTable<Tx2>& x2
+	template<typename Y, typename X1, typename X2, typename F>
+	FullTable<Y> derive(const F f, 
+		const FullTable<X1>& x1, 
+		const FullTable<X2>& x2
 	){
 	    assert(x1.size() == x2.size());
-	    FullTable<Ty> y;
+	    FullTable<Y> y;
 	    for (std::size_t i = 0; i < x1.size(); ++i)
 	    {
 	        y.rows.push_back(f(x1[i],x2[i]));
@@ -95,14 +95,14 @@ namespace table {
 	    return y;
 	}
 
-	template<typename Ty, typename F, typename Tx1, typename Tx2, typename Tx3>
-	FullTable<Ty> derive(const F f, 
-		const FullTable<Tx1>& x1, 
-		const FullTable<Tx2>& x2, 
+	template<typename Y, typename F, typename X1, typename X2, typename Tx3>
+	FullTable<Y> derive(const F f, 
+		const FullTable<X1>& x1, 
+		const FullTable<X2>& x2, 
 		const FullTable<Tx3>& x3
 	){
 	    assert(x1.size() == x2.size() && x1.size() == x3.size());
-	    FullTable<Ty> y;
+	    FullTable<Y> y;
 	    for (std::size_t i = 0; i < x1.size(); ++i)
 	    {
 	        y.rows.push_back(f(x1[i],x2[i],x3[i]));
@@ -110,15 +110,15 @@ namespace table {
 	    return y;
 	}
 
-	template<typename Ty, typename F, typename Tx1, typename Tx2, typename Tx3, typename Tx4>
-	FullTable<Ty> derive(const F f, 
-		const FullTable<Tx1>& x1, 
-		const FullTable<Tx2>& x2, 
+	template<typename Y, typename F, typename X1, typename X2, typename Tx3, typename Tx4>
+	FullTable<Y> derive(const F f, 
+		const FullTable<X1>& x1, 
+		const FullTable<X2>& x2, 
 		const FullTable<Tx3>& x3, 
 		const FullTable<Tx4>& x4
 	){
 	    assert(x1.size() == x2.size() && x1.size() == x3.size() && x1.size() == x4.size());
-	    FullTable<Ty> y;
+	    FullTable<Y> y;
 	    for (std::size_t i = 0; i < x1.size(); ++i)
 	    {
 	        y.rows.push_back(f(x1[i],x2[i],x3[i],x4[i]));
@@ -126,16 +126,16 @@ namespace table {
 	    return y;
 	}
 
-	template<typename Ty, typename F, typename Tx1, typename Tx2, typename Tx3, typename Tx4, typename Tx5>
-	FullTable<Ty> derive(const F f, 
-		const FullTable<Tx1>& x1, 
-		const FullTable<Tx2>& x2, 
+	template<typename Y, typename F, typename X1, typename X2, typename Tx3, typename Tx4, typename Tx5>
+	FullTable<Y> derive(const F f, 
+		const FullTable<X1>& x1, 
+		const FullTable<X2>& x2, 
 		const FullTable<Tx3>& x3, 
 		const FullTable<Tx4>& x4, 
 		const FullTable<Tx5>& x5
 	){
 	    assert(x1.size() == x2.size() && x1.size() == x3.size() && x1.size() == x4.size() && x1.size() == x5.size());
-	    FullTable<Ty> y;
+	    FullTable<Y> y;
 	    for (std::size_t i = 0; i < x1.size(); ++i)
 	    {
 	        y.rows.push_back(f(x1[i],x2[i],x3[i],x4[i],x5[i]));
@@ -143,17 +143,17 @@ namespace table {
 	    return y;
 	}
 
-	template<typename Ty, typename F, typename Tx1, typename Tx2, typename Tx3, typename Tx4, typename Tx5, typename Tx6>
-	FullTable<Ty> derive(const F f, 
-		const FullTable<Tx1>& x1, 
-		const FullTable<Tx2>& x2, 
+	template<typename Y, typename F, typename X1, typename X2, typename Tx3, typename Tx4, typename Tx5, typename Tx6>
+	FullTable<Y> derive(const F f, 
+		const FullTable<X1>& x1, 
+		const FullTable<X2>& x2, 
 		const FullTable<Tx3>& x3, 
 		const FullTable<Tx4>& x4, 
 		const FullTable<Tx5>& x5, 
 		const FullTable<Tx6>& x6
 	){
 	    assert(x1.size() == x2.size() && x1.size() == x3.size() && x1.size() == x4.size() && x1.size() == x5.size() && x1.size() == x6.size());
-	    FullTable<Ty> y;
+	    FullTable<Y> y;
 	    for (std::size_t i = 0; i < x1.size(); ++i)
 	    {
 	        y.rows.push_back(f(x1[i],x2[i],x3[i],x4[i],x5[i],x6[i]));
@@ -163,74 +163,74 @@ namespace table {
 
 
 
-    // operators that are closed between FullTable<Tx> 
-    template<typename Tx>
-    constexpr FullTable<Tx> operator+(const FullTable<Tx>& x1, const FullTable<Tx>& x2)
+    // operators that are closed between FullTable<X> 
+    template<typename X>
+    constexpr FullTable<X> operator+(const FullTable<X>& x1, const FullTable<X>& x2)
     {
-        return derive<Tx>([](Tx x1i, Tx x2i){return x1i+x2i;}, x1, x2);
+        return derive<X>([](X x1i, X x2i){return x1i+x2i;}, x1, x2);
     }
-    template<typename Tx>
-    constexpr FullTable<Tx> operator-(const FullTable<Tx>& x1, const FullTable<Tx>& x2)
+    template<typename X>
+    constexpr FullTable<X> operator-(const FullTable<X>& x1, const FullTable<X>& x2)
     {
-        return derive<Tx>([](Tx x1i, Tx x2i){return x1i-x2i;}, x1, x2);
+        return derive<X>([](X x1i, X x2i){return x1i-x2i;}, x1, x2);
     }
-    template<typename Tx>
-    constexpr FullTable<Tx> operator*(const FullTable<Tx>& x1, const FullTable<Tx>& x2)
+    template<typename X>
+    constexpr FullTable<X> operator*(const FullTable<X>& x1, const FullTable<X>& x2)
     {
-        return derive<Tx>([](Tx x1i, Tx x2i){return x1i*x2i;}, x1, x2);
+        return derive<X>([](X x1i, X x2i){return x1i*x2i;}, x1, x2);
     }
-    template<typename Tx>
-    constexpr FullTable<Tx> operator/(const FullTable<Tx>& x1, const FullTable<Tx>& x2)
+    template<typename X>
+    constexpr FullTable<X> operator/(const FullTable<X>& x1, const FullTable<X>& x2)
     {
-        return derive<Tx>([](Tx x1i, Tx x2i){return x1i/x2i;}, x1, x2);
+        return derive<X>([](X x1i, X x2i){return x1i/x2i;}, x1, x2);
     }
 
 
-    // operators with reals that are closed under FullTable<Tx> 
-    template<typename Tx>
-    constexpr FullTable<Tx> operator+(const FullTable<Tx>& x1, const Tx x2)
+    // operators with reals that are closed under FullTable<X> 
+    template<typename X>
+    constexpr FullTable<X> operator+(const FullTable<X>& x1, const X x2)
     {
-        return derive<Tx>([x2](Tx x1i){return x1i+x2;}, x1);
+        return derive<X>([x2](X x1i){return x1i+x2;}, x1);
     }
-    template<typename Tx>
-    constexpr FullTable<Tx> operator+(const Tx x2, const FullTable<Tx>& x1)
+    template<typename X>
+    constexpr FullTable<X> operator+(const X x2, const FullTable<X>& x1)
     {
-        return derive<Tx>([x2](Tx x1i){return x2+x1i;}, x1);
+        return derive<X>([x2](X x1i){return x2+x1i;}, x1);
     }
-    template<typename Tx>
-    constexpr FullTable<Tx> operator-(const FullTable<Tx>& x1, const Tx x2)
+    template<typename X>
+    constexpr FullTable<X> operator-(const FullTable<X>& x1, const X x2)
     {
-        return derive<Tx>([x2](Tx x1i){return x1i-x2;}, x1);
+        return derive<X>([x2](X x1i){return x1i-x2;}, x1);
     }
-    template<typename Tx>
-    constexpr FullTable<Tx> operator-(const Tx x2, const FullTable<Tx>& x1)
+    template<typename X>
+    constexpr FullTable<X> operator-(const X x2, const FullTable<X>& x1)
     {
-        return derive<Tx>([x2](Tx x1i){return x2-x1i;}, x1);
+        return derive<X>([x2](X x1i){return x2-x1i;}, x1);
     }
-    template<typename Tx>
-    constexpr FullTable<Tx> operator*(const FullTable<Tx>& x1, const Tx x2)
+    template<typename X>
+    constexpr FullTable<X> operator*(const FullTable<X>& x1, const X x2)
     {
-        return derive<Tx>([x2](Tx x1i){return x1i*x2;}, x1);
+        return derive<X>([x2](X x1i){return x1i*x2;}, x1);
     }
-    template<typename Tx>
-    constexpr FullTable<Tx> operator*(const Tx x2, const FullTable<Tx>& x1)
+    template<typename X>
+    constexpr FullTable<X> operator*(const X x2, const FullTable<X>& x1)
     {
-        return derive<Tx>([x2](Tx x1i){return x2*x1i;}, x1);
+        return derive<X>([x2](X x1i){return x2*x1i;}, x1);
     }
-    template<typename Tx>
-    constexpr FullTable<Tx> operator/(const FullTable<Tx>& x1, const Tx x2)
+    template<typename X>
+    constexpr FullTable<X> operator/(const FullTable<X>& x1, const X x2)
     {
-        return derive<Tx>([x2](Tx x1i){return x1i/x2;}, x1);
+        return derive<X>([x2](X x1i){return x1i/x2;}, x1);
     }
-    template<typename Tx>
-    constexpr FullTable<Tx> operator/(const Tx x2, const FullTable<Tx>& x1)
+    template<typename X>
+    constexpr FullTable<X> operator/(const X x2, const FullTable<X>& x1)
     {
-        return derive<Tx>([x2](Tx x1i){return x2/x1i;}, x1);
+        return derive<X>([x2](X x1i){return x2/x1i;}, x1);
     }
-    template<typename Tx>
-    constexpr FullTable<Tx> operator-(const FullTable<Tx>& x1)
+    template<typename X>
+    constexpr FullTable<X> operator-(const FullTable<X>& x1)
     {
-        return derive<Tx>([](Tx x1i){return -x1i;}, x1);
+        return derive<X>([](X x1i){return -x1i;}, x1);
     }
 
 }}

@@ -113,7 +113,7 @@ namespace relation {
             return *this;
         }
 
-        LiquidDensityTemperatureRelation operator/=(const float scalar)
+        LiquidDensityTemperatureRelation& operator/=(const float scalar)
         {
             dippr105s /= scalar;
             dippr119s /= scalar;
@@ -145,9 +145,9 @@ namespace relation {
     };
 
     // 20 uses, for density of liquids
-    template<typename Tx, typename Ty>
+    template<typename X, typename Y>
     LiquidDensityTemperatureRelation get_dippr_temperature_relation_105( 
-        const Tx Tunits, const Ty yunits,
+        const X Tunits, const Y yunits,
         const float c1, const float c2, const float c3, const float c4,
         const float Tmin, const float Tmax
     ){

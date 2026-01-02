@@ -26,35 +26,35 @@ namespace relation {
     It is expected that instances of this relation will be mapped to lower fidelity approximations before use,
     such as PolynomialRailyardRelation or (if implemented) some kind of GriddedSplineRelation.
     */
-    template<typename Tx, typename Ty>
+    template<typename X, typename Y>
     struct GenericRelation
     {
-        std::function<Ty(Tx)> f;
+        std::function<Y(X)> f;
         
-        using value_type = Ty;
+        using value_type = Y;
 
         // zero constructor
         constexpr GenericRelation():
-            f([](Tx x){ return Ty(0); })
+            f([](X x){ return Y(0); })
         {
         }
 
         // constant constructor
-        constexpr GenericRelation(const Ty& constant):
-            f([constant](Tx x){ return constant; })
+        constexpr GenericRelation(const Y& constant):
+            f([constant](X x){ return constant; })
         {
         }
 
         // copy constructor
         constexpr GenericRelation(
-            const GenericRelation<Tx,Ty>& other
+            const GenericRelation<X,Y>& other
         ):
             f(other.f)
         {
         }
 
         constexpr GenericRelation(
-            const std::function<Ty(Tx)> f
+            const std::function<Y(X)> f
         ):
             f(f)
         {
@@ -64,118 +64,122 @@ namespace relation {
         constexpr GenericRelation(
             const F& other
         ):
-            f([other](Tx x){return other(x);})
+            f([other](X x){return other(x);})
         {
         }
 
-        constexpr GenericRelation<Tx,Ty>& operator=(const GenericRelation<Tx,Ty>& other)
+        constexpr GenericRelation<X,Y>& operator=(const GenericRelation<X,Y>& other)
         {
             f = other.f;
             return *this;
         }
 
         template<typename F>
-        constexpr GenericRelation<Tx,Ty>& operator=(const F& other)
+        constexpr GenericRelation<X,Y>& operator=(const F& other)
         {
-            f = [other](Tx x){ return other(x); };
+            f = [other](X x){ return other(x); };
             return *this;
         }
 
-        constexpr GenericRelation<Tx,Ty>& operator=(const Ty& other)
+        constexpr GenericRelation<X,Y>& operator=(const Y& other)
         {
-            f = [other](Tx x){return Ty(other); };
+            f = [other](X x){return Y(other); };
             return *this;
         }
 
-        Ty operator()(const Tx x) const
+        Y operator()(const X x) const
         {
             return f(x);
         }
 
-        // GenericRelation<Tx,Ty> restriction(
+        // GenericRelation<X,Y> restriction(
         //     const si::temperature xlo, const si::temperature xhi,
         //     const double known_max_fractional_error
         // ) const
         // {
-        //     return GenericRelation<Tx,Ty>(restriction(yard, xlo/xunits, xhi/xunits), xunits, yunits);
+        //     return GenericRelation<X,Y>(restriction(yard, xlo/xunits, xhi/xunits), xunits, yunits);
         // }
 
-        GenericRelation<Tx,Ty> operator+=(const double scalar)
+        template<typename scalar>
+        GenericRelation<X,Y>& operator+=(const scalar k)
         {
-            f = [=,this](const Tx x){return f(x)+scalar;};
+            f = [=,this](const X x){return f(x)+k;};
             return *this;
         }
 
-        GenericRelation<Tx,Ty> operator-=(const double scalar)
+        template<typename scalar>
+        GenericRelation<X,Y>& operator-=(const scalar k)
         {
-            f = [=,this](const Tx x){return f(x)-scalar;};
+            f = [=,this](const X x){return f(x)-k;};
             return *this;
         }
 
-        GenericRelation<Tx,Ty> operator*=(const double scalar)
+        template<typename scalar>
+        GenericRelation<X,Y>& operator*=(const scalar k)
         {
-            f = [=,this](const Tx x){return f(x)*scalar;};
+            f = [=,this](const X x){return f(x)*k;};
             return *this;
         }
 
-        GenericRelation<Tx,Ty> operator/=(const double scalar)
+        template<typename scalar>
+        GenericRelation<X,Y>& operator/=(const scalar k)
         {
-            f = [=,this](const Tx x){return f(x)/scalar;};
+            f = [=,this](const X x){return f(x)/k;};
             return *this;
         }
 
         template<typename F>
-        GenericRelation<Tx,Ty>& operator+=(const F relation)
+        GenericRelation<X,Y>& operator+=(const F relation)
         {
-            f = [=,this](const Tx x){return f(x)+relation(x);};
+            f = [=,this](const X x){return f(x)+relation(x);};
             return *this;
         }
 
         template<typename F>
-        GenericRelation<Tx,Ty>& operator-=(const F relation)
+        GenericRelation<X,Y>& operator-=(const F relation)
         {
-            f = [=,this](const Tx x){return f(x)-relation(x);};
+            f = [=,this](const X x){return f(x)-relation(x);};
             return *this;
         }
 
     };
 
-    template<typename Tx, typename Ty>
-    GenericRelation<Tx,Ty> operator-(const GenericRelation<Tx,Ty>& relation)
+    template<typename X, typename Y>
+    GenericRelation<X,Y> operator-(const GenericRelation<X,Y>& relation)
     {
-        GenericRelation<Tx,Ty> result = relation;
+        GenericRelation<X,Y> result = relation;
         result *= -1.0;
         return result;
     }
 
-    template<typename Tx, typename Ty>
-    GenericRelation<Tx,Ty> operator+(const GenericRelation<Tx,Ty>& relation, const Ty value)
+    template<typename X, typename Y>
+    GenericRelation<X,Y> operator+(const GenericRelation<X,Y>& relation, const Y value)
     {
-        GenericRelation<Tx,Ty> result = relation;
+        GenericRelation<X,Y> result = relation;
         result += value;
         return result;
     }
 
-    template<typename Tx, typename Ty>
-    GenericRelation<Tx,Ty> operator+(const Ty value, const GenericRelation<Tx,Ty>& relation)
+    template<typename X, typename Y>
+    GenericRelation<X,Y> operator+(const Y value, const GenericRelation<X,Y>& relation)
     {
-        GenericRelation<Tx,Ty> result = relation;
+        GenericRelation<X,Y> result = relation;
         result += value;
         return result;
     }
 
-    template<typename Tx, typename Ty>
-    GenericRelation<Tx,Ty> operator-(const GenericRelation<Tx,Ty>& relation, const Ty value)
+    template<typename X, typename Y>
+    GenericRelation<X,Y> operator-(const GenericRelation<X,Y>& relation, const Y value)
     {
-        GenericRelation<Tx,Ty> result = relation;
+        GenericRelation<X,Y> result = relation;
         result -= value;
         return result;
     }
 
-    template<typename Tx, typename Ty>
-    GenericRelation<Tx,Ty> operator-(const Ty value, const GenericRelation<Tx,Ty>& relation)
+    template<typename X, typename Y>
+    GenericRelation<X,Y> operator-(const Y value, const GenericRelation<X,Y>& relation)
     {
-        GenericRelation<Tx,Ty> result = relation;
+        GenericRelation<X,Y> result = relation;
         result *= -1.0;
         result += value;
         return result;

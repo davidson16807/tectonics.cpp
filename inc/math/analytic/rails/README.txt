@@ -1,7 +1,10 @@
 
 This directory, "rails", stores classes that represent mathematical expressions
 centered around creating piecewise functions. 
-It uses a dedicated paradigm to implement piecewise functions in such a way
+A "rail" is any function along which pieces (known as "cars") can be placed.
+Its name reflects the 1-dimensional case, which is currently the only case that is supported.
+
+"rails" uses a dedicated paradigm to implement piecewise functions in such a way
 that makes it easy to perform common operations on piecewise functions,
 such as arithmetic, integration, derivation, and function composition.
 This paradigm centers around a well known mathematical concept called the 

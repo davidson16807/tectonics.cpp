@@ -27,13 +27,13 @@ namespace relation {
     It is expected that instances of this relation will be mapped to lower fidelity approximations before use,
     such as PolynomialRailyardRelation or (if implemented) some kind of GriddedSplineRelation.
     */
-    template<typename Tx, typename Ty>
-    using GenericRelation = ::relation::GenericRelation<Tx,Ty>;
+    template<typename X, typename Y>
+    using GenericRelation = ::relation::GenericRelation<X,Y>;
 
     // 21 uses, for viscosity of liquids
-    template<typename Tx>
+    template<typename X>
     GenericRelation<si::temperature<double>, si::dynamic_viscosity<double>> get_dippr_liquid_dynamic_viscosity_temperature_relation_101(
-        const Tx Tunits, const si::dynamic_viscosity<double> yunits,
+        const X Tunits, const si::dynamic_viscosity<double> yunits,
         const double log_intercept, const double log_slope, const double log_log, const double log_exponentiated, const int exponent,
         const double xmin, const double xmax
     ){
@@ -46,16 +46,16 @@ namespace relation {
     }
 
     // 1 use, for viscosity of liquids
-    template<typename Ty>
+    template<typename Y>
     GenericRelation<si::temperature<double>, si::dynamic_viscosity<double>> get_exponential_linear_dynamic_viscosity_temperature_relation(
-        const si::temperature<double> Tunits, const Ty yunits,
+        const si::temperature<double> Tunits, const Y yunits,
         const double x0, const double x1,
         const double y0, const double y1
     ){
         std::vector<double> xs    {x0,           x1          };
         std::vector<double> logys {std::log(y0), std::log(y1)};
         return GenericRelation<si::temperature<double>, si::dynamic_viscosity<double>>(
-            relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,0,1>(
+            relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Y,0,1>(
                 analytic::spline::linear_spline<float>(xs, logys), Tunits, yunits));
     }
 
@@ -81,11 +81,11 @@ namespace relation {
 
 
     // 5 uses, for heat capacities of liquids
-    template<typename Tx>
+    template<typename X>
     GenericRelation<si::temperature<double>, si::specific_heat_capacity<double>> get_dippr_liquid_heat_capacity_temperature_function_114( 
-        const Tx Tc, const si::specific_heat_capacity<double> yunits,
+        const X Tc, const si::specific_heat_capacity<double> yunits,
         const double c1, const double c2, const double c3, const double c4, const double c5,
-        const Tx xmin, Tx xmax
+        const X xmin, X xmax
     ){
         return GenericRelation<si::temperature<double>, si::specific_heat_capacity<double>>(
             [=](const si::temperature<double> x)
@@ -103,9 +103,9 @@ namespace relation {
 
 
     // 21 uses, for vapor pressures of liquids
-    template<typename Tx>
+    template<typename X>
     GenericRelation<si::temperature<double>, si::pressure<double>> get_dippr_liquid_vapor_pressure_temperature_relation_101(
-        const Tx Tunits, const si::pressure<double> yunits,
+        const X Tunits, const si::pressure<double> yunits,
         const double log_intercept, const double log_slope, const double log_log, const double log_exponentiated, const int exponent,
         const double xmin, const double xmax
     ){
@@ -137,9 +137,9 @@ namespace relation {
     }
 
     // 175 uses
-    template<typename Ty>
+    template<typename Y>
     GenericRelation<si::temperature<double>, si::pressure<double>> get_vapor_pressure_exponential_interpolated_temperature_function(
-        const si::celsius_type<double> Tunits, const Ty yunits,
+        const si::celsius_type<double> Tunits, const Y yunits,
         const std::vector<double>xs, 
         const std::vector<double>ys,
         const si::temperature<double> xmin,
@@ -152,7 +152,7 @@ namespace relation {
             kelvins.push_back(xs[i]*Tunits/si::kelvin);
             logys.push_back(std::log(ys[i]));
         }
-        return GenericRelation<si::temperature<double>, si::pressure<double>>(relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Ty,0,1>(
+        return GenericRelation<si::temperature<double>, si::pressure<double>>(relation::ExponentiatedPolynomialRailyardRelation<si::temperature<double>,Y,0,1>(
                     analytic::spline::linear_spline<float>(kelvins, logys), si::kelvin, yunits));
     }
 
@@ -174,22 +174,22 @@ namespace relation {
     }
 
     // 3 uses, for liquid surface tension
-    template<typename Ty>
-    GenericRelation<si::temperature<double>,Ty> get_linear_interpolation_anonymous_temperature_relation( 
-        const si::temperature<double> Tunits, const Ty yunits,
+    template<typename Y>
+    GenericRelation<si::temperature<double>,Y> get_linear_interpolation_anonymous_temperature_relation( 
+        const si::temperature<double> Tunits, const Y yunits,
         const std::vector<double>xs, 
         const std::vector<double>ys,
         const double xmin,
         const double xmax
     ){
         return GenericRelation<si::temperature<double>, si::surface_energy<double>>(
-                PolynomialRailyardRelation<si::temperature<double>,Ty,0,1>(analytic::spline::linear_spline<double>(xs, ys), Tunits, yunits));
+                PolynomialRailyardRelation<si::temperature<double>,Y,0,1>(analytic::spline::linear_spline<double>(xs, ys), Tunits, yunits));
     }
 
     // 3 uses, for liquid surface tension
-    template<typename Ty>
-    GenericRelation<si::temperature<double>,Ty> get_linear_interpolation_anonymous_temperature_relation( 
-        const si::celsius_type<double> Tunits, const Ty yunits,
+    template<typename Y>
+    GenericRelation<si::temperature<double>,Y> get_linear_interpolation_anonymous_temperature_relation( 
+        const si::celsius_type<double> Tunits, const Y yunits,
         const std::vector<double>xs, 
         const std::vector<double>ys,
         const double xmin,
@@ -217,9 +217,9 @@ namespace relation {
     // from Mulero (2012)
 
     // 3 uses, for liquid surface tension
-    template<typename Tx>
+    template<typename X>
     GenericRelation<si::temperature<double>, si::surface_energy<double>> get_linear_liquid_surface_tension_temperature_function(
-        const Tx Tunits, const si::surface_energy<double> yunits,
+        const X Tunits, const si::surface_energy<double> yunits,
         const double TL, const double gammaTL, const double dgamma_dT,
         const double xmin, const double xmax
     ){
@@ -281,29 +281,29 @@ namespace relation {
                 analytic::spline::linear_spline<double>(ns2, ys), nunits, yunits));
     }
 
-    template<typename Ty>
-    GenericRelation<si::spatial_frequency<double>,Ty> get_generic_spectral_linear_interpolation_function_of_wavelength(
-        const si::length<double> lunits, const Ty yunits,
+    template<typename Y>
+    GenericRelation<si::spatial_frequency<double>,Y> get_generic_spectral_linear_interpolation_function_of_wavelength(
+        const si::length<double> lunits, const Y yunits,
         const std::vector<double> ls, 
         const std::vector<double> ys
     ){
         assert(ls.size() == ys.size());
         auto relation = analytic::spline::linear_spline<double>(ls, ys);
-        return GenericRelation<si::spatial_frequency<double>,Ty>(
+        return GenericRelation<si::spatial_frequency<double>,Y>(
             [=](si::spatial_frequency<double> n){ 
                 return relation((1.0/n)/lunits)*yunits;
             });
     }
 
-    template<typename Ty>
-    GenericRelation<si::spatial_frequency<double>,Ty> get_generic_spectral_linear_interpolation_function_of_wavenumber(
-        const si::spatial_frequency<double> nunits, const Ty yunits,
+    template<typename Y>
+    GenericRelation<si::spatial_frequency<double>,Y> get_generic_spectral_linear_interpolation_function_of_wavenumber(
+        const si::spatial_frequency<double> nunits, const Y yunits,
         const std::vector<double> ns, 
         const std::vector<double> ys
     ){
         assert(ns.size() == ys.size());
         auto relation = analytic::spline::linear_spline<double>(ns, ys);
-        return GenericRelation<si::spatial_frequency<double>,Ty>(
+        return GenericRelation<si::spatial_frequency<double>,Y>(
             [=](si::spatial_frequency<double> n){ 
                 return relation(n/nunits)*yunits;
             });

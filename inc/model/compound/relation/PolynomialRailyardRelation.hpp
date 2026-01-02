@@ -12,18 +12,18 @@
 namespace compound {
 namespace relation {
 
-    template<typename Tx, typename Ty, int Plo, int Phi>
-    using PolynomialRailyardRelation = ::relation::PolynomialRailyardRelation<Tx,Ty,Plo,Phi>;
+    template<typename X, typename Y, int Plo, int Phi>
+    using PolynomialRailyardRelation = ::relation::PolynomialRailyardRelation<X,Y,Plo,Phi>;
 
     // TODO: rename `spectral_linear_yard`
-    template<typename T, typename Ty>
-    relation::PolynomialRailyardRelation<si::temperature<T>,Ty,0,1> get_linear_interpolation_function(
-        const si::celsius_type<T> celsius, const Ty yunits,
+    template<typename T, typename Y>
+    relation::PolynomialRailyardRelation<si::temperature<T>,Y,0,1> get_linear_interpolation_function(
+        const si::celsius_type<T> celsius, const Y yunits,
         const std::vector<double>xs, 
         const std::vector<double>ys
     ){
         assert(xs.size() == ys.size());
-        return relation::PolynomialRailyardRelation<si::temperature<T>,Ty,0,1>(
+        return relation::PolynomialRailyardRelation<si::temperature<T>,Y,0,1>(
                 analytic::compose(
                     analytic::spline::linear_spline<double>(xs, ys), 
                     analytic::Shifting(-si::standard_temperature/si::kelvin)), 
@@ -31,25 +31,25 @@ namespace relation {
     }
 
     // TODO: rename `spectral_linear_yard`
-    template<typename T, typename Ty>
-    relation::PolynomialRailyardRelation<si::temperature<T>,Ty,0,1> get_linear_interpolation_function(
-        const si::temperature<T> xunits, const Ty yunits,
+    template<typename T, typename Y>
+    relation::PolynomialRailyardRelation<si::temperature<T>,Y,0,1> get_linear_interpolation_function(
+        const si::temperature<T> xunits, const Y yunits,
         const std::vector<double>xs, 
         const std::vector<double>ys
     ){
         assert(xs.size() == ys.size());
-        return relation::PolynomialRailyardRelation<si::temperature<T>,Ty,0,1>(analytic::spline::linear_spline<double>(xs, ys), xunits, yunits);
+        return relation::PolynomialRailyardRelation<si::temperature<T>,Y,0,1>(analytic::spline::linear_spline<double>(xs, ys), xunits, yunits);
     }
 
     // TODO: rename `spectral_linear_yard`
-    template<typename T, typename Ty>
-    relation::PolynomialRailyardRelation<si::pressure<T>,Ty,0,1> get_linear_interpolation_function(
-        const si::pressure<T> xunits, const Ty yunits,
+    template<typename T, typename Y>
+    relation::PolynomialRailyardRelation<si::pressure<T>,Y,0,1> get_linear_interpolation_function(
+        const si::pressure<T> xunits, const Y yunits,
         const std::vector<double>xs, 
         const std::vector<double>ys
     ){
         assert(xs.size() == ys.size());
-        return relation::PolynomialRailyardRelation<si::pressure<T>,Ty,0,1>(analytic::spline::linear_spline<double>(xs, ys), xunits, yunits);
+        return relation::PolynomialRailyardRelation<si::pressure<T>,Y,0,1>(analytic::spline::linear_spline<double>(xs, ys), xunits, yunits);
     }
     
     /*
@@ -57,9 +57,9 @@ namespace relation {
     for liquid thermal conductivity, heat capacity, and solid density
     */
     // 26 uses, for liquid thermal conductivity and heat capacity
-    template<typename Ty>
-    relation::PolynomialRailyardRelation<si::temperature<double>, Ty, 0,4> get_dippr_quartic_temperature_relation_100( 
-        const si::temperature<double> Tunits, const Ty yunits,
+    template<typename Y>
+    relation::PolynomialRailyardRelation<si::temperature<double>, Y, 0,4> get_dippr_quartic_temperature_relation_100( 
+        const si::temperature<double> Tunits, const Y yunits,
         const double intercept, const double slope, const double square, const double cube, const double fourth,
         const double Tmin, double Tmax
     ){
@@ -67,7 +67,7 @@ namespace relation {
         using C = analytic::Clamped<double,P>;
         using R = analytic::Railyard<double,P>;
         analytic::Polynomial<double,0,4> p = analytic::Polynomial<double,0,4>({intercept, slope, square, cube, fourth});
-        return relation::PolynomialRailyardRelation<si::temperature<double>,Ty,0,4>(R(C(Tmin,Tmax, p)), Tunits, yunits);
+        return relation::PolynomialRailyardRelation<si::temperature<double>,Y,0,4>(R(C(Tmin,Tmax, p)), Tunits, yunits);
     }
 
     // Sheffy Johnson: https://chemicals.readthedocs.io/chemicals.thermal_conductivity.html#pure-low-pressure-liquid-correlations
@@ -120,9 +120,9 @@ namespace relation {
                 }), Tunits, y_units_johnson);
     }
     
-    template<typename Ty>
-    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength(
-        const si::length<double> lunits, const Ty yunits,
+    template<typename Y>
+    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Y,0,1> get_spectral_linear_interpolation_function_of_wavelength(
+        const si::length<double> lunits, const Y yunits,
         const std::vector<double> ls, 
         const std::vector<double> lys
     ){
@@ -136,22 +136,22 @@ namespace relation {
         }
         std::reverse(ns.begin(), ns.end());
         std::reverse(ys.begin(), ys.end());
-        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1>(analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Y,0,1>(analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
-    template<typename Ty>
-    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavenumber(
-        const si::spatial_frequency<double> nunits, const Ty yunits,
+    template<typename Y>
+    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Y,0,1> get_spectral_linear_interpolation_function_of_wavenumber(
+        const si::spatial_frequency<double> nunits, const Y yunits,
         const std::vector<double> ns, 
         const std::vector<double> ys
     ){
         assert(ns.size() == ys.size());
-        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1>(analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Y,0,1>(analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
-    template<typename Ty>
-    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output(
-        const si::spatial_frequency<double> nunits, const Ty yunits,
+    template<typename Y>
+    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Y,0,1> get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_output(
+        const si::spatial_frequency<double> nunits, const Y yunits,
         const std::vector<double>      ns, 
         const std::vector<double> log10ys
     ){
@@ -160,12 +160,12 @@ namespace relation {
         for (std::size_t i=0; i<log10ys.size(); i++){
             ys.push_back(pow(10.0, log10ys[i]));
         }
-        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Y,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
-    template<typename Ty>
-    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,3> get_spectral_cubic_interpolation_function_of_wavenumber_for_log10_sample_output(
-        const si::spatial_frequency<double> nunits, const Ty yunits,
+    template<typename Y>
+    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Y,0,3> get_spectral_cubic_interpolation_function_of_wavenumber_for_log10_sample_output(
+        const si::spatial_frequency<double> nunits, const Y yunits,
         const std::vector<double>      ns, 
         const std::vector<double> log10ys
     ){
@@ -174,12 +174,12 @@ namespace relation {
         for (std::size_t i=0; i<log10ys.size(); i++){
             ys.push_back(pow(10.0, log10ys[i]));
         }
-        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,3> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Y,0,3> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
-    template<typename Ty>
-    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_output(
-        const si::length<double> lunits, const Ty yunits,
+    template<typename Y>
+    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Y,0,1> get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_output(
+        const si::length<double> lunits, const Y yunits,
         const std::vector<double>      ls, 
         const std::vector<double>log10lys
     ){
@@ -197,13 +197,13 @@ namespace relation {
         for (std::size_t i=0; i<log10ys.size(); i++){
             ys.push_back(pow(10.0, log10ys[i]));
         }
-        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Y,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
 
-    template<typename Ty>
-    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_input(
-        const si::spatial_frequency<double> nunits, const Ty yunits,
+    template<typename Y>
+    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Y,0,1> get_spectral_linear_interpolation_function_of_wavenumber_for_log10_sample_input(
+        const si::spatial_frequency<double> nunits, const Y yunits,
         const std::vector<double> log10ns, 
         const std::vector<double>      ys
     ){
@@ -212,12 +212,12 @@ namespace relation {
         for (std::size_t i=0; i<log10ns.size(); i++){
             ns.push_back(pow(10.0, log10ns[i]));
         }
-        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Y,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
-    template<typename Ty>
-    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_input(
-        const si::length<double> lunits, const Ty yunits,
+    template<typename Y>
+    relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Y,0,1> get_spectral_linear_interpolation_function_of_wavelength_for_log10_sample_input(
+        const si::length<double> lunits, const Y yunits,
         const std::vector<double> log10ls, 
         const std::vector<double>      lys
     ){
@@ -231,7 +231,7 @@ namespace relation {
         }
         std::reverse(ns.begin(), ns.end());
         std::reverse(ys.begin(), ys.end());
-        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Ty,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
+        return relation::PolynomialRailyardRelation<si::spatial_frequency<double>,Y,0,1> (analytic::spline::linear_spline<double>(ns, ys), nunits, yunits);
     }
 
 

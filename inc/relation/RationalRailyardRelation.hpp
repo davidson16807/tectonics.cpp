@@ -19,13 +19,13 @@ namespace relation {
     `RationalRailyardRelation` consolidates many kinds of expressions
     that are commonly used to represent the relation between temperature and the heat capacity of liquids
     */
-    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
+    template<typename X, typename Y, int Plo, int Phi, int Qlo, int Qhi>
     class RationalRailyardRelation
     {
         analytic::Railyard<float, analytic::Rational<float, Plo,Phi,Qlo,Qhi>> yard;
 
-        Tx Tunits;
-        Ty yunits;
+        X Tunits;
+        Y yunits;
 
     public:
         float known_max_fractional_error;
@@ -42,8 +42,8 @@ namespace relation {
         }
 
         // constant constructor
-        RationalRailyardRelation(const Ty constant):
-            yard(constant/Ty(1.0)),
+        RationalRailyardRelation(const Y constant):
+            yard(constant/Y(1.0)),
 
             Tunits(1.0),
             yunits(1.0),
@@ -55,7 +55,7 @@ namespace relation {
         // copy constructor
         template<int Nlo, int Nhi>
         RationalRailyardRelation(
-            const relation::PolynomialRailyardRelation<Tx, Ty, Nlo, Nhi> relation
+            const relation::PolynomialRailyardRelation<X, Y, Nlo, Nhi> relation
         ):
             yard(relation.yard),
 
@@ -69,8 +69,8 @@ namespace relation {
         RationalRailyardRelation(
             const analytic::Railyard<float, analytic::Rational<float, Plo, Phi, Qlo, Qhi>> yard,
 
-            const Tx Tunits,
-            const Ty yunits,
+            const X Tunits,
+            const Y yunits,
 
             const float known_max_fractional_error
         ):
@@ -95,12 +95,12 @@ namespace relation {
             return *this;
         }
 
-        Ty operator()(const Tx temperature) const
+        Y operator()(const X temperature) const
         {
             return (yard(temperature/Tunits)) * yunits;
         }
 
-        RationalRailyardRelation& operator+=(const Ty offset)
+        RationalRailyardRelation& operator+=(const Y offset)
         {
             using R = analytic::Rational<float, Plo, Phi, Qlo, Qhi>;
             using RC = analytic::Railcar<float, R>;
@@ -108,7 +108,7 @@ namespace relation {
             return *this;
         }
 
-        RationalRailyardRelation& operator-=(const Ty offset)
+        RationalRailyardRelation& operator-=(const Y offset)
         {
             using R = analytic::Rational<float, Plo, Phi, Qlo, Qhi>;
             using RC = analytic::Railcar<float, R>;
@@ -116,15 +116,17 @@ namespace relation {
             return *this;
         }
 
-        RationalRailyardRelation& operator*=(const float scalar)
+        template<typename scalar>
+        RationalRailyardRelation& operator*=(const scalar k)
         {
-            yard *= scalar;
+            yard *= k;
             return *this;
         }
 
-        RationalRailyardRelation operator/=(const float scalar)
+        template<typename scalar>
+        RationalRailyardRelation& operator/=(const scalar k)
         {
-            yard /= scalar;
+            yard /= k;
             return *this;
         }
 
@@ -147,84 +149,84 @@ namespace relation {
     };
 
 
-    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator+(const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation, const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> other)
+    template<typename X, typename Y, int Plo, int Phi, int Qlo, int Qhi>
+    RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> operator+(const RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> relation, const RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> other)
     {
-        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
+        RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> result = relation;
         result += other;
         return result;
     }
 
-    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator-(const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation, const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> other)
+    template<typename X, typename Y, int Plo, int Phi, int Qlo, int Qhi>
+    RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> operator-(const RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> relation, const RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> other)
     {
-        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
+        RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> result = relation;
         result -= other;
         return result;
     }
 
-    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator+(const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation, const Ty offset)
+    template<typename X, typename Y, int Plo, int Phi, int Qlo, int Qhi>
+    RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> operator+(const RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> relation, const Y offset)
     {
-        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
+        RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> result = relation;
         result += offset;
         return result;
     }
 
-    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator-(const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation, const Ty offset)
+    template<typename X, typename Y, int Plo, int Phi, int Qlo, int Qhi>
+    RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> operator-(const RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> relation, const Y offset)
     {
-        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
+        RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> result = relation;
         result -= offset;
         return result;
     }
 
-    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator*(const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation, const float scalar)
+    template<typename X, typename Y, int Plo, int Phi, int Qlo, int Qhi>
+    RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> operator*(const RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> relation, const float k)
     {
-        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
-        result *= scalar;
+        RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> result = relation;
+        result *= k;
         return result;
     }
 
-    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator/(const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation, const float scalar)
+    template<typename X, typename Y, int Plo, int Phi, int Qlo, int Qhi>
+    RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> operator/(const RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> relation, const float k)
     {
-        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
-        result /= scalar;
+        RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> result = relation;
+        result /= k;
         return result;
     }
 
-    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator+(const Ty offset, const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation)
+    template<typename X, typename Y, int Plo, int Phi, int Qlo, int Qhi>
+    RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> operator+(const Y offset, const RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> relation)
     {
-        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
+        RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> result = relation;
         result += offset;
         return result;
     }
 
-    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator-(const Ty offset, const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation)
+    template<typename X, typename Y, int Plo, int Phi, int Qlo, int Qhi>
+    RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> operator-(const Y offset, const RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> relation)
     {
-        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
+        RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> result = relation;
         result *= 1.0f;
         result += offset;
         return result;
     }
 
-    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator-(const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation)
+    template<typename X, typename Y, int Plo, int Phi, int Qlo, int Qhi>
+    RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> operator-(const RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> relation)
     {
-        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
+        RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> result = relation;
         result *= -1.0f;
         return result;
     }
 
-    template<typename Tx, typename Ty, int Plo, int Phi, int Qlo, int Qhi>
-    RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> operator*(const float scalar, const RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> relation)
+    template<typename X, typename Y, int Plo, int Phi, int Qlo, int Qhi, typename scalar=float>
+    RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> operator*(const scalar k, const RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> relation)
     {
-        RationalRailyardRelation<Tx,Ty,Plo,Phi,Qlo,Qhi> result = relation;
-        result *= scalar;
+        RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> result = relation;
+        result *= k;
         return result;
     }
 
