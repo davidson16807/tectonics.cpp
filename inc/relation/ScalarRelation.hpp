@@ -27,8 +27,8 @@ namespace relation {
             const ScalarRelation<X,Y,F>& other
         ):
             f(other.f),
-            x0(1),
-            y0(1)
+            x0(other.x0),
+            y0(other.y0)
         {
         }
 

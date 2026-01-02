@@ -1,7 +1,7 @@
 #pragma once
 
-#include <iostream>
 #include <algorithm>
+#include <limits>    // numeric_limits
 
 // in-house libraries
 #include <math/analytic/Scaling.hpp>
@@ -83,7 +83,7 @@ namespace relation {
         {
         }
 
-        RationalRailyardRelation& operator=(const RationalRailyardRelation other)
+        RationalRailyardRelation& operator=(const RationalRailyardRelation& other)
         {
             yard = other.yard;
 
@@ -209,7 +209,7 @@ namespace relation {
     RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> operator-(const Y offset, const RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> relation)
     {
         RationalRailyardRelation<X,Y,Plo,Phi,Qlo,Qhi> result = relation;
-        result *= 1.0f;
+        result *= -1.0f;
         result += offset;
         return result;
     }
@@ -249,7 +249,7 @@ namespace relation {
             analytic::Railyard<float, R>({
                 RC(-oo,  Tmin, R(r(Tmin))),
                 RC(Tmin, Tmax, r),
-                RC(Tmax, oo,   R(r(Tmin))),
+                RC(Tmax, oo,   R(r(Tmax))),
             }), si::kelvin, yunits, 0.0f);
     }
 

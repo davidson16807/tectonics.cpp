@@ -1,12 +1,15 @@
 #pragma once
 
-// std libraries
+// C libraries
 #include <cmath>
+#include <cassert>
+
+// std libraries
+#include <vector>
+#include <algorithm>
 
 // in-house libraries
 #include <math/analytic/Scaling.hpp>
-#include <math/analytic/rails/PolynomialRailyard.hpp>
-#include <math/analytic/rails/PolynomialRailyard_library.hpp>
 #include <math/analytic/rails/PolynomialRailyard.hpp>
 #include <math/analytic/rails/PolynomialRailyard_library.hpp>
 #include <unit/si.hpp>
@@ -107,41 +110,41 @@ namespace relation {
             return ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi>(restriction(yard, xlo/xunits, xhi/xunits), xunits, yunits);
         }
 
-        ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi>& operator*=(const float scalar)
+        ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi>& operator*=(const float k)
         {
-            yard += scalar;
+            yard += std::log(k);
             return *this;
         }
 
-        ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi>& operator/=(const float scalar)
+        ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi>& operator/=(const float k)
         {
-            yard -= scalar;
+            yard -= std::log(k);
             return *this;
         }
 
     };
 
     template<typename X, typename Y, int Plo, int Phi>
-    ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi> operator*(const ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi>& relation, const float scalar)
+    ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi> operator*(const ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi>& relation, const float k)
     {
         ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi> result = relation;
-        result *= scalar;
+        result *= k;
         return result;
     }
 
     template<typename X, typename Y, int Plo, int Phi>
-    ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi> operator*(const float scalar, const ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi>& relation)
+    ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi> operator*(const float k, const ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi>& relation)
     {
         ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi> result = relation;
-        result *= scalar;
+        result *= k;
         return result;
     }
 
     template<typename X, typename Y, int Plo, int Phi>
-    ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi> operator/(const ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi>& relation, const float scalar)
+    ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi> operator/(const ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi>& relation, const float k)
     {
         ExponentiatedPolynomialRailyardRelation<X,Y,Plo,Phi> result = relation;
-        result /= scalar;
+        result /= k;
         return result;
     }
 

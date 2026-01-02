@@ -85,7 +85,7 @@ namespace relation {
         {
         }
 
-        LiquidDensityTemperatureRelation& operator=(const LiquidDensityTemperatureRelation other)
+        LiquidDensityTemperatureRelation& operator=(const LiquidDensityTemperatureRelation& other)
         {
             dippr105s = other.dippr105s;
             dippr119s = other.dippr119s;
@@ -117,7 +117,6 @@ namespace relation {
         {
             dippr105s /= scalar;
             dippr119s /= scalar;
-            intercept /= scalar;
             intercept /= scalar;
             return *this;
         }
@@ -207,7 +206,7 @@ namespace relation {
     LiquidDensityTemperatureRelation operator-(const si::density<double> offset, const LiquidDensityTemperatureRelation relation)
     {
         LiquidDensityTemperatureRelation result = relation;
-        result *= 1.0f;
+        result *= -1.0f;
         result += offset;
         return result;
     }
@@ -215,7 +214,7 @@ namespace relation {
     LiquidDensityTemperatureRelation operator-(const LiquidDensityTemperatureRelation relation)
     {
         LiquidDensityTemperatureRelation result = relation;
-        result *= 1.0f;
+        result *= -1.0f;
         return result;
     }
 

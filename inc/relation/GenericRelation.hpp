@@ -2,9 +2,12 @@
 
 // c libraries
 #include <cmath>
+#include <cassert>
 
 // std libraries
-#include <functional>
+#include <vector>    // std::vector
+#include <algorithm> // std::clamp
+#include <functional>// std::function
 
 // in-house libraries
 #include <math/analytic/Scaling.hpp>

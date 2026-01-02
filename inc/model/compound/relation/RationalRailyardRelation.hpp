@@ -1,7 +1,7 @@
 #pragma once
 
-#include <iostream>
 #include <algorithm>
+#include <limits>
 
 // in-house libraries
 #include <math/analytic/Scaling.hpp>
@@ -38,7 +38,7 @@ namespace relation {
             analytic::Railyard<float, R>({
                 RC(-oo,  Tmin, R(r(Tmin))),
                 RC(Tmin, Tmax, r),
-                RC(Tmax, oo,   R(r(Tmin))),
+                RC(Tmax, oo,   R(r(Tmax))),
             }), si::kelvin, yunits, 0.0f);
     }
 

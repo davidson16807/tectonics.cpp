@@ -1,7 +1,12 @@
 #pragma once
 
-// std libraries
+// C libraries
 #include <cmath>
+#include <cassert>
+
+// std libraries
+#include <vector>
+#include <algorithm> // clamp, reverse
 
 // in-house libraries
 #include <math/analytic/Scaling.hpp>

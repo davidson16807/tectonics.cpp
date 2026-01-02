@@ -3,6 +3,8 @@
 // in-house libraries
 #include <unit/si.hpp>
 
+#include <model/compound/correlation/published.hpp> // or the correct path
+
 namespace compound {
 namespace relation {
 
@@ -31,7 +33,7 @@ namespace relation {
         {
         }
 
-        constexpr GasDensityStateRelation& operator=(const GasDensityStateRelation other)
+        GasDensityStateRelation& operator=(const GasDensityStateRelation& other)
         {
             molar_mass = other.molar_mass;
             critical_pressure = other.critical_pressure;

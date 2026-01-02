@@ -112,7 +112,7 @@ namespace relation {
         {
         }
 
-        constexpr GasPropertyStateRelation<Y>& operator=(const GasPropertyStateRelation<Y> other)
+        constexpr GasPropertyStateRelation<Y>& operator=(const GasPropertyStateRelation<Y>& other)
         {
             pexponents = other.pexponents;
             Texponents = other.Texponents;
@@ -530,7 +530,7 @@ namespace relation {
     GasPropertyStateRelation<Y> operator-(const Y offset, const GasPropertyStateRelation<Y> relation)
     {
         GasPropertyStateRelation<Y> result = relation;
-        result *= 1.0f;
+        result *= -1.0f;
         result += offset;
         return result;
     }
@@ -539,7 +539,7 @@ namespace relation {
     GasPropertyStateRelation<Y> operator-(const GasPropertyStateRelation<Y> relation)
     {
         GasPropertyStateRelation<Y> result = relation;
-        result *= 1.0f;
+        result *= -1.0f;
         return result;
     }
 

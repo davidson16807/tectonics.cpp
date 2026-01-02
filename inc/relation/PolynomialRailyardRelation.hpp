@@ -1,5 +1,13 @@
 #pragma once
 
+// C libraries
+#include <cassert>    // assert
+
+// std libraries
+#include <vector>    // vector
+#include <algorithm> // reverse, min
+#include <limits>    // numeric_limits
+
 // in-house libraries
 #include <math/analytic/Scaling.hpp>
 #include <math/analytic/rails/PolynomialRailyard.hpp>
@@ -121,7 +129,7 @@ namespace relation {
 
         PolynomialRailyardRelation<X,Y,Plo,Phi>& operator/=(const float scalar)
         {
-            yard *= scalar;
+            yard /= scalar;
             return *this;
         }
 
@@ -137,7 +145,7 @@ namespace relation {
         {
             const float Tscale = float(other.xunits / xunits);
             const float yscale = float(other.yunits / yunits);
-            yard += yscale * compose(other.yard, analytic::Scaling(Tscale));
+            yard -= yscale * compose(other.yard, analytic::Scaling(Tscale));
             return *this;
         }
 
@@ -203,7 +211,7 @@ namespace relation {
     PolynomialRailyardRelation<X,Y,Plo,Phi> operator-(const Y offset, const PolynomialRailyardRelation<X,Y,Plo,Phi>& relation)
     {
         PolynomialRailyardRelation<X,Y,Plo,Phi> result = relation;
-        result *= 1.0f;
+        result *= -1.0f;
         result += offset;
         return result;
     }

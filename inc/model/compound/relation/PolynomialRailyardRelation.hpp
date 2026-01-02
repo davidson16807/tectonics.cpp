@@ -1,5 +1,13 @@
 #pragma once
 
+// C libraries
+#include <cassert>
+
+// std libraries
+#include <vector>
+#include <algorithm>
+#include <limits>
+
 // in-house libraries
 #include <math/analytic/Scaling.hpp>
 #include <math/analytic/rails/PolynomialRailyard.hpp>
