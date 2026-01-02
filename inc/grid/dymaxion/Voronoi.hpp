@@ -1,5 +1,8 @@
 #pragma once
 
+// C libraries
+#include <cmath>
+
 // std libraries
 #include <limits>
 
@@ -8,7 +11,6 @@
 #include <glm/vec3.hpp>             // *vec3
 
 // in-house libraries
-#include <grid/cartesian/Interleaving.hpp>
 #include "Projection.hpp"
 
 namespace dymaxion
@@ -40,6 +42,8 @@ namespace dymaxion
     public:
 
         const id vertices_per_square_side;
+        const id max_vertex_id;
+        const scalar vertices_per_square_side_scalar;
         const scalar vertices_per_square_side_inverse;
         const scalar vertices_per_meridian;
         const id2 vertices_per_square;
@@ -51,6 +55,8 @@ namespace dymaxion
         Voronoi(const scalar radius, const id2 vertices_per_square_side) : 
             projection(Projection<id,id2,scalar,Q>()),
             vertices_per_square_side(vertices_per_square_side),
+            max_vertex_id(vertices_per_square_side-i1),
+            vertices_per_square_side_scalar(vertices_per_square_side),
             vertices_per_square_side_inverse(1.0/vertices_per_square_side),
             vertices_per_meridian(vertices_per_square_side * s2*(s1+std::sqrt(s2))),
             vertices_per_square(vertices_per_square_side * vertices_per_square_side),
@@ -62,11 +68,11 @@ namespace dymaxion
 
         inline constexpr ipoint grid_id(const point& grid_position) const
         {
-            return min(ipoint(grid_position), vertices_per_square_side-i1);
+            return min(ipoint(grid_position), max_vertex_id);
         }
-        inline constexpr ipoint grid_id(const vec3 sphere_position) const
+        inline constexpr ipoint grid_id(const vec3& sphere_position) const
         {
-            return min(ipoint(grid_position(sphere_position)), id(vertices_per_square_side-i1));
+            return min(ipoint(grid_position(sphere_position)), max_vertex_id);
         }
 
 
@@ -75,9 +81,9 @@ namespace dymaxion
         {
             return point(grid_id);
         }
-        inline constexpr point grid_position(const vec3 normalized_sphere_position) const
+        inline constexpr point grid_position(const vec3& normalized_sphere_position) const
         {
-            return point(projection.grid_id(normalized_sphere_position) * scalar(vertices_per_square_side));
+            return projection.grid_id(normalized_sphere_position) * vertices_per_square_side_scalar;
         }
 
 
@@ -85,11 +91,15 @@ namespace dymaxion
         inline constexpr vec3 sphere_normal(const ipoint& grid_id) const
         {
             point scalable(grid_id);
-            return projection.sphere_position((scalable+half_cell) * vertices_per_square_side_inverse);
+            scalable += half_cell;
+            scalable *= vertices_per_square_side_inverse;
+            return projection.sphere_position(scalable);
         }
         inline constexpr vec3 sphere_normal(const point& grid_position) const
         {
-            return projection.sphere_position(grid_position * vertices_per_square_side_inverse);
+            point scalable(grid_position);
+            scalable *= vertices_per_square_side_inverse;
+            return projection.sphere_position(scalable);
         }
 
 

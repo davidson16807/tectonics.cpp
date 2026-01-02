@@ -195,17 +195,17 @@ namespace dymaxion
 			// return vertex_normals[vertex_id];
 		}
 
-		inline constexpr auto vertex_east(const vec3 vertex_normal, const vec3 north_pole) const 
+		inline constexpr auto vertex_east(const vec3& vertex_normal, const vec3& north_pole) const 
 		{
 			return grid.vertex_east(vertex_normal, north_pole);
 		}
 
-		inline constexpr auto vertex_north(const vec3 vertex_east, const vec3 vertex_normal) const 
+		inline constexpr auto vertex_north(const vec3& vertex_east, const vec3& vertex_normal) const 
 		{
 			return grid.vertex_north(vertex_east, vertex_normal);
 		}
 
-		inline constexpr auto vertex_frame(const id2 vertex_id, const vec3 north_pole) const 
+		inline constexpr auto vertex_frame(const id2 vertex_id, const vec3& north_pole) const 
 		{
 			return grid.vertex_frame(vertex_id, north_pole);
 		}
@@ -216,7 +216,7 @@ namespace dymaxion
 			return vertex_dual_areas[vertex_id];
 		}
 
-		inline constexpr auto nearest_vertex_id(const vec3 vertex_position) const
+		inline constexpr auto nearest_vertex_id(const vec3& vertex_position) const
 		{
 			return grid.nearest_vertex_id(vertex_position);
 		}

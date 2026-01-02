@@ -157,7 +157,7 @@ namespace dymaxion
 			// return grid_id;
 			id    i  (grid_id.square_id);
 			vec2  V2 (grid_id.square_position);
-			vec2  U2 (V2-half);
+			vec2  U2 (grid_id.square_position-half);
 			bvec2 are_nonlocal   (std::abs(U2.x)>half, std::abs(U2.y)>half);
 			ivec2 nonlocal_sign  (glm::sign(U2) * vec2(are_nonlocal));
 			bvec2 are_polar      (glm::equal(nonlocal_sign, imirror * id(i1-i2*(i&i1))));
@@ -178,7 +178,7 @@ namespace dymaxion
 			return is_pole? grid_id : point((i+di+square_count) % square_count, flipped);
 		}
 
-		constexpr point grid_id(const vec3 V3 /*normalized position on a unit sphere*/) const 
+		constexpr point grid_id(const vec3& V3 /*normalized position on a unit sphere*/) const 
 		{
 			/* 
 			counterintuitively, runtime is faster when std::pow is uncached
@@ -188,20 +188,23 @@ namespace dymaxion
 			id    EWid((std::atan2(V3.y,V3.x)+turn)*half_subgrid_fraction_of_turn);
 			id    i ((EWid - id(glm::dot(V3,west_halfspace_normals[EWid])>=s0) + square_count) % square_count);
 			bool   is_polar     (std::pow(-i1, i) * glm::dot(V3, polar_halfspace_normals[i]) >= s0); 
-			// GridIdCache triangle(grid_ids[i2*i + is_polar]);
-			const GridIdCache& triangle =grid_ids[i2*i + is_polar];
+			const GridIdCache& triangle = grid_ids[i2*i + is_polar];
 			vec2   triangle_position(triangle.Binv_NO * V3 * (s1/ glm::dot(triangle.normal,V3)));
-			return point(i, triangle.origin2 + triangle.direction2*triangle_position.yx());
+			triangle_position = triangle_position.yx();
+			triangle_position *= triangle.direction2;
+			triangle_position += triangle.origin2;
+			return point(i, triangle_position);
 		}
 
 		constexpr vec3 sphere_position(const point& grid_id) const 
 		{
 			id   i  (grid_id.square_id);
 			vec2 V2 (grid_id.square_position.yx());
-			// SpherePositionCache triangle(sphere_positions[i2*i + ((V2.y > V2.x) == (i&i1))]);
 			const SpherePositionCache& triangle = sphere_positions[i2*i + ((V2.y > V2.x) == (i&i1))];
 			vec3 triangle_position((V2-triangle.origin2)*triangle.direction2, s1);
-			return glm::normalize(triangle.basis * triangle_position);
+			triangle_position = triangle.basis * triangle_position;
+			triangle_position *= s1/glm::length(triangle_position);
+			return triangle_position;
 		}
 
 	};

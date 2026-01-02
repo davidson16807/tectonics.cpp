@@ -87,7 +87,7 @@ namespace dymaxion
     }
 
     template<typename id, typename scalar, glm::qualifier precision>
-    constexpr Point<id,scalar,precision> operator+(const Point<id,scalar,precision>& p, const glm::vec<2,scalar,precision> k)
+    constexpr Point<id,scalar,precision> operator+(const Point<id,scalar,precision>& p, const glm::vec<2,scalar,precision>& k)
     {
         Point<id,scalar,precision> y(p);
         y += k;
@@ -95,7 +95,7 @@ namespace dymaxion
     }
 
     template<typename id, typename scalar, glm::qualifier precision>
-    constexpr Point<id,scalar,precision> operator-(const Point<id,scalar,precision>& p, const glm::vec<2,scalar,precision> k)
+    constexpr Point<id,scalar,precision> operator-(const Point<id,scalar,precision>& p, const glm::vec<2,scalar,precision>& k)
     {
         Point<id,scalar,precision> y(p);
         y -= k;

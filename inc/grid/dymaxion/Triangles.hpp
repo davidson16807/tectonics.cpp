@@ -102,7 +102,7 @@ namespace dymaxion
 		}
 
 		inline vec3 sphere_project(
-			const vec3 V3
+			const vec3& V3
 		) const {
 			return glm::normalize(V3);
 		}
