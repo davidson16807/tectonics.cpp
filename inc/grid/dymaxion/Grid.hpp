@@ -6,6 +6,8 @@
 #include <glm/geometric.hpp>
 
 // in-house libraries
+#include <math/special.hpp>
+
 #include "Voronoi.hpp"
 #include "Indexing.hpp"
 
@@ -28,16 +30,16 @@ namespace dymaxion
     that are necessary for spatially aware operations such as those in vector calculus or binary morphology.
     These concepts include vertex neighbors, faces, edges, and arrows, and the duals of such concepts.
     */
-    template<typename id, typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
+    template<typename id, typename id2, typename scalar, glm::qualifier precision=glm::defaultp>
 	class Grid{
 
-        using ivec2 = glm::vec<2,id,Q>;
-        using vec2 = glm::vec<2,scalar,Q>;
-        using vec3 = glm::vec<3,scalar,Q>;
+        using ivec2 = glm::vec<2,id,precision>;
+        using vec2 = glm::vec<2,scalar,precision>;
+        using vec3 = glm::vec<3,scalar,precision>;
 
-        using mat3 = glm::mat<3,3,scalar,Q>;
+        using mat3 = glm::mat<3,3,scalar,precision>;
 
-		static constexpr scalar pi = 3.141592652653589793;
+		static constexpr scalar pi = scalar(3.141592653589793238462643383279502884L);
 
 		static constexpr id i0 = (0);
 		static constexpr id i1 = (1);
@@ -76,7 +78,7 @@ namespace dymaxion
 		constexpr id2 arrow_offset_id(const ivec2 arrow_offset_grid_position) const
 		{
 			return 2*(arrow_offset_grid_position.x + arrow_offset_grid_position.y < 0) + 
-				+  (std::abs(arrow_offset_grid_position.y) > std::abs(arrow_offset_grid_position.x));
+				   (std::abs(arrow_offset_grid_position.y) > std::abs(arrow_offset_grid_position.x));
 		}
 
 		inline constexpr id2 arrow_source_id(const id2 arrow_id) const
@@ -113,7 +115,7 @@ namespace dymaxion
 
 		inline constexpr scalar total_diameter() const 
 		{
-			return voronoi.radius;
+			return 2.0*voronoi.radius;
 		}
 
 		inline constexpr scalar total_area() const 
@@ -189,7 +191,7 @@ namespace dymaxion
 		// thereby providing an adequate representation for the vertex with irregular edges.
 		inline constexpr id2 vertex_representative(const id2 vertex_id) const 
 		{
-			return memory.memory_id(clamp(memory.grid_id(vertex_id), 1, voronoi.vertices_per_square_side-2));
+			return memory.memory_id(clamp(memory.grid_id(vertex_id), id2(1), voronoi.vertices_per_square_side-id2(2)));
 		}
 
 		inline constexpr vec3 vertex_position(const id2 vertex_id) const 
@@ -225,10 +227,10 @@ namespace dymaxion
 			const scalar half(0.5);
 			const auto Oid(memory.grid_id(vertex_id));
 			const vec3 O(voronoi.sphere_position(Oid));
-			const auto A(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(0, arrows_per_vertex)) ));
-			const auto B(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(1, arrows_per_vertex)) ));
-			const auto C(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(2, arrows_per_vertex)) ));
-			const auto D(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(3, arrows_per_vertex)) ));
+			const auto A(voronoi.sphere_position( Oid + arrow_offset_grid_position(0) ));
+			const auto B(voronoi.sphere_position( Oid + arrow_offset_grid_position(1) ));
+			const auto C(voronoi.sphere_position( Oid + arrow_offset_grid_position(2) ));
+			const auto D(voronoi.sphere_position( Oid + arrow_offset_grid_position(3) ));
 			const auto AB(glm::normalize(A+B)*voronoi.radius-O);
 			const auto BC(glm::normalize(B+C)*voronoi.radius-O);
 			const auto CD(glm::normalize(C+D)*voronoi.radius-O);

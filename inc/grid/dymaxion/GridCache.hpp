@@ -19,17 +19,17 @@ namespace dymaxion
     Care should be taken if using `GridCache` as a class attribute
     since its memory footprint is not trivial as with `Grid`.
     */
-    template<typename id, typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
+    template<typename id, typename id2, typename scalar, glm::qualifier precision=glm::defaultp>
 	class GridCache{
 
-        using ivec2 = glm::vec<2,id2,Q>;
-        using vec3 = glm::vec<3,scalar,Q>;
+        using ivec2 = glm::vec<2,id2,precision>;
+        using vec3 = glm::vec<3,scalar,precision>;
 
-        using mat3 = glm::mat<3,3,scalar,Q>;
+        using mat3 = glm::mat<3,3,scalar,precision>;
 
 	public:
 
-		const Grid<id,id2,scalar,Q> grid;
+		const Grid<id,id2,scalar,precision> grid;
 		std::vector<scalar> vertex_dual_areas;
 		std::vector<vec3> vertex_positions;
 		std::vector<vec3> vertex_normals;
@@ -40,7 +40,7 @@ namespace dymaxion
 
 		static constexpr id2 arrows_per_vertex = 4;
 
-        inline constexpr explicit GridCache(const Grid<id,id2,scalar,Q> grid):
+        inline constexpr explicit GridCache(const Grid<id,id2,scalar,precision> grid):
         	grid(grid),
         	vertex_dual_areas(grid.vertex_count()),
         	vertex_positions(grid.vertex_count()),

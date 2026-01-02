@@ -21,12 +21,12 @@ namespace dymaxion
         point ↔ memory_id
 
     */
-    template<typename id, typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
+    template<typename id, typename id2, typename scalar, glm::qualifier precision=glm::defaultp>
     class Indexing
     {
 
-        using ivec2 = glm::vec<2,id2,glm::defaultp>;
-        using vec2  = glm::vec<2,scalar,glm::defaultp>;
+        using ivec2 = glm::vec<2,id2,precision>;
+        using vec2  = glm::vec<2,scalar,precision>;
         using ipoint = Point<id,id>;
         using point = Point<id,scalar>;
 
@@ -34,10 +34,11 @@ namespace dymaxion
         static constexpr id i0 = 0;
         static constexpr id i1 = 1;
 
-        const Projection<id,id2,scalar,Q> projection;
+        const Projection<id,id2,scalar,precision> projection;
 
     public:
-        const id2 vertices_per_square_side;
+        const id vertices_per_square_side;
+        const id max_vertex_id;
         const scalar vertices_per_square_side_scalar;
         const scalar vertices_per_square_side_inverse;
         const id2 vertices_per_square;
@@ -51,8 +52,9 @@ namespace dymaxion
         static constexpr id2 square_count = 10;
 
         constexpr Indexing(const id2 vertices_per_square_side) : 
-            projection(Projection<id,id2,scalar,Q>()),
+            projection(Projection<id,id2,scalar,precision>()),
             vertices_per_square_side(vertices_per_square_side),
+            max_vertex_id(vertices_per_square_side-i1),
             vertices_per_square_side_scalar(vertices_per_square_side),
             vertices_per_square_side_inverse(1.0/vertices_per_square_side),
             vertices_per_square(vertices_per_square_side * vertices_per_square_side),
@@ -68,7 +70,7 @@ namespace dymaxion
         Use this only if you are certain that a grid_id will always be standardized!
         */
         constexpr id2 memory_id_when_standard(const ipoint& standardized_grid_id) const {
-            const ipoint clamped(clamp(standardized_grid_id, i0, id(vertices_per_square_side-i1)));
+            const ipoint clamped(clamp(standardized_grid_id, i0, max_vertex_id));
             return square_interleave.interleaved_id(
                     clamped.square_id, 
                     row_interleave.interleaved_id(clamped.square_position.y, clamped.square_position.x)

@@ -5,6 +5,14 @@
 
 // std libraries
 
+// 3rd-party libraries
+#include <glm/vec3.hpp>
+#include <glm/mat3x3.hpp>
+
+// in-house libraries
+#include "Grid.hpp"
+#include "Point.hpp"
+
 namespace dymaxion
 {
 
@@ -15,16 +23,16 @@ namespace dymaxion
 	*/
 
 	#define DYMAXION_SERIES(TYPE, TITLE, LOWER, METHOD) \
-	template<typename id, typename id2, typename scalar> \
+	template<typename id, typename id2, typename scalar, glm::qualifier precision=glm::defaultp> \
 	struct TITLE \
 	{ \
 		Grid<id,id2,scalar> grid; \
 		constexpr inline explicit TITLE(const Grid<id,id2,scalar> grid): grid(grid) {} \
-	    using ivec3 = glm::vec<3,id,glm::defaultp>; \
-	    using vec3 = glm::vec<3,scalar,glm::defaultp>; \
-	    using mat3 = glm::mat<3,3,scalar,glm::defaultp>; \
-        using ipoint = Point<id2,id>;\
-        using point = Point<id2,scalar>;\
+	    using ivec3 = glm::vec<3,id,precision>; \
+	    using vec3 = glm::vec<3,scalar,precision>; \
+	    using mat3 = glm::mat<3,3,scalar,precision>; \
+        using ipoint = Point<id,id>;\
+        using point = Point<id,scalar>;\
 	    using size_type = std::size_t; \
 		using value_type = TYPE; \
 		constexpr inline value_type operator()(const vec3 position ) const { return METHOD(position); } \

@@ -23,12 +23,12 @@ namespace dymaxion
     From another point of view, a `dymaxion::Voronoi` is a wrapper around a `Projection` 
     that introduces the concepts of sphere radius, vertex count, and boundary alignment. That is all.
     */
-    template<typename id, typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
+    template<typename id, typename id2, typename scalar, glm::qualifier precision=glm::defaultp>
     class Voronoi
     {
 
-        using vec2  = glm::vec<2,scalar,glm::defaultp>;
-        using vec3  = glm::vec<3,scalar,glm::defaultp>;
+        using vec2  = glm::vec<2,scalar,precision>;
+        using vec3  = glm::vec<3,scalar,precision>;
         using ipoint= Point<id,id>;
         using point = Point<id,scalar>;
 
@@ -37,7 +37,7 @@ namespace dymaxion
         static constexpr scalar s2 = 2;
         static constexpr id i1 = 1;
 
-        const Projection<id,id2,scalar,Q> projection;
+        const Projection<id,id2,scalar,precision> projection;
 
     public:
 
@@ -53,7 +53,7 @@ namespace dymaxion
         static constexpr id2 square_count = 10;
 
         Voronoi(const scalar radius, const id2 vertices_per_square_side) : 
-            projection(Projection<id,id2,scalar,Q>()),
+            projection(Projection<id,id2,scalar,precision>()),
             vertices_per_square_side(vertices_per_square_side),
             max_vertex_id(vertices_per_square_side-i1),
             vertices_per_square_side_scalar(vertices_per_square_side),

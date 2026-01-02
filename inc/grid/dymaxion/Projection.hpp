@@ -35,16 +35,16 @@ namespace dymaxion
 	* `i`: subgrid id
 	*/
 	
-    template<typename id, typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
+    template<typename id, typename id2, typename scalar, glm::qualifier precision=glm::defaultp>
 	class Projection
 	{
 
-        using vec2  = glm::vec<2,scalar,Q>;
-        using vec3  = glm::vec<3,scalar,Q>;
-        using vec4  = glm::vec<4,scalar,Q>;
-        using ivec2 = glm::vec<2,id,Q>;
-        using bvec2 = glm::vec<2,bool,Q>;
-        using mat3  = glm::mat<3,3,scalar,Q>;
+        using vec2  = glm::vec<2,scalar,precision>;
+        using vec3  = glm::vec<3,scalar,precision>;
+        using vec4  = glm::vec<4,scalar,precision>;
+        using ivec2 = glm::vec<2,id,precision>;
+        using bvec2 = glm::vec<2,bool,precision>;
+        using mat3  = glm::mat<3,3,scalar,precision>;
         using point = dymaxion::Point<id,scalar>;
 
 		static constexpr vec2 I = vec2(1,0);
@@ -86,8 +86,8 @@ namespace dymaxion
 		std::array<scalar,8> padding;
 		std::array<SpherePositionCache,triangle_count*i2> sphere_positions;
 
-		const Triangles<id,scalar,Q> triangles;
-		const Squares<id,scalar,Q> squares;
+		const Triangles<id,scalar,precision> triangles;
+		const Squares<id,scalar,precision> squares;
 
 		constexpr vec3 west_halfspace_normal(const id EWid) const 
 		{

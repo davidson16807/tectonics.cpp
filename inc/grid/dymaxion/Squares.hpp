@@ -31,10 +31,10 @@ namespace dymaxion
 	* `i`: subgrid id
 	*/
 
-    template<typename id, typename scalar, glm::qualifier Q=glm::defaultp>
+    template<typename id, typename scalar, glm::qualifier precision=glm::defaultp>
 	class Squares
 	{
-        using vec3 = glm::vec<3,scalar,Q>;
+        using vec3 = glm::vec<3,scalar,precision>;
 
 		static constexpr scalar pi = scalar(3.141592653589793238462643383279502884L);
 		static constexpr scalar half = scalar(0.5);
