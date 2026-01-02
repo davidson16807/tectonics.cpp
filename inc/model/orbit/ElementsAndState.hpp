@@ -3,6 +3,7 @@
 // 3rd party libraries
 #include <glm/vec3.hpp>     // *vec3
 #include <glm/mat3x3.hpp>     // *mat3
+#include <glm/gtc/matrix_transform.hpp> // glm::rotate
 
 // in-house libraries
 #include <math/special.hpp>
@@ -28,7 +29,7 @@ struct ElementsAndState
 		properties(properties)
 	{}
 
-	Elements<scalar> get_elements_from_state(const State<scalar>& state, const scalar combined_mass)
+	Elements<scalar> get_elements_from_state(const State<scalar>& state, const scalar combined_mass) const
 	{
 		vec3 angular_momentum_vector       = properties.angular_momentum_vector_from_position_and_velocity      (state.position, state.velocity);
 		vec3 eccentricity_vector           = properties.eccentricity_vector_from_position_and_velocity          (state.position, state.velocity, combined_mass);
@@ -54,7 +55,7 @@ struct ElementsAndState
 		);
 	}
 
-	State<scalar> get_state_from_elements(const Elements<scalar>& elements, const scalar combined_mass)
+	State<scalar> get_state_from_elements(const Elements<scalar>& elements, const scalar combined_mass) const
 	{
 
 		const vec3 I = properties.vernal_equinox_direction;
@@ -68,15 +69,15 @@ struct ElementsAndState
 		vec3 perifocal_velocity  = properties.perifocal_velocity(semi_latus_rectum, elements.eccentricity, true_anomaly, combined_mass);
 
 		// NOTE: we use mat4x4 since it is the only thing that rotate() works with
-        mat4 perifocal_to_reference_matrix(scalar(1.0));
+        mat4 perifocal_to_reference_matrix(scalar(1));
         perifocal_to_reference_matrix = glm::rotate(perifocal_to_reference_matrix, elements.longitude_of_ascending_node, K);
         perifocal_to_reference_matrix = glm::rotate(perifocal_to_reference_matrix, elements.inclination,                 I);
         perifocal_to_reference_matrix = glm::rotate(perifocal_to_reference_matrix, elements.argument_of_periapsis,       K);
 
-        vec4 position = perifocal_to_reference_matrix * vec4(perifocal_position, scalar(1.0));
-		vec4 velocity = perifocal_to_reference_matrix * vec4(perifocal_velocity, scalar(1.0));
 		// NOTE: we convert to vec4 since it is the only thing glm allows to multiply with mat4
-        return State<scalar>(position, velocity);
+        vec4 position = perifocal_to_reference_matrix * vec4(perifocal_position, scalar(1));
+		vec4 velocity = perifocal_to_reference_matrix * vec4(perifocal_velocity, scalar(0));
+        return State<scalar>(position.xyz(), velocity.xyz());
 
 	}
 
