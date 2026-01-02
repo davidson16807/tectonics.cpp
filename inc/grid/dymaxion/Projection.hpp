@@ -89,26 +89,26 @@ namespace dymaxion
 		const Triangles<id,scalar,precision> triangles;
 		const Squares<id,scalar,precision> squares;
 
-		constexpr vec3 west_halfspace_normal(const id EWid) const 
+		constexpr vec3 west_halfspace_normal(const id EWid) const noexcept
 		{
 			id     Nid (i2*std::round((EWid+half)/s2));
 			id     Sid (i2*std::round(((EWid+half)-s1)/s2)+i1);
 			return glm::cross(squares.westmost(Sid), squares.westmost(Nid)); // |S×N|
 		}
 
-		constexpr vec3 polar_halfspace_normal(const id i) const 
+		constexpr vec3 polar_halfspace_normal(const id i) const noexcept
 		{
 			return glm::normalize(glm::cross(squares.westmost(i), squares.eastmost(i))); // W×E
 		}
 
-		constexpr vec3 origin(const id i, const bool is_polar) const 
+		constexpr vec3 origin(const id i, const bool is_polar) const noexcept
 		{
 			id     Oid (i+i1);
 			scalar square_polarity(squares.polarity(i));
 			return triangles.origin(Oid, square_polarity, is_polar);
 		}
 
-		constexpr mat3 basis(const id i, const bool is_polar) const 
+		constexpr mat3 basis(const id i, const bool is_polar) const noexcept
 		{
 			vec3   W   (squares.westmost(i));    // W: westernmost triangle vertex
 			vec3   E   (squares.westmost(i+i2)); // E: easternmost triangle vertex
@@ -152,7 +152,7 @@ namespace dymaxion
 			}
 		}
 
-		constexpr point standardize(const point& grid_id) const 
+		constexpr point standardize(const point& grid_id) const noexcept
 		{
 			// return grid_id;
 			id    i  (grid_id.square_id);
@@ -178,7 +178,7 @@ namespace dymaxion
 			return is_pole? grid_id : point((i+di+square_count) % square_count, flipped);
 		}
 
-		constexpr point grid_id(const vec3& V3 /*normalized position on a unit sphere*/) const 
+		constexpr point grid_id(const vec3& V3 /*normalized position on a unit sphere*/) const noexcept
 		{
 			/* 
 			counterintuitively, runtime is faster when std::pow is uncached
@@ -196,7 +196,7 @@ namespace dymaxion
 			return point(i, triangle_position);
 		}
 
-		constexpr vec3 sphere_position(const point& grid_id) const 
+		constexpr vec3 sphere_position(const point& grid_id) const noexcept
 		{
 			id   i  (grid_id.square_id);
 			vec2 V2 (grid_id.square_position.yx());

@@ -47,7 +47,7 @@ namespace math{
 	#undef MATH_BINARY_STD_WRAPPER
 
 	template<typename I>
-	constexpr I ipow(const I b, const I e)
+	constexpr I ipow(const I b, const I e) noexcept
 	{
 	    I y(1);
 	    I c(b);
@@ -57,7 +57,7 @@ namespace math{
 	}
 
 	template<typename I, std::uint8_t E>
-	inline constexpr I ipow(const I b)
+	inline constexpr I ipow(const I b) noexcept
 	{
 	    return (E == I(0)) ? I(1) : b * ipow<E-I(1)>(b);
 	}
@@ -84,7 +84,7 @@ namespace math{
 	regardless of whether that whole number is bigger or smaller.
 	*/
 	template<typename In1, typename In2>
-	inline auto remainder(const In1& a, const In2& b)
+	inline auto remainder(const In1& a, const In2& b) noexcept
 	{
 	    return a - b * std::round(a / b);
 	}
@@ -94,7 +94,7 @@ namespace math{
 	i.e. the amount that is left unaccounted for after dividing by the next smallest whole number
 	*/
 	template<typename In1, typename In2>
-	inline auto residue(const In1& a, const In2& b)
+	inline auto residue(const In1& a, const In2& b) noexcept
 	{
 	    return a - b * std::floor(a / b);
 	}
@@ -104,29 +104,32 @@ namespace math{
 	this is equivalent to the % operator in python
 	*/
 	template<typename In1, typename In2>
-	inline auto modulus(const In1& a, const In2& b)
+	inline auto modulus(const In1& a, const In2& b) noexcept
 	{
 	    return residue(residue(a,b) + b, b);
 	}
 
 	template<typename T>
-	inline T maxabs(const T& a, const T& b)
+	inline T maxabs(const T& a, const T& b) noexcept
 	{
 	    return std::max(-std::min(a,b), std::max(a,b));
 	}
 
 	template <typename T>
-	inline constexpr T sign(const T x) {
+	inline constexpr T sign(const T x) noexcept
+	{
 		return x==T(0)? T(0) : x>T(0)? T(1) : T(-1);
 	}
 
 	template <typename T>
-	inline T bitsign(const T x) {
+	inline T bitsign(const T x) noexcept
+	{
 		return std::signbit(x)? T(-1):T(1);
 	}
 
 	template <typename In1, typename In2> 
-	inline auto distance(const In1 a, const In2 b){
+	inline auto distance(const In1 a, const In2 b)noexcept
+	{
 		return std::abs(a-b);
 	}
 

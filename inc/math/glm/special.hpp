@@ -20,19 +20,19 @@ namespace math{
 	*/
 
 	template<typename T, glm::qualifier Q>
-	inline constexpr T trace(const glm::mat<2,2,T,Q>& A)
+	inline constexpr T trace(const glm::mat<2,2,T,Q>& A) noexcept
 	{
 	    return A[0][0] + A[1][1];
 	}
 
 	template<typename T, glm::qualifier Q>
-	inline constexpr T trace(const glm::mat<3,3,T,Q>& A)
+	inline constexpr T trace(const glm::mat<3,3,T,Q>& A) noexcept
 	{
 	    return A[0][0] + A[1][1] + A[2][2];
 	}
 
 	template<typename T, glm::qualifier Q>
-	inline constexpr T trace(const glm::mat<4,4,T,Q>& A)
+	inline constexpr T trace(const glm::mat<4,4,T,Q>& A) noexcept
 	{
 	    return A[0][0] + A[1][1] + A[2][2] + A[3][3];
 	}
@@ -44,13 +44,13 @@ namespace math{
 	*/
 
 	template<typename T, glm::qualifier Q>
-	inline constexpr auto permutation(const glm::mat<2,2,T,Q>& A)
+	inline constexpr auto permutation(const glm::mat<2,2,T,Q>& A) noexcept
 	{
 	    return glm::mat<2,2,T,Q>(0,-1,1,0) * A;
 	}
 
 	template<typename T, glm::qualifier Q>
-	inline constexpr auto permutation(const glm::mat<3,3,T,Q>& A)
+	inline constexpr auto permutation(const glm::mat<3,3,T,Q>& A) noexcept
 	{
 	    return glm::vec<3,T,Q>(
 		    glm::dot(
@@ -73,33 +73,33 @@ namespace math{
 	See https://en.wikipedia.org/wiki/Cosine_similarity.
 	*/
 	template<int L, typename T, glm::qualifier Q>
-	inline constexpr T similarity(const glm::vec<L,T,Q>& U, const glm::vec<L,T,Q>& V)
+	inline constexpr T similarity(const glm::vec<L,T,Q>& U, const glm::vec<L,T,Q>& V) noexcept
 	{
 	    return glm::dot(U,V) / (glm::length(U)*glm::length(V));
 	}
 
 	template <int L, typename T, glm::qualifier Q>
-	inline constexpr auto scalar_projection (const glm::vec<L,T,Q>& a, const glm::vec<L,T,Q>& b)
+	inline constexpr auto scalar_projection (const glm::vec<L,T,Q>& a, const glm::vec<L,T,Q>& b) noexcept
 	{
 		return glm::dot(a, glm::normalize(b));
 	}
 
 	template <int L, typename T, glm::qualifier Q>
-	inline constexpr auto vector_projection (const glm::vec<L,T,Q>& a, const glm::vec<L,T,Q>& b)
+	inline constexpr auto vector_projection (const glm::vec<L,T,Q>& a, const glm::vec<L,T,Q>& b) noexcept
 	{
 		auto bhat = glm::normalize(b);
 		return glm::dot(a, glm::normalize(bhat)) * bhat;
 	}
 
 	template <int L, typename T, glm::qualifier Q>
-	inline constexpr auto scalar_rejection (const glm::vec<L,T,Q>& a, const glm::vec<L,T,Q>& b)
+	inline constexpr auto scalar_rejection (const glm::vec<L,T,Q>& a, const glm::vec<L,T,Q>& b) noexcept
 	{
 		auto bhat = glm::normalize(b);
 		return glm::length(a - glm::dot(a, bhat) * bhat);
 	}
 
 	template <int L, typename T, glm::qualifier Q>
-	inline constexpr auto vector_rejection (const glm::vec<L,T,Q>& a, const glm::vec<L,T,Q>& b)
+	inline constexpr auto vector_rejection (const glm::vec<L,T,Q>& a, const glm::vec<L,T,Q>& b) noexcept
 	{
 		auto bhat = glm::normalize(b);
 		return a - glm::dot(a, glm::normalize(bhat)) * bhat;
@@ -110,7 +110,7 @@ namespace math{
 	It is meant to be similar in nature to other component-wise operations in glm, e.g. `compMax`, `compAdd`, etc.
 	*/
 	template<int L, typename T, glm::qualifier Q>
-	inline constexpr T compMaxAbs(const glm::vec<L,T,Q>& V)
+	inline constexpr T compMaxAbs(const glm::vec<L,T,Q>& V) noexcept
 	{
 		T max_value(V[0]);
 		T max_abs(std::abs(V[0]));

@@ -54,27 +54,27 @@ namespace dymaxion
 		inline constexpr id triangle_id(
 			const id i, 
 			const bool is_polar
-		) const {
+		) const noexcept {
 			return (i*i2) + is_polar;
 		}
 
 		inline constexpr bool is_inverted_square_id(
 			const id i,
 			const bool is_polar
-		) const {
+		) const noexcept {
 			return is_polar == bool(i%2);
 		}
 
 		inline constexpr bool is_polar_square_id(
 			const id i,
 			const bool is_inverted
-		) const {
+		) const noexcept {
 			return is_inverted == i%2;
 		}
 
 		inline constexpr bool is_inverted_grid_position(
 			const vec2 V2
-		) const {
+		) const noexcept {
 			return V2.y > V2.x;
 		}
 
@@ -82,7 +82,7 @@ namespace dymaxion
 			const id i, 
 			const scalar square_polarity, 
 			const bool is_polar
-		) const {
+		) const noexcept {
 			scalar z         (square_polarity*(is_polar? 1.0:-0.5));
 			scalar longitude (i*half_subgrid_longitude_arc_length);
 			return cartesian_from_zlon(z, longitude);
@@ -93,7 +93,7 @@ namespace dymaxion
 			const vec3& W,
 			const vec3& E,
 			const vec3& O
-		) const {
+		) const noexcept {
 			return is_inverted? 
 			mat3(E-O,W-O,O) 
 			: 
@@ -103,7 +103,7 @@ namespace dymaxion
 
 		inline vec3 sphere_project(
 			const vec3& V3
-		) const {
+		) const noexcept {
 			return glm::normalize(V3);
 		}
 
@@ -111,7 +111,7 @@ namespace dymaxion
 			const vec3& V3,
 			const vec3& N,
 			const vec3& O
-		) const {
+		) const noexcept {
 			return V3 * glm::dot(N,O)/glm::dot(N,V3);
 		}
 

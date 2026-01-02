@@ -69,7 +69,7 @@ namespace dymaxion
         Undefined behavior results when the standardized_grid_id is not already in a standardized form.
         Use this only if you are certain that a grid_id will always be standardized!
         */
-        constexpr id2 memory_id_when_standard(const ipoint& standardized_grid_id) const {
+        constexpr id2 memory_id_when_standard(const ipoint& standardized_grid_id) const noexcept {
             const ipoint clamped(clamp(standardized_grid_id, i0, max_vertex_id));
             return square_interleave.interleaved_id(
                     clamped.square_id, 
@@ -77,18 +77,18 @@ namespace dymaxion
                 );
         }
 
-        constexpr ipoint standardize(const ipoint& grid_id) const {
+        constexpr ipoint standardize(const ipoint& grid_id) const noexcept {
             point standardized =(
                 projection.standardize((point(grid_id)+half_cell) * vertices_per_square_side_inverse)
             ) * vertices_per_square_side_scalar;
             return ipoint(standardized);
         }
 
-        constexpr id2 memory_id(const ipoint& grid_id) const {
+        constexpr id2 memory_id(const ipoint& grid_id) const noexcept {
             return memory_id_when_standard(standardize(grid_id));
         }
 
-        inline constexpr ipoint grid_id(const id2 memory_id) const {
+        inline constexpr ipoint grid_id(const id2 memory_id) const noexcept {
             id2 square_element_id(square_interleave.element_id(memory_id));
             return ipoint(
                 square_interleave.block_id(memory_id), 

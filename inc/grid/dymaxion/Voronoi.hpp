@@ -66,36 +66,36 @@ namespace dymaxion
         }
 
 
-        inline constexpr ipoint grid_id(const point& grid_position) const
+        inline constexpr ipoint grid_id(const point& grid_position) const noexcept
         {
             return min(ipoint(grid_position), max_vertex_id);
         }
-        inline constexpr ipoint grid_id(const vec3& sphere_position) const
+        inline constexpr ipoint grid_id(const vec3& sphere_position) const noexcept
         {
             return min(ipoint(grid_position(sphere_position)), max_vertex_id);
         }
 
 
 
-        inline constexpr point grid_position(const ipoint& grid_id) const
+        inline constexpr point grid_position(const ipoint& grid_id) const noexcept
         {
             return point(grid_id);
         }
-        inline constexpr point grid_position(const vec3& normalized_sphere_position) const
+        inline constexpr point grid_position(const vec3& normalized_sphere_position) const noexcept
         {
             return projection.grid_id(normalized_sphere_position) * vertices_per_square_side_scalar;
         }
 
 
 
-        inline constexpr vec3 sphere_normal(const ipoint& grid_id) const
+        inline constexpr vec3 sphere_normal(const ipoint& grid_id) const noexcept
         {
             point scalable(grid_id);
             scalable += half_cell;
             scalable *= vertices_per_square_side_inverse;
             return projection.sphere_position(scalable);
         }
-        inline constexpr vec3 sphere_normal(const point& grid_position) const
+        inline constexpr vec3 sphere_normal(const point& grid_position) const noexcept
         {
             point scalable(grid_position);
             scalable *= vertices_per_square_side_inverse;
@@ -104,11 +104,11 @@ namespace dymaxion
 
 
 
-        inline constexpr vec3 sphere_position(const ipoint& grid_id) const
+        inline constexpr vec3 sphere_position(const ipoint& grid_id) const noexcept
         {
             return sphere_normal(grid_id) * radius;
         }
-        inline constexpr vec3 sphere_position(const point& grid_position) const
+        inline constexpr vec3 sphere_position(const point& grid_position) const noexcept
         {
             return sphere_normal(grid_position) * radius;
         }

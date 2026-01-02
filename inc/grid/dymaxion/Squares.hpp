@@ -49,17 +49,17 @@ namespace dymaxion
 		{
 		}
 
-		inline constexpr vec3 westmost(const id i) const {
+		inline constexpr vec3 westmost(const id i) const noexcept {
 			scalar z         (half*std::pow(-i1,i));
 			scalar longitude (i*half_subgrid_longitude_arc_length);
 			return cartesian_from_zlon(z, longitude);
 		}
 
-		inline constexpr vec3 eastmost(const id i) const {
+		inline constexpr vec3 eastmost(const id i) const noexcept {
 			return westmost(i+i2);
 		}
 
-		inline constexpr scalar polarity(const id i) const {
+		inline constexpr scalar polarity(const id i) const noexcept {
 			return std::pow(-i1, i);
 		}
 

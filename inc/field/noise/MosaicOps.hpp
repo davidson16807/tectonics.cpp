@@ -56,7 +56,7 @@ namespace field
 		}
 
 		template<typename scalar2>
-		inline scalar weight(const glm::vector<L,scalar2,precision>& position, const ivector& origin, const ivector& offset) const
+		inline scalar weight(const glm::vec<L,scalar2,precision>& position, const ivector& origin, const ivector& offset) const
 		{
 			vector F = fract(position);
 			vector F01 = glm::smoothstep(vector(0), vector(1), F);
