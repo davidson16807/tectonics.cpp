@@ -1,33 +1,39 @@
 #pragma once
 
+// C libraries
+#include <cstddef>  // std::size_t
+
 // std libraries
-#include <vector> // std::vector
+#include <vector>   // std::vector
+#include <iostream> // std::cout
+#include <string>   // std::string
 
 // in-house libraries
 #include "equality.hpp"
+#include "predicate.hpp"
 
 namespace test {
 
-    template<typename Adapter, typename A>
+    template<typename Adapter, typename As>
     bool discernability(const Adapter& adapter, 
-        const A& a
+        const As& as
     ) {
-        for (std::size_t i = 0; i < a.size(); ++i) {
+        for (std::size_t i = 0; i < as.size(); ++i) {
         for (std::size_t j = 0; j < i; ++j) {
-            if (adapter.equal(a[i],a[j])) {
+            if (adapter.equal(as[i],as[j])) {
                 std::cout << std::endl;
                 std::cout << "Test failed:" << std::endl;
                 std::cout << "  sample values should be appreciably different" << std::endl;
-                std::cout << "  a₁ : " << indent(adapter.print(a[i]), "  ") << " [from index "<< i <<"]" << std::endl;
-                std::cout << "  a₂ : " << indent(adapter.print(a[j]), "  ") << " [from index "<< j <<"]" << std::endl;
+                std::cout << "  a₁ : " << indent(adapter.print(as[i]), "  ") << " [from index "<< i <<"]" << std::endl;
+                std::cout << "  a₂ : " << indent(adapter.print(as[j]), "  ") << " [from index "<< j <<"]" << std::endl;
                 return false; 
             }
-            if (adapter.print(a[i]) == adapter.print(a[j])) {
+            if (adapter.print(as[i]) == adapter.print(as[j])) {
                 std::cout << std::endl;
                 std::cout << "Test failed:" << std::endl;
-                std::cout << "  adapter.print(…) must be able to be depict appreciable differences" << std::endl;
-                std::cout << "  a₁ : " << indent(adapter.print(a[i]), "  ") << " [from index "<< i <<"]" << std::endl;
-                std::cout << "  a₂ : " << indent(adapter.print(a[j]), "  ") << " [from index "<< j <<"]" << std::endl;
+                std::cout << "  adapter.print(…) must be able to depict appreciable differences" << std::endl;
+                std::cout << "  a₁ : " << indent(adapter.print(as[i]), "  ") << " [from index "<< i <<"]" << std::endl;
+                std::cout << "  a₂ : " << indent(adapter.print(as[j]), "  ") << " [from index "<< j <<"]" << std::endl;
                 return false; 
             }
         }}
@@ -39,12 +45,18 @@ namespace test {
         const std::string f_name, const F& f, 
         const A& as
     ) {
-        return equality(
-            adapter,
+        return predicate(adapter, 
             f_name + " must be able to be called repeatedly without changing the output", 
-            "[the first call] ", f,
-            "[the second call]", f,
-            as);
+            [&](auto a){
+                auto f1 = f(a);
+                auto f2 = f(a);
+                return Results(adapter.equal(f1, f2),
+                    "such that: \n  [the first call] = [the second call]\n" + 
+                    "a : " + indent(adapter.print(a), "  ")+"\n" +
+                    "[the first call]  : " + indent(adapter.print(f1), "  ")+"\n" +
+                    "[the second call] : " + indent(adapter.print(f2), "  ")+"\n"
+                );
+            }, as);
     }
 
     template<typename Adapter, typename F, typename A, typename B>
@@ -52,12 +64,19 @@ namespace test {
         const std::string f_name, const F& f, 
         const A& as, const B& bs
     ) {
-        return equality(
-            adapter,
+        return predicate(adapter, 
             f_name + " must be able to be called repeatedly without changing the output", 
-            "[the first call] ", f,
-            "[the second call]", f,
-            as, bs);
+            [&](auto a, auto b){
+                auto f1 = f(a, b);
+                auto f2 = f(a, b);
+                return Results(adapter.equal(f1, f2),
+                    "such that: \n  [the first call] = [the second call]\n" + 
+                    "a : " + indent(adapter.print(a), "  ")+"\n" +
+                    "b : " + indent(adapter.print(b), "  ")+"\n" +
+                    "[the first call]  : " + indent(adapter.print(f1), "  ")+"\n" +
+                    "[the second call] : " + indent(adapter.print(f2), "  ")+"\n"
+                );
+            }, as, bs);
     }
 
     template<typename Adapter, typename F, typename A, typename B, typename C>
@@ -65,12 +84,17 @@ namespace test {
         const std::string f_name, const F& f, 
         const A& as, const B& bs, const C& cs
     ) {
-        return equality(
-            adapter,
+        return predicate(adapter, 
             f_name + " must be able to be called repeatedly without changing the output", 
-            "[the first call] ",f,
-            "[the second call]",f,
-            as, bs, cs);
+            [&](auto a, auto b, auto c){
+                auto f1 = f(a, b, c);
+                auto f2 = f(a, b, c);
+                return Results(adapter.equal(f1, f2),
+                    "such that: \n  [the first call] = [the second call]\n" + 
+                    "[the first call]  : " + indent(adapter.print(f1), "  ")+"\n" +
+                    "[the second call] : " + indent(adapter.print(f2), "  ")+"\n"
+                );
+            }, as, bs, cs);
     }
 
     template<typename Adapter, typename F, typename E, typename A>
@@ -86,7 +110,7 @@ namespace test {
                 auto fea = f(e,a);
                 return Results(adapter.equal(fea, a),
                     "f(e,a) : " + indent(adapter.print(fea), "  ")+"\n" +
-                    "e : " + indent(adapter.print(e), "  ")
+                    "e : " + indent(adapter.print(e), "  ")+"\n"
                 );
             }, as);
     }
@@ -98,14 +122,14 @@ namespace test {
         const A& as
     ) {
         return predicate(adapter, 
-            f_name + " [denoted \"f\"] must have a \"left identity\", " + e_name + " [denoted \"e\"], that when passed on the right always returns the left argument" +
+            f_name + " [denoted \"f\"] must have a \"right identity\", " + e_name + " [denoted \"e\"], that when passed on the right always returns the left argument" +
             "\nsuch that: \n  f(a,e) = a\n",
             [=](auto a){
                 auto fae = f(a,e);
                 return Results(adapter.equal(fae, a),
                     "f(a,e) : " + indent(adapter.print(fae), "  ")+"\n" +
-                    "e : " + indent(adapter.print(e)
-                    , "  ")                );
+                    "e : " + indent(adapter.print(e), "  ")+"\n"
+                );
             }, as);
     }
 
@@ -128,10 +152,24 @@ namespace test {
         return equality(
             adapter,
             f_name + " [denoted \"f\"] must have an \"identity\", " + e_name + "[denoted \"e\"], that when passed will always return itself" +
+            "\nsuch that: \n  f(e) = e\n",
+            "f(e)",[=](auto e){ return f(e); },
+            "e   ",[=](auto e){ return e; },
+            std::vector<E>{e});
+    }
+
+    template<typename Adapter, typename F, typename As>
+    bool unary_identity(const Adapter& adapter, 
+        const std::string f_name, const F& f,
+        const As& as
+    ) {
+        return equality(
+            adapter,
+            f_name + " [denoted \"f\"] must always return its argument" +
             "\nsuch that: \n  f(a) = a\n",
             "f(a)",[=](auto a){ return f(a); },
             "a   ",[=](auto a){ return a; },
-            std::vector<E>{e});
+            as);
     }
 
     template<typename Adapter, typename F, typename A, typename Z>
@@ -142,13 +180,13 @@ namespace test {
     ) {
         return predicate(adapter, 
             f_name + " [denoted \"f\"] must have a \"left annihilator\", " + z_name + " [denoted \"z\"], that when passed on the left will always return itself" + 
-            "\nsuch that: \n  f(a,z) = a\n",
+            "\nsuch that: \n  f(z,a) = z\n",
             [=](auto a){
                 auto fza = f(z,a);
-                return Results(adapter.equal(fza, a),
-                    "f(a,z) : " + indent(adapter.print(fza), "  ")+"\n" +
-                    "z : " + indent(adapter.print(z)
-                    , "  ")                );
+                return Results(adapter.equal(fza, z),
+                    "f(z,a) : " + indent(adapter.print(fza), "  ")+"\n" +
+                    "z : " + indent(adapter.print(z), "  ")+"\n"
+                );
             }, as);
     }
 
@@ -159,14 +197,14 @@ namespace test {
         const A& as
     ) {
         return predicate(adapter, 
-            f_name + " [denoted \"f\"] must have an \"right annihilator\", " + z_name + " [denoted \"z\"], that when passed on the right will always return itself" + 
-            "\nsuch that: \n  f(a,z) = a\n",
+            f_name + " [denoted \"f\"] must have a \"right annihilator\", " + z_name + " [denoted \"z\"], that when passed on the right will always return itself" + 
+            "\nsuch that: \n  f(a,z) = z\n",
             [=](auto a){
-                auto faz = f(a,z);
-                return Results(adapter.equal(faz, a),
-                    "f(a,z) : " + indent(adapter.print(faz), "  ")+"\n" +
-                    "z : " + indent(adapter.print(z)
-                    , "  ")                );
+                auto fao = f(a,z);
+                return Results(adapter.equal(fao, z),
+                    "f(a,z) : " + indent(adapter.print(fao), "  ")+"\n" +
+                    "z : " + indent(adapter.print(z), "  ")+"\n"
+                );
             }, as);
     }
 
@@ -197,20 +235,9 @@ namespace test {
                 auto finvfa = finv(fa);
                 return Results(adapter.equal(finvfa, a),
                     "f⁻¹(f(a)) : " + indent(adapter.print(finvfa), "  ")+"\n" +
-                    "f(a) : " + indent(adapter.print(fa), "  ")
+                    "f(a) : " + indent(adapter.print(fa), "  ")+"\n"
                 );
             }, as);
-    }
-
-    template<typename Adapter, typename F, typename G, typename A>
-    bool unary_invertibility(const Adapter& adapter, 
-        const std::string f_name, const F& f, 
-        const std::string g_name, const G& g, 
-        const A& as
-    ) {
-        return 
-            left_invertibility(adapter, f_name, f, f_name, g, as) &&
-            left_invertibility(adapter, g_name, g, g_name, f, as);
     }
 
     template<typename Adapter, typename E, typename Finv, typename F, typename A>
@@ -229,9 +256,20 @@ namespace test {
                 return Results(adapter.equal(ffinveaa, e),
                     "f(f⁻¹(e,a),a) : " + indent(adapter.print(ffinveaa), "  ")+"\n" +
                     "f⁻¹(e,a) : " + indent(adapter.print(finvea), "  ")+"\n" +
-                    "e : " + indent(adapter.print(e)
-                    , "  ")                );
+                    "e : " + indent(adapter.print(e), "  ")+"\n"
+                );
             }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A>
+    bool unary_invertibility(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as
+    ) {
+        return 
+            left_invertibility(adapter, f_name, f, g_name, g, as) &&
+            left_invertibility(adapter, g_name, g, f_name, f, as);
     }
 
     template<typename Adapter, typename E, typename Finv, typename F, typename A>
@@ -250,8 +288,8 @@ namespace test {
                 return Results(adapter.equal(fafinvea, e),
                     "f(a,f⁻¹(e,a)) : " + indent(adapter.print(fafinvea), "  ")+"\n" +
                     "f⁻¹(e,a) : " + indent(adapter.print(finvea), "  ")+"\n" +
-                    "e : " + indent(adapter.print(e)
-                    , "  ")                );
+                    "e : " + indent(adapter.print(e), "  ")+"\n"
+                );
             }, as);
     }
 
@@ -284,7 +322,8 @@ namespace test {
                     "f(f(a,b), c) : " + indent(adapter.print(ffab_c), "  ") + "\n" +
                     "f(a, f(b,c)) : " + indent(adapter.print(fa_fbc), "  ") + "\n" +
                     "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n" +
-                    "f(b,c) : " + indent(adapter.print(fbc), "  ") + "\n");
+                    "f(b,c) : " + indent(adapter.print(fbc), "  ") + "\n"
+                );
             }, as, bs, cs);
     }
 
@@ -307,7 +346,8 @@ namespace test {
                     "f(f(a,b), c) : " + indent(adapter.print(ffab_c), "  ") + "\n" +
                     "f(a, f(b,c)) : " + indent(adapter.print(fa_fbc), "  ") + "\n" +
                     "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n" +
-                    "f(b,c) : " + indent(adapter.print(fbc), "  ") + "\n");
+                    "f(b,c) : " + indent(adapter.print(fbc), "  ") + "\n"
+                );
             }, as, bs, cs);
     }
 
@@ -381,7 +421,7 @@ namespace test {
         return predicate(adapter, 
             f_name + " [denoted \"f\"] must under certain conditions allow invocations to be calculated in any order without changing results" + 
             "\nsuch that: \n  f(f(a,a), b) = f(a, f(a,b))\n",
-            [=](auto a, auto b, auto c){
+            [=](auto a, auto b){
                 auto fab = f(a,b);
                 auto faa = f(a,a);
                 auto fa_fab = f(a, fab);
@@ -389,7 +429,7 @@ namespace test {
                 return Results(adapter.equal(fa_fab, ffaa_b),
                     "f(a, f(a,b)) : " + indent(adapter.print(fa_fab), "  ") + "\n" +
                     "f(f(a,a), b) : " + indent(adapter.print(ffaa_b), "  ") + "\n" +
-                    "f(a,a) : " + indent(adapter.print(faa), "  ") + "\n"
+                    "f(a,a) : " + indent(adapter.print(faa), "  ") + "\n" +
                     "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n"
                 );
             }, as, bs);
@@ -411,7 +451,7 @@ namespace test {
                 return Results(adapter.equal(fa_fbb, ffab_b),
                     "f(a, f(b,b)) : " + indent(adapter.print(fa_fbb), "  ") + "\n" +
                     "f(f(a,b), b) : " + indent(adapter.print(ffab_b), "  ") + "\n" +
-                    "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n"
+                    "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n" +
                     "f(b,b) : " + indent(adapter.print(fbb), "  ") + "\n"
                 );
             }, as, bs);
@@ -514,7 +554,7 @@ namespace test {
                 auto gab = g(a,b);
                 auto fac = f(a,c);
                 auto fbc = f(b,c);
-                auto f_gab_c = f(c, gab);
+                auto f_gab_c = f(gab, c);
                 auto g_fac_fbc = g(fac,fbc);
                 return Results(adapter.equal(f_gab_c, g_fac_fbc),
                     "f(g(a,b), c)     : " + indent(adapter.print(f_gab_c), "  ") + "\n" +
@@ -572,7 +612,7 @@ namespace test {
         const A& as, const B& bs
     ) {
         return predicate(adapter, 
-            f_name + " [denoted \"f\"] must allow the output of a sum, using \""+add1_name+"\" to be used in place of the the sum of the output, using \"" + add2_name + "\"" +
+            f_name + " [denoted \"f\"] must allow the output of a sum, using \""+add1_name+"\" to be used in place of the sum of the output, using \"" + add2_name + "\"" +
             "\nsuch that: \n  f(a+b) = f(a)+f(b)\n",
             [=](auto a, auto b){
                 auto ab = add1(a,b);
@@ -598,7 +638,7 @@ namespace test {
         const A& as, const B& bs
     ) {
         return predicate(adapter, 
-            f_name + " [denoted \"f\"] must allow the output of a sum (using "+mult1_name+") to be used in place of the the sum of the output (using " + mult2_name + ")" +
+            f_name + " [denoted \"f\"] must allow the multiple of an input (using "+mult1_name+") to be used in place of the multiple of an output (using " + mult2_name + ")" +
             "\nsuch that: \n  f(a*b) = a*f(b)\n",
             [=](auto a, auto b){
                 auto ab = mult1(a,b);
@@ -613,7 +653,6 @@ namespace test {
                 );
             }, as, bs);
     }
-
 
     template<typename Adapter, typename F, typename G, typename FG, typename A>
     bool composition(const Adapter& adapter, 
@@ -636,7 +675,6 @@ namespace test {
                 );
             }, as);
     }
-
 
     template<typename Adapter, typename F, typename A>
     bool unary_idempotence(const Adapter& adapter, 
@@ -669,17 +707,17 @@ namespace test {
             as);
     }
 
-    template<typename Adapter, typename F, typename N, typename A>
+    template<typename Adapter, typename F, typename Z, typename A>
     bool nilpotence(const Adapter& adapter, 
-        const std::string n_name, const N& n, 
+        const std::string z_name, const Z& z, 
         const std::string f_name, const F& f, 
         const A& as
     ) {
         return equality(
             adapter,
-            f_name + " [denoted \"f\"] must return the index "+ n_name +" [denoted \"n\"] if both parameters are the same", 
+            f_name + " [denoted \"f\"] must return a zero value "+ z_name +" [denoted \"z\"] if both parameters are the same", 
             "f(a,a) : ", [=](auto a){ return f(a, a);  },
-            "n      : ", [=](auto a){ return n; },
+            "z      : ", [=](auto a){ return z; },
             as);
     }
 
@@ -725,12 +763,12 @@ namespace test {
         const A& as, const B& bs
     ) {
         return predicate(adapter, 
-            f_name + " [denoted \"f\"] must return the original input if invoked a second time with the same left parameter" + 
+            f_name + " [denoted \"f\"] must return the original input if invoked a second time with the same right parameter" + 
             "\nsuch that: \n  f(f(a,b), b) = a\n",
             [=](auto a, auto b){
                 auto fab = f(a,b);
-                auto ffabb = f(a,fab);
-                return Results(adapter.equal(ffabb, b),
+                auto ffabb = f(fab, b);
+                return Results(adapter.equal(ffabb, a),
                     "f(a,b)       : " + indent(adapter.print(fab), "  ") + "\n" +
                     "f(f(a,b), b) : " + indent(adapter.print(ffabb), "  ") + "\n"
                 );
@@ -940,41 +978,53 @@ namespace test {
             }, as);
     }
 
-    template<typename Adapter, typename F, typename G, typename A, typename B>
+    template<typename Adapter, typename Add, typename F, typename G, typename A, typename B>
     bool binary_conservation(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const std::string g_name, const G& g, 
+        const std::string add_name, const Add& add, 
         const A& as, const B& bs
     ) {
         return predicate(adapter, 
             f_name + " [denoted \"f\"] must conserve " + g_name + " [denoted \"g\"]" + 
-            "\nsuch that: \n  g(f(a)) = g(a)\n",
+            "\nsuch that: \n  g(a)+g(b) = g(f(a,b))\n",
             [=](auto a, auto b){
-                auto gab = g(a)+g(b);
+                auto ga = g(a);
+                auto gb = g(b);
+                auto gagb = add(ga,gb);
                 auto fab = f(a,b);
                 auto gfab = g(fab);
-                return Results(adapter.equal(gfab, gab),
-                    "g(a)+g(b) : " + indent(adapter.print(gab), "  ") + "\n" +
+                return Results(adapter.equal(gfab, gagb),
+                    "g(a)      : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "g(b)      : " + indent(adapter.print(gb), "  ") + "\n" +
+                    "g(a)+g(b) : " + indent(adapter.print(gagb), "  ") + "\n" +
                     "f(a,b)    : " + indent(adapter.print(fab), "  ") + "\n" +
                     "g(f(a,b)) : " + indent(adapter.print(gfab), "  ") + "\n"
                 );
             }, as, bs);
     }
 
-    template<typename Adapter, typename F, typename G, typename A, typename B, typename C>
+    template<typename Adapter, typename Add, typename F, typename G, typename A, typename B, typename C>
     bool trinary_conservation(const Adapter& adapter, 
         const std::string f_name, const F& f, 
         const std::string g_name, const G& g, 
+        const std::string add_name, const Add& add, 
         const A& as, const B& bs, const C& cs
     ) {
         return predicate(adapter, 
             f_name + " [denoted \"f\"] must conserve " + g_name + " [denoted \"g\"]" + 
-            "\nsuch that: \n  g(f(a)) = g(a)\n",
+            "\nsuch that: \n  g(a)+g(b)+g(c) = g(f(a,b,c))\n",
             [=](auto a, auto b, auto c){
-                auto gabc = g(a)+g(b)+g(c);
+                auto ga = g(a);
+                auto gb = g(b);
+                auto gc = g(c);
+                auto gabc = add(add(ga,gb),gc);
                 auto fabc = f(a,b,c);
                 auto gfabc = g(fabc);
                 return Results(adapter.equal(gfabc, gabc),
+                    "g(a)      : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "g(b)      : " + indent(adapter.print(gb), "  ") + "\n" +
+                    "g(c)      : " + indent(adapter.print(gc), "  ") + "\n" +
                     "g(a)+g(b)+g(c) : " + indent(adapter.print(gabc), "  ") + "\n" +
                     "f(a,b,c)       : " + indent(adapter.print(fabc), "  ") + "\n" +
                     "g(f(a,b,c))    : " + indent(adapter.print(gfabc), "  ") + "\n"
@@ -1039,84 +1089,81 @@ namespace test {
 
 
 
-    template<typename Adapter, typename Finv, typename F, typename A, typename B, typename C>
+    template<typename Adapter, typename F, typename A, typename B, typename C>
     bool left_cancellative(const Adapter& adapter, 
-        const std::string finv_name, const Finv& finv, 
-        const std::string f_name,    const F& f, 
+        const std::string f_name, const F& f, 
         const A& as, const B& bs, const C& cs
     ) {
         return predicate(
             adapter,
-            f_name + " [denoted \"f\"] must imply that two arguments are equal if invoking them both on the left with with the same right argument produces the same result" + 
+            f_name + " [denoted \"f\"] must imply that two arguments are equal if invoking them with the same left argument produces the same result" + 
                 "such that: \n  f(a,b)=f(a,c) implies b=c \n",
             [=](auto a, auto b, auto c){
-                auto fac = f(a,c);
                 auto fab = f(a,b);
+                auto fac = f(a,c);
                 std::string diagnostics;
-                diagnostics += "f(a,c) : " + indent(adapter.print(fac), "  ") + "\n";
                 diagnostics += "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n";
-                return Results(adapter.equal(f(a,b), f(a,c))? adapter.equal(b,c) : true, diagnostics); 
+                diagnostics += "f(a,c) : " + indent(adapter.print(fac), "  ") + "\n";
+                return Results(adapter.equal(fab, fac)? adapter.equal(b,c) : true, diagnostics); 
             }, 
             as, bs, cs);
     }
 
-    template<typename Adapter, typename Finv, typename F, typename A, typename B, typename C>
+    template<typename Adapter, typename F, typename A, typename B, typename C>
     bool right_cancellative(const Adapter& adapter, 
-        const std::string finv_name, const Finv& finv, 
-        const std::string f_name,    const F& f, 
+        const std::string f_name, const F& f, 
         const A& as, const B& bs, const C& cs
     ) {
         return predicate(
             adapter,
-            f_name + " [denoted \"f\"] must imply that two arguments are equal if invoking them both on the right with with the same left argument produces the same result" + 
+            f_name + " [denoted \"f\"] must imply that two arguments are equal if invoking them with the same right argument produces the same result" + 
                 "such that: \n  f(b,a)=f(c,a) implies b=c \n", 
             [=](auto a, auto b, auto c){
-                auto fca = f(c,a);
                 auto fba = f(b,a);
+                auto fca = f(c,a);
                 std::string diagnostics;
-                diagnostics += "f(c,a) : " + indent(adapter.print(fca), "  ") + "\n";
                 diagnostics += "f(b,a) : " + indent(adapter.print(fba), "  ") + "\n";
-                return Results(adapter.equal(f(a,b), f(a,c))? adapter.equal(b,c) : true, diagnostics); 
+                diagnostics += "f(c,a) : " + indent(adapter.print(fca), "  ") + "\n";
+                return Results(adapter.equal(fba, fca)? adapter.equal(b,c) : true, diagnostics); 
             }, 
             as, bs, cs);
     }
 
-    template<typename Adapter, typename Finv, typename F, typename A, typename B, typename C>
+    template<typename Adapter, typename F, typename A, typename B, typename C>
     bool cancellative(const Adapter& adapter, 
-        const std::string finv_name, const Finv& finv, 
         const std::string f_name, const F& f, 
         const A& as, const B& bs, const C& cs
     ) {
         return 
-            left_cancellative (adapter, finv_name, finv, f_name, f, as) &&
-            right_cancellative(adapter, finv_name, finv, f_name, f, as);
+            left_cancellative (adapter, f_name, f, as, bs, cs) &&
+            right_cancellative(adapter, f_name, f, as, bs, cs);
     }
 
 
 
-    template<typename Adapter, typename R, typename A, typename B>
+    template<typename Adapter, typename R, typename A>
     bool reflexivity(const Adapter& adapter, 
         const std::string r_name, const R& r, 
         const A& as
     ) {
         return predicate(
             adapter,
-            "reflexivity", 
+            "Relation " + r_name + " [denoted \"r\"] is reflexive", 
             [=](auto a){
                 return Results(r(a, a), "such that: \n  r(a,a) for each a \n"); 
             }, as);
     }
 
-    template<typename Adapter, typename R, typename A, typename B>
+    template<typename Adapter, typename R, typename A>
     bool irreflexivity(const Adapter& adapter, 
         const std::string r_name, const R& r, 
         const A& as
     ) {
         return predicate(
             adapter,
-            "irreflexivity", 
+            "Relation " + r_name + " [denoted \"r\"] is irreflexive", 
             [=](auto a){
-                return Results(!r(a, a), "such that: \n  r(a,a) for each a \n");
+                return Results(!r(a, a), "such that: \n  ¬r(a,a) for each a \n");
             }, as);
     }
 
@@ -1127,7 +1174,7 @@ namespace test {
     ) {
         return predicate(
             adapter,
-            "symmetry", 
+            "Relation " + r_name + " [denoted \"r\"] is symmetric", 
             [=](auto a, auto b){
                 auto rab = r(a, b);
                 auto rba = r(b, a);
@@ -1140,21 +1187,40 @@ namespace test {
     }
 
     template<typename Adapter, typename R, typename A, typename B>
+    bool asymmetry(const Adapter& adapter, 
+            std::string r_name, const R& r, 
+        const A& as, const B& bs
+    ) {
+        return predicate(
+            adapter,
+            "Relation " + r_name + " [denoted \"r\"] is asymmetric", 
+            [=](auto a, auto b){
+                auto rab = r(a, b);
+                auto rba = r(b, a);
+                std::string diagnostics;
+                diagnostics += "such that: \n  r(a,b) = ¬r(b,a)\n";
+                diagnostics += "r(a,b) : " + indent(adapter.print(rab), "  ") + "\n";
+                diagnostics += "r(b,a) : " + indent(adapter.print(rba), "  ") + "\n";
+                return Results(rab? !rba:true, diagnostics);
+            }, as, bs);
+    }
+
+    template<typename Adapter, typename R, typename A, typename B>
     bool antisymmetry(const Adapter& adapter, 
             std::string r_name, const R& r, 
         const A& as, const B& bs
     ) {
         return predicate(
             adapter,
-            "antisymmetry", 
+            "Relation " + r_name + " [denoted \"r\"] is antisymmetric", 
             [=](auto a, auto b){
                 auto rab = r(a, b);
                 auto rba = r(b, a);
                 std::string diagnostics;
-                diagnostics += "such that: \n  r(a,b) = r(b,a)\n";
+                diagnostics += "such that: \n  r(a,b) = r(b,a) implies a=b\n";
                 diagnostics += "r(a,b) : " + indent(adapter.print(rab), "  ") + "\n";
                 diagnostics += "r(b,a) : " + indent(adapter.print(rba), "  ") + "\n";
-                return Results(rab!=rba, diagnostics);
+                return Results(rab&&rba? adapter.equal(a,b):true, diagnostics);
             }, as, bs);
     }
 
@@ -1165,16 +1231,16 @@ namespace test {
     ) {
         return predicate(
             adapter,
-            "transitivity", 
+            "Relation " + r_name + " [denoted \"r\"] is transitive", 
             [=](auto a, auto b, auto c){
                 auto rab = r(a, b);
-                auto rba = r(b, a);
                 auto rbc = r(b, c);
                 auto rac = r(a, c);
                 std::string diagnostics;
-                diagnostics += "such that: \n  r(a,b) ∧ r(b,a) implies r(a,c)\n";
+                diagnostics += "such that: \n  r(a,b) ∧ r(b,c) implies r(a,c)\n";
                 diagnostics += "r(a,b) : " + indent(adapter.print(rab), "  ") + "\n";
-                diagnostics += "r(b,a) : " + indent(adapter.print(rba), "  ") + "\n";
+                diagnostics += "r(b,c) : " + indent(adapter.print(rbc), "  ") + "\n";
+                diagnostics += "r(a,c) : " + indent(adapter.print(rac), "  ") + "\n";
                 return Results(rab&&rbc?rac:true, diagnostics); 
             }, as, bs, cs);
     }
@@ -1186,7 +1252,7 @@ namespace test {
     ) {
         return predicate(
             adapter,
-            "antitransitivity", 
+            "Relation " + r_name + " [denoted \"r\"] is antitransitive", 
             [=](auto a, auto b, auto c){
                 auto rab = r(a, b);
                 auto rbc = r(b, c);
@@ -1195,7 +1261,7 @@ namespace test {
                 diagnostics += "such that: \n  r(a,b) ∧ r(b,c) implies ¬r(a,c)\n";
                 diagnostics += "r(a,b) : " + indent(adapter.print(rab), "  ") + "\n";
                 diagnostics += "r(b,c) : " + indent(adapter.print(rbc), "  ") + "\n";
-                diagnostics += "r(a,c) : " + indent(adapter.print(rbc), "  ") + "\n";
+                diagnostics += "r(a,c) : " + indent(adapter.print(rac), "  ") + "\n";
                 return Results(rab&&rbc?!rac:true, diagnostics); 
             }, as, bs, cs);
     }
@@ -1207,12 +1273,12 @@ namespace test {
     ) {
         return predicate(
             adapter,
-            "totality", 
+            "Relation " + r_name + " [denoted \"r\"] is total", 
             [=](auto a, auto b){
                 auto rab = r(a, b);
                 auto rba = r(b, a);
                 std::string diagnostics;
-                diagnostics += "such that: \n  r(a,b) = r(b,a)\n";
+                diagnostics += "such that: \n  r(a,b) ∨ r(b,a)\n";
                 diagnostics += "r(a,b) : " + indent(adapter.print(rab), "  ") + "\n";
                 diagnostics += "r(b,a) : " + indent(adapter.print(rba), "  ") + "\n";
                 return Results(rab||rba, diagnostics); 
@@ -1226,7 +1292,7 @@ namespace test {
     ) {
         return predicate(
             adapter,
-            "strict totality", 
+            "Relation " + r_name + " [denoted \"r\"] is strictly total", 
             [=](auto a, auto b){
                 auto rab = r(a, b);
                 auto rba = r(b, a);
@@ -1237,9 +1303,6 @@ namespace test {
                 return Results(rab^rba, diagnostics); 
             }, as, bs);
     }
-
-
-
 
     template<typename Adapter, typename LessThanEqual, typename Add, typename F, typename A, typename B, typename C>
     bool triangle_inequality(const Adapter& adapter, 
@@ -1254,14 +1317,14 @@ namespace test {
                 auto fac = f(a,c);
                 auto fab = f(a,b);
                 auto fbc = f(b,c);
-                auto fab_fac = add(fab, fac);
+                auto fab_fbc = add(fab, fbc);
                 std::string diagnostics;
-                diagnostics += "such that: \n  f(a,c) ≤ f(a,b)+f(a,c)\n";
+                diagnostics += "such that: \n  f(a,c) ≤ f(a,b)+f(b,c)\n";
                 diagnostics += "f(a,c) : " + indent(adapter.print(fac), "  ") + "\n";
-                diagnostics += "f(a,b)+f(a,c) : " + indent(adapter.print(fab_fac), "  ") + "\n";
                 diagnostics += "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n";
                 diagnostics += "f(b,c) : " + indent(adapter.print(fbc), "  ") + "\n";
-                return Results(leq(fac, fab_fac), diagnostics); 
+                diagnostics += "f(a,b)+f(b,c) : " + indent(adapter.print(fab_fbc), "  ") + "\n";
+                return Results(leq(fac, fab_fbc), diagnostics); 
             }, 
             as, bs, cs);
     }
@@ -1327,11 +1390,11 @@ namespace test {
                 auto gfa = g(fa);
                 auto ga = g(a);
                 std::string diagnostics;
-                diagnostics += "such that: \n  g(a) ≤ g(f(a))\n";
+                diagnostics += "such that: \n  g(f(a)) ≥ g(a)\n";
                 diagnostics += "g(f(a)) : " + indent(adapter.print(gfa), "  ") + "\n";
                 diagnostics += "g(a) : " + indent(adapter.print(ga), "  ") + "\n";
                 diagnostics += "f(a) : " + indent(adapter.print(fa), "  ") + "\n";
-                return Results(ga <= gfa, diagnostics); 
+                return Results(gfa >= ga, diagnostics); 
             }, as);
     }
 
@@ -1349,11 +1412,11 @@ namespace test {
                 auto gfa = g(fa);
                 auto ga = g(a);
                 std::string diagnostics;
-                diagnostics += "such that: \n  g(a) < g(f(a))\n";
+                diagnostics += "such that: \n  g(f(a)) > g(a)\n";
                 diagnostics += "g(f(a)) : " + indent(adapter.print(gfa), "  ") + "\n";
                 diagnostics += "g(a) : " + indent(adapter.print(ga), "  ") + "\n";
                 diagnostics += "f(a) : " + indent(adapter.print(fa), "  ") + "\n";
-                return Results(ga < gfa, diagnostics); 
+                return Results(gfa > ga, diagnostics); 
             }, as);
     }
 
@@ -1366,7 +1429,7 @@ namespace test {
     ) {
         return predicate(
             adapter,
-            f_name + " [denoted \"f\"] must be decreasing with respect to "+g_name+" [denoted \"g\"], so that an increase to input [denoted \"i\"] corresponds to a decrease to output", 
+            f_name + " [denoted \"f\"] must be decreasing with respect to "+g_name+" [denoted \"g\"], so that an increase to input "+i_name+" [denoted \"i\"] causes a decrease to output", 
             [=](auto a){
                 auto fa = f(a);
                 auto gfa = g(fa);
@@ -1374,13 +1437,13 @@ namespace test {
                 auto fia = f(ia);
                 auto gfia = g(fia);
                 std::string diagnostics;
-                diagnostics += "such that: \n  g(f(a)) > g(f(i(a)))\n";
+                diagnostics += "such that: \n  g(f(i(a))) < g(f(a))\n";
                 diagnostics += "f(a)   : " + indent(adapter.print(fa), "  ") + "\n";
                 diagnostics += "gf(a)  : " + indent(adapter.print(gfa), "  ") + "\n";
                 diagnostics += "i(a)   : " + indent(adapter.print(ia), "  ") + "\n";
                 diagnostics += "fi(a)  : " + indent(adapter.print(fia), "  ") + "\n";
                 diagnostics += "gfi(a) : " + indent(adapter.print(gfia), "  ") + "\n";
-                return Results(gfa > gfia, diagnostics); 
+                return Results(gfia < gfa, diagnostics); 
             }, as);
     }
 
@@ -1393,7 +1456,7 @@ namespace test {
     ) {
         return predicate(
             adapter,
-            f_name + " [denoted \"f\"] must be nonincreasing with respect to "+g_name+" [denoted \"g\"], so that an increase to input [denoted \"i\"] corresponds to a decrease to output if any change occurs", 
+            f_name + " [denoted \"f\"] must be nonincreasing with respect to "+g_name+" [denoted \"g\"], so that an increase to input "+i_name+" [denoted \"i\"] does not cause an increase to output", 
             [=](auto a){
                 auto fa = f(a);
                 auto gfa = g(fa);
@@ -1401,13 +1464,13 @@ namespace test {
                 auto fia = f(ia);
                 auto gfia = g(fia);
                 std::string diagnostics;
-                diagnostics += "such that: \n  g(f(a)) ≥ g(f(i(a)))\n";
+                diagnostics += "such that: \n  g(f(i(a))) ≤ g(f(a))\n";
                 diagnostics += "f(a)   : " + indent(adapter.print(fa), "  ") + "\n";
                 diagnostics += "gf(a)  : " + indent(adapter.print(gfa), "  ") + "\n";
                 diagnostics += "i(a)   : " + indent(adapter.print(ia), "  ") + "\n";
                 diagnostics += "fi(a)  : " + indent(adapter.print(fia), "  ") + "\n";
                 diagnostics += "gfi(a) : " + indent(adapter.print(gfia), "  ") + "\n";
-                return Results(gfa >= gfia, diagnostics); 
+                return Results(gfia <= gfa, diagnostics); 
             }, as);
     }
 
@@ -1420,7 +1483,7 @@ namespace test {
     ) {
         return predicate(
             adapter,
-            f_name + " [denoted \"f\"] must be nondecreasing with respect to "+g_name+" [denoted \"g\"], so that an increase to input [denoted \"i\"] corresponds to a increase to output if any change occurs", 
+            f_name + " [denoted \"f\"] must be nondecreasing with respect to "+g_name+" [denoted \"g\"], so that an increase to input "+i_name+" [denoted \"i\"] does not cause a decrease to output", 
             [=](auto a){
                 auto fa = f(a);
                 auto gfa = g(fa);
@@ -1428,13 +1491,13 @@ namespace test {
                 auto fia = f(ia);
                 auto gfia = g(fia);
                 std::string diagnostics;
-                diagnostics += "such that: \n  g(f(a)) ≤ g(f(i(a)))\n";
+                diagnostics += "such that: \n  g(f(i(a))) ≥ g(f(a))\n";
                 diagnostics += "f(a)   : " + indent(adapter.print(fa), "  ") + "\n";
                 diagnostics += "gf(a)  : " + indent(adapter.print(gfa), "  ") + "\n";
                 diagnostics += "i(a)   : " + indent(adapter.print(ia), "  ") + "\n";
                 diagnostics += "fi(a)  : " + indent(adapter.print(fia), "  ") + "\n";
                 diagnostics += "gfi(a) : " + indent(adapter.print(gfia), "  ") + "\n";
-                return Results(gfa <= gfia, diagnostics); 
+                return Results(gfia >= gfa, diagnostics); 
             }, as);
     }
 
@@ -1447,7 +1510,7 @@ namespace test {
     ) {
         return predicate(
             adapter,
-            f_name + " [denoted \"f\"] must be increasing with respect to "+g_name+" [denoted \"g\"], so that an increase to input [denoted \"i\"] corresponds to a increase to output", 
+            f_name + " [denoted \"f\"] must be increasing with respect to "+g_name+" [denoted \"g\"], so that an increase to input "+i_name+" [denoted \"i\"] causes an increase to output", 
             [=](auto a){
                 auto fa = f(a);
                 auto gfa = g(fa);
@@ -1455,13 +1518,137 @@ namespace test {
                 auto fia = f(ia);
                 auto gfia = g(fia);
                 std::string diagnostics;
-                diagnostics += "such that: \n  g(f(a)) < g(f(i(a)))\n";
+                diagnostics += "such that: \n  g(f(i(a))) > g(f(a))\n";
                 diagnostics += "f(a)   : " + indent(adapter.print(fa), "  ") + "\n";
                 diagnostics += "gf(a)  : " + indent(adapter.print(gfa), "  ") + "\n";
                 diagnostics += "i(a)   : " + indent(adapter.print(ia), "  ") + "\n";
                 diagnostics += "fi(a)  : " + indent(adapter.print(fia), "  ") + "\n";
                 diagnostics += "gfi(a) : " + indent(adapter.print(gfia), "  ") + "\n";
-                return Results(gfa < gfia, diagnostics); 
+                return Results(gfia > gfa, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename D, typename I, typename A>
+    bool decelerating(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string i_name, const I& i, 
+        const std::string d_name, const D& d, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must have decelerating returns so that an increase to input"+
+            i_name + " [denoted \"i\"] will cause smaller changes in output (according to distance "+d_name+", denoted \"d\") when applied a second time", 
+            [=](auto a){
+                auto fa = f(a);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto iia = i(ia);
+                auto fiia = f(iia);
+                auto d1 = d(fa, fia);
+                auto d2 = d(fia, fiia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  d(f∘i∘i(a), f∘i(a)) < d(f∘i(a), f(a))\n";
+                diagnostics += "f(a)                : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "i(a)                : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "f∘i(a)              : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "f∘i∘i(a)            : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "d(f∘i(a), f(a))     : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(f∘i∘i(a), f∘i(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d2 < d1, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename D, typename I, typename A>
+    bool nonaccelerating(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string i_name, const I& i, 
+        const std::string d_name, const D& d, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must have nonaccelerating returns so that an increase to input"+
+            i_name + " [denoted \"i\"] will cause smaller or equivalent changes in output (according to distance "+d_name+", denoted \"d\") when applied a second time", 
+            [=](auto a){
+                auto fa = f(a);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto iia = i(ia);
+                auto fiia = f(iia);
+                auto d1 = d(fa, fia);
+                auto d2 = d(fia, fiia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  d(f∘i∘i(a), f∘i(a)) ≤ d(f∘i(a), f(a))\n";
+                diagnostics += "f(a)                : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "i(a)                : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "f∘i(a)              : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "f∘i∘i(a)            : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "d(f∘i(a), f(a))     : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(f∘i∘i(a), f∘i(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d2 <= d1, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename D, typename I, typename A>
+    bool nondecelerating(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string i_name, const I& i, 
+        const std::string d_name, const D& d, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must have nondecelerating returns so that an increase to input"+
+            i_name + " [denoted \"i\"] will cause larger or equivalent changes in output (according to distance "+d_name+", denoted \"d\") when applied a second time", 
+            [=](auto a){
+                auto fa = f(a);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto iia = i(ia);
+                auto fiia = f(iia);
+                auto d1 = d(fa, fia);
+                auto d2 = d(fia, fiia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  d(f∘i∘i(a), f∘i(a)) ≥ d(f∘i(a), f(a))\n";
+                diagnostics += "f(a)                : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "i(a)                : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "f∘i(a)              : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "f∘i∘i(a)            : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "d(f∘i(a), f(a))     : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(f∘i∘i(a), f∘i(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d2 >= d1, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename D, typename I, typename A>
+    bool accelerating(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string i_name, const I& i, 
+        const std::string d_name, const D& d, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must have accelerating returns so that an increase to input"+
+            i_name + " [denoted \"i\"] will cause larger changes in output (according to distance "+d_name+", denoted \"d\") when applied a second time", 
+            [=](auto a){
+                auto fa = f(a);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto iia = i(ia);
+                auto fiia = f(iia);
+                auto d1 = d(fa, fia);
+                auto d2 = d(fia, fiia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  d(f∘i∘i(a), f∘i(a)) > d(f∘i(a), f(a))\n";
+                diagnostics += "f(a)                : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "i(a)                : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "f∘i(a)              : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "f∘i∘i(a)            : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "d(f∘i(a), f(a))     : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(f∘i∘i(a), f∘i(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d2 > d1, diagnostics); 
             }, as);
     }
 
@@ -1475,8 +1662,8 @@ namespace test {
     ) {
         return predicate(
             adapter,
-            f_name + " [denoted \"f\"] must have decelerating returns with respect to "+g_name+" [denoted \"g\"], so that same increase to input"+
-            i_name + " [denoted \"i\"] will cause smaller changes in output (according to distance \"d\") if the starting input is larger", 
+            f_name + " [denoted \"f\"] must have decelerating returns with respect to "+g_name+" [denoted \"g\"], so that an increase to input"+
+            i_name + " [denoted \"i\"] will cause smaller changes in output (according to distance "+d_name+", denoted \"d\") when applied a second time", 
             [=](auto a){
                 auto fa = f(a);
                 auto gfa = g(fa);
@@ -1489,17 +1676,17 @@ namespace test {
                 auto d1 = d(gfa, gfia);
                 auto d2 = d(gfia, gfiia);
                 std::string diagnostics;
-                diagnostics += "such that: \n  d(gf(a), gfi(a)) > d(gfi(a), gfii(a))\n";
-                diagnostics += "f(a)               : " + indent(adapter.print(fa), "  ") + "\n";
-                diagnostics += "gf(a)              : " + indent(adapter.print(gfa), "  ") + "\n";
-                diagnostics += "i(a)               : " + indent(adapter.print(ia), "  ") + "\n";
-                diagnostics += "fi(a)              : " + indent(adapter.print(fia), "  ") + "\n";
-                diagnostics += "gfi(a)             : " + indent(adapter.print(gfia), "  ") + "\n";
-                diagnostics += "fii(a)             : " + indent(adapter.print(fiia), "  ") + "\n";
-                diagnostics += "gfii(a)            : " + indent(adapter.print(gfiia), "  ") + "\n";
-                diagnostics += "d(gf(a), gfi(a))   : " + indent(adapter.print(d1), "  ") + "\n";
-                diagnostics += "d(gfi(a), gfii(a)) : " + indent(adapter.print(d2), "  ") + "\n";
-                return Results(d1 > d2, diagnostics); 
+                diagnostics += "such that: \n  d(g∘f∘i∘i(a), g∘f∘i(a)) < d(g∘f∘i(a), g∘f(a))\n";
+                diagnostics += "f(a)                    : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "g(f(a))                 : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)                    : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "f∘i(a)                  : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "g∘f∘i(a)                : " + indent(adapter.print(gfia), "  ") + "\n";
+                diagnostics += "f∘i∘i(a)                : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "g∘f∘i∘i(a)              : " + indent(adapter.print(gfiia), "  ") + "\n";
+                diagnostics += "d(g∘f∘i(a), g∘f(a))     : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(g∘f∘i∘i(a), g∘f∘i(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d2 < d1, diagnostics); 
             }, as);
     }
 
@@ -1513,8 +1700,8 @@ namespace test {
     ) {
         return predicate(
             adapter,
-            f_name + " [denoted \"f\"] must have accelerating returns with respect to "+g_name+" [denoted \"g\"], so that same increase to input"+
-            i_name + " [denoted \"i\"] will cause smaller changes in output (according to distance \"d\") if the starting input is larger", 
+            f_name + " [denoted \"f\"] must have nonaccelerating returns with respect to "+g_name+" [denoted \"g\"], so that an increase to input"+
+            i_name + " [denoted \"i\"] will cause smaller or equivalent changes in output (according to distance "+d_name+", denoted \"d\") when applied a second time", 
             [=](auto a){
                 auto fa = f(a);
                 auto gfa = g(fa);
@@ -1527,17 +1714,17 @@ namespace test {
                 auto d1 = d(gfa, gfia);
                 auto d2 = d(gfia, gfiia);
                 std::string diagnostics;
-                diagnostics += "such that: \n  d(gf(a), gfi(a)) > d(gfi(a), gfii(a))\n";
-                diagnostics += "f(a)               : " + indent(adapter.print(fa), "  ") + "\n";
-                diagnostics += "gf(a)              : " + indent(adapter.print(gfa), "  ") + "\n";
-                diagnostics += "i(a)               : " + indent(adapter.print(ia), "  ") + "\n";
-                diagnostics += "fi(a)              : " + indent(adapter.print(fia), "  ") + "\n";
-                diagnostics += "gfi(a)             : " + indent(adapter.print(gfia), "  ") + "\n";
-                diagnostics += "fii(a)             : " + indent(adapter.print(fiia), "  ") + "\n";
-                diagnostics += "gfii(a)            : " + indent(adapter.print(gfiia), "  ") + "\n";
-                diagnostics += "d(gf(a), gfi(a))   : " + indent(adapter.print(d1), "  ") + "\n";
-                diagnostics += "d(gfi(a), gfii(a)) : " + indent(adapter.print(d2), "  ") + "\n";
-                return Results(d1 >= d2, diagnostics); 
+                diagnostics += "such that: \n  d(g∘f∘i∘i(a), g∘f∘i(a)) ≤ d(g∘f∘i(a), g∘f(a))\n";
+                diagnostics += "f(a)                    : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "g(f(a))                 : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)                    : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "f∘i(a)                  : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "g∘f∘i(a)                : " + indent(adapter.print(gfia), "  ") + "\n";
+                diagnostics += "f∘i∘i(a)                : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "g∘f∘i∘i(a)              : " + indent(adapter.print(gfiia), "  ") + "\n";
+                diagnostics += "d(g∘f∘i(a), g∘f(a))     : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(g∘f∘i∘i(a), g∘f∘i(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d2 <= d1, diagnostics); 
             }, as);
     }
 
@@ -1551,8 +1738,8 @@ namespace test {
     ) {
         return predicate(
             adapter,
-            f_name + " [denoted \"f\"] must have nondecelerating returns with respect to "+g_name+" [denoted \"g\"], so that same increase to input"+
-            i_name + " [denoted \"i\"] will cause smaller changes in output (according to distance \"d\") if the starting input is larger", 
+            f_name + " [denoted \"f\"] must have nondecelerating returns with respect to "+g_name+" [denoted \"g\"], so that an increase to input"+
+            i_name + " [denoted \"i\"] will cause larger or equivalent changes in output (according to distance "+d_name+", denoted \"d\") when applied a second time", 
             [=](auto a){
                 auto fa = f(a);
                 auto gfa = g(fa);
@@ -1565,17 +1752,17 @@ namespace test {
                 auto d1 = d(gfa, gfia);
                 auto d2 = d(gfia, gfiia);
                 std::string diagnostics;
-                diagnostics += "such that: \n  d(gf(a), gfi(a)) > d(gfi(a), gfii(a))\n";
-                diagnostics += "f(a)               : " + indent(adapter.print(fa), "  ") + "\n";
-                diagnostics += "gf(a)              : " + indent(adapter.print(gfa), "  ") + "\n";
-                diagnostics += "i(a)               : " + indent(adapter.print(ia), "  ") + "\n";
-                diagnostics += "fi(a)              : " + indent(adapter.print(fia), "  ") + "\n";
-                diagnostics += "gfi(a)             : " + indent(adapter.print(gfia), "  ") + "\n";
-                diagnostics += "fii(a)             : " + indent(adapter.print(fiia), "  ") + "\n";
-                diagnostics += "gfii(a)            : " + indent(adapter.print(gfiia), "  ") + "\n";
-                diagnostics += "d(gf(a), gfi(a))   : " + indent(adapter.print(d1), "  ") + "\n";
-                diagnostics += "d(gfi(a), gfii(a)) : " + indent(adapter.print(d2), "  ") + "\n";
-                return Results(d1 <= d2, diagnostics); 
+                diagnostics += "such that: \n  d(g∘f∘i∘i(a), g∘f∘i(a)) ≥ d(g∘f∘i(a), g∘f(a))\n";
+                diagnostics += "f(a)                    : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "g(f(a))                 : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)                    : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "f∘i(a)                  : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "g∘f∘i(a)                : " + indent(adapter.print(gfia), "  ") + "\n";
+                diagnostics += "f∘i∘i(a)                : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "g∘f∘i∘i(a)              : " + indent(adapter.print(gfiia), "  ") + "\n";
+                diagnostics += "d(g∘f∘i(a), g∘f(a))     : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(g∘f∘i∘i(a), g∘f∘i(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d2 >= d1, diagnostics); 
             }, as);
     }
 
@@ -1589,8 +1776,8 @@ namespace test {
     ) {
         return predicate(
             adapter,
-            f_name + " [denoted \"f\"] must have accelerating returns with respect to "+g_name+" [denoted \"g\"], so that same increase to input"+
-            i_name + " [denoted \"i\"] will cause smaller changes in output (according to distance \"d\") if the starting input is larger", 
+            f_name + " [denoted \"f\"] must have accelerating returns with respect to "+g_name+" [denoted \"g\"], so that an increase to input"+
+            i_name + " [denoted \"i\"] will cause larger changes in output (according to distance "+d_name+", denoted \"d\") when applied a second time", 
             [=](auto a){
                 auto fa = f(a);
                 auto gfa = g(fa);
@@ -1603,17 +1790,17 @@ namespace test {
                 auto d1 = d(gfa, gfia);
                 auto d2 = d(gfia, gfiia);
                 std::string diagnostics;
-                diagnostics += "such that: \n  d(gf(a), gfi(a)) > d(gfi(a), gfii(a))\n";
-                diagnostics += "f(a)               : " + indent(adapter.print(fa), "  ") + "\n";
-                diagnostics += "gf(a)              : " + indent(adapter.print(gfa), "  ") + "\n";
-                diagnostics += "i(a)               : " + indent(adapter.print(ia), "  ") + "\n";
-                diagnostics += "fi(a)              : " + indent(adapter.print(fia), "  ") + "\n";
-                diagnostics += "gfi(a)             : " + indent(adapter.print(gfia), "  ") + "\n";
-                diagnostics += "fii(a)             : " + indent(adapter.print(fiia), "  ") + "\n";
-                diagnostics += "gfii(a)            : " + indent(adapter.print(gfiia), "  ") + "\n";
-                diagnostics += "d(gf(a), gfi(a))   : " + indent(adapter.print(d1), "  ") + "\n";
-                diagnostics += "d(gfi(a), gfii(a)) : " + indent(adapter.print(d2), "  ") + "\n";
-                return Results(d1 < d2, diagnostics); 
+                diagnostics += "such that: \n  d(g∘f∘i∘i(a), g∘f∘i(a)) > d(g∘f∘i(a), g∘f(a))\n";
+                diagnostics += "f(a)                    : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "g(f(a))                 : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)                    : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "f∘i(a)                  : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "g∘f∘i(a)                : " + indent(adapter.print(gfia), "  ") + "\n";
+                diagnostics += "f∘i∘i(a)                : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "g∘f∘i∘i(a)              : " + indent(adapter.print(gfiia), "  ") + "\n";
+                diagnostics += "d(g∘f∘i(a), g∘f(a))     : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(g∘f∘i∘i(a), g∘f∘i(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d2 > d1, diagnostics); 
             }, as);
     }
 

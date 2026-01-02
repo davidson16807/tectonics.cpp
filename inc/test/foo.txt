@@ -1,0 +1,3895 @@
+```
+
+./test.cpp
+
+```c++
+#include "./structures/ringlike_test.cpp"
+#include "./structures/grouplike_test.cpp"
+#include "./structures/metriclike_test.cpp"
+```
+
+./adapter.hpp
+
+```c++
+#pragma once
+
+// C libraries
+#include <cmath>
+
+// std libraries
+#include <sstream>
+#include <string>
+
+/*
+A `test::*Adapter` is a class that standardizes a minimal set of function signatures to permit testing.
+Many functions must satisfy other concerns that affect their signature, such as performance.
+Unit tests require much fewer concerns to be satisfied, 
+so such functions could be adapted if needed to another signature that is easier to work with when testing.
+However it is important that such adapter logic be clearly separated from production code, 
+and this is what `test::*Adapter` provide.
+
+It is important to note that the list of `*Adapter` classes here is not comprehensive.
+The definition of `*Adapter` classes is kept deliberately simple to make it easy for 
+developers to define their own `*Adapter` classes to suite their needs.
+All that is needed to define an `*Adapter` are an equality relation and a way to display quantites as a string.
+The `*Adapter` classes here are provided only as a convenience to suite the most common use cases.
+*/
+
+namespace test {
+
+    /*
+    `MetricAdapter` uses an object resembling an `adapted::Metric`
+    in order to compare variables, and an operator<< to display them.
+    */
+    template<typename Metric, typename scalar>
+    struct MetricAdapter{
+        const Metric metric;
+        const scalar threshold;
+
+        MetricAdapter(const Metric& metric, const scalar threshold):
+            metric(metric),
+            threshold(threshold)
+        {}
+
+        inline bool equal(const scalar& a, const scalar& b) const {
+            return metric.distance(a, b) <= threshold;
+        }
+
+        std::string print(const scalar& a) const {
+            std::ostringstream os;
+            os << a;
+            return os.str();
+        }
+
+    };
+
+    /*
+    `CustomAdapter` uses custom lambdas 
+    in order to compare and display variables.
+    */
+    template<typename Equal, typename Print>
+    struct CustomAdapter{
+        const Equal equal;
+        const Print print;
+
+        CustomAdapter(const Equal& equal, const Print& print):
+            equal(equal),
+            print(print)
+        {}
+
+    };
+
+    /*
+    `OperatorAdapter` leverages operators 
+    to compare and display its variables
+    */
+    struct OperatorAdapter{
+
+        template<typename T>
+        inline bool equal(const T& a, const T& b) const {
+            return a == b;
+        }
+
+        template<typename T>
+        std::string print(const T& a) const {
+            std::ostringstream os;
+            os << a;
+            return os.str();
+        }
+
+    };
+
+    /*
+    `StandardAdapter` leverages standardized function names
+    to compare and display its variables
+    */
+    template<typename T>
+    struct StandardAdapter{
+        const T threshold;
+
+        StandardAdapter(T threshold):
+            threshold(threshold)
+        {}
+
+        inline bool equal(const T& a, const T& b) const {
+            return distance(a, b) <= threshold;
+        }
+
+        template<typename T2>
+        std::string print(const T2& a) const {
+            return to_string(a);
+        }
+
+    };
+
+    /*
+    `PrimitiveAdapter` uses `std::` function names
+    to compare and display primitive scalar data types 
+    for which `std::` provides no other `distance` function.
+    Such data types include float and double
+    */
+    template<typename T>
+    struct PrimitiveAdapter{
+        const T threshold;
+
+        PrimitiveAdapter(T threshold):
+            threshold(threshold)
+        {}
+
+        inline bool equal(const T& a, const T& b) const {
+            return std::abs(double(a) - double(b)) <= threshold;
+        }
+
+        template<typename T2>
+        std::string print(const T2& a) const {
+            // return to_string(a);
+            std::ostringstream os;
+            os << a;
+            return os.str();
+        }
+
+    };
+
+}
+
+```
+
+./predicate.hpp
+
+```c++
+#pragma once
+
+// std libraries
+#include <iostream>
+#include <string>   // std::string
+#include <regex>
+
+// in-house libraries
+
+namespace test {
+
+    std::string indent(const std::string& text, const std::string& tab)
+    {
+        return std::regex_replace(
+            (std::regex_search(text, std::regex("\n"))? "\n":"") + text, 
+            std::regex("\n"), 
+            "\n" +tab);
+    }
+
+    struct Results{
+        const bool pass;
+        const std::string diagnostics;
+        Results(
+            const bool pass, 
+            const std::string diagnostics):
+            pass(pass),
+            diagnostics(diagnostics)
+        {}
+    };
+
+    template<typename Adapter, typename Predicate, typename A>
+    bool predicate(const Adapter& adapter, 
+            const std::string& predicate_name, const Predicate& predicate, 
+            const A& a) {
+        using size_type = typename A::size_type;
+        for (size_type i = 0; i < a.size(); ++i) {
+            Results results = predicate(a[i]);
+            if (!results.pass) {
+                std::cout << std::endl;
+                std::cout << "Test failed:" << std::endl;
+                std::cout << "  " << predicate_name << std::endl;
+                std::cout <<  indent(results.diagnostics, "  ") << std::endl;
+                std::cout << "  a : " << indent(adapter.print(a[i]), "    ") << " [from index "<< i <<"]" << std::endl;
+                return false; 
+            }
+        }
+        return true;
+    }
+
+    template<typename Adapter, typename Predicate, typename A, typename B>
+    bool predicate(const Adapter& adapter, 
+            const std::string& predicate_name, const Predicate& predicate, 
+            const A& a, const B& b) {
+        using size_type = typename A::size_type;
+        for (size_type i = 0; i < a.size(); ++i) {
+        for (size_type j = 0; j < b.size(); ++j) {
+            Results results = predicate(a[i], b[j]);
+            if (!results.pass) {
+                std::cout << std::endl;
+                std::cout << "Test failed:" << std::endl;
+                std::cout << "  " << predicate_name << std::endl;
+                std::cout <<  indent(results.diagnostics, "  ") << std::endl;
+                std::cout << "  a : " << indent(adapter.print(a[i]), "    ") << " [from index "<< i <<"]" << std::endl;
+                std::cout << "  b : " << indent(adapter.print(b[j]), "    ") << " [from index "<< j <<"]" << std::endl;
+                return false; 
+            }
+        }}
+        return true;
+    }
+
+    template<typename Adapter, typename Predicate, typename A, typename B, typename C>
+    bool predicate(const Adapter& adapter, 
+            const std::string& predicate_name, const Predicate& predicate, 
+            const A& a, const B& b, const C& c) {
+        using size_type = typename A::size_type;
+        for (size_type i = 0; i < a.size(); ++i) {
+        for (size_type j = 0; j < b.size(); ++j) {
+        for (size_type k = 0; k < c.size(); ++k) {
+            Results results = predicate(a[i], b[j], c[k]);
+            if (!results.pass) {
+                std::cout << std::endl;
+                std::cout << "Test failed:" << std::endl;
+                std::cout << "  " << predicate_name << std::endl;
+                std::cout <<  indent(results.diagnostics, "  ") << std::endl;
+                std::cout << "  a : " << indent(adapter.print(a[i]), "    ") << " [from index "<< i <<"]" << std::endl;
+                std::cout << "  b : " << indent(adapter.print(b[j]), "    ") << " [from index "<< j <<"]" << std::endl;
+                std::cout << "  c : " << indent(adapter.print(c[k]), "    ") << " [from index "<< k <<"]" << std::endl;
+                return false; 
+            }
+        }}}
+        return true;
+    }
+
+}
+```
+
+./equality.hpp
+
+```c++
+#pragma once
+
+// std libraries
+#include <string>   // std::string
+
+// in-house libraries
+#include "predicate.hpp"
+
+namespace test {
+
+    template<typename Adapter, typename LHS, typename RHS, typename A>
+    bool equality( const Adapter& adapter, const std::string& property, 
+                const std::string& lhs_name, const LHS& lhs, 
+                const std::string& rhs_name, const RHS& rhs, 
+                const A& as) {
+        return predicate(adapter, property, 
+            [=](auto a){
+                auto lhs_value = lhs(a);
+                auto rhs_value = rhs(a);
+                return Results(adapter.equal(lhs_value, rhs_value),
+                    "such that: \n  " + lhs_name + " = " + rhs_name + "\n" + 
+                    lhs_name+" : " + indent(adapter.print(lhs_value), "    ")+"\n" +
+                    rhs_name+" : " + indent(adapter.print(rhs_value), "    "));
+            }, as);
+    }
+
+    template<typename Adapter, typename LHS, typename RHS, typename A, typename B>
+    bool equality( const Adapter& adapter, const std::string& property, 
+                const std::string& lhs_name, const LHS& lhs, 
+                const std::string& rhs_name, const RHS& rhs, 
+                const A& as, const B& bs) {
+        return predicate(adapter, property, 
+            [=](auto a, auto b){
+                auto lhs_value = lhs(a, b);
+                auto rhs_value = rhs(a, b);
+                return Results(adapter.equal(lhs_value, rhs_value),
+                    "such that: \n  " + lhs_name + " = " + rhs_name + "\n" + 
+                    lhs_name+" : " + indent(adapter.print(lhs_value), "    ")+"\n" +
+                    rhs_name+" : " + indent(adapter.print(rhs_value), "    "));
+            }, as, bs);
+    }
+
+    template<typename Adapter, typename LHS, typename RHS, typename A, typename B, typename C>
+    bool equality( const Adapter& adapter, const std::string& property, 
+                const std::string& lhs_name, const LHS& lhs, 
+                const std::string& rhs_name, const RHS& rhs, 
+                const A& as, const B& bs, const C& cs) {
+        return predicate(adapter, property, 
+            [=](auto a, auto b, auto c){
+                auto lhs_value = lhs(a, b, c);
+                auto rhs_value = rhs(a, b, c);
+                return Results(adapter.equal(lhs_value, rhs_value),
+                    "such that: \n  " + lhs_name + " = " + rhs_name + "\n" + 
+                    lhs_name+" : " + indent(adapter.print(lhs_value), "    ")+"\n" +
+                    rhs_name+" : " + indent(adapter.print(rhs_value), "    "));
+            }, as, bs, cs);
+    }
+
+}
+```
+
+./structures/grouplike.hpp
+
+```c++
+#pragma once
+
+// std libraries
+#include <vector>
+
+// in-house libraries
+#include "../properties.hpp"
+
+namespace test {
+
+    /*
+    NOTE1: Unlike tests for properties, tests for structure are bulky and are expected to be called 
+    multiple times on multiple kinds of input (See math/analytic/Polynomial_test.cpp for an example).
+    to save us trouble, we implement classes that store parameters that are likely not to change.
+
+    NOTE2: Any structure here is expected to demonstrate closure with respect to some set of values.
+    Closure is enforced by the type system so no explicit tests are required,
+    however sometimes a set of values may be implemented as multiple data types.
+    For instance, polynomials are closed under multiplication, 
+    but there are some degenerate cases of polynomials that we implement as separate types, 
+    notably including scalars like `double`s.
+    This is why we allow the user to provide sample values through several parameters of different type, 
+    (seen below as `as`, `bs`, `cs`). If multiple data types are provided as test data,
+    this vastly increases the number of tests we could perform,
+    and since operations on each data type may be implemented separately, 
+    we really should test for these situations. We do want our tests to run fast though, 
+    so while we are not excused from running these tests, we do want to avoid needlessly repeating tests.
+    In other words, we want be able to call these functions multiple times on different inputs
+    without unecessarily repeating tests, and we also want to reduce the size of each test function's implementation.
+    We've found the best way to do this is to have each method 
+    only consider those tests that make use of all their arguments.
+    */
+
+    // cancellative ("inverse")
+    template<typename F>
+    struct QuasiGroup{
+        const std::string f_name;    const F f; 
+        QuasiGroup(
+            const std::string f_name,    const F& f
+        ): 
+            f_name(f_name),       f(f)
+        {}
+
+        template<typename Adapter, typename A>
+        bool valid(const Adapter& adapter, const std::vector<A>& as) const {
+            return 
+
+            determinism  (adapter, f_name, f, as, as)     &&
+            cancellative (adapter, f_name, f, as, as, as) &&
+            discernability(adapter,           as)         &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B>
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs) const {
+            return 
+
+            determinism  (adapter, f_name, f, as, bs)     &&
+            determinism  (adapter, f_name, f, bs, as)     &&
+            cancellative (adapter, f_name, f, as, as, bs) &&
+            cancellative (adapter, f_name, f, as, bs, as) &&
+            cancellative (adapter, f_name, f, as, bs, bs) &&
+            cancellative (adapter, f_name, f, bs, as, as) &&
+            cancellative (adapter, f_name, f, bs, as, bs) &&
+            cancellative (adapter, f_name, f, bs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B, typename C>
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs, const std::vector<C>& cs) const {
+            return 
+
+            cancellative (adapter, f_name, f, as, bs, cs) &&
+            cancellative (adapter, f_name, f, as, cs, bs) &&
+            cancellative (adapter, f_name, f, bs, as, cs) &&
+            cancellative (adapter, f_name, f, bs, cs, as) &&
+            cancellative (adapter, f_name, f, cs, as, bs) &&
+            cancellative (adapter, f_name, f, cs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+
+    };
+
+    // associativity
+    template<typename F>
+    struct SemiGroup{
+        const std::string f_name; const F f; 
+        SemiGroup(
+            const std::string f_name, const F& f
+        ): 
+            f_name(f_name), f(f)
+        {}
+
+        template<typename Adapter, typename A>
+        bool valid(const Adapter& adapter, const std::vector<A>& as) const {
+            return 
+
+            determinism  (adapter,            f_name, f, as, as)     &&
+            associativity(adapter,            f_name, f, as, as, as) &&
+            discernability(adapter,           as)         &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B>
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs) const {
+            return 
+
+            determinism  (adapter, f_name, f, as, bs)     &&
+            determinism  (adapter, f_name, f, bs, as)     &&
+            associativity(adapter, f_name, f, as, as, bs) &&
+            associativity(adapter, f_name, f, as, bs, as) &&
+            associativity(adapter, f_name, f, as, bs, bs) &&
+            associativity(adapter, f_name, f, bs, as, as) &&
+            associativity(adapter, f_name, f, bs, as, bs) &&
+            associativity(adapter, f_name, f, bs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B, typename C>
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs, const std::vector<C>& cs) const {
+            return 
+
+            associativity(adapter, f_name, f, as, bs, cs) &&
+            associativity(adapter, f_name, f, as, cs, bs) &&
+            associativity(adapter, f_name, f, bs, as, cs) &&
+            associativity(adapter, f_name, f, bs, cs, as) &&
+            associativity(adapter, f_name, f, cs, as, bs) &&
+            associativity(adapter, f_name, f, cs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+
+    };
+
+    // associativity, identity
+    template<typename E, typename F>
+    struct Monoid{
+        const std::string e_name; const E e; 
+        const std::string f_name; const F f; 
+        Monoid(
+            const std::string e_name, const E& e, 
+            const std::string f_name, const F& f
+        ): 
+            e_name(e_name), e(e),
+            f_name(f_name), f(f)
+        {}
+
+        template<typename Adapter, typename A>
+        bool valid(const Adapter& adapter, const std::vector<A>& as) const {
+            return 
+
+            determinism    (adapter,            f_name, f, as, as)     &&
+            associativity  (adapter,            f_name, f, as, as, as) &&
+            binary_identity(adapter, e_name, e, f_name, f, as)         &&
+            discernability (adapter,            as)                    &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B>
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs) const {
+            return 
+
+            determinism  (adapter, f_name, f, as, bs)     &&
+            associativity(adapter, f_name, f, as, as, bs) &&
+            associativity(adapter, f_name, f, as, bs, bs) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B, typename C>
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs, const std::vector<C>& cs) const {
+            return 
+
+            associativity(adapter, f_name, f, as, bs, cs) &&
+
+            true; // added so lines above can be easily swapped
+        }
+
+    };
+
+    // invertibility, identity
+    template<typename E, typename Finv, typename F>
+    struct Loop{
+        const std::string e_name;    const E e; 
+        const std::string f_name;    const F f; 
+        const std::string finv_name; const Finv finv; 
+        Loop(
+            const std::string e_name,    const E& e, 
+            const std::string f_name,    const F& f,
+            const std::string finv_name, const Finv& finv
+        ): 
+            e_name(e_name),       e(e),
+            f_name(f_name),       f(f),
+            finv_name(finv_name), finv(finv)
+        {}
+        template<typename Adapter, typename A>
+        bool valid(const Adapter& adapter, const std::vector<A>& as) const {
+            return 
+
+            determinism    (adapter,            f_name, f, as, as)     &&
+            binary_identity(adapter, e_name, e, f_name, f, as)         &&
+            determinism    (adapter,            finv_name, finv,            as, as) &&
+            binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as)     &&
+            discernability (adapter,           as)         &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B>
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs) const {
+            return 
+
+            determinism  (adapter, f_name, f, as, bs)     &&
+            determinism  (adapter, f_name, f, bs, as)     &&
+            determinism  (adapter,            finv_name, finv,            as, bs) &&
+            binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as) &&
+            binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, bs) &&
+
+            true; // added so lines above can be easily swapped
+        }
+
+    };
+
+    // associativity, invertibility, identity
+    template<typename E, typename Finv, typename F>
+    struct Group{
+        const std::string e_name;    const E e; 
+        const std::string f_name;    const F f; 
+        const std::string finv_name; const Finv finv; 
+        Group(
+            const std::string e_name,    const E& e, 
+            const std::string f_name,    const F& f,
+            const std::string finv_name, const Finv& finv
+        ): 
+            e_name(e_name),       e(e),
+            f_name(f_name),       f(f),
+            finv_name(finv_name), finv(finv)
+        {}
+        template<typename Adapter, typename A>
+        bool valid(const Adapter& adapter, const std::vector<A>& as) const {
+            return 
+
+            determinism    (adapter,            f_name, f, as, as)     &&
+            associativity  (adapter,            f_name, f, as, as, as) &&
+            binary_identity(adapter, e_name, e, f_name, f, as)         &&
+            determinism    (adapter,            finv_name, finv,            as, as) &&
+            binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as)     &&
+            discernability (adapter,           as)         &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B>
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs) const {
+            return 
+
+            determinism  (adapter, f_name, f, as, bs)     &&
+            associativity(adapter, f_name, f, as, as, bs) &&
+            associativity(adapter, f_name, f, as, bs, bs) &&
+            associativity(adapter, f_name, f, as, bs, bs) &&
+            binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as) &&
+            binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, bs) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B, typename C>
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs, const std::vector<C>& cs) const {
+            return 
+
+            associativity(adapter, f_name, f, as, bs, cs) &&
+            associativity(adapter, f_name, f, as, cs, bs) &&
+            associativity(adapter, f_name, f, bs, as, cs) &&
+            associativity(adapter, f_name, f, bs, cs, as) &&
+            associativity(adapter, f_name, f, cs, as, bs) &&
+            associativity(adapter, f_name, f, cs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+
+    };
+
+
+    // commutativity, associativity, identity
+    template<typename E, typename F>
+    struct CommutativeMonoid{
+        const std::string e_name; const E e; 
+        const std::string f_name; const F f; 
+        CommutativeMonoid(
+            const std::string e_name, const E& e, 
+            const std::string f_name, const F& f
+        ): 
+            e_name(e_name), e(e),
+            f_name(f_name), f(f)
+        {}
+        template<typename Adapter, typename A>
+        bool valid(const Adapter& adapter, const std::vector<A>& as) const {
+            return 
+
+            determinism    (adapter,            f_name, f, as, as)     &&
+            associativity  (adapter,            f_name, f, as, as, as) &&
+            binary_identity(adapter, e_name, e, f_name, f, as)         &&
+            commutativity  (adapter,            f_name, f, as, as)     &&
+            discernability (adapter,           as)         &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B>
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs) const {
+            return 
+
+            determinism  (adapter, f_name, f, as, bs)     &&
+            determinism  (adapter, f_name, f, bs, as)     &&
+            associativity(adapter, f_name, f, as, as, bs) &&
+            associativity(adapter, f_name, f, as, bs, as) &&
+            associativity(adapter, f_name, f, as, bs, bs) &&
+            associativity(adapter, f_name, f, bs, as, as) &&
+            associativity(adapter, f_name, f, bs, as, bs) &&
+            associativity(adapter, f_name, f, bs, bs, as) &&
+            commutativity(adapter, f_name, f, as, bs)     &&
+            commutativity(adapter, f_name, f, bs, as)     &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B, typename C>
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs, const std::vector<C>& cs) const {
+            return 
+
+            associativity(adapter, f_name, f, as, bs, cs) &&
+            associativity(adapter, f_name, f, as, cs, bs) &&
+            associativity(adapter, f_name, f, bs, as, cs) &&
+            associativity(adapter, f_name, f, bs, cs, as) &&
+            associativity(adapter, f_name, f, cs, as, bs) &&
+            associativity(adapter, f_name, f, cs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+    };
+
+    // commutativity, invertibility, identity
+    template<typename F>
+    struct CommutativeSemiGroup{
+        const std::string f_name; const F f; 
+        CommutativeSemiGroup(
+            const std::string f_name, const F& f
+        ): 
+            f_name(f_name), f(f)
+        {}
+
+        template<typename Adapter, typename A>
+        bool valid(const Adapter& adapter, const std::vector<A>& as) const {
+            return 
+
+            determinism  (adapter,            f_name, f, as, as)     &&
+            associativity(adapter,            f_name, f, as, as, as) &&
+            commutativity  (adapter,            f_name, f, as, as)     &&
+            discernability(adapter,           as)         &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B>
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs) const {
+            return 
+
+            determinism  (adapter, f_name, f, as, bs)     &&
+            determinism  (adapter, f_name, f, bs, as)     &&
+            associativity(adapter, f_name, f, as, as, bs) &&
+            associativity(adapter, f_name, f, as, bs, as) &&
+            associativity(adapter, f_name, f, as, bs, bs) &&
+            associativity(adapter, f_name, f, bs, as, as) &&
+            associativity(adapter, f_name, f, bs, as, bs) &&
+            associativity(adapter, f_name, f, bs, bs, as) &&
+            commutativity(adapter, f_name, f, as, bs)     &&
+            commutativity(adapter, f_name, f, bs, as)     &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B, typename C>
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs, const std::vector<C>& cs) const {
+            return 
+
+            associativity(adapter, f_name, f, as, bs, cs) &&
+            associativity(adapter, f_name, f, as, cs, bs) &&
+            associativity(adapter, f_name, f, bs, as, cs) &&
+            associativity(adapter, f_name, f, bs, cs, as) &&
+            associativity(adapter, f_name, f, cs, as, bs) &&
+            associativity(adapter, f_name, f, cs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+
+    };
+
+    // commutativity, associativity, invertibility, identity
+    template<typename E, typename F, typename Finv>
+    struct CommutativeGroup{
+        const std::string e_name;    const E e; 
+        const std::string f_name;    const F f; 
+        const std::string finv_name; const Finv finv; 
+        CommutativeGroup(
+            const std::string e_name,    const E& e, 
+            const std::string f_name,    const F& f,
+            const std::string finv_name, const Finv& finv
+        ): 
+            e_name(e_name),       e(e),
+            f_name(f_name),       f(f),
+            finv_name(finv_name), finv(finv)
+        {}
+        template<typename Adapter, typename A>
+        bool valid(const Adapter& adapter, const std::vector<A>& as) const {
+            return 
+
+            determinism    (adapter,            f_name, f, as, as)     &&
+            associativity  (adapter,            f_name, f, as, as, as) &&
+            binary_identity(adapter, e_name, e, f_name, f, as)         &&
+            binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as) &&
+            commutativity  (adapter,            f_name, f, as, as)     &&
+            discernability (adapter,           as)         &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B>
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs) const {
+            return 
+
+            determinism  (adapter, f_name, f, as, bs)     &&
+            determinism  (adapter, f_name, f, bs, as)     &&
+            associativity(adapter, f_name, f, as, as, bs) &&
+            associativity(adapter, f_name, f, as, bs, as) &&
+            associativity(adapter, f_name, f, as, bs, bs) &&
+            associativity(adapter, f_name, f, bs, as, as) &&
+            associativity(adapter, f_name, f, bs, as, bs) &&
+            associativity(adapter, f_name, f, bs, bs, as) &&
+            binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as) &&
+            binary_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, bs) &&
+            commutativity(adapter, f_name, f, as, bs)     &&
+            commutativity(adapter, f_name, f, bs, as)     &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B, typename C>
+        bool valid(const Adapter& adapter, const std::vector<A>& as, const std::vector<B>& bs, const std::vector<C>& cs) const {
+            return 
+
+            associativity(adapter, f_name, f, as, bs, cs) &&
+            associativity(adapter, f_name, f, as, cs, bs) &&
+            associativity(adapter, f_name, f, bs, as, cs) &&
+            associativity(adapter, f_name, f, bs, cs, as) &&
+            associativity(adapter, f_name, f, cs, as, bs) &&
+            associativity(adapter, f_name, f, cs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+    };
+
+}
+
+```
+
+./structures/ringlike.hpp
+
+```c++
+#pragma once
+
+// std libraries
+
+// in-house libraries
+#include "grouplike.hpp"
+
+namespace test {
+
+    /*
+    NOTE1: Unlike tests for properties, tests for structure are bulky and are expected to be called 
+    multiple times on multiple kinds of input (See math/analytic/Polynomial_test.cpp for an example).
+    to save us trouble, we implement classes that store parameters that are likely not to change.
+    */
+
+    template<typename Zero, typename One, typename Add, typename Mult>
+    struct Rig{
+        const Monoid <Zero, Add>  addition;
+        const Monoid <One,  Mult> multiplication;
+        const std::string zero_name; const Zero zero;   
+        const std::string one_name;  const One  one;   
+        const std::string add_name;  const Add  add;   
+        const std::string mult_name; const Mult mult;
+        Rig(
+            const std::string zero_name, const Zero& zero, 
+            const std::string one_name,  const One&  one, 
+            const std::string add_name,  const Add&  add, 
+            const std::string mult_name, const Mult& mult
+        ): 
+            addition      (zero_name, zero, add_name,  add),
+            multiplication(one_name,  one,  mult_name, mult),
+            zero_name (zero_name), zero (zero), 
+            one_name  (one_name),  one  (one), 
+            add_name  (add_name),  add  (add), 
+            mult_name (mult_name), mult (mult)
+        {}
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
+            return 
+
+            addition      .valid(adapter, as) &&
+            multiplication.valid(adapter, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
+            return 
+
+            addition      .valid(adapter, as, bs) &&
+            multiplication.valid(adapter, as, bs) &&
+
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs, typename Cs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
+            return 
+
+            addition      .valid(adapter, as, bs, cs) &&
+            multiplication.valid(adapter, as, bs, cs) &&
+
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, cs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, cs, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, cs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, cs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, cs, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, cs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+    };
+
+    template<typename Zero, typename Add, typename Sub, typename Mult>
+    struct Rng{
+        const Group  <Zero, Add, Sub>  addition;
+        const SemiGroup <Mult>      multiplication;
+        const std::string zero_name; const Zero zero;   
+        const std::string add_name;  const Add  add;   
+        const std::string sub_name;  const Sub  sub;   
+        const std::string mult_name; const Mult mult;
+        Rng(
+            const std::string zero_name, const Zero& zero, 
+            const std::string add_name,  const Add&  add, 
+            const std::string sub_name,  const Sub&  sub, 
+            const std::string mult_name, const Mult& mult
+        ): 
+            addition      (zero_name, zero, add_name,  add, sub_name,  sub),
+            multiplication(mult_name, mult),
+            zero_name (zero_name), zero (zero), 
+            add_name  (add_name),  add  (add), 
+            sub_name  (sub_name),  sub  (sub), 
+            mult_name (mult_name), mult (mult)
+        {}
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
+            return 
+
+            addition      .valid(adapter, as) &&
+            multiplication.valid(adapter, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
+            return 
+
+            addition      .valid(adapter, as, bs) &&
+            multiplication.valid(adapter, as, bs) &&
+
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs, typename Cs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
+            return 
+
+            addition      .valid(adapter, as, bs, cs) &&
+            multiplication.valid(adapter, as, bs, cs) &&
+
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, cs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, cs, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, cs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, cs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, cs, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, cs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+    };
+
+    template<typename Zero, typename One, typename Add, typename Sub, typename Mult>
+    struct Ring{
+        const Group  <Zero, Add, Sub>  addition;
+        const Monoid <One,  Mult>      multiplication;
+        const std::string zero_name; const Zero zero;   
+        const std::string one_name;  const One  one;   
+        const std::string add_name;  const Add  add;   
+        const std::string sub_name;  const Sub  sub;   
+        const std::string mult_name; const Mult mult;
+        Ring(
+            const std::string zero_name, const Zero& zero, 
+            const std::string one_name,  const One&  one, 
+            const std::string add_name,  const Add&  add, 
+            const std::string sub_name,  const Sub&  sub, 
+            const std::string mult_name, const Mult& mult
+        ): 
+            addition      (zero_name, zero, add_name,  add, sub_name,  sub),
+            multiplication(one_name,  one,  mult_name, mult),
+            zero_name (zero_name), zero (zero), 
+            one_name  (one_name),  one  (one), 
+            add_name  (add_name),  add  (add), 
+            sub_name  (sub_name),  sub  (sub), 
+            mult_name (mult_name), mult (mult)
+        {}
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
+            return 
+
+            addition      .valid(adapter, as) &&
+            multiplication.valid(adapter, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
+            return 
+
+            addition      .valid(adapter, as, bs) &&
+            multiplication.valid(adapter, as, bs) &&
+
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs, typename Cs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
+            return 
+
+            addition      .valid(adapter, as, bs, cs) &&
+            multiplication.valid(adapter, as, bs, cs) &&
+
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, cs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, cs, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, cs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, cs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, cs, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, cs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+    };
+
+
+    template<typename Zero, typename One, typename Add, typename Mult>
+    struct CommutativeRig{
+        const CommutativeMonoid  <Zero, Add>  addition;
+        const CommutativeMonoid <One,  Mult>  multiplication;
+        const std::string zero_name; const Zero zero;   
+        const std::string one_name;  const One  one;   
+        const std::string add_name;  const Add  add;   
+        const std::string mult_name; const Mult mult;
+        CommutativeRig(
+            const std::string zero_name, const Zero& zero, 
+            const std::string one_name,  const One&  one, 
+            const std::string add_name,  const Add&  add, 
+            const std::string mult_name, const Mult& mult
+        ): 
+            addition      (zero_name, zero, add_name,  add),
+            multiplication(one_name,  one,  mult_name, mult),
+            zero_name (zero_name), zero (zero), 
+            one_name  (one_name),  one  (one), 
+            add_name  (add_name),  add  (add), 
+            mult_name (mult_name), mult (mult)
+        {}
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
+            return 
+
+            addition      .valid(adapter, as) &&
+            multiplication.valid(adapter, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
+            return 
+
+            addition      .valid(adapter, as, bs) &&
+            multiplication.valid(adapter, as, bs) &&
+
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs, typename Cs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
+            return 
+
+            addition      .valid(adapter, as, bs, cs) &&
+            multiplication.valid(adapter, as, bs, cs) &&
+
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, cs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, cs, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, cs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, cs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, cs, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, cs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+    };
+
+    template<typename Zero, typename Add, typename Sub, typename Mult>
+    struct CommutativeRng{
+        const CommutativeGroup  <Zero, Add, Sub>  addition;
+        const CommutativeSemiGroup <Mult>      multiplication;
+        const std::string zero_name; const Zero zero;   
+        const std::string add_name;  const Add  add;   
+        const std::string sub_name;  const Sub  sub;   
+        const std::string mult_name; const Mult mult;
+        CommutativeRng(
+            const std::string zero_name, const Zero& zero, 
+            const std::string add_name,  const Add&  add, 
+            const std::string sub_name,  const Sub&  sub, 
+            const std::string mult_name, const Mult& mult
+        ): 
+            addition      (zero_name, zero, add_name,  add, sub_name,  sub),
+            multiplication(mult_name, mult),
+            zero_name (zero_name), zero (zero), 
+            add_name  (add_name),  add  (add), 
+            sub_name  (sub_name),  sub  (sub), 
+            mult_name (mult_name), mult (mult)
+        {}
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
+            return 
+
+            addition      .valid(adapter, as) &&
+            multiplication.valid(adapter, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
+            return 
+
+            addition      .valid(adapter, as, bs) &&
+            multiplication.valid(adapter, as, bs) &&
+
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs, typename Cs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
+            return 
+
+            addition      .valid(adapter, as, bs, cs) &&
+            multiplication.valid(adapter, as, bs, cs) &&
+
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, cs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, cs, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, cs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, cs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, cs, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, cs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+    };
+
+    template<typename Zero, typename One, typename Add, typename Sub, typename Mult>
+    struct CommutativeRing{
+        const CommutativeGroup  <Zero, Add, Sub>  addition;
+        const CommutativeMonoid <One,  Mult>      multiplication;
+        const std::string zero_name; const Zero zero;   
+        const std::string one_name;  const One  one;   
+        const std::string add_name;  const Add  add;   
+        const std::string sub_name;  const Sub  sub;   
+        const std::string mult_name; const Mult mult;
+        CommutativeRing(
+            const std::string zero_name, const Zero& zero, 
+            const std::string one_name,  const One&  one, 
+            const std::string add_name,  const Add&  add, 
+            const std::string sub_name,  const Sub&  sub, 
+            const std::string mult_name, const Mult& mult
+        ): 
+            addition      (zero_name, zero, add_name,  add, sub_name,  sub),
+            multiplication(one_name,  one,  mult_name, mult),
+            zero_name (zero_name), zero (zero), 
+            one_name  (one_name),  one  (one), 
+            add_name  (add_name),  add  (add), 
+            sub_name  (sub_name),  sub  (sub), 
+            mult_name (mult_name), mult (mult)
+        {}
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
+            return 
+
+            addition      .valid(adapter, as) &&
+            multiplication.valid(adapter, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
+            return 
+
+            addition      .valid(adapter, as, bs) &&
+            multiplication.valid(adapter, as, bs) &&
+
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs, typename Cs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
+            return 
+
+            addition      .valid(adapter, as, bs, cs) &&
+            multiplication.valid(adapter, as, bs, cs) &&
+
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, cs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, cs, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, cs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, cs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, cs, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, cs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+    };
+
+
+    template<typename Zero, typename One, typename Add, typename Sub, typename Mult, typename Div>
+    struct Field{
+        const CommutativeGroup  <Zero, Add, Sub>  addition;
+        const CommutativeGroup  <One,  Mult,Div>  multiplication;
+        const std::string zero_name; const Zero zero;   
+        const std::string one_name;  const One  one;   
+        const std::string add_name;  const Add  add;   
+        const std::string sub_name;  const Sub  sub;   
+        const std::string mult_name; const Mult mult;
+        const std::string div_name;  const Div  div;
+        Field(
+            const std::string zero_name, const Zero& zero, 
+            const std::string one_name,  const One&  one, 
+            const std::string add_name,  const Add&  add, 
+            const std::string sub_name,  const Sub&  sub, 
+            const std::string mult_name, const Mult& mult,
+            const std::string div_name,  const Div&  div
+        ): 
+            addition      (zero_name, zero, add_name,  add, sub_name, sub),
+            multiplication(one_name,  one,  mult_name, mult,div_name, div),
+            zero_name (zero_name), zero (zero), 
+            one_name  (one_name),  one  (one), 
+            add_name  (add_name),  add  (add), 
+            sub_name  (sub_name),  sub  (sub), 
+            mult_name (mult_name), mult (mult),
+            div_name  (div_name),  div  (div)
+        {}
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
+            return 
+
+            addition      .valid(adapter, as) &&
+            multiplication.valid(adapter, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
+            return 
+
+            addition      .valid(adapter, as, bs) &&
+            multiplication.valid(adapter, as, bs) &&
+
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs, typename Cs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
+            return 
+
+            addition      .valid(adapter, as, bs, cs) &&
+            multiplication.valid(adapter, as, bs, cs) &&
+
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, bs, cs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, as, cs, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, as, cs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, bs, cs, as) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, cs, as, bs) &&
+            binary_distributivity(adapter, mult_name, mult, add_name, add, cs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+    };
+
+
+}
+
+```
+
+./structures/metriclike.hpp
+
+```c++
+#pragma once
+
+// std libraries
+
+// in-house libraries
+#include "../properties.hpp"
+
+namespace test {
+
+    /*
+    NOTE1: Unlike tests for properties, tests for structure are bulky and are expected to be called 
+    multiple times on multiple kinds of input (See math/analytic/Polynomial_test.cpp for an example).
+    to save us trouble, we implement classes that store parameters that are likely not to change.
+    */
+
+    template<typename F>
+    struct PreMetric{
+        const std::string f_name;    const F f; 
+        PreMetric(
+            const std::string f_name,    const F& f
+        ): 
+            f_name(f_name),       f(f)
+        {}
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
+
+            auto ge0 = [](double x)           {return x>=0.0;};
+
+            return 
+
+            discernability(adapter,           as)         &&
+            determinism  (adapter,                  f_name, f, as, as) &&
+            codomain     (adapter, "positive", ge0, f_name, f, as, as) &&
+            nilpotence   (adapter, "0", 0.0,        f_name, f, as)     &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
+
+            auto ge0 = [](double x)           {return x>=0.0;};
+
+            return 
+
+            determinism  (adapter,                  f_name, f, as, bs) &&
+            codomain     (adapter, "positive", ge0, f_name, f, as, bs) &&
+            codomain     (adapter, "positive", ge0, f_name, f, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+
+    };
+
+    template<typename F>
+    struct SemiMetric{
+        const std::string f_name;    const F f; 
+        SemiMetric(
+            const std::string f_name,    const F& f
+        ): 
+            f_name(f_name),       f(f)
+        {}
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
+
+            auto ge0 = [](double x)           {return x>=0.0;};
+
+            return 
+
+            discernability(adapter,           as)         &&
+            determinism  (adapter,                  f_name, f, as, as) &&
+            codomain     (adapter, "positive", ge0, f_name, f, as, as) &&
+            nilpotence   (adapter, "0", 0.0,        f_name, f, as)     &&
+            commutativity(adapter,                  f_name, f, as, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
+
+            auto ge0 = [](double x)           {return x>=0.0;};
+
+            return 
+
+            determinism  (adapter,                  f_name, f, as, bs) &&
+            codomain     (adapter, "positive", ge0, f_name, f, as, bs) &&
+            codomain     (adapter, "positive", ge0, f_name, f, bs, as) &&
+            commutativity(adapter,                  f_name, f, as, bs) &&
+            commutativity(adapter,                  f_name, f, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+
+    };
+
+    template<typename F>
+    struct MetaMetric{
+        const std::string f_name;    const F f; 
+        /* 
+        NOTE: a metric by definition maps 𝕏→ℝ, so `add` and `leq` do not need to be passed in
+        we define `add` and `leq` as returning doubles since this allows any other numeric primitives 
+        to be automatically cast without loss of precision
+        */
+        MetaMetric(
+            const std::string f_name,    const F& f
+        ): 
+            f_name(f_name),       f(f)
+        {}
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
+
+            auto add = [](double x, double y) {return x+y; };
+            auto leq = [](double x, double y) {return x<=y; };
+            auto ge0 = [](double x)           {return x>=0.0;};
+
+            return 
+
+            discernability(adapter,           as)         &&
+            determinism  (adapter,                  f_name, f, as, as) &&
+            codomain     (adapter, "positive", ge0, f_name, f, as, as) &&
+            commutativity(adapter,                  f_name, f, as, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, as, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
+
+            auto add = [](double x, double y) {return x+y; };
+            auto leq = [](double x, double y) {return x<=y; };
+            auto ge0 = [](double x)           {return x>=0.0;};
+
+            return 
+
+            determinism  (adapter,                  f_name, f, as, bs) &&
+            codomain     (adapter, "positive", ge0, f_name, f, as, bs) &&
+            codomain     (adapter, "positive", ge0, f_name, f, bs, as) &&
+            commutativity(adapter,                  f_name, f, as, bs) &&
+            commutativity(adapter,                  f_name, f, bs, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, as, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, as, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, bs, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, bs, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, as, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, as, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, bs, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, bs, bs) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs, typename Cs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
+
+            auto add = [](double x, double y) {return x+y; };
+            auto leq = [](double x, double y) {return x+y; };
+
+            return 
+
+            triangle_inequality(adapter, leq, add,  f_name, f, as, as, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, as, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, as, cs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, bs, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, bs, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, bs, cs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, cs, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, cs, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, cs, cs) &&
+
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, as, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, as, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, as, cs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, bs, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, bs, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, bs, cs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, cs, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, cs, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, cs, cs) &&
+
+            triangle_inequality(adapter, leq, add,  f_name, f, cs, as, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, cs, as, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, cs, as, cs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, cs, bs, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, cs, bs, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, cs, bs, cs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, cs, cs, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, cs, cs, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, cs, cs, cs) &&
+
+            true; // added so lines above can be easily swapped
+        }
+
+    };
+
+    template<typename F>
+    struct Metric{
+        const std::string f_name;    const F f; 
+        /* 
+        NOTE: a metric by definition maps 𝕏→ℝ, so `add` and `leq` do not need to be passed in
+        we define `add` and `leq` as returning doubles since this allows any other numeric primitives 
+        to be automatically cast without loss of precision
+        */
+        Metric(
+            const std::string f_name,    const F& f
+        ): 
+            f_name(f_name),       f(f)
+        {}
+        template<typename Adapter, typename As>
+        bool valid(const Adapter& adapter, const As& as) const {
+
+            auto add = [](double x, double y) {return x+y; };
+            auto leq = [](double x, double y) {return x<=y; };
+            auto ge0 = [](double x)           {return x>=0.0;};
+
+            return 
+
+            discernability(adapter,           as)         &&
+            determinism  (adapter,                  f_name, f, as, as) &&
+            codomain     (adapter, "positive", ge0, f_name, f, as, as) &&
+            nilpotence   (adapter, "0", 0.0,        f_name, f, as)     &&
+            commutativity(adapter,                  f_name, f, as, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, as, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
+
+            auto add = [](double x, double y) {return x+y; };
+            auto leq = [](double x, double y) {return x<=y; };
+            auto ge0 = [](double x)           {return x>=0.0;};
+
+            return 
+
+            determinism  (adapter,                  f_name, f, as, bs) &&
+            codomain     (adapter, "positive", ge0, f_name, f, as, bs) &&
+            codomain     (adapter, "positive", ge0, f_name, f, bs, as) &&
+            commutativity(adapter,                  f_name, f, as, bs) &&
+            commutativity(adapter,                  f_name, f, bs, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, as, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, as, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, bs, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, bs, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, as, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, as, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, bs, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, bs, bs) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename As, typename Bs, typename Cs>
+        bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
+
+            auto add = [](double x, double y) {return x+y; };
+            auto leq = [](double x, double y) {return x+y; };
+
+            return 
+
+            triangle_inequality(adapter, leq, add,  f_name, f, as, as, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, as, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, as, cs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, bs, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, bs, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, bs, cs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, cs, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, cs, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, as, cs, cs) &&
+
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, as, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, as, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, as, cs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, bs, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, bs, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, bs, cs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, cs, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, cs, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, bs, cs, cs) &&
+
+            triangle_inequality(adapter, leq, add,  f_name, f, cs, as, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, cs, as, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, cs, as, cs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, cs, bs, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, cs, bs, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, cs, bs, cs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, cs, cs, as) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, cs, cs, bs) &&
+            triangle_inequality(adapter, leq, add,  f_name, f, cs, cs, cs) &&
+
+            true; // added so lines above can be easily swapped
+        }
+
+    };
+
+}
+
+```
+
+./structures/ringlike_test.cpp
+
+```c++
+#pragma once
+
+// std libraries
+#include <cmath>
+#include <limits>
+
+// 3rd party libraries
+#define CATCH_CONFIG_MAIN  // This tells Catch to provide p main() - only do this in one cpp file
+#include <catch/catch.hpp>
+
+// in-house libraries
+#include <math/analytic/Polynomial.hpp>
+
+#include <test/macros.hpp>
+#include <test/adapter.hpp>
+#include <test/structures/ringlike.hpp>
+
+TEST_CASE( "Scalar arithmetic is a field", "[math]" ) {
+    test::PrimitiveAdapter<double> adapter(1e-6);
+    std::vector<double> scalars {-2.0, 0.0, 1.0, 2.0};
+    test::Field structure(
+        "0", 0.0, 
+        "1", 1.0, 
+        "scalar addition",       TEST_SYMBOL(+),
+        "scalar subtraction",    TEST_SYMBOL(-),
+        "scalar multiplication", TEST_SYMBOL(*),
+        "scalar division",       TEST_SYMBOL(/)
+    );
+    REQUIRE(structure.valid(adapter, scalars));
+}
+
+TEST_CASE( "Scalar arithmetic is a commutative ring", "[math]" ) {
+    test::PrimitiveAdapter<double> adapter(1e-6);
+    std::vector<double> scalars {-2.0, 0.0, 1.0, 2.0};
+    test::CommutativeRing structure(
+        "0", 0.0, 
+        "1", 1.0, 
+        "scalar addition",       TEST_SYMBOL(+),
+        "scalar subtraction",    TEST_SYMBOL(-),
+        "scalar multiplication", TEST_SYMBOL(*)
+    );
+    REQUIRE(structure.valid(adapter, scalars));
+}
+
+```
+
+./structures/orderlike.hpp
+
+```c++
+#pragma once
+
+// std libraries
+
+// in-house libraries
+#include "../properties.hpp"
+
+namespace test {
+
+    /*
+    NOTE1: Unlike tests for properties, tests for structure are bulky and are expected to be called 
+    multiple times on multiple kinds of input (See math/analytic/Polynomial_test.cpp for an example).
+    to save us trouble, we implement classes that store parameters that are likely not to change.
+    */
+
+    template<typename R>
+    struct PreOrder{
+        const std::string r_name;    const R r; 
+        PreOrder(
+            const std::string r_name,    const R& r
+        ): 
+            r_name(r_name),       r(r)
+        {}
+
+        template<typename Adapter, typename A>
+        bool valid(const Adapter& adapter, const many<A>& as) const {
+            return 
+
+            discernability(adapter,           as)          &&
+            determinism   (adapter, r_name, r, as, as)     &&
+            reflexivity   (adapter, r_name, r, as, as)     &&
+            transitivity  (adapter, r_name, r, as, as, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+            return 
+
+            determinism   (adapter, r_name, r, as, bs)     &&
+            determinism   (adapter, r_name, r, bs, as)     &&
+            determinism   (adapter, r_name, r, as, as)     &&
+            reflexivity   (adapter, r_name, r, as, bs)     &&
+            reflexivity   (adapter, r_name, r, bs, as)     &&
+            transitivity  (adapter, r_name, r, as, as, bs) &&
+            transitivity  (adapter, r_name, r, as, bs, as) &&
+            transitivity  (adapter, r_name, r, as, bs, bs) &&
+            transitivity  (adapter, r_name, r, bs, as, bs) &&
+            transitivity  (adapter, r_name, r, bs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B, typename C>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+            return 
+
+            transitivity  (adapter, r_name, r, as, bs, cs) &&
+            transitivity  (adapter, r_name, r, as, cs, bs) &&
+            transitivity  (adapter, r_name, r, bs, as, cs) &&
+            transitivity  (adapter, r_name, r, bs, cs, as) &&
+            transitivity  (adapter, r_name, r, cs, as, bs) &&
+            transitivity  (adapter, r_name, r, cs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+
+    };
+
+    template<typename R>
+    struct PartialOrder{
+        const std::string r_name;    const R r; 
+        PreOrder(
+            const std::string r_name,    const R& r
+        ): 
+            r_name(r_name),       r(r)
+        {}
+
+        template<typename Adapter, typename A>
+        bool valid(const Adapter& adapter, const many<A>& as) const {
+            return 
+
+            discernability(adapter,           as)          &&
+            determinism   (adapter, r_name, r, as, as)     &&
+            reflexivity   (adapter, r_name, r, as, as)     &&
+            antisymmetry  (adapter, r_name, r, as, as)     &&
+            transitivity  (adapter, r_name, r, as, as, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+            return 
+
+            determinism   (adapter, r_name, r, as, bs)     &&
+            determinism   (adapter, r_name, r, bs, as)     &&
+            determinism   (adapter, r_name, r, as, as)     &&
+            reflexivity   (adapter, r_name, r, as, bs)     &&
+            reflexivity   (adapter, r_name, r, bs, as)     &&
+            antisymmetry  (adapter, r_name, r, as, bs)     &&
+            antisymmetry  (adapter, r_name, r, bs, as)     &&
+            transitivity  (adapter, r_name, r, as, as, bs) &&
+            transitivity  (adapter, r_name, r, as, bs, as) &&
+            transitivity  (adapter, r_name, r, as, bs, bs) &&
+            transitivity  (adapter, r_name, r, bs, as, bs) &&
+            transitivity  (adapter, r_name, r, bs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B, typename C>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+            return 
+
+            transitivity  (adapter, r_name, r, as, bs, cs) &&
+            transitivity  (adapter, r_name, r, as, cs, bs) &&
+            transitivity  (adapter, r_name, r, bs, as, cs) &&
+            transitivity  (adapter, r_name, r, bs, cs, as) &&
+            transitivity  (adapter, r_name, r, cs, as, bs) &&
+            transitivity  (adapter, r_name, r, cs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+
+    };
+
+
+    template<typename R>
+    struct TotalPartialOrder{
+        const std::string r_name;    const R r; 
+        PreOrder(
+            const std::string r_name,    const R& r
+        ): 
+            r_name(r_name),       r(r)
+        {}
+
+        template<typename Adapter, typename A>
+        bool valid(const Adapter& adapter, const many<A>& as) const {
+            return 
+
+            discernability(adapter,           as)          &&
+            determinism   (adapter, r_name, r, as, as)     &&
+            reflexivity   (adapter, r_name, r, as, as)     &&
+            antisymmetry  (adapter, r_name, r, as, as)     &&
+            totality      (adapter, r_name, r, as, as)     &&
+            transitivity  (adapter, r_name, r, as, as, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+            return 
+
+            determinism   (adapter, r_name, r, as, bs)     &&
+            determinism   (adapter, r_name, r, bs, as)     &&
+            determinism   (adapter, r_name, r, as, as)     &&
+            reflexivity   (adapter, r_name, r, as, bs)     &&
+            reflexivity   (adapter, r_name, r, bs, as)     &&
+            antisymmetry  (adapter, r_name, r, as, bs)     &&
+            antisymmetry  (adapter, r_name, r, bs, as)     &&
+            totality      (adapter, r_name, r, as, bs)     &&
+            totality      (adapter, r_name, r, bs, as)     &&
+            transitivity  (adapter, r_name, r, as, as, bs) &&
+            transitivity  (adapter, r_name, r, as, bs, as) &&
+            transitivity  (adapter, r_name, r, as, bs, bs) &&
+            transitivity  (adapter, r_name, r, bs, as, bs) &&
+            transitivity  (adapter, r_name, r, bs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B, typename C>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+            return 
+
+            transitivity  (adapter, r_name, r, as, bs, cs) &&
+            transitivity  (adapter, r_name, r, as, cs, bs) &&
+            transitivity  (adapter, r_name, r, bs, as, cs) &&
+            transitivity  (adapter, r_name, r, bs, cs, as) &&
+            transitivity  (adapter, r_name, r, cs, as, bs) &&
+            transitivity  (adapter, r_name, r, cs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+
+    };
+
+
+    template<typename R>
+    struct Equivalence{
+        const std::string r_name;    const R r; 
+        PreOrder(
+            const std::string r_name,    const R& r
+        ): 
+            r_name(r_name),       r(r)
+        {}
+
+        template<typename Adapter, typename A>
+        bool valid(const Adapter& adapter, const many<A>& as) const {
+            return 
+
+            discernability(adapter,           as)          &&
+            determinism   (adapter, r_name, r, as, as)     &&
+            reflexivity   (adapter, r_name, r, as, as)     &&
+            symmetry      (adapter, r_name, r, as, as)     &&
+            transitivity  (adapter, r_name, r, as, as, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs) const {
+            return 
+
+            determinism   (adapter, r_name, r, as, bs)     &&
+            determinism   (adapter, r_name, r, bs, as)     &&
+            determinism   (adapter, r_name, r, as, as)     &&
+            reflexivity   (adapter, r_name, r, as, bs)     &&
+            reflexivity   (adapter, r_name, r, bs, as)     &&
+            symmetry      (adapter, r_name, r, as, bs)     &&
+            symmetry      (adapter, r_name, r, bs, as)     &&
+            transitivity  (adapter, r_name, r, as, as, bs) &&
+            transitivity  (adapter, r_name, r, as, bs, as) &&
+            transitivity  (adapter, r_name, r, as, bs, bs) &&
+            transitivity  (adapter, r_name, r, bs, as, bs) &&
+            transitivity  (adapter, r_name, r, bs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+        template<typename Adapter, typename A, typename B, typename C>
+        bool valid(const Adapter& adapter, const many<A>& as, const many<B>& bs, const many<C>& cs) const {
+            return 
+
+            transitivity  (adapter, r_name, r, as, bs, cs) &&
+            transitivity  (adapter, r_name, r, as, cs, bs) &&
+            transitivity  (adapter, r_name, r, bs, as, cs) &&
+            transitivity  (adapter, r_name, r, bs, cs, as) &&
+            transitivity  (adapter, r_name, r, cs, as, bs) &&
+            transitivity  (adapter, r_name, r, cs, bs, as) &&
+
+            true; // added so lines above can be easily swapped
+        }
+
+    };
+
+}
+
+```
+
+./structures/grouplike_test.cpp
+
+```c++
+#pragma once
+
+// std libraries
+#include <cmath>
+#include <limits>
+
+// 3rd party libraries
+#define CATCH_CONFIG_MAIN  // This tells Catch to provide p main() - only do this in one cpp file
+#include <catch/catch.hpp>
+
+// in-house libraries
+#include <math/analytic/Polynomial.hpp>
+
+#include <test/macros.hpp>
+#include <test/adapter.hpp>
+#include <test/structures/ringlike.hpp>
+
+TEST_CASE( "Scalar addition is a commutative group", "[math]" ) {
+    test::PrimitiveAdapter<double> adapter(1e-6);
+    std::vector<double> scalars {-2.0, 0.0, 1.0, 2.0};
+    test::CommutativeGroup structure(
+        "0", 0.0, 
+        "scalar addition",       TEST_SYMBOL(+),
+        "scalar subtraction",    TEST_SYMBOL(-)
+    );
+    REQUIRE(structure.valid(adapter, scalars));
+}
+
+TEST_CASE( "Scalar addition is a group", "[math]" ) {
+    test::PrimitiveAdapter<double> adapter(1e-6);
+    std::vector<double> scalars {-2.0, 0.0, 1.0, 2.0};
+    test::Group structure(
+        "0", 0.0, 
+        "scalar addition",       TEST_SYMBOL(+),
+        "scalar subtraction",    TEST_SYMBOL(-)
+    );
+    REQUIRE(structure.valid(adapter, scalars));
+}
+
+TEST_CASE( "Scalar addition is a commutative monoid", "[math]" ) {
+    test::PrimitiveAdapter<double> adapter(1e-6);
+    std::vector<double> scalars {-2.0, 0.0, 1.0, 2.0};
+    test::CommutativeMonoid structure(
+        "0", 0.0, 
+        "scalar addition",       TEST_SYMBOL(+)
+    );
+    REQUIRE(structure.valid(adapter, scalars));
+}
+
+TEST_CASE( "Scalar addition is a monoid", "[math]" ) {
+    test::PrimitiveAdapter<double> adapter(1e-6);
+    std::vector<double> scalars {-2.0, 0.0, 1.0, 2.0};
+    test::Monoid structure(
+        "0", 0.0, 
+        "scalar addition",       TEST_SYMBOL(+)
+    );
+    REQUIRE(structure.valid(adapter, scalars));
+}
+
+```
+
+./structures/metriclike_test.cpp
+
+```c++
+#pragma once
+
+// std libraries
+#include <cmath>
+#include <limits>
+
+// 3rd party libraries
+#define CATCH_CONFIG_MAIN  // This tells Catch to provide p main() - only do this in one cpp file
+#include <catch/catch.hpp>
+
+// in-house libraries
+#include <math/analytic/Polynomial.hpp>
+
+#include <test/macros.hpp>
+#include <test/adapter.hpp>
+#include <test/structures/metriclike.hpp>
+
+TEST_CASE( "The distance between scalars is a metric", "[math]" ) {
+    test::PrimitiveAdapter<double> adapter (1e-6);
+    std::vector<double> scalars {-2.0, 0.0, 1.0, 2.0};
+    test::Metric metric("scalar distance", [=](auto x, auto y) { return std::abs(x-y); } );
+    REQUIRE(metric.valid(adapter, scalars));
+}
+
+TEST_CASE( "The distance between scalars is a semimetric", "[math]" ) {
+    test::PrimitiveAdapter<double> adapter (1e-6);
+    std::vector<double> scalars {-2.0, 0.0, 1.0, 2.0};
+    test::SemiMetric metric("scalar distance", [=](auto x, auto y) { return std::abs(x-y); } );
+    REQUIRE(metric.valid(adapter, scalars));
+}
+
+TEST_CASE( "The distance between scalars is a metametric", "[math]" ) {
+    test::PrimitiveAdapter<double> adapter (1e-6);
+    std::vector<double> scalars {-2.0, 0.0, 1.0, 2.0};
+    test::MetaMetric metric("scalar distance", [=](auto x, auto y) { return std::abs(x-y); } );
+    REQUIRE(metric.valid(adapter, scalars));
+}
+
+TEST_CASE( "The distance between scalars is a premetric", "[math]" ) {
+    test::PrimitiveAdapter<double> adapter (1e-6);
+    std::vector<double> scalars {-2.0, 0.0, 1.0, 2.0};
+    test::PreMetric metric("scalar distance", [=](auto x, auto y) { return std::abs(x-y); } );
+    REQUIRE(metric.valid(adapter, scalars));
+}
+
+```
+
+./properties.hpp
+
+```c++
+#pragma once
+
+// C libraries
+#include <cstddef>  // std::size_t
+
+// std libraries
+#include <vector>   // std::vector
+#include <iostream> // std::cout
+#include <string>   // std::string
+
+// in-house libraries
+#include "equality.hpp"
+#include "predicate.hpp"
+
+namespace test {
+
+    template<typename Adapter, typename A>
+    bool discernability(const Adapter& adapter, 
+        const A& a
+    ) {
+        for (std::size_t i = 0; i < a.size(); ++i) {
+        for (std::size_t j = 0; j < i; ++j) {
+            if (adapter.equal(a[i],a[j])) {
+                std::cout << std::endl;
+                std::cout << "Test failed:" << std::endl;
+                std::cout << "  sample values should be appreciably different" << std::endl;
+                std::cout << "  a₁ : " << indent(adapter.print(a[i]), "  ") << " [from index "<< i <<"]" << std::endl;
+                std::cout << "  a₂ : " << indent(adapter.print(a[j]), "  ") << " [from index "<< j <<"]" << std::endl;
+                return false; 
+            }
+            if (adapter.print(a[i]) == adapter.print(a[j])) {
+                std::cout << std::endl;
+                std::cout << "Test failed:" << std::endl;
+                std::cout << "  adapter.print(…) must be able to depict appreciable differences" << std::endl;
+                std::cout << "  a₁ : " << indent(adapter.print(a[i]), "  ") << " [from index "<< i <<"]" << std::endl;
+                std::cout << "  a₂ : " << indent(adapter.print(a[j]), "  ") << " [from index "<< j <<"]" << std::endl;
+                return false; 
+            }
+        }}
+        return true;
+    }
+
+    template<typename Adapter, typename F, typename A>
+    bool determinism(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " must be able to be called repeatedly without changing the output", 
+            [&](auto a){
+                auto f1 = f(a);
+                auto f2 = f(a);
+                return Results(adapter.equal(f1, f2),
+                    "such that: \n  [the first call] = [the second call]\n" + 
+                    "a : " + indent(adapter.print(a), "  ")+"\n" +
+                    "[the first call]  : " + indent(adapter.print(f1), "  ")+"\n" +
+                    "[the second call] : " + indent(adapter.print(f2), "  ")+"\n"
+                );
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename A, typename B>
+    bool determinism(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as, const B& bs
+    ) {
+        return predicate(adapter, 
+            f_name + " must be able to be called repeatedly without changing the output", 
+            [&](auto a, auto b){
+                auto f1 = f(a, b);
+                auto f2 = f(a, b);
+                return Results(adapter.equal(f1, f2),
+                    "such that: \n  [the first call] = [the second call]\n" + 
+                    "a : " + indent(adapter.print(a), "  ")+"\n" +
+                    "b : " + indent(adapter.print(b), "  ")+"\n" +
+                    "[the first call]  : " + indent(adapter.print(f1), "  ")+"\n" +
+                    "[the second call] : " + indent(adapter.print(f2), "  ")+"\n"
+                );
+            }, as, bs);
+    }
+
+    template<typename Adapter, typename F, typename A, typename B, typename C>
+    bool determinism(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(adapter, 
+            f_name + " must be able to be called repeatedly without changing the output", 
+            [&](auto a, auto b, auto c){
+                auto f1 = f(a, b, c);
+                auto f2 = f(a, b, c);
+                return Results(adapter.equal(f1, f2),
+                    "such that: \n  [the first call] = [the second call]\n" + 
+                    "[the first call]  : " + indent(adapter.print(f1), "  ")+"\n" +
+                    "[the second call] : " + indent(adapter.print(f2), "  ")+"\n"
+                );
+            }, as, bs, cs);
+    }
+
+    template<typename Adapter, typename F, typename E, typename A>
+    bool left_identity(const Adapter& adapter, 
+        const std::string e_name, const E& e, 
+        const std::string f_name, const F& f, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must have a \"left identity\", " + e_name + " [denoted \"e\"], that when passed on the left always returns the right argument" +
+            "\nsuch that: \n  f(e,a) = a\n",
+            [=](auto a){
+                auto fea = f(e,a);
+                return Results(adapter.equal(fea, a),
+                    "f(e,a) : " + indent(adapter.print(fea), "  ")+"\n" +
+                    "e : " + indent(adapter.print(e), "  ")+"\n"
+                );
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename E, typename A>
+    bool right_identity(const Adapter& adapter, 
+        const std::string e_name, const E& e, 
+        const std::string f_name, const F& f, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must have a \"right identity\", " + e_name + " [denoted \"e\"], that when passed on the right always returns the left argument" +
+            "\nsuch that: \n  f(a,e) = a\n",
+            [=](auto a){
+                auto fae = f(a,e);
+                return Results(adapter.equal(fae, a),
+                    "f(a,e) : " + indent(adapter.print(fae), "  ")+"\n" +
+                    "e : " + indent(adapter.print(e), "  ")+"\n"
+                );
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename E, typename A>
+    bool binary_identity(const Adapter& adapter, 
+        const std::string e_name, const E& e, 
+        const std::string f_name, const F& f, 
+        const A& as
+    ) {
+        return 
+            left_identity (adapter, e_name, e, f_name, f, as) &&
+            right_identity(adapter, e_name, e, f_name, f, as);
+    }
+
+    template<typename Adapter, typename F, typename E>
+    bool unary_identity(const Adapter& adapter, 
+        const std::string e_name, const E& e,
+        const std::string f_name, const F& f 
+    ) {
+        return equality(
+            adapter,
+            f_name + " [denoted \"f\"] must have an \"identity\", " + e_name + "[denoted \"e\"], that when passed will always return itself" +
+            "\nsuch that: \n  f(e) = e\n",
+            "f(e)",[=](auto e){ return f(e); },
+            "e   ",[=](auto e){ return e; },
+            std::vector<E>{e});
+    }
+
+    template<typename Adapter, typename F, typename As>
+    bool unary_identity(const Adapter& adapter, 
+        const std::string f_name, const F& f,
+        const As& as
+    ) {
+        return equality(
+            adapter,
+            f_name + " [denoted \"f\"] must always return its argument" +
+            "\nsuch that: \n  f(a) = a\n",
+            "f(a)",[=](auto a){ return f(a); },
+            "a   ",[=](auto a){ return a; },
+            as);
+    }
+
+    template<typename Adapter, typename F, typename A, typename O>
+    bool left_annihilation(const Adapter& adapter, 
+        const std::string o_name, const O& o, 
+        const std::string f_name, const F& f, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must have a \"left annihilator\", " + o_name + " [denoted \"o\"], that when passed on the left will always return itself" + 
+            "\nsuch that: \n  f(o,a) = o\n",
+            [=](auto a){
+                auto foa = f(o,a);
+                return Results(adapter.equal(foa, o),
+                    "f(o,a) : " + indent(adapter.print(foa), "  ")+"\n" +
+                    "o : " + indent(adapter.print(o), "  ")+"\n"
+                );
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename A, typename O>
+    bool right_annihilation(const Adapter& adapter, 
+        const std::string o_name, const O& o, 
+        const std::string f_name, const F& f, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must have a \"right annihilator\", " + o_name + " [denoted \"o\"], that when passed on the right will always return itself" + 
+            "\nsuch that: \n  f(a,o) = o\n",
+            [=](auto a){
+                auto fao = f(a,o);
+                return Results(adapter.equal(fao, o),
+                    "f(a,o) : " + indent(adapter.print(fao), "  ")+"\n" +
+                    "o : " + indent(adapter.print(o), "  ")+"\n"
+                );
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename A, typename O>
+    bool binary_annihilation(const Adapter& adapter, 
+        const std::string o_name, const O& o, 
+        const std::string f_name, const F& f, 
+        const A& as
+    ) {
+        return 
+            left_annihilation (adapter, o_name, o, f_name, f, as) &&
+            right_annihilation(adapter, o_name, o, f_name, f, as);
+    }
+
+    // NOTE: unary_annihilation exists, but is not useful since it implies ∀a:f(a)=0 for some 0
+
+    template<typename Adapter, typename F, typename Finv, typename A>
+    bool left_invertibility(const Adapter& adapter, 
+        const std::string finv_name, const Finv& finv, 
+        const std::string f_name, const F& f, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must permit input to be reconstructed by a \"left inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]" +
+            "\nsuch that: \n  f⁻¹(f(a)) = a\n",
+            [=](auto a){
+                auto fa = f(a);
+                auto finvfa = finv(fa);
+                return Results(adapter.equal(finvfa, a),
+                    "f⁻¹(f(a)) : " + indent(adapter.print(finvfa), "  ")+"\n" +
+                    "f(a) : " + indent(adapter.print(fa), "  ")+"\n"
+                );
+            }, as);
+    }
+
+    template<typename Adapter, typename E, typename Finv, typename F, typename A>
+    bool left_invertibility(const Adapter& adapter, 
+        const std::string e_name,    const E& e, 
+        const std::string finv_name, const Finv& finv, 
+        const std::string f_name,    const F& f, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must permit input to be reconstructed by a \"left inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]" +
+            "\nsuch that: \n  f(f⁻¹(e,a), a) = e\n",
+            [=](auto a){
+                auto finvea = finv(e,a);
+                auto ffinveaa = f(finvea, a);
+                return Results(adapter.equal(ffinveaa, e),
+                    "f(f⁻¹(e,a),a) : " + indent(adapter.print(ffinveaa), "  ")+"\n" +
+                    "f⁻¹(e,a) : " + indent(adapter.print(finvea), "  ")+"\n" +
+                    "e : " + indent(adapter.print(e), "  ")+"\n"
+                );
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A>
+    bool unary_invertibility(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as
+    ) {
+        return 
+            left_invertibility(adapter, f_name, f, g_name, g, as) &&
+            left_invertibility(adapter, g_name, g, f_name, f, as);
+    }
+
+    template<typename Adapter, typename E, typename Finv, typename F, typename A>
+    bool right_invertibility(const Adapter& adapter, 
+        const std::string e_name,    const E& e, 
+        const std::string finv_name, const Finv& finv, 
+        const std::string f_name,    const F& f, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must permit input to be reconstructed by a \"right inverse\" function, " + finv_name + " [denoted \"f⁻¹\"]" +
+            "\nsuch that: \n  f(a, f⁻¹(e,a)) = e\n",
+            [=](auto a){
+                auto finvea = finv(e,a);
+                auto fafinvea = f(a, finvea);
+                return Results(adapter.equal(fafinvea, e),
+                    "f(a,f⁻¹(e,a)) : " + indent(adapter.print(fafinvea), "  ")+"\n" +
+                    "f⁻¹(e,a) : " + indent(adapter.print(finvea), "  ")+"\n" +
+                    "e : " + indent(adapter.print(e), "  ")+"\n"
+                );
+            }, as);
+    }
+
+    template<typename Adapter, typename E, typename Finv, typename F, typename A>
+    bool binary_invertibility(const Adapter& adapter, 
+        const std::string e_name,    const E& e, 
+        const std::string finv_name, const Finv& finv, 
+        const std::string f_name, const F& f, 
+        const A& as
+    ) {
+        return 
+            left_invertibility (adapter, e_name, e, finv_name, finv, f_name, f, as) &&
+            right_invertibility(adapter, e_name, e, finv_name, finv, f_name, f, as);
+    }
+
+    template<typename Adapter, typename F, typename A, typename B, typename C>
+    bool associativity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must allow invocations to be calculated in any order without changing results"+
+            "\nsuch that: \n  f(f(a,b), c) = f(a, f(b,c))\n",
+            [=](auto a, auto b, auto c){
+                auto fab = f(a,b);
+                auto fbc = f(b,c);
+                auto ffab_c = f(fab, c);
+                auto fa_fbc = f(a, fbc);
+                return Results(adapter.equal(ffab_c, fa_fbc),
+                    "f(f(a,b), c) : " + indent(adapter.print(ffab_c), "  ") + "\n" +
+                    "f(a, f(b,c)) : " + indent(adapter.print(fa_fbc), "  ") + "\n" +
+                    "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "f(b,c) : " + indent(adapter.print(fbc), "  ") + "\n"
+                );
+            }, as, bs, cs);
+    }
+
+    template<typename Adapter, typename F, typename FL, typename FR, typename A, typename B, typename C>
+    bool associativity(const Adapter& adapter, 
+        const std::string f_name,  const F& f, 
+        const std::string fl_name, const FL& fl, 
+        const std::string fr_name, const FR& fr, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must allow invocations to be calculated in any order without changing results"+
+            "\nsuch that: \n  f(f(a,b), c) = f(a, f(b,c))\n",
+            [=](auto a, auto b, auto c){
+                auto fab = fl(a,b);
+                auto fbc = fr(b,c);
+                auto ffab_c = f(fab, c);
+                auto fa_fbc = f(a, fbc);
+                return Results(adapter.equal(ffab_c, fa_fbc),
+                    "f(f(a,b), c) : " + indent(adapter.print(ffab_c), "  ") + "\n" +
+                    "f(a, f(b,c)) : " + indent(adapter.print(fa_fbc), "  ") + "\n" +
+                    "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "f(b,c) : " + indent(adapter.print(fbc), "  ") + "\n"
+                );
+            }, as, bs, cs);
+    }
+
+    template<typename Adapter, typename F2, typename F3, typename A, typename B, typename C>
+    bool left_associativity(const Adapter& adapter, 
+        const std::string f2_name, const F2& f2, 
+        const std::string f3_name, const F3& f3, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(adapter, 
+            f3_name + " [denoted \"f\"] must calculate starting from the leftmost parameters using "+f2_name+ 
+            "\nsuch that: \n  f(f(a,b), c) = f(a,b,c)\n",
+            [=](auto a, auto b, auto c){
+                auto fab = f2(a,b);
+                auto ffab_c = f2(fab, c);
+                auto fabc = f3(a,b,c);
+                return Results(adapter.equal(ffab_c, fabc),
+                    "f(a, b, c) : " + indent(adapter.print(fabc), "  ") + "\n" +
+                    "f(f(a,b), c) : " + indent(adapter.print(ffab_c), "  ") + "\n" +
+                    "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n"
+                );
+            }, as, bs, cs);
+    }
+
+    template<typename Adapter, typename F2, typename F3, typename A, typename B, typename C>
+    bool right_associativity(const Adapter& adapter, 
+        const std::string f2_name, const F2& f2, 
+        const std::string f3_name, const F3& f3, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(adapter, 
+            f3_name + " [denoted \"f\"] must calculate starting from the rightmost parameters using "+f2_name+ 
+            "\nsuch that: \n  f(a,f(b,c)) = f(a,b,c)\n",
+            [=](auto a, auto b, auto c){
+                auto fbc = f2(b,c);
+                auto fa_fbc = f2(a, fbc);
+                auto fabc = f3(a,b,c);
+                return Results(adapter.equal(fa_fbc, fabc),
+                    "f(a, b, c) : " + indent(adapter.print(fabc), "  ") + "\n" +
+                    "f(a,f(b,c)) : " + indent(adapter.print(fa_fbc), "  ") + "\n" +
+                    "f(b,c) : " + indent(adapter.print(fbc), "  ") + "\n"
+                );
+            }, as, bs, cs);
+    }
+
+    template<typename Adapter, typename F, typename A>
+    bool power_associativity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must allow invocations with a single parameter to be calculated in any order without changing results" + 
+            "\nsuch that: \n  f(f(a,a), a) = f(a, f(a,a))\n",
+            [=](auto a){
+                auto faa = f(a,a);
+                auto fa_faa = f(a, faa);
+                auto ffaa_a = f(f(a,a),a);
+                return Results(adapter.equal(fa_faa, ffaa_a),
+                    "f(a, f(a,a)) : " + indent(adapter.print(fa_faa), "  ") + "\n" +
+                    "f(f(a,a), a) : " + indent(adapter.print(ffaa_a), "  ") + "\n" +
+                    "f(a,a) : " + indent(adapter.print(faa), "  ") + "\n"
+                );
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename A, typename B>
+    bool left_alternativity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as, const B& bs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must under certain conditions allow invocations to be calculated in any order without changing results" + 
+            "\nsuch that: \n  f(f(a,a), b) = f(a, f(a,b))\n",
+            [=](auto a, auto b){
+                auto fab = f(a,b);
+                auto faa = f(a,a);
+                auto fa_fab = f(a, fab);
+                auto ffaa_b = f(faa,b);
+                return Results(adapter.equal(fa_fab, ffaa_b),
+                    "f(a, f(a,b)) : " + indent(adapter.print(fa_fab), "  ") + "\n" +
+                    "f(f(a,a), b) : " + indent(adapter.print(ffaa_b), "  ") + "\n" +
+                    "f(a,a) : " + indent(adapter.print(faa), "  ") + "\n" +
+                    "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n"
+                );
+            }, as, bs);
+    }
+
+    template<typename Adapter, typename F, typename A, typename B>
+    bool right_alternativity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as, const B& bs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must under certain conditions allow invocations to be calculated in any order without changing results" + 
+            "\nsuch that: \n  f(f(a,b), b) = f(a, f(b,b))\n",
+            [=](auto a, auto b){
+                auto fab = f(a,b);
+                auto fbb = f(b,b);
+                auto fa_fbb = f(a, fbb);
+                auto ffab_b = f(fab,b);
+                return Results(adapter.equal(fa_fbb, ffab_b),
+                    "f(a, f(b,b)) : " + indent(adapter.print(fa_fbb), "  ") + "\n" +
+                    "f(f(a,b), b) : " + indent(adapter.print(ffab_b), "  ") + "\n" +
+                    "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "f(b,b) : " + indent(adapter.print(fbb), "  ") + "\n"
+                );
+            }, as, bs);
+    }
+
+    template<typename Adapter, typename F, typename A, typename B>
+    bool alternativity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as, const B& bs
+    ) {
+        return 
+            left_alternativity (adapter, f_name, f, as, bs) &&
+            right_alternativity(adapter, f_name, f, as, bs);
+    }
+
+    template<typename Adapter, typename F, typename A, typename B>
+    bool flexibility(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as, const B& bs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must under certain conditions allow invocations to be calculated in any order without changing results" + 
+            "\nsuch that: \n  f(f(a,b), a) = f(a, f(b,a))\n",
+            [=](auto a, auto b){
+                auto fab = f(a,b);
+                auto fba = f(b,a);
+                auto fa_fba = f(a, fba);
+                auto ffab_a = f(fab,a);
+                return Results(adapter.equal(fa_fba, ffab_a),
+                    "f(a, f(b,a)) : " + indent(adapter.print(fa_fba), "  ") + "\n" +
+                    "f(f(a,b), a) : " + indent(adapter.print(ffab_a), "  ") + "\n" +
+                    "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "f(b,a) : " + indent(adapter.print(fba), "  ") + "\n"
+                );
+            }, as, bs);
+    }
+
+    template<typename Adapter, typename F, typename A, typename B>
+    bool commutativity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as, const B& bs
+    ) {
+        return equality(
+            adapter,
+            f_name + " [denoted \"f\"] must allow arguments to be passed in any order without changing results", 
+            "f(a,b)", [=](auto a, auto b){ return f(a, b); },
+            "f(b,a)", [=](auto a, auto b){ return f(b, a); },
+            as, bs);
+    }
+
+    template<typename Adapter, typename Invert, typename F, typename A, typename B>
+    bool anticommutativity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string inv_name, const Invert& inv, 
+        const A& as, const B& bs
+    ) {
+        return equality(
+            adapter,
+            f_name + " [denoted \"f\"] must return the opposite value if its arguments are flipped, where opposite is determined by "+inv_name+" [denoted \"-\"]", 
+            "-f(a,b)", [=](auto a, auto b){ return inv(f(a, b)); },
+            " f(b,a)", [=](auto a, auto b){ return f(b, a); },
+            as, bs);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A, typename B, typename C>
+    bool left_distributivity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must allow left parameters to distribute over "+g_name+" [denoted \"g\"] while still producing the same results" + 
+            "\nsuch that: \n  f(c, g(a, b)) = g(f(c,a), f(c,b))\n",
+            [=](auto a, auto b, auto c){
+                auto gab = g(a,b);
+                auto fca = f(c,a);
+                auto fcb = f(c,b);
+                auto f_c_gab = f(c, gab);
+                auto g_fca_fcb = g(fca,fcb);
+                return Results(adapter.equal(f_c_gab, g_fca_fcb),
+                    "f(c, g(a, b))     : " + indent(adapter.print(f_c_gab), "  ") + "\n" +
+                    "g(f(c,a), f(c,b)) : " + indent(adapter.print(g_fca_fcb), "  ") + "\n" +
+                    "g(a,b) : " + indent(adapter.print(gab), "  ") + "\n" +
+                    "f(c,a) : " + indent(adapter.print(fca), "  ") + "\n" +
+                    "f(c,b) : " + indent(adapter.print(fcb), "  ") + "\n"
+                );
+            }, as, bs, cs);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A, typename B, typename C>
+    bool right_distributivity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must allow right parameters to distribute over "+g_name+" [denoted \"g\"] while still producing the same results" + 
+            "\nsuch that: \n  f(g(a,b), c) = g(f(a,c), f(b,c))\n",
+            [=](auto a, auto b, auto c){
+                auto gab = g(a,b);
+                auto fac = f(a,c);
+                auto fbc = f(b,c);
+                auto f_gab_c = f(gab, c);
+                auto g_fac_fbc = g(fac,fbc);
+                return Results(adapter.equal(f_gab_c, g_fac_fbc),
+                    "f(g(a,b), c)     : " + indent(adapter.print(f_gab_c), "  ") + "\n" +
+                    "g(f(a,c), f(b,c)) : " + indent(adapter.print(g_fac_fbc), "  ") + "\n" +
+                    "g(a,b) : " + indent(adapter.print(gab), "  ") + "\n" +
+                    "f(a,c) : " + indent(adapter.print(fac), "  ") + "\n" +
+                    "f(b,c) : " + indent(adapter.print(fbc), "  ") + "\n"
+                );
+            }, as, bs, cs);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A, typename B, typename C>
+    bool binary_distributivity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return 
+            left_distributivity (adapter, f_name, f, g_name, g, as, bs, cs) &&
+            right_distributivity(adapter, f_name, f, g_name, g, as, bs, cs);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A, typename B>
+    bool unary_distributivity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as, const B& bs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must be able to distribute over a "+g_name+" [denoted \"g\"] while still producing the same results" + 
+            "\nsuch that: \n  f(g(a,b)) = g(f(a),f(b))\n",
+            [=](auto a, auto b){
+                auto fa = f(a);
+                auto fb = f(b);
+                auto gfafb = g(fa,fb);
+                auto gab = g(a,b);
+                auto fgab = f(gab);
+                return Results(adapter.equal(fgab, gfafb),
+                    "f(g(a,b)) : " + indent(adapter.print(fgab), "  ") + "\n" +
+                    "g(a,b) : " + indent(adapter.print(gab), "  ") + "\n" +
+                    "g(f(a),f(b)) : " + indent(adapter.print(gfafb), "  ") + "\n" +
+                    "f(a) : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "f(b) : " + indent(adapter.print(fb), "  ") + "\n"
+                );
+            }, as, bs);
+    }
+
+
+
+    template<typename Adapter, typename F, typename Add1, typename Add2, typename A, typename B>
+    bool additivity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string add1_name, const Add1& add1, 
+        const std::string add2_name, const Add2& add2, 
+        const A& as, const B& bs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must allow the output of a sum, using \""+add1_name+"\" to be used in place of the sum of the output, using \"" + add2_name + "\"" +
+            "\nsuch that: \n  f(a+b) = f(a)+f(b)\n",
+            [=](auto a, auto b){
+                auto ab = add1(a,b);
+                auto fab = f(ab);
+                auto fa = f(a);
+                auto fb = f(b);
+                auto fa_fb = add2(fa,fb);
+                return Results(adapter.equal(fab, fa_fb),
+                    "f(a+b)    : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "f(a)+f(b) : " + indent(adapter.print(fa_fb), "  ") + "\n" +
+                    "a+b       : " + indent(adapter.print(ab), "  ") + "\n" +
+                    "f(a)      : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "f(b)      : " + indent(adapter.print(fb), "  ") + "\n"
+                );
+            }, as, bs);
+    }
+
+    template<typename Adapter, typename F, typename Mult1, typename Mult2, typename A, typename B>
+    bool homogeneity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string mult1_name, const Mult1& mult1, 
+        const std::string mult2_name, const Mult2& mult2, 
+        const A& as, const B& bs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must allow the multiple of an input (using "+mult1_name+") to be used in place of the multiple of an output (using " + mult2_name + ")" +
+            "\nsuch that: \n  f(a*b) = a*f(b)\n",
+            [=](auto a, auto b){
+                auto ab = mult1(a,b);
+                auto fab = f(ab);
+                auto fb = f(b);
+                auto afb = mult2(a,fb);
+                return Results(adapter.equal(fab, afb),
+                    "f(a*b) : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "a*f(b) : " + indent(adapter.print(afb), "  ") + "\n" +
+                    "a*b    : " + indent(adapter.print(ab), "  ") + "\n" +
+                    "f(b)   : " + indent(adapter.print(fb), "  ") + "\n"
+                );
+            }, as, bs);
+    }
+
+    template<typename Adapter, typename F, typename G, typename FG, typename A>
+    bool composition(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string fg_name, const FG& fg, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] after "+g_name+" [denoted \"g\"] must be equivalent to " + fg_name + "[denoted \"fg\"]"
+            "\nsuch that: \n  f(g(a)) = fg(a)\n",
+            [=](auto a){
+                auto ga = g(a);
+                auto f_ga = f(ga);
+                auto fg_a = fg(a);
+                return Results(adapter.equal(f_ga, fg_a),
+                    "f(g(a)) : " + indent(adapter.print(f_ga), "  ") + "\n" +
+                    "fg(a)   : " + indent(adapter.print(fg_a), "  ") + "\n" +
+                    "g(a)    : " + indent(adapter.print(ga), "  ") + "\n"
+                );
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename A>
+    bool unary_idempotence(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must return the same output if invoked a second time" + 
+            "\nsuch that: \n  f(f(a)) = f(a)\n",
+            [=](auto a){
+                auto fa = f(a);
+                auto ffa = f(fa);
+                return Results(adapter.equal(ffa, fa),
+                    "f(a)    : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "f(f(a)) : " + indent(adapter.print(ffa), "  ") + "\n"
+                );
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename A>
+    bool binary_idempotence(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as
+    ) {
+        return equality(
+            adapter,
+            f_name + " [denoted \"f\"] must return input if both parameters are the same", 
+            "f(a,a) : ", [=](auto a){ return f(a, a); },
+            "a      : ", [=](auto a){ return a; },
+            as);
+    }
+
+    template<typename Adapter, typename F, typename Z, typename A>
+    bool nilpotence(const Adapter& adapter, 
+        const std::string z_name, const Z& z, 
+        const std::string f_name, const F& f, 
+        const A& as
+    ) {
+        return equality(
+            adapter,
+            f_name + " [denoted \"f\"] must return a zero value "+ z_name +" [denoted \"z\"] if both parameters are the same", 
+            "f(a,a) : ", [=](auto a){ return f(a, a);  },
+            "z      : ", [=](auto a){ return z; },
+            as);
+    }
+
+    template<typename Adapter, typename F, typename A>
+    bool unary_involutivity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must return the original input if invoked a second time" + 
+            "\nsuch that: \n  f(f(a)) = a\n",
+            [=](auto a){
+                auto fa = f(a);
+                auto ffa = f(fa);
+                return Results(adapter.equal(ffa, a),
+                    "f(a)    : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "f(f(a)) : " + indent(adapter.print(ffa), "  ") + "\n"
+                );
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename A, typename B>
+    bool left_involutivity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as, const B& bs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must return the original input if invoked a second time with the same left parameter" + 
+            "\nsuch that: \n  f(a, f(a,b)) = b\n",
+            [=](auto a, auto b){
+                auto fab = f(a,b);
+                auto fafab = f(a,fab);
+                return Results(adapter.equal(fafab, b),
+                    "f(a,b)       : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "f(a, f(a,b)) : " + indent(adapter.print(fafab), "  ") + "\n"
+                );
+            }, as, bs);
+    }
+
+    template<typename Adapter, typename F, typename A, typename B>
+    bool right_involutivity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as, const B& bs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must return the original input if invoked a second time with the same right parameter" + 
+            "\nsuch that: \n  f(f(a,b), b) = a\n",
+            [=](auto a, auto b){
+                auto fab = f(a,b);
+                auto ffabb = f(fab, b);
+                return Results(adapter.equal(ffabb, a),
+                    "f(a,b)       : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "f(f(a,b), b) : " + indent(adapter.print(ffabb), "  ") + "\n"
+                );
+            }, as, bs);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A, typename B>
+    bool binary_involutivity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as, const B& bs
+    ) {
+        return 
+            left_involutivity (adapter, f_name, f, as, bs) &&
+            right_involutivity(adapter, f_name, f, as, bs);
+    }
+
+    template<typename Adapter, typename Cross, typename Add, typename N, typename A, typename B, typename C>
+    bool jacobi_identity(
+        const Adapter& adapter, 
+        const std::string n_name, const N& n,
+        const std::string cross_name, const Cross& cross, 
+        const std::string add_name, const Add& add, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(adapter, 
+            cross_name + " [denoted \"×\"] and "+ add_name +" [denoted \"+\"] must satisfy the jacobi identity for index "+ n_name+ " [denoted \"n\"]" + 
+            "\nsuch that: \n  a×(b×c) + b×(c×a) + c×(a×b) = n\n",
+            [=](auto a, auto b, auto c){
+                auto ab = cross(a,b);
+                auto bc = cross(b,c);
+                auto ca = cross(c,a);
+                auto a_bc = cross(a,bc);
+                auto b_ca = cross(b,ca);
+                auto c_ab = cross(c,ab);
+                auto abc_bca = add(a_bc,b_ca);
+                auto abc_bca_cab = add(abc_bca, c_ab);
+                return Results(adapter.equal(abc_bca_cab, n),
+                    "a×b                     :" + indent(adapter.print(ab), "  ") + "\n" +
+                    "b×c                     :" + indent(adapter.print(bc), "  ") + "\n" +
+                    "c×a                     :" + indent(adapter.print(ca), "  ") + "\n" +
+                    "a×(b×c)                 :" + indent(adapter.print(a_bc), "  ") + "\n" +
+                    "b×(c×a)                 :" + indent(adapter.print(b_ca), "  ") + "\n" +
+                    "c×(a×b)                 :" + indent(adapter.print(c_ab), "  ") + "\n" +
+                    "a×(b×c)+b×(c×a)         :" + indent(adapter.print(abc_bca), "  ") + "\n" +
+                    "a×(b×c)+b×(c×a)+c×(a×b) :" + indent(adapter.print(abc_bca_cab), "  ") + "\n" +
+                    "n:           " + indent(adapter.print(n) , "  ")+ "\n"
+                );
+            }, as, bs, cs);
+    }
+
+    /* 
+    NOTE: the following functions (invariance, continuity, conservation, preservation, congruence) effectively test for the same thing,
+    however some differ in how they are invoked, and some differ in how they should most effectively communicate the concept to the user,
+    so in either case we implement different functions that vary only in how they present information to the user.
+    */
+
+    template<typename Adapter, typename F, typename G, typename A>
+    bool invariance(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must be invariant to " + g_name + " [denoted \"g\"]" + 
+            "\nsuch that: \n  f(g(a)) = f(a)\n",
+            [=](auto a){
+                auto fa = f(a);
+                auto ga = g(a);
+                auto fga = f(ga);
+                return Results(adapter.equal(fga, fa),
+                    "f(a)    : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "g(a)    : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "f(g(a)) : " + indent(adapter.print(fga), "  ") + "\n"
+                );
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A, typename B>
+    bool invariance(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as, const B& bs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must be invariant to " + g_name + " [denoted \"g\"]" + 
+            "\nsuch that: \n  f(g(a),g(b)) = f(a,b)\n",
+            [=](auto a, auto b){
+                auto fab = f(a,b);
+                auto ga = g(a);
+                auto gb = g(b);
+                auto fgagb = f(ga,gb);
+                return Results(adapter.equal(fgagb, fab),
+                    "f(a,b)       : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "g(a)         : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "g(b)         : " + indent(adapter.print(gb), "  ") + "\n" +
+                    "f(g(a),g(b)) : " + indent(adapter.print(fgagb), "  ") + "\n"
+                );
+            }, as, bs);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A, typename B, typename C>
+    bool invariance(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must be invariant to " + g_name + " [denoted \"g\"]" + 
+            "\nsuch that: \n  f(g(a),g(b),g(c)) = f(a,b,c)\n",
+            [=](auto a, auto b, auto c){
+                auto fabc = f(a,b,c);
+                auto ga = g(a);
+                auto gb = g(b);
+                auto gc = g(c);
+                auto fgagbgc = f(ga,gb,gc);
+                return Results(adapter.equal(fgagbgc, fabc),
+                    "f(a,b,c)          : " + indent(adapter.print(fabc), "  ") + "\n" +
+                    "g(a)              : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "g(b)              : " + indent(adapter.print(gb), "  ") + "\n" +
+                    "g(c)              : " + indent(adapter.print(gc), "  ") + "\n" +
+                    "f(g(a),g(b),g(c)) : " + indent(adapter.print(fgagbgc), "  ") + "\n"
+                );
+            }, as, bs, cs);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A>
+    bool continuity(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must be continuous so that imperceptible changes to input [denoted \"g\"] will produce imperceptible changes to output" + 
+            "\nsuch that: \n  f(g(a)) = f(a)\n",
+            [=](auto a){
+                auto fa = f(a);
+                auto ga = g(a);
+                auto fga = f(ga);
+                return Results(adapter.equal(fga, fa),
+                    "f(a)    : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "g(a)    : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "f(g(a)) : " + indent(adapter.print(fga), "  ") + "\n"
+                );
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A>
+    bool congruence(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must be congruent over " + g_name + " [denoted \"g\"]" + 
+            "\nsuch that: \n  f(g(a)) = f(a)\n",
+            [=](auto a){
+                auto fa = f(a);
+                auto ga = g(a);
+                auto fga = f(ga);
+                return Results(adapter.equal(fga, fa),
+                    "f(a)    : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "g(a)    : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "f(g(a)) : " + indent(adapter.print(fga), "  ") + "\n"
+                );
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A>
+    bool preservation(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must preserve " + g_name + " [denoted \"g\"]" + 
+            "\nsuch that: \n  f(g(a)) = f(a)\n",
+            [=](auto a){
+                auto fa = f(a);
+                auto ga = g(a);
+                auto fga = f(ga);
+                return Results(adapter.equal(fga, fa),
+                    "f(a)    : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "g(a)    : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "f(g(a)) : " + indent(adapter.print(fga), "  ") + "\n"
+                );
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A>
+    bool unary_conservation(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must conserve " + g_name + " [denoted \"g\"]" + 
+            "\nsuch that: \n  g(f(a)) = g(a)\n",
+            [=](auto a){
+                auto ga = g(a);
+                auto fa = f(a);
+                auto gfa = g(fa);
+                return Results(adapter.equal(gfa, ga),
+                    "g(a)    : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "f(a)    : " + indent(adapter.print(fa), "  ") + "\n" +
+                    "g(f(a)) : " + indent(adapter.print(gfa), "  ") + "\n"
+                );
+            }, as);
+    }
+
+    template<typename Adapter, typename Add, typename F, typename G, typename A, typename B>
+    bool binary_conservation(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string add_name, const Add& add, 
+        const A& as, const B& bs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must conserve " + g_name + " [denoted \"g\"]" + 
+            "\nsuch that: \n  g(a)+g(b) = g(f(a,b))\n",
+            [=](auto a, auto b){
+                auto ga = g(a);
+                auto gb = g(b);
+                auto gagb = add(ga,gb);
+                auto fab = f(a,b);
+                auto gfab = g(fab);
+                return Results(adapter.equal(gfab, gagb),
+                    "g(a)      : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "g(b)      : " + indent(adapter.print(gb), "  ") + "\n" +
+                    "g(a)+g(b) : " + indent(adapter.print(gagb), "  ") + "\n" +
+                    "f(a,b)    : " + indent(adapter.print(fab), "  ") + "\n" +
+                    "g(f(a,b)) : " + indent(adapter.print(gfab), "  ") + "\n"
+                );
+            }, as, bs);
+    }
+
+    template<typename Adapter, typename Add, typename F, typename G, typename A, typename B, typename C>
+    bool trinary_conservation(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string add_name, const Add& add, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(adapter, 
+            f_name + " [denoted \"f\"] must conserve " + g_name + " [denoted \"g\"]" + 
+            "\nsuch that: \n  g(a)+g(b)+g(c) = g(f(a,b,c))\n",
+            [=](auto a, auto b, auto c){
+                auto ga = g(a);
+                auto gb = g(b);
+                auto gc = g(c);
+                auto gabc = add(add(ga,gb),gc);
+                auto fabc = f(a,b,c);
+                auto gfabc = g(fabc);
+                return Results(adapter.equal(gfabc, gabc),
+                    "g(a)      : " + indent(adapter.print(ga), "  ") + "\n" +
+                    "g(b)      : " + indent(adapter.print(gb), "  ") + "\n" +
+                    "g(c)      : " + indent(adapter.print(gc), "  ") + "\n" +
+                    "g(a)+g(b)+g(c) : " + indent(adapter.print(gabc), "  ") + "\n" +
+                    "f(a,b,c)       : " + indent(adapter.print(fabc), "  ") + "\n" +
+                    "g(f(a,b,c))    : " + indent(adapter.print(gfabc), "  ") + "\n"
+                );
+            }, as, bs, cs);
+    }
+
+
+
+
+
+    template<typename Adapter, typename Valid, typename F, typename A>
+    bool codomain(const Adapter& adapter, 
+        const std::string validity_name, const Valid& valid, 
+        const std::string f_name, const F& f, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " must only produce output that is " + validity_name,
+            [=](auto a){
+                auto fa = f(a);
+                std::string diagnostics = "f(a) : " + indent(adapter.print(fa), "  ");
+                return Results(valid(fa), diagnostics); }, 
+            as);
+    }
+
+    template<typename Adapter, typename Valid, typename F, typename A, typename B>
+    bool codomain(const Adapter& adapter, 
+        const std::string validity_name, const Valid& valid, 
+        const std::string f_name, const F& f, 
+        const A& as, const B& bs
+    ) {
+        return predicate(
+            adapter,
+            f_name + " must only produce output that is " + validity_name, 
+            [=](auto a, auto b){
+                auto fab = f(a,b);
+                std::string diagnostics = "f(a,b) : " + indent(adapter.print(fab), "  ");
+                return Results(valid(fab), diagnostics); }, 
+            as, bs);
+    }
+
+    template<typename Adapter, typename Valid, typename F, typename A, typename B, typename C>
+    bool codomain(const Adapter& adapter, 
+        const std::string validity_name, const Valid& valid, 
+        const std::string f_name, const F& f, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(
+            adapter,
+            f_name + " must only produce output that is " + validity_name, 
+            [=](auto a, auto b, auto c){
+                auto fabc = f(a,b,c);
+                std::string diagnostics = "f(a,b,c) : " + indent(adapter.print(fabc), "  ");
+                return Results(valid(fabc), diagnostics); }, 
+            as, bs, cs);
+    }
+
+
+
+
+
+
+    template<typename Adapter, typename F, typename A, typename B, typename C>
+    bool left_cancellative(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must imply that two arguments are equal if invoking them with the same left argument produces the same result" + 
+                "such that: \n  f(a,b)=f(a,c) implies b=c \n",
+            [=](auto a, auto b, auto c){
+                auto fab = f(a,b);
+                auto fac = f(a,c);
+                std::string diagnostics;
+                diagnostics += "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n";
+                diagnostics += "f(a,c) : " + indent(adapter.print(fac), "  ") + "\n";
+                return Results(adapter.equal(fab, fac)? adapter.equal(b,c) : true, diagnostics); 
+            }, 
+            as, bs, cs);
+    }
+
+    template<typename Adapter, typename F, typename A, typename B, typename C>
+    bool right_cancellative(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must imply that two arguments are equal if invoking them with the same right argument produces the same result" + 
+                "such that: \n  f(b,a)=f(c,a) implies b=c \n", 
+            [=](auto a, auto b, auto c){
+                auto fba = f(b,a);
+                auto fca = f(c,a);
+                std::string diagnostics;
+                diagnostics += "f(b,a) : " + indent(adapter.print(fba), "  ") + "\n";
+                diagnostics += "f(c,a) : " + indent(adapter.print(fca), "  ") + "\n";
+                return Results(adapter.equal(fba, fca)? adapter.equal(b,c) : true, diagnostics); 
+            }, 
+            as, bs, cs);
+    }
+
+    template<typename Adapter, typename F, typename A, typename B, typename C>
+    bool cancellative(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return 
+            left_cancellative (adapter, f_name, f, as, bs, cs) &&
+            right_cancellative(adapter, f_name, f, as, bs, cs);
+    }
+
+
+
+    template<typename Adapter, typename R, typename A>
+    bool reflexivity(const Adapter& adapter, 
+        const std::string r_name, const R& r, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            "Relation " + r_name + " [denoted \"r\"] is reflexive", 
+            [=](auto a){
+                return Results(r(a, a), "such that: \n  r(a,a) for each a \n"); 
+            }, as);
+    }
+
+    template<typename Adapter, typename R, typename A>
+    bool irreflexivity(const Adapter& adapter, 
+        const std::string r_name, const R& r, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            "Relation " + r_name + " [denoted \"r\"] is irreflexive", 
+            [=](auto a){
+                return Results(!r(a, a), "such that: \n  ¬r(a,a) for each a \n");
+            }, as);
+    }
+
+    template<typename Adapter, typename R, typename A, typename B>
+    bool symmetry(const Adapter& adapter, 
+        const std::string r_name, const R& r, 
+        const A& as, const B& bs
+    ) {
+        return predicate(
+            adapter,
+            "Relation " + r_name + " [denoted \"r\"] is symmetric", 
+            [=](auto a, auto b){
+                auto rab = r(a, b);
+                auto rba = r(b, a);
+                std::string diagnostics;
+                diagnostics += "such that: \n  r(a,b) = r(b,a)\n";
+                diagnostics += "r(a,b) : " + indent(adapter.print(rab), "  ") + "\n";
+                diagnostics += "r(b,a) : " + indent(adapter.print(rba), "  ") + "\n";
+                return Results(rab==rba, diagnostics);
+            }, as, bs);
+    }
+
+    template<typename Adapter, typename R, typename A, typename B>
+    bool asymmetry(const Adapter& adapter, 
+            std::string r_name, const R& r, 
+        const A& as, const B& bs
+    ) {
+        return predicate(
+            adapter,
+            "Relation " + r_name + " [denoted \"r\"] is asymmetric", 
+            [=](auto a, auto b){
+                auto rab = r(a, b);
+                auto rba = r(b, a);
+                std::string diagnostics;
+                diagnostics += "such that: \n  r(a,b) = ¬r(b,a)\n";
+                diagnostics += "r(a,b) : " + indent(adapter.print(rab), "  ") + "\n";
+                diagnostics += "r(b,a) : " + indent(adapter.print(rba), "  ") + "\n";
+                return Results(rab? !rba:true, diagnostics);
+            }, as, bs);
+    }
+
+    template<typename Adapter, typename R, typename A, typename B>
+    bool antisymmetry(const Adapter& adapter, 
+            std::string r_name, const R& r, 
+        const A& as, const B& bs
+    ) {
+        return predicate(
+            adapter,
+            "Relation " + r_name + " [denoted \"r\"] is antisymmetric", 
+            [=](auto a, auto b){
+                auto rab = r(a, b);
+                auto rba = r(b, a);
+                std::string diagnostics;
+                diagnostics += "such that: \n  r(a,b) = r(b,a) implies a=b\n";
+                diagnostics += "r(a,b) : " + indent(adapter.print(rab), "  ") + "\n";
+                diagnostics += "r(b,a) : " + indent(adapter.print(rba), "  ") + "\n";
+                return Results(rab&&rba? adapter.equal(a,b):true, diagnostics);
+            }, as, bs);
+    }
+
+    template<typename Adapter, typename R, typename A, typename B, typename C>
+    bool transitivity(const Adapter& adapter, 
+            std::string r_name, const R& r, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(
+            adapter,
+            "Relation " + r_name + " [denoted \"r\"] is transitive", 
+            [=](auto a, auto b, auto c){
+                auto rab = r(a, b);
+                auto rbc = r(b, c);
+                auto rac = r(a, c);
+                std::string diagnostics;
+                diagnostics += "such that: \n  r(a,b) ∧ r(b,c) implies r(a,c)\n";
+                diagnostics += "r(a,b) : " + indent(adapter.print(rab), "  ") + "\n";
+                diagnostics += "r(b,c) : " + indent(adapter.print(rbc), "  ") + "\n";
+                diagnostics += "r(a,c) : " + indent(adapter.print(rac), "  ") + "\n";
+                return Results(rab&&rbc?rac:true, diagnostics); 
+            }, as, bs, cs);
+    }
+
+    template<typename Adapter, typename R, typename A, typename B, typename C>
+    bool antitransitivity(const Adapter& adapter, 
+            std::string r_name, const R& r, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(
+            adapter,
+            "Relation " + r_name + " [denoted \"r\"] is antitransitive", 
+            [=](auto a, auto b, auto c){
+                auto rab = r(a, b);
+                auto rbc = r(b, c);
+                auto rac = r(a, c);
+                std::string diagnostics;
+                diagnostics += "such that: \n  r(a,b) ∧ r(b,c) implies ¬r(a,c)\n";
+                diagnostics += "r(a,b) : " + indent(adapter.print(rab), "  ") + "\n";
+                diagnostics += "r(b,c) : " + indent(adapter.print(rbc), "  ") + "\n";
+                diagnostics += "r(a,c) : " + indent(adapter.print(rac), "  ") + "\n";
+                return Results(rab&&rbc?!rac:true, diagnostics); 
+            }, as, bs, cs);
+    }
+
+    template<typename Adapter, typename R, typename A, typename B>
+    bool totality(const Adapter& adapter, 
+            std::string r_name, const R& r, 
+        const A& as, const B& bs
+    ) {
+        return predicate(
+            adapter,
+            "Relation " + r_name + " [denoted \"r\"] is total", 
+            [=](auto a, auto b){
+                auto rab = r(a, b);
+                auto rba = r(b, a);
+                std::string diagnostics;
+                diagnostics += "such that: \n  r(a,b) ∨ r(b,a)\n";
+                diagnostics += "r(a,b) : " + indent(adapter.print(rab), "  ") + "\n";
+                diagnostics += "r(b,a) : " + indent(adapter.print(rba), "  ") + "\n";
+                return Results(rab||rba, diagnostics); 
+            }, as, bs);
+    }
+
+    template<typename Adapter, typename R, typename A, typename B>
+    bool strict_totality(const Adapter& adapter, 
+            std::string r_name, const R& r, 
+        const A& as, const B& bs
+    ) {
+        return predicate(
+            adapter,
+            "Relation " + r_name + " [denoted \"r\"] is strictly total", 
+            [=](auto a, auto b){
+                auto rab = r(a, b);
+                auto rba = r(b, a);
+                std::string diagnostics;
+                diagnostics += "such that: \n  r(a,b) iff ¬r(b,a)\n";
+                diagnostics += "r(a,b) : " + indent(adapter.print(rab), "  ") + "\n";
+                diagnostics += "r(b,a) : " + indent(adapter.print(rba), "  ") + "\n";
+                return Results(rab^rba, diagnostics); 
+            }, as, bs);
+    }
+
+    template<typename Adapter, typename LessThanEqual, typename Add, typename F, typename A, typename B, typename C>
+    bool triangle_inequality(const Adapter& adapter, 
+        const LessThanEqual& leq, const Add& add, 
+        const std::string f_name, const F& f, 
+        const A& as, const B& bs, const C& cs
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must satisfy the triangle inequality, so for any pair of arguments the smallest sum of invocations that use those arguments is a single invocation", 
+            [=](auto a, auto b, auto c){
+                auto fac = f(a,c);
+                auto fab = f(a,b);
+                auto fbc = f(b,c);
+                auto fab_fbc = add(fab, fbc);
+                std::string diagnostics;
+                diagnostics += "such that: \n  f(a,c) ≤ f(a,b)+f(b,c)\n";
+                diagnostics += "f(a,c) : " + indent(adapter.print(fac), "  ") + "\n";
+                diagnostics += "f(a,b) : " + indent(adapter.print(fab), "  ") + "\n";
+                diagnostics += "f(b,c) : " + indent(adapter.print(fbc), "  ") + "\n";
+                diagnostics += "f(a,b)+f(b,c) : " + indent(adapter.print(fab_fbc), "  ") + "\n";
+                return Results(leq(fac, fab_fbc), diagnostics); 
+            }, 
+            as, bs, cs);
+    }
+
+
+
+
+    template<typename Adapter, typename F, typename G, typename A>
+    bool decreasing(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must be decreasing with respect to "+g_name+" [denoted \"g\"], so that this property of output is always less than that of input", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ga = g(a);
+                std::string diagnostics;
+                diagnostics += "such that: \n  g(f(a)) < g(a)\n";
+                diagnostics += "g(f(a)) : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "g(a) : " + indent(adapter.print(ga), "  ") + "\n";
+                diagnostics += "f(a) : " + indent(adapter.print(fa), "  ") + "\n";
+                return Results(gfa < ga, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A>
+    bool nonincreasing(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must be nonincreasing with respect to "+g_name+" [denoted \"g\"], so that this property of output is always less than or equal to that of input", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ga = g(a);
+                std::string diagnostics;
+                diagnostics += "such that: \n  g(f(a)) ≤ g(a)\n";
+                diagnostics += "g(f(a)) : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "g(a) : " + indent(adapter.print(ga), "  ") + "\n";
+                diagnostics += "f(a) : " + indent(adapter.print(fa), "  ") + "\n";
+                return Results(gfa <= ga, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A>
+    bool nondecreasing(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must be nondecreasing with respect to "+g_name+" [denoted \"g\"], so that this property of output is always greater than or equal to that of input", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ga = g(a);
+                std::string diagnostics;
+                diagnostics += "such that: \n  g(f(a)) ≥ g(a)\n";
+                diagnostics += "g(f(a)) : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "g(a) : " + indent(adapter.print(ga), "  ") + "\n";
+                diagnostics += "f(a) : " + indent(adapter.print(fa), "  ") + "\n";
+                return Results(gfa >= ga, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A>
+    bool increasing(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must be increasing with respect to "+g_name+" [denoted \"g\"], so that this property of output is always greater than that of input", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ga = g(a);
+                std::string diagnostics;
+                diagnostics += "such that: \n  g(f(a)) > g(a)\n";
+                diagnostics += "g(f(a)) : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "g(a) : " + indent(adapter.print(ga), "  ") + "\n";
+                diagnostics += "f(a) : " + indent(adapter.print(fa), "  ") + "\n";
+                return Results(gfa > ga, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A, typename I>
+    bool decreasing(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string i_name, const I& i, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must be decreasing with respect to "+g_name+" [denoted \"g\"], so that an increase to input "+i_name+" [denoted \"i\"] causes a decrease to output", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto gfia = g(fia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  g(f(i(a))) < g(f(a))\n";
+                diagnostics += "f(a)   : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "gf(a)  : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)   : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "fi(a)  : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "gfi(a) : " + indent(adapter.print(gfia), "  ") + "\n";
+                return Results(gfia < gfa, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A, typename I>
+    bool nonincreasing(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string i_name, const I& i, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must be nonincreasing with respect to "+g_name+" [denoted \"g\"], so that an increase to input "+i_name+" [denoted \"i\"] does not cause an increase to output", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto gfia = g(fia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  g(f(i(a))) ≤ g(f(a))\n";
+                diagnostics += "f(a)   : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "gf(a)  : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)   : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "fi(a)  : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "gfi(a) : " + indent(adapter.print(gfia), "  ") + "\n";
+                return Results(gfia <= gfa, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A, typename I>
+    bool nondecreasing(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string i_name, const I& i, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must be nondecreasing with respect to "+g_name+" [denoted \"g\"], so that an increase to input "+i_name+" [denoted \"i\"] does not cause a decrease to output", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto gfia = g(fia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  g(f(i(a))) ≥ g(f(a))\n";
+                diagnostics += "f(a)   : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "gf(a)  : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)   : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "fi(a)  : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "gfi(a) : " + indent(adapter.print(gfia), "  ") + "\n";
+                return Results(gfia >= gfa, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename A, typename I>
+    bool increasing(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string i_name, const I& i, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must be increasing with respect to "+g_name+" [denoted \"g\"], so that an increase to input "+i_name+" [denoted \"i\"] causes an increase to output", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto gfia = g(fia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  g(f(i(a))) > g(f(a))\n";
+                diagnostics += "f(a)   : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "gf(a)  : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)   : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "fi(a)  : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "gfi(a) : " + indent(adapter.print(gfia), "  ") + "\n";
+                return Results(gfia > gfa, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename D, typename I, typename A>
+    bool decelerating(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string i_name, const I& i, 
+        const std::string d_name, const D& d, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must have decelerating returns so that an increase to input"+
+            i_name + " [denoted \"i\"] will cause smaller changes in output (according to distance "+d_name+", denoted \"d\") when applied a second time", 
+            [=](auto a){
+                auto fa = f(a);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto iia = i(ia);
+                auto fiia = f(iia);
+                auto d1 = d(fa, fia);
+                auto d2 = d(fia, fiia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  d(f∘i∘i(a), f∘i(a)) < d(f∘i(a), f(a))\n";
+                diagnostics += "f(a)                : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "i(a)                : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "f∘i(a)              : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "f∘i∘i(a)            : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "d(f∘i(a), f(a))     : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(f∘i∘i(a), f∘i(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d2 < d1, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename D, typename I, typename A>
+    bool nonaccelerating(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string i_name, const I& i, 
+        const std::string d_name, const D& d, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must have nonaccelerating returns so that an increase to input"+
+            i_name + " [denoted \"i\"] will cause smaller or equivalent changes in output (according to distance "+d_name+", denoted \"d\") when applied a second time", 
+            [=](auto a){
+                auto fa = f(a);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto iia = i(ia);
+                auto fiia = f(iia);
+                auto d1 = d(fa, fia);
+                auto d2 = d(fia, fiia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  d(f∘i∘i(a), f∘i(a)) ≤ d(f∘i(a), f(a))\n";
+                diagnostics += "f(a)                : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "i(a)                : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "f∘i(a)              : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "f∘i∘i(a)            : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "d(f∘i(a), f(a))     : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(f∘i∘i(a), f∘i(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d2 <= d1, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename D, typename I, typename A>
+    bool nondecelerating(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string i_name, const I& i, 
+        const std::string d_name, const D& d, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must have nondecelerating returns so that an increase to input"+
+            i_name + " [denoted \"i\"] will cause larger or equivalent changes in output (according to distance "+d_name+", denoted \"d\") when applied a second time", 
+            [=](auto a){
+                auto fa = f(a);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto iia = i(ia);
+                auto fiia = f(iia);
+                auto d1 = d(fa, fia);
+                auto d2 = d(fia, fiia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  d(f∘i∘i(a), f∘i(a)) ≥ d(f∘i(a), f(a))\n";
+                diagnostics += "f(a)                : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "i(a)                : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "f∘i(a)              : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "f∘i∘i(a)            : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "d(f∘i(a), f(a))     : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(f∘i∘i(a), f∘i(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d2 >= d1, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename D, typename I, typename A>
+    bool accelerating(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string i_name, const I& i, 
+        const std::string d_name, const D& d, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must have accelerating returns so that an increase to input"+
+            i_name + " [denoted \"i\"] will cause larger changes in output (according to distance "+d_name+", denoted \"d\") when applied a second time", 
+            [=](auto a){
+                auto fa = f(a);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto iia = i(ia);
+                auto fiia = f(iia);
+                auto d1 = d(fa, fia);
+                auto d2 = d(fia, fiia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  d(f∘i∘i(a), f∘i(a)) > d(f∘i(a), f(a))\n";
+                diagnostics += "f(a)                : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "i(a)                : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "f∘i(a)              : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "f∘i∘i(a)            : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "d(f∘i(a), f(a))     : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(f∘i∘i(a), f∘i(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d2 > d1, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename D, typename I, typename A>
+    bool decelerating(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string i_name, const I& i, 
+        const std::string d_name, const D& d, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must have decelerating returns with respect to "+g_name+" [denoted \"g\"], so that an increase to input"+
+            i_name + " [denoted \"i\"] will cause smaller changes in output (according to distance "+d_name+", denoted \"d\") when applied a second time", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto gfia = g(fia);
+                auto iia = i(ia);
+                auto fiia = f(iia);
+                auto gfiia = g(fiia);
+                auto d1 = d(gfa, gfia);
+                auto d2 = d(gfia, gfiia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  d(g∘f∘i∘i(a), g∘f∘i(a)) < d(g∘f∘i(a), g∘f(a))\n";
+                diagnostics += "f(a)                    : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "g(f(a))                 : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)                    : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "f∘i(a)                  : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "g∘f∘i(a)                : " + indent(adapter.print(gfia), "  ") + "\n";
+                diagnostics += "f∘i∘i(a)                : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "g∘f∘i∘i(a)              : " + indent(adapter.print(gfiia), "  ") + "\n";
+                diagnostics += "d(g∘f∘i(a), g∘f(a))     : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(g∘f∘i∘i(a), g∘f∘i(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d2 < d1, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename D, typename I, typename A>
+    bool nonaccelerating(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string i_name, const I& i, 
+        const std::string d_name, const D& d, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must have nonaccelerating returns with respect to "+g_name+" [denoted \"g\"], so that an increase to input"+
+            i_name + " [denoted \"i\"] will cause smaller or equivalent changes in output (according to distance "+d_name+", denoted \"d\") when applied a second time", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto gfia = g(fia);
+                auto iia = i(ia);
+                auto fiia = f(iia);
+                auto gfiia = g(fiia);
+                auto d1 = d(gfa, gfia);
+                auto d2 = d(gfia, gfiia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  d(g∘f∘i∘i(a), g∘f∘i(a)) ≤ d(g∘f∘i(a), g∘f(a))\n";
+                diagnostics += "f(a)                    : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "g(f(a))                 : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)                    : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "f∘i(a)                  : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "g∘f∘i(a)                : " + indent(adapter.print(gfia), "  ") + "\n";
+                diagnostics += "f∘i∘i(a)                : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "g∘f∘i∘i(a)              : " + indent(adapter.print(gfiia), "  ") + "\n";
+                diagnostics += "d(g∘f∘i(a), g∘f(a))     : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(g∘f∘i∘i(a), g∘f∘i(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d2 <= d1, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename D, typename I, typename A>
+    bool nondecelerating(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string i_name, const I& i, 
+        const std::string d_name, const D& d, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must have nondecelerating returns with respect to "+g_name+" [denoted \"g\"], so that an increase to input"+
+            i_name + " [denoted \"i\"] will cause larger or equivalent changes in output (according to distance "+d_name+", denoted \"d\") when applied a second time", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto gfia = g(fia);
+                auto iia = i(ia);
+                auto fiia = f(iia);
+                auto gfiia = g(fiia);
+                auto d1 = d(gfa, gfia);
+                auto d2 = d(gfia, gfiia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  d(g∘f∘i∘i(a), g∘f∘i(a)) ≥ d(g∘f∘i(a), g∘f(a))\n";
+                diagnostics += "f(a)                    : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "g(f(a))                 : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)                    : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "f∘i(a)                  : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "g∘f∘i(a)                : " + indent(adapter.print(gfia), "  ") + "\n";
+                diagnostics += "f∘i∘i(a)                : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "g∘f∘i∘i(a)              : " + indent(adapter.print(gfiia), "  ") + "\n";
+                diagnostics += "d(g∘f∘i(a), g∘f(a))     : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(g∘f∘i∘i(a), g∘f∘i(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d2 >= d1, diagnostics); 
+            }, as);
+    }
+
+    template<typename Adapter, typename F, typename G, typename D, typename I, typename A>
+    bool accelerating(const Adapter& adapter, 
+        const std::string f_name, const F& f, 
+        const std::string g_name, const G& g, 
+        const std::string i_name, const I& i, 
+        const std::string d_name, const D& d, 
+        const A& as
+    ) {
+        return predicate(
+            adapter,
+            f_name + " [denoted \"f\"] must have accelerating returns with respect to "+g_name+" [denoted \"g\"], so that an increase to input"+
+            i_name + " [denoted \"i\"] will cause larger changes in output (according to distance "+d_name+", denoted \"d\") when applied a second time", 
+            [=](auto a){
+                auto fa = f(a);
+                auto gfa = g(fa);
+                auto ia = i(a);
+                auto fia = f(ia);
+                auto gfia = g(fia);
+                auto iia = i(ia);
+                auto fiia = f(iia);
+                auto gfiia = g(fiia);
+                auto d1 = d(gfa, gfia);
+                auto d2 = d(gfia, gfiia);
+                std::string diagnostics;
+                diagnostics += "such that: \n  d(g∘f∘i∘i(a), g∘f∘i(a)) > d(g∘f∘i(a), g∘f(a))\n";
+                diagnostics += "f(a)                    : " + indent(adapter.print(fa), "  ") + "\n";
+                diagnostics += "g(f(a))                 : " + indent(adapter.print(gfa), "  ") + "\n";
+                diagnostics += "i(a)                    : " + indent(adapter.print(ia), "  ") + "\n";
+                diagnostics += "f∘i(a)                  : " + indent(adapter.print(fia), "  ") + "\n";
+                diagnostics += "g∘f∘i(a)                : " + indent(adapter.print(gfia), "  ") + "\n";
+                diagnostics += "f∘i∘i(a)                : " + indent(adapter.print(fiia), "  ") + "\n";
+                diagnostics += "g∘f∘i∘i(a)              : " + indent(adapter.print(gfiia), "  ") + "\n";
+                diagnostics += "d(g∘f∘i(a), g∘f(a))     : " + indent(adapter.print(d1), "  ") + "\n";
+                diagnostics += "d(g∘f∘i∘i(a), g∘f∘i(a)) : " + indent(adapter.print(d2), "  ") + "\n";
+                return Results(d2 > d1, diagnostics); 
+            }, as);
+    }
+
+}
+```
+
+./glm/adapter.hpp
+
+```c++
+#pragma once
+
+// C libraries
+#include <cmath>
+
+// std libraries
+#include <sstream>
+#include <string>
+
+// 3rd party libraries
+#include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>  // to_string
+
+namespace test {
+
+template<typename id, typename scalar>
+struct GlmAdapter{
+
+    const scalar threshold;
+
+    GlmAdapter(scalar threshold):
+        threshold(threshold)
+    {}
+
+    inline bool equal(const scalar& a, const scalar& b) const {
+        return abs(a - b) <= threshold;
+    }
+
+    inline bool equal(const id& a, const id& b) const {
+        return a == b;
+    }
+
+    template<int L, glm::qualifier Q>
+    inline bool equal(const glm::vec<L,scalar,Q> a, const glm::vec<L,scalar,Q> b) const {
+        return glm::distance(a,b) <= threshold;
+    }
+
+    template<int L, glm::qualifier Q>
+    inline bool equal(const glm::vec<L,id,Q> a, const glm::vec<L,id,Q> b) const {
+        return a == b;
+    }
+
+    std::string print(const scalar a) const {
+        std::ostringstream os;
+        os << a;
+        return os.str();
+    }
+
+    std::string print(const id a) const {
+        std::ostringstream os;
+        os << a;
+        return os.str();
+    }
+
+    template<int L, glm::qualifier Q>
+    std::string print(const glm::vec<L,scalar,Q> a) const {
+        return glm::to_string(a);
+    }
+
+    template<int L, glm::qualifier Q>
+    std::string print(const glm::vec<L,id,Q> a) const {
+        return glm::to_string(a);
+    }
+
+};
+
+}
+```
+
+./macros.hpp
+
+```c++
+#pragma once
+
+/*
+`macros.hpp` is an optional header that contains macros 
+that are defined for convenience to simplify specification 
+of lambdas that follow very regular formats.
+
+Macros are used since some language constructs such as 
+class methods and operators cannot be passed directly as parameters
+
+Defining lambdas that wraps these constructs 
+would make it harder to read and write unit tests.
+Macros get around this. Macros carry disadvantages,
+but since the intended use case is restricted to a test environment,
+the risks associated with macros are reduced 
+to the point where ease of use is preferred.
+*/
+
+#define TEST_NUDGE(DX)     [=](auto x){ return x+(DX); }
+#define TEST_LOWER(LO)     [=](auto x){ return (LO) <= x; }
+#define TEST_UPPER(HI)     [=](auto x){ return x <= HI; }
+#define TEST_RANGE(LO,HI)  [=](auto x){ return LO <= x&&x <= HI; }
+#define TEST_INDEX(F)      [=](auto x){ return (F[x]); }
+#define TEST_UNARY(F)      [=](auto x){ return (F(x)); }
+#define TEST_BINARY(F)     [=](auto x, auto y){ return (F(x,y)); }
+#define TEST_TRINARY(F)    [=](auto x, auto y, auto z){ return (F(x,y,z)); }
+#define TEST_SYMBOL(SYMBOL)[=](auto x, auto y){ return (x SYMBOL y); }
+
+```

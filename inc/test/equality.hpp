@@ -1,9 +1,7 @@
 #pragma once
 
 // std libraries
-#include <iostream>
 #include <string>   // std::string
-#include <regex>
 
 // in-house libraries
 #include "predicate.hpp"

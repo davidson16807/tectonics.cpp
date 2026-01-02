@@ -104,7 +104,6 @@ TEST_CASE( "drag_per_angular_velocity", "[rock]" ) {
                 "drag_per_angular_velocity(length)", [=](auto length){ 
                     return motion.drag_per_angular_velocity(length, dimension1, dimension2); 
                 }, 
-                "identity",  [](auto x){return x;},
                 "increment", [](auto x){return x+length(10);},
                 dimensions
             ));
@@ -112,7 +111,6 @@ TEST_CASE( "drag_per_angular_velocity", "[rock]" ) {
                 "drag_per_angular_velocity(thickness)", [=](auto thickness){ 
                     return motion.drag_per_angular_velocity(dimension1, thickness, dimension2); 
                 }, 
-                "identity",  [](auto x){return x;},
                 "increment", [](auto x){return x+length(10);},
                 dimensions
             ));
@@ -120,7 +118,6 @@ TEST_CASE( "drag_per_angular_velocity", "[rock]" ) {
                 "drag_per_angular_velocity(width)", [=](auto width){ 
                     return motion.drag_per_angular_velocity(dimension1, dimension2, width);
                 },
-                "identity",  [](auto x){return x;},
                 "increment", [](auto x){return x+length(10);},
                 dimensions
             ));
@@ -128,7 +125,6 @@ TEST_CASE( "drag_per_angular_velocity", "[rock]" ) {
                 "drag_per_angular_velocity(thickness)", [=](auto thickness){ 
                     return motion.drag_per_angular_velocity(dimension1, thickness, dimension2); 
                 }, 
-                "identity",  [](auto x){return x;},
                 "increment", [](auto x){return x+length(10);},
                 "distance",  [](auto x, auto y){return si::distance(x,y);},
                 dimensions
@@ -137,7 +133,6 @@ TEST_CASE( "drag_per_angular_velocity", "[rock]" ) {
                 "drag_per_angular_velocity(width)", [=](auto width){ 
                     return motion.drag_per_angular_velocity(dimension1, dimension2, width);
                 },
-                "identity",  [](auto x){return x;},
                 "increment", [](auto x){return x+length(10);},
                 "distance",  [](auto x, auto y){return si::distance(x,y);},
                 dimensions

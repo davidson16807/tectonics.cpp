@@ -1,5 +1,12 @@
 #pragma once
 
+// C libraries
+#include <cmath>
+
+// std libraries
+#include <sstream>
+#include <string>
+
 // 3rd party libraries
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>  // to_string
@@ -8,27 +15,28 @@ namespace test {
 
 template<typename id, typename scalar>
 struct GlmAdapter{
+
     const scalar threshold;
 
     GlmAdapter(scalar threshold):
         threshold(threshold)
     {}
 
-    bool equal(const scalar& a, const scalar& b) const {
+    inline bool equal(const scalar& a, const scalar& b) const {
         return abs(a - b) <= threshold;
     }
 
-    bool equal(const id& a, const id& b) const {
+    inline bool equal(const id& a, const id& b) const {
         return a == b;
     }
 
     template<int L, glm::qualifier Q>
-    bool equal(const glm::vec<L,scalar,Q> a, const glm::vec<L,scalar,Q> b) const {
-        return distance(a,b) < threshold;
+    inline bool equal(const glm::vec<L,scalar,Q> a, const glm::vec<L,scalar,Q> b) const {
+        return glm::distance(a,b) <= threshold;
     }
 
     template<int L, glm::qualifier Q>
-    bool equal(const glm::vec<L,id,Q> a, const glm::vec<L,id,Q> b) const {
+    inline bool equal(const glm::vec<L,id,Q> a, const glm::vec<L,id,Q> b) const {
         return a == b;
     }
 
@@ -46,12 +54,12 @@ struct GlmAdapter{
 
     template<int L, glm::qualifier Q>
     std::string print(const glm::vec<L,scalar,Q> a) const {
-        return to_string(a);
+        return glm::to_string(a);
     }
 
     template<int L, glm::qualifier Q>
     std::string print(const glm::vec<L,id,Q> a) const {
-        return to_string(a);
+        return glm::to_string(a);
     }
 
 };

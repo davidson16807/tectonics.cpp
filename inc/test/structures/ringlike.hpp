@@ -1,6 +1,7 @@
 #pragma once
 
 // std libraries
+#include <string>
 
 // in-house libraries
 #include "grouplike.hpp"
@@ -15,7 +16,7 @@ namespace test {
 
     template<typename Zero, typename One, typename Add, typename Mult>
     struct Rig{
-        const Monoid <Zero, Add>  addition;
+        const CommutativeMonoid <Zero, Add>  addition;
         const Monoid <One,  Mult> multiplication;
         const std::string zero_name; const Zero zero;   
         const std::string one_name;  const One  one;   
@@ -40,6 +41,7 @@ namespace test {
 
             addition      .valid(adapter, as) &&
             multiplication.valid(adapter, as) &&
+            binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
             binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
 
             true; // added so lines above can be easily swapped
@@ -105,6 +107,7 @@ namespace test {
 
             addition      .valid(adapter, as) &&
             multiplication.valid(adapter, as) &&
+            binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
             binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
 
             true; // added so lines above can be easily swapped
@@ -173,6 +176,7 @@ namespace test {
 
             addition      .valid(adapter, as) &&
             multiplication.valid(adapter, as) &&
+            binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
             binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
 
             true; // added so lines above can be easily swapped
@@ -239,6 +243,7 @@ namespace test {
 
             addition      .valid(adapter, as) &&
             multiplication.valid(adapter, as) &&
+            binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
             binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
 
             true; // added so lines above can be easily swapped
@@ -304,6 +309,7 @@ namespace test {
 
             addition      .valid(adapter, as) &&
             multiplication.valid(adapter, as) &&
+            binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
             binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
 
             true; // added so lines above can be easily swapped
@@ -372,6 +378,7 @@ namespace test {
 
             addition      .valid(adapter, as) &&
             multiplication.valid(adapter, as) &&
+            binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
             binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
 
             true; // added so lines above can be easily swapped
@@ -444,6 +451,7 @@ namespace test {
 
             addition      .valid(adapter, as) &&
             multiplication.valid(adapter, as) &&
+            binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
             binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
 
             true; // added so lines above can be easily swapped
