@@ -33,7 +33,7 @@ namespace dymaxion {
 
 	public:
         const Indexing<id,id2,scalar> vertices;
-        const int vertices_per_side;
+        const id vertices_per_side;
         const buffer::PrimitiveBuffers<id2,Q> primitives;
 
 		constexpr inline explicit PoleBuffers(const id2 vertices_per_side): 

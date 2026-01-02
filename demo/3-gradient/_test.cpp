@@ -196,7 +196,7 @@ int main() {
   // flatten vector raster for OpenGL
   iterated::Arithmetic scalars(adapted::TypedSymbolicArithmetic(0.0f, 1.0f));
   buffer::PyramidBuffers<int, float> pyramids;
-  std::vector<glm::vec3> vectors_element_position(pyramids.triangles_size<3>(3));
+  std::vector<glm::vec3> vectors_element_position(pyramids.triangles_size(3));
   std::vector<glm::vec3> vectors_instance_position(grid.vertex_count());
   std::vector<glm::vec3> vectors_instance_heading(grid.vertex_count());
   std::vector<glm::vec3> vectors_instance_up(grid.vertex_count());

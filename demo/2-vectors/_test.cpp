@@ -64,7 +64,7 @@ int main() {
 
   // flatten vector raster for OpenGL
   buffer::PyramidBuffers<int, float> pyramids;
-  std::vector<vec3> vectors_element_position(pyramids.triangles_size<3>(3));
+  std::vector<vec3> vectors_element_position(pyramids.triangles_size(3));
 
   std::vector<vec3> vectors_instance_position{ 
     vec3( 0, 0, 1),

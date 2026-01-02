@@ -63,8 +63,8 @@ namespace dymaxion {
 			element N,S,E,W;
 			id2 buffer_id = buffer_start_id;
 			ivec2 grid_id;
-			for (int j = 0; j < vertices_per_square_side; ++j) {
-				for (int i = 0; i < vertices_per_square_side; ++i) {
+			for (id j = 0; j < vertices_per_square_side; ++j) {
+				for (id i = 0; i < vertices_per_square_side; ++i) {
 					grid_id = ivec2(i,j);
 					W = input[vertices.memory_id(ipoint(square_id, grid_id             ))];
 					S = input[vertices.memory_id(ipoint(square_id, grid_id + ivec2(1,0)))];
@@ -98,10 +98,10 @@ namespace dymaxion {
 			*/
 			id2 buffer_id = buffer_start_id;
 			ivec2 grid_id;
-			for (int i = 0; i < vertices_per_square_side; ++i) {
+			for (id i = 0; i < vertices_per_square_side; ++i) {
 				grid_id = ivec2(i,0);
 				buffer_id = primitives.storePoint(input[vertices.memory_id(ipoint(square_id, grid_id))], output, buffer_id); // S
-				for (int j = 0; j < vertices_per_square_side; ++j) {
+				for (id j = 0; j < vertices_per_square_side; ++j) {
 					grid_id = ivec2(i,j);
 					buffer_id = primitives.storePoint(input[vertices.memory_id(ipoint(square_id, grid_id + ivec2(1,0)))], output, buffer_id); // S
 					buffer_id = primitives.storePoint(input[vertices.memory_id(ipoint(square_id, grid_id + ivec2(1,1)))], output, buffer_id); // E

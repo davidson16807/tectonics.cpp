@@ -16,7 +16,7 @@ namespace buffer {
 		}
 
 		template<typename T, typename Buffer>
-		constexpr inline id storePoint(const T value, Buffer& output, const id buffer_start_id=0) const
+		inline id storePoint(const T value, Buffer& output, const id buffer_start_id=0) const
 		{
 			output[buffer_start_id] = value;
 			return buffer_start_id + point_size(value);
@@ -29,7 +29,7 @@ namespace buffer {
 		}
 
 		template<typename T, typename Buffer>
-		constexpr id storeTriangle(const T CW, const T O, const T CCW, Buffer& output, const id buffer_start_id=0) const
+		id storeTriangle(const T CW, const T O, const T CCW, Buffer& output, const id buffer_start_id=0) const
 		{
 			id buffer_id = buffer_start_id;
 			buffer_id = storePoint(CW, output, buffer_id);
