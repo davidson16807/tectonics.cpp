@@ -77,7 +77,7 @@ namespace field {
         }
 
         template<int N, typename T2, glm::qualifier Q=glm::defaultp>
-        inline T operator()(const glm::vec<N,T2,Q> v) const
+        inline T operator()(const glm::vec<N,T2,Q>& v) const
         {
             auto u = glm::normalize(v);
             return call(u.z, std::atan2(u.y, u.x));

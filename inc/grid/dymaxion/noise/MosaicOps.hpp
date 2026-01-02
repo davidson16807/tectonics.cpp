@@ -40,37 +40,37 @@ namespace dymaxion
         using point = Point<id,scalar,precision>;
         using ipoint = Point<id,id,precision>;
 
-		inline ipoint floor(const point grid_position) const
+		inline ipoint floor(const point& grid_position) const
 		{
-			return ipoint(grid_position.square_id, ivec2(grid_position.square_position));
+			return ipoint(grid_position.square_id, ivec2(glm::floor(grid_position.square_position)));
 		}
 
-		inline vec2 fract(const point grid_position) const
+		inline vec2 fract(const point& grid_position) const
 		{
 			return glm::fract(grid_position.square_position);
 		}
 
-		inline ipoint floor(const ipoint grid_id) const
+		inline ipoint floor(const ipoint& grid_id) const
 		{
 			return grid_id;
 		}
 
-		inline vec2 fract(const ipoint grid_id) const
+		inline vec2 fract(const ipoint& grid_id) const
 		{
 			return vec2(0);
 		}
 
-		inline point add(const ipoint grid_id, vec2 offset) const
+		inline point add(const ipoint& grid_id, const vec2& offset) const
 		{
 			return point(grid_id.square_id, vec2(grid_id.square_position)+offset);
 		}
 
-		inline ipoint add(const ipoint grid_id, ivec2 offset) const
+		inline ipoint add(const ipoint& grid_id, const ivec2& offset) const
 		{
 			return ipoint(grid_id.square_id, grid_id.square_position+offset);
 		}
 
-		inline scalar distance(const point grid_id1, point grid_id2) const
+		inline scalar distance(const point& grid_id1, const point& grid_id2) const
 		{
 			return voronoi.radius * 
 				std::acos(
@@ -82,7 +82,7 @@ namespace dymaxion
 		}
 
 		template<typename tpoint>
-		inline scalar weight(const tpoint position, const ipoint origin, ivec2 offset) const
+		inline scalar weight(const tpoint& position, const ipoint& origin, const ivec2& offset) const
 		{
 			// // // inverse square distance interpolation:
 			// vec3 U = voronoi.sphere_normal(point(add(origin, offset)));
@@ -114,7 +114,7 @@ namespace dymaxion
 	};
 
 	template<typename id, typename scalar, glm::qualifier precision=glm::defaultp>
-	constexpr inline auto mosaic_ops(const Voronoi<id,scalar> voronoi)
+	constexpr inline auto mosaic_ops(const Voronoi<id,scalar>& voronoi)
 	{
 		return MosaicOps<id,scalar,precision>(voronoi);
 	}

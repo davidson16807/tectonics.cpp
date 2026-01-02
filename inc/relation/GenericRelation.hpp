@@ -103,29 +103,25 @@ namespace relation {
         //     return GenericRelation<X,Y>(restriction(yard, xlo/xunits, xhi/xunits), xunits, yunits);
         // }
 
-        template<typename scalar>
-        GenericRelation<X,Y>& operator+=(const scalar k)
+        GenericRelation<X,Y>& operator+=(const double k)
         {
             f = [=,this](const X x){return f(x)+k;};
             return *this;
         }
 
-        template<typename scalar>
-        GenericRelation<X,Y>& operator-=(const scalar k)
+        GenericRelation<X,Y>& operator-=(const double k)
         {
             f = [=,this](const X x){return f(x)-k;};
             return *this;
         }
 
-        template<typename scalar>
-        GenericRelation<X,Y>& operator*=(const scalar k)
+        GenericRelation<X,Y>& operator*=(const double k)
         {
             f = [=,this](const X x){return f(x)*k;};
             return *this;
         }
 
-        template<typename scalar>
-        GenericRelation<X,Y>& operator/=(const scalar k)
+        GenericRelation<X,Y>& operator/=(const double k)
         {
             f = [=,this](const X x){return f(x)/k;};
             return *this;

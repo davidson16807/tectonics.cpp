@@ -3,6 +3,8 @@
 // C libraries
 
 // std libraries
+#include <limits>    // numeric_limits
+#include <algorithm> // min
 
 // 3rd-party libraries
 #include <glm/common.hpp>
@@ -40,13 +42,11 @@ namespace field
 			indexing(3) 
 		{}
 
-		using vec = glm::vec<L,scalar,precision>;
-		using ivec = glm::vec<L,int,precision>;
 		using vector_type = typename MosaicVectorNoise::value_type;
 		using value_type = typename vector_type::value_type;
 
-		template<typename tpoint>
-		value_type operator()(const tpoint V) const {
+		template<typename vector>
+		value_type operator()(const vector& V) const {
 		    scalar nearest_distance = std::numeric_limits<scalar>::max();
 		    auto I = ops.floor(V);
 		    for (int i = 0; i < indexing.size; ++i)

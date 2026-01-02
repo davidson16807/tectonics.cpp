@@ -23,7 +23,7 @@ namespace field
 	template<int L, typename scalar, typename MosaicVectorNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
 	struct PerlinNoise
 	{
-		using vec = glm::vec<L,scalar,precision>;
+		using vector = glm::vec<L,scalar,precision>;
 
 		MosaicVectorNoise noise;
 		MosaicOps ops;
@@ -53,10 +53,10 @@ namespace field
 			indexing() 
 		{}
 
-		template<typename tpoint>
-		scalar operator()(const tpoint V) const {
+		template<typename vector2>
+		scalar operator()(const vector2& V) const {
 		    auto I = ops.floor(V);
-		    vec F = ops.fract(V);
+		    vector F = ops.fract(V);
 		    scalar f(0);
 		    scalar weight(0);
 		    scalar weight_total(0);
@@ -65,7 +65,7 @@ namespace field
                 auto O = indexing.grid_id(i);
                 weight = ops.weight(V,I,O);
                 weight_total += weight;
-                f += glm::dot(glm::normalize(noise(ops.add(I,O))), F-vec(O)) * weight;
+                f += glm::dot(glm::normalize(noise(ops.add(I,O))), F-vector(O)) * weight;
 		    }
 		    return f / weight_total;
 		}

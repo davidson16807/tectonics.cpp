@@ -1,7 +1,10 @@
 #pragma once
 
+// C libraries
+#include <cstddef>
+
 // 3rd party libraries
-#include <glm/vec3.hpp>
+#include <glm/matrix.hpp>
 
 namespace field
 {
@@ -19,7 +22,7 @@ namespace field
 			A(A)
 		{}
 		constexpr inline size_type size() const { return 1; }
-		constexpr inline value_type operator()(const glm::vec<R,T,Q> v ) const
+		constexpr inline value_type operator()(const glm::vec<R,T,Q>& v ) const
 		{
 			return A*v;
 		}

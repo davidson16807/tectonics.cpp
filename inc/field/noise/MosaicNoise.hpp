@@ -8,7 +8,6 @@
 #include <glm/vector_relational.hpp>
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
-#include <glm/gtc/noise.hpp>
 
 #include <grid/cartesian/UnboundedIndexing.hpp>
 
@@ -28,7 +27,7 @@ namespace field
 		Noise noise;
 		Indexing indexing;
 
-        constexpr MosaicNoise(const Noise noise, const Indexing indexing) :
+        constexpr MosaicNoise(const Noise& noise, const Indexing& indexing) :
         	noise(noise),
         	indexing(indexing)
         {
@@ -45,8 +44,8 @@ namespace field
 			indexing(mosaic_noise.indexing)
 		{}
 
-		template<typename T>
-		auto operator()(const T V) const {
+		template<typename vector>
+		auto operator()(const vector& V) const {
 		    return noise(indexing.memory_id(V));
 		}
 

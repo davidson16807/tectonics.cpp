@@ -53,7 +53,7 @@ namespace field
 		using value_type = T;
 
 		template<int L, glm::qualifier Q>
-		T operator()(const glm::vec<L,T,Q> position) const {
+		T operator()(const glm::vec<L,T,Q>& position) const {
 			glm::vec<L,T,Q> normalized(glm::normalize(position));
 			T region_mod(0);
 			T out(0);

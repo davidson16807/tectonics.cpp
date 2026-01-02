@@ -34,7 +34,7 @@ namespace field
 		using value_type = typename SmoothVectorNoise::value_type;
 
 		template<typename T, glm::qualifier Q>
-		value_type operator()(const glm::vec<4,T,Q> V) const {
+		value_type operator()(const glm::vec<4,T,Q>& V) const {
 			using vec4 = glm::vec<4,T,Q>;
 			using vec3 = glm::vec<3,T,Q>;
 
@@ -61,7 +61,7 @@ namespace field
 	};
 
 	template<typename SmoothVectorNoise>
-	constexpr inline auto curl_noise4(const SmoothVectorNoise noise)
+	constexpr inline auto curl_noise4(const SmoothVectorNoise& noise)
 	{
 		return CurlNoise4<SmoothVectorNoise>(noise);
 	}
@@ -89,7 +89,7 @@ namespace field
 		using value_type = typename SmoothVectorNoise::value_type;
 
 		template<typename T, glm::qualifier Q>
-		value_type operator()(const glm::vec<3,T,Q> V) const {
+		value_type operator()(const glm::vec<3,T,Q>& V) const {
 			using vec3 = glm::vec<3,T,Q>;
 
 		    const T e = .1;
@@ -115,7 +115,7 @@ namespace field
 	};
 
 	template<typename SmoothVectorNoise>
-	constexpr inline auto curl_noise3(const SmoothVectorNoise noise)
+	constexpr inline auto curl_noise3(const SmoothVectorNoise& noise)
 	{
 		return CurlNoise3<SmoothVectorNoise>(noise);
 	}

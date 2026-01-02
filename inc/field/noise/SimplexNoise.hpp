@@ -1,8 +1,10 @@
 #pragma once
 
 // C libraries
+#include <cmath> // sqrt
 
 // std libraries
+#include <algorithm> // max
 
 // 3rd-party libraries
 #include <glm/common.hpp>
@@ -119,7 +121,7 @@ namespace field
 	};
 
 	template<typename MosaicVectorNoise>
-	constexpr inline auto simplex_noise4(const MosaicVectorNoise noise)
+	constexpr inline auto simplex_noise4(const MosaicVectorNoise& noise)
 	{
 		return SimplexNoise4<MosaicVectorNoise>(noise);
 	}
@@ -226,7 +228,7 @@ namespace field
 	};
 
 	template<typename MosaicVectorNoise>
-	constexpr inline auto simplex_noise3(const MosaicVectorNoise noise)
+	constexpr inline auto simplex_noise3(const MosaicVectorNoise& noise)
 	{
 		return SimplexNoise3<MosaicVectorNoise>(noise);
 	}
@@ -287,7 +289,7 @@ namespace field
 	};
 
 	template<typename MosaicVectorNoise>
-	constexpr inline auto simplex_noise2(const MosaicVectorNoise noise)
+	constexpr inline auto simplex_noise2(const MosaicVectorNoise& noise)
 	{
 		return SimplexNoise2<MosaicVectorNoise>(noise);
 	}

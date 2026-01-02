@@ -31,12 +31,12 @@ struct GlmAdapter{
     }
 
     template<int L, glm::qualifier Q>
-    inline bool equal(const glm::vec<L,scalar,Q> a, const glm::vec<L,scalar,Q> b) const {
+    inline bool equal(const glm::vec<L,scalar,Q>& a, const glm::vec<L,scalar,Q>& b) const {
         return glm::distance(a,b) <= threshold;
     }
 
     template<int L, glm::qualifier Q>
-    inline bool equal(const glm::vec<L,id,Q> a, const glm::vec<L,id,Q> b) const {
+    inline bool equal(const glm::vec<L,id,Q>& a, const glm::vec<L,id,Q>& b) const {
         return a == b;
     }
 
@@ -53,12 +53,12 @@ struct GlmAdapter{
     }
 
     template<int L, glm::qualifier Q>
-    std::string print(const glm::vec<L,scalar,Q> a) const {
+    std::string print(const glm::vec<L,scalar,Q>& a) const {
         return glm::to_string(a);
     }
 
     template<int L, glm::qualifier Q>
-    std::string print(const glm::vec<L,id,Q> a) const {
+    std::string print(const glm::vec<L,id,Q>& a) const {
         return glm::to_string(a);
     }
 

@@ -1,8 +1,15 @@
 #pragma once
 
-// 3rd party libraries
-#include <glm/vec3.hpp>
+// C libraries
+#include <cmath>
 
+// std libraries
+#include <array>
+
+// 3rd party libraries
+#include <glm/geometric.hpp>
+
+// in-house libraries
 #include <field/SphericalHarmonic.hpp>              // field::SphericalHarmonic
 
 namespace field
@@ -87,7 +94,7 @@ namespace field
         }
 
         template<int N, typename T2, glm::qualifier Q=glm::defaultp>
-        inline T operator()(const glm::vec<N,T2,Q> v) const
+        inline T operator()(const glm::vec<N,T2,Q>& v) const
         {
             auto u = glm::normalize(v);
             return linear_combination_for_degrees<Lhi>(u.z, std::atan2(u.y, u.x));
