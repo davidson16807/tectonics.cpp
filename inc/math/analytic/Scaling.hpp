@@ -24,7 +24,7 @@ namespace analytic {
             factor(factor)
         {}
         constexpr explicit Scaling(const Identity<T> e):
-            factor(T(1.0))
+            factor(T(1))
         {}
         constexpr T operator()(const T x) const
         {
@@ -74,14 +74,14 @@ namespace analytic {
     template<typename T>
     constexpr Scaling<T> operator+(const Scaling<T> f, const Scaling<T> g)
     {
-        Scaling y = f;
+        Scaling<T> y = f;
         y += g;
         return y;
     }
     template<typename T>
     constexpr Scaling<T> operator-(const Scaling<T> f, const Scaling<T> g)
     {
-        Scaling y = f;
+        Scaling<T> y = f;
         y -= g;
         return y;
     }

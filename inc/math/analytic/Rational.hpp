@@ -42,7 +42,7 @@ namespace analytic {
         {}
         // zero constructor
         constexpr explicit Rational(): 
-            p(0.0), 
+            p(), 
             q(1.0)
         {
         }

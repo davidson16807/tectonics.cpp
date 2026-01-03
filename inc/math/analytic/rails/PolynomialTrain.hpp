@@ -39,8 +39,8 @@ namespace analytic {
         for (std::size_t i=0; i<=couplers_.size(); i++)
         {
             T sample = (couplers_[i] + couplers_[i+1]) / 2.0;
-            P1 pi(0);
-            P2 qi(0);
+            P1 pi;
+            P2 qi;
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
             for (std::size_t j=0; j<p.size(); j++)
             {
@@ -80,8 +80,8 @@ namespace analytic {
         for (std::size_t i=0; i<=couplers_.size(); i++)
         {
             T sample = (couplers_[i] + couplers_[i+1]) / 2.0;
-            P1 pi(0);
-            P2 qi(0);
+            P1 pi;
+            P2 qi;
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
             for (std::size_t j=0; j<p.size(); j++)
             {
@@ -121,8 +121,8 @@ namespace analytic {
         for (std::size_t i=0; i<=couplers_.size(); i++)
         {
             T sample = (couplers_[i] + couplers_[i+1]) / 2.0;
-            P1 pi(0);
-            P2 qi(0);
+            P1 pi;
+            P2 qi;
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
             for (std::size_t j=0; j<p.size(); j++)
             {
@@ -161,8 +161,8 @@ namespace analytic {
         for (std::size_t i=0; i<=couplers_.size(); i++)
         {
             T sample = (couplers_[i] + couplers_[i+1]) / 2.0;
-            P1 pi(0);
-            P2 qi(0);
+            P1 pi;
+            P2 qi;
             // add together all contents that intersect the region from couplers_[i-1] to couplers_[i]
             for (std::size_t j=0; j<p.size(); j++)
             {

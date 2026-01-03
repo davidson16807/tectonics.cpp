@@ -24,7 +24,7 @@
 namespace analytic {
 
     /* 
-    `Polynomial<T,Nlo,Nhi>` is a class template that represents functions of the form f(x)=Σᵢaᵢxᵇⁱ where bᵢ∈ℤ.
+    `Polynomial<T,Plo,Phi>` is a class template that represents functions of the form f(x)=Σᵢaᵢxᵇⁱ where bᵢ∈ℤ.
     It is designed for high performance applications where a function must be composed from other functions.
     To address data locality concerns, the data structure is stored on the stack, 
     and users may control size in memory by specifying the highest and lowest exponent within the polynomial.
@@ -35,140 +35,158 @@ namespace analytic {
     and support for Laurent polynomials places little to no performance penalties on classic polynomial behavior,
     so we support Laurent polynomials as a degenerate case to avoid creating a separate implementation.
     */
-    template<typename T, int Nlo, int Nhi>
+    template<typename T, int Plo, int Phi>
     struct Polynomial
     {
         using value_type = T;
 
-        std::array<T,Nhi+1-Nlo> k;
+        std::array<T,Phi+1-Plo> k;
         // the zero polynomial
         constexpr Polynomial(): k()
         {
-            std::fill(k.begin(), k.end(), T(0.0));
+            static_assert(Plo <= Phi, "Polynomial<Plo,Phi> must satisfy Plo≤Phi");
+            std::fill(k.begin(), k.end(), T(0));
         }
         // constant constructor
         constexpr explicit Polynomial(const T k2): k()
         {
-            std::fill(k.begin(), k.end(), T(0.0));
-            k[0-Nlo] = k2;
+            static_assert(Plo==Phi || Plo<=0&&0<=Phi, "Polynomial<Plo,Phi> must satisfy Plo=Phi or Plo≤0≤Phi");
+            // regardless of Plo or Phi, if there is only one term, the caller unambiguously means to set its coefficient
+            if (Plo==Phi) 
+            {
+                k[Plo] = k2;
+            }
+            else
+            {
+                std::fill(k.begin(), k.end(), T(0));
+                k[0-Plo] = k2;
+            }
         }
         // cast constructor
         template <typename T2, int Qlo, int Qhi, 
-            typename = std::enable_if_t<(Nlo <= Qlo&&Qhi <= Nhi)>> 
+            typename = std::enable_if_t<(Plo <= Qlo&&Qhi <= Phi)>> 
         constexpr Polynomial(const Polynomial<T2,Qlo,Qhi>& p): k()
         {
-            std::fill(k.begin(), k.end(), T(0.0));
+            static_assert(Plo <= Phi, "Polynomial<Plo,Phi> must satisfy Plo≤Phi");
+            std::fill(k.begin(), k.end(), T(0));
             for (int i = Qlo; i <= Qhi; ++i)
             {
-                k[i-Nlo] = T(p.k[i-Qlo]);
+                k[i-Plo] = T(p.k[i-Qlo]);
             }
         }
         constexpr explicit Polynomial(const Identity<T> e): k()
         {
-            std::fill(k.begin(), k.end(), T(0.0));
-            k[1-Nlo] = T(1.0);
+            static_assert(Plo <= Phi, "Polynomial<Plo,Phi> must satisfy Plo≤Phi");
+            std::fill(k.begin(), k.end(), T(0));
+            k[1-Plo] = T(1);
         }
         constexpr explicit Polynomial(const Scaling<T> f): k()
         {
-            std::fill(k.begin(), k.end(), T(0.0));
-            k[1-Nlo] = f.factor;
+            static_assert(Plo <= Phi, "Polynomial<Plo,Phi> must satisfy Plo≤Phi");
+            std::fill(k.begin(), k.end(), T(0));
+            k[1-Plo] = f.factor;
         }
         constexpr explicit Polynomial(const Shifting<T> f): k()
         {
-            std::fill(k.begin(), k.end(), T(0.0));
-            k[0-Nlo] = f.offset;
-            k[1-Nlo] = T(1.0);
+            static_assert(Plo <= Phi, "Polynomial<Plo,Phi> must satisfy Plo≤Phi");
+            std::fill(k.begin(), k.end(), T(0));
+            k[0-Plo] = f.offset;
+            k[1-Plo] = T(1);
         }
         constexpr explicit Polynomial(const ScaledComplement<T,Identity<T>> f): k()
         {
-            k[0-Nlo] = T(1.0);
-            k[1-Nlo] = T(-1.0/f.scale);
+            static_assert(Plo <= Phi, "Polynomial<Plo,Phi> must satisfy Plo≤Phi");
+            std::fill(k.begin(), k.end(), T(0));
+            k[0-Plo] = T(1);
+            k[1-Plo] = T(-1)/f.scale;
         }
-        constexpr explicit Polynomial(const std::array<T,Nhi+1-Nlo> k2)
+        constexpr explicit Polynomial(const std::array<T,Phi+1-Plo> k2)
         {
-            std::fill(k.begin(), k.end(), T(0.0));
+            static_assert(Plo <= Phi, "Polynomial<Plo,Phi> must satisfy Plo≤Phi");
+            // std::fill(k.begin(), k.end(), T(0));
             std::copy(k2.begin(), k2.end(), k.begin());
         }
         template<typename TIterator>
         constexpr explicit Polynomial(TIterator first, TIterator last)
         {
-            std::fill(k.begin(), k.end(), T(0.0));
+            static_assert(Plo <= Phi, "Polynomial<Plo,Phi> must satisfy Plo≤Phi");
+            std::fill(k.begin(), k.end(), T(0));
             std::copy(first, last, k.begin());
         }
-        constexpr Polynomial<T,Nlo,Nhi>& operator=(const Polynomial<T,Nlo,Nhi>& p)
+        constexpr Polynomial<T,Plo,Phi>& operator=(const Polynomial<T,Plo,Phi>& p)
         {
-            std::fill(k.begin(), k.end(), T(0.0));
+            std::fill(k.begin(), k.end(), T(0));
             std::copy(p.k.begin(), p.k.end(), k.begin());
             return *this;
         }
         constexpr T operator()(const T x) const
         {
             T y(0);
-            for (int i = Nlo; i <= -1; ++i)
+            for (int i = Plo; i <= -1; ++i)
             {
                 // Exponents are calculated using pow(), 
                 // rather than repeated multiplication, to avoid precision errors
-                // We check for k[i-Nlo] == T(0) as a sensible prevention of nans when dividing by 0.
-                y += k[i-Nlo] == T(0)? T(0) : k[i-Nlo] * std::pow(x, i);
+                // We check for k[i-Plo] == T(0) as a sensible prevention of nans when dividing by 0.
+                y += k[i-Plo] == T(0)? T(0) : k[i-Plo] * std::pow(x, i);
             }
-            int i0(std::max(Nlo,0));
+            int i0(std::max(Plo,0));
             T xi(std::pow(x, i0));
-            for (int i = i0; i <= Nhi; ++i)
+            for (int i = i0; i <= Phi; ++i)
             {
-                y += k[i-Nlo] * xi;
+                y += k[i-Plo] * xi;
                 xi*= x;
             }
             return y;
         }
         constexpr T& operator[](const int i)
         {
-            return k[i-Nlo];
+            return k[i-Plo];
         }
         constexpr T operator[](const int i) const
         {
-            return Nlo<=i&&i<=Nhi? k[i-Nlo] : T(0.0);
+            return Plo<=i&&i<=Phi? k[i-Plo] : T(0);
         }
-        template<int Qlo, int Qhi, typename = std::enable_if_t<(Nlo <= Qlo&&Qhi <= Nhi)>>
-        constexpr Polynomial<T,Nlo,Nhi>& operator+=(const Polynomial<T,Qlo,Qhi>& p)
+        template<int Qlo, int Qhi, typename = std::enable_if_t<(Plo <= Qlo&&Qhi <= Phi)>>
+        constexpr Polynomial<T,Plo,Phi>& operator+=(const Polynomial<T,Qlo,Qhi>& p)
         {
             for (int i = Qlo; i <= Qhi; ++i)
             {
-                k[i-Nlo] += p.k[i-Qlo];
+                k[i-Plo] += p.k[i-Qlo];
             }
             return *this;
         }
-        template<int Qlo, int Qhi, typename = std::enable_if_t<(Nlo <= Qlo&&Qhi <= Nhi)>>
-        constexpr Polynomial<T,Nlo,Nhi>& operator-=(const Polynomial<T,Qlo,Qhi>& p)
+        template<int Qlo, int Qhi, typename = std::enable_if_t<(Plo <= Qlo&&Qhi <= Phi)>>
+        constexpr Polynomial<T,Plo,Phi>& operator-=(const Polynomial<T,Qlo,Qhi>& p)
         {
             for (int i = Qlo; i <= Qhi; ++i)
             {
-                k[i-Nlo] -= p.k[i-Qlo];
+                k[i-Plo] -= p.k[i-Qlo];
             }
             return *this;
         }
-        constexpr Polynomial<T,Nlo,Nhi>& operator+=(const T k2)
+        constexpr Polynomial<T,Plo,Phi>& operator+=(const T k2)
         {
-            k[0-Nlo] += k2;
+            k[0-Plo] += k2;
             return *this;
         }
-        constexpr Polynomial<T,Nlo,Nhi>& operator-=(const T k2)
+        constexpr Polynomial<T,Plo,Phi>& operator-=(const T k2)
         {
-            k[0-Nlo] -= k2;
+            k[0-Plo] -= k2;
             return *this;
         }
-        constexpr Polynomial<T,Nlo,Nhi>& operator*=(const T k2)
+        constexpr Polynomial<T,Plo,Phi>& operator*=(const T k2)
         {
-            for (int i = Nlo; i <= Nhi; ++i)
+            for (int i = Plo; i <= Phi; ++i)
             {
-                k[i-Nlo] *= k2;
+                k[i-Plo] *= k2;
             }
             return *this;
         }
-        constexpr Polynomial<T,Nlo,Nhi>& operator/=(const T k2)
+        constexpr Polynomial<T,Plo,Phi>& operator/=(const T k2)
         {
-            for (int i = Nlo; i <= Nhi; ++i)
+            for (int i = Plo; i <= Phi; ++i)
             {
-                k[i-Nlo] /= k2;
+                k[i-Plo] /= k2;
             }
             return *this;
         }
@@ -182,10 +200,10 @@ namespace analytic {
         return Polynomial<T,0,0>(k2);
     }
 
-    template <typename T, int Nlo, int Nhi> 
-    constexpr Polynomial<T,Nlo,Nhi> polynomial(const Polynomial<T,Nlo,Nhi>& p)
+    template <typename T, int Plo, int Phi> 
+    constexpr Polynomial<T,Plo,Phi> polynomial(const Polynomial<T,Plo,Phi>& p)
     {
-        return Polynomial<T,Nlo,Nhi>(p);
+        return Polynomial<T,Plo,Phi>(p);
     }
 
     template <typename T>
