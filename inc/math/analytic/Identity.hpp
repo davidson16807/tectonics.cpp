@@ -45,6 +45,7 @@ namespace analytic {
     {
         return T(0);
     }
+
     template<typename T>
     constexpr T operator/(const Identity<T>, const Identity<T>)
     {

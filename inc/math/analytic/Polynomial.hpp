@@ -310,7 +310,7 @@ namespace analytic {
 
     // operators that are not closed under Polynomial<T,Plo,Phi> relations, but produce Polynomial<T,> relations of some degree
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)> operator+(const Polynomial<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi>& q)
+    constexpr auto operator+(const Polynomial<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi>& q)
     {
         Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)> y(p);
         y += q;
@@ -318,7 +318,7 @@ namespace analytic {
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)> operator-(const Polynomial<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi>& q)
+    constexpr auto operator-(const Polynomial<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi>& q)
     {
         Polynomial<T,std::min(Plo,Qlo),std::max(Phi,Qhi)> y(p);
         y -= q;
@@ -326,7 +326,7 @@ namespace analytic {
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr Polynomial<T,Plo+Qlo,Phi+Qhi> operator*(const Polynomial<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi>& q)
+    constexpr auto operator*(const Polynomial<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi>& q)
     {
         Polynomial<T,Plo+Qlo,Phi+Qhi> y;
         for (int i = Plo; i <= Phi; ++i)
@@ -340,7 +340,7 @@ namespace analytic {
     }
 
     template<typename T, int Plo, int Phi, int M>
-    constexpr Polynomial<T,Plo-M,Phi-M> operator/(const Polynomial<T,Plo,Phi>& p, const Polynomial<T,M,M>& q)
+    constexpr auto operator/(const Polynomial<T,Plo,Phi>& p, const Polynomial<T,M,M>& q)
     {
         Polynomial<T,Plo-M,Phi-M> y;
         for (int i = Plo; i <= Phi; ++i)
@@ -562,17 +562,6 @@ namespace analytic {
         return Polynomial<T,0,1>(f) + Polynomial<T,1,1>(e);
     }
 
-    template<typename T>
-    constexpr auto operator-(const Identity<T> e, const Shifting<T> f)
-    {
-        return Polynomial<T,1,1>(e) - Polynomial<T,0,1>(f);
-    }
-
-    template<typename T>
-    constexpr auto operator-(const Shifting<T> f, const Identity<T> e)
-    {
-        return Polynomial<T,0,1>(f) - Polynomial<T,1,1>(e);
-    }
 
     template<typename T>
     constexpr auto operator*(const Identity<T> e, const Shifting<T> f)
@@ -803,11 +792,11 @@ namespace analytic {
     {
         return Polynomial<T,0,1>(f) + Polynomial<T,0,1>(g);
     }
-    template<typename T>
-    constexpr auto operator-(const Shifting<T> f, const Shifting<T> g)
-    {
-        return Polynomial<T,0,1>(f) - Polynomial<T,0,1>(g);
-    }
+    // template<typename T>
+    // constexpr auto operator-(const Shifting<T> f, const Shifting<T> g)
+    // {
+    //     return Polynomial<T,0,1>(f) - Polynomial<T,0,1>(g);
+    // }
 
     template<typename T>
     constexpr auto operator*(const Shifting<T> f, const Shifting<T> g)

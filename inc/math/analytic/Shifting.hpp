@@ -88,14 +88,22 @@ namespace analytic {
         return Shifting<T>(-k);
     }
 
-    // operators that cause cancelation
+    // operators that produce cancellation with Shifting relations
+    template<typename T>
+    constexpr auto operator-(const Identity<T> e, const Shifting<T> f)
+    {
+        return -f.offset;
+    }
+    template<typename T>
+    constexpr auto operator-(const Shifting<T> f, const Identity<T> e)
+    {
+        return f.offset;
+    }
     template<typename T>
     constexpr T operator-(const Shifting<T> f, const Shifting<T> g)
     {
         return f.offset-g.offset;
     }
-    
-
 
     template<typename T, typename Expression>
     constexpr auto compose(const Shifting<T> f, const Expression& g)
