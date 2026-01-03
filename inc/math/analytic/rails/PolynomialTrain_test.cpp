@@ -90,17 +90,19 @@ TEST_CASE( "PolynomialTrain arithmetic is a commutative ring", "[math]" ) {
     REQUIRE(commutative_ring.valid(broad, P0s, P1s));
 
     REQUIRE(commutative_ring.valid(broad, P0s, ks));
+    REQUIRE(commutative_ring.valid(broad, P1s, ks));
+
     REQUIRE(commutative_ring.valid(broad, P0s, m0s));
     REQUIRE(commutative_ring.valid(broad, P0s, m1s));
     REQUIRE(commutative_ring.valid(broad, P0s, m2s));
-    REQUIRE(commutative_ring.valid(broad, P0s, fs));
-    REQUIRE(commutative_ring.valid(broad, P0s, gs));
-
-    REQUIRE(commutative_ring.valid(broad, P1s, ks));
     REQUIRE(commutative_ring.valid(broad, P1s, m0s));
     REQUIRE(commutative_ring.valid(broad, P1s, m1s));
     REQUIRE(commutative_ring.valid(broad, P1s, m2s));
+
+    REQUIRE(commutative_ring.valid(broad, P0s, fs));
     REQUIRE(commutative_ring.valid(broad, P1s, fs));
+
+    REQUIRE(commutative_ring.valid(broad, P0s, gs));
     REQUIRE(commutative_ring.valid(broad, P1s, gs));
 
     // TRINARY TESTS
