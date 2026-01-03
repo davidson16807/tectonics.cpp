@@ -54,7 +54,7 @@ namespace aggregated
 			{
 				out = arithmetic.add(out, a[i]);
 			}
-			out = arithmetic.divide(out, T(a.size()));
+			out = arithmetic.divide(out, a.size());
 			return out;
 		}
 
@@ -70,7 +70,7 @@ namespace aggregated
 				sum_of_squared_differences = 
 					arithmetic.add(sum_of_squared_differences, arithmetic.multiply(difference, difference));
 			}
-			return algebraic.sqrt(arithmetic.divide(sum_of_squared_differences, T(a.size()-1)));
+			return algebraic.sqrt(arithmetic.divide(sum_of_squared_differences, (a.size()-1)));
 		}
 
 		template <typename T>
@@ -84,7 +84,7 @@ namespace aggregated
 				sum_of_squared_differences = 
 					arithmetic.add(sum_of_squared_differences, arithmetic.multiply(difference, difference));
 			}
-			return algebraic.sqrt(arithmetic.divide(sum_of_squared_differences, T(a.size()-1)));
+			return algebraic.sqrt(arithmetic.divide(sum_of_squared_differences, (a.size()-1)));
 		}
 
 		template <typename T1, typename T2>
