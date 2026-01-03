@@ -1,5 +1,12 @@
 #pragma once
 
+// C libraries
+#include <cstddef>   // std::size_t
+
+// std libraries
+#include <vector>    // std::vector
+#include <algorithm> // std::fill
+
 #include <index/procedural/Map.hpp>     // procedural::map
 
 #include <field/Compose.hpp>        // field::compose
@@ -8,6 +15,7 @@
 #include <grid/dymaxion/GridSeries.hpp> // dymaxion::VertexPositions
 #include <grid/dymaxion/field.hpp> // dymaxion::NearestVertexIds
 
+#include <model/rock/formation/FormationSummary.hpp>
 #include <model/rock/crust/CrustSummaryOps.hpp>
 
 #include "Lithosphere.hpp"
@@ -35,7 +43,7 @@ namespace rock{
     */
 
     // NOTE: `M` is mineral count, `F` is formation count
-    template <int M, int F, typename CrustSummarization>
+    template <std::size_t M, std::size_t F, typename CrustSummarization>
     class LithosphereSummarization
     {
 
@@ -96,7 +104,7 @@ namespace rock{
 
     };
 
-    template <int M, int F, typename CrustSummarization>
+    template <std::size_t M, std::size_t F, typename CrustSummarization>
     auto lithosphere_summarization(
         const CrustSummarization& summarization, 
         const CrustSummaryOps& ops

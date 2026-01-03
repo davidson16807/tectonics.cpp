@@ -1,12 +1,15 @@
 #pragma once
 
 // C libraries
+#include <cstddef>
 
 // std libraries
 
 // 3rd party libraries
 
 // in-house libraries
+#include <unit/si.hpp>
+
 #include "Formation.hpp"
 #include "FormationSummary.hpp"
 

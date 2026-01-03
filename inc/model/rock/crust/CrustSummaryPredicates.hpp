@@ -1,9 +1,12 @@
 #pragma once
 
+// C libraries
 #include <cmath>
 
+// std libraries
 #include <vector>
 
+// in-house libraries
 #include <unit/si.hpp>
 
 #include "CrustSummary.hpp"

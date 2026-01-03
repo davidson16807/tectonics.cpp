@@ -20,7 +20,7 @@ namespace rock{
             ops(ops)
         {}
 
-        si::length<float> operator()(const ColumnSummary& summary) const
+        auto operator()(const ColumnSummary& summary) const
         {
             return property(ops.flatten(summary));
         }

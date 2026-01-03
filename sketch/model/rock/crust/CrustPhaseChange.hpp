@@ -1,11 +1,16 @@
 #pragma once
 
+// C libraries
+#include <cstddef> // std::size_t
 #include <cmath>
 
+// std libraries
 #include <vector>
 
+// 3rd-party libraries
 #include <glm/vec3.hpp>               // *vec3
 
+// in-house libraries
 #include <unit/si.hpp>
 
 #include <model/rock/formation/Formation.hpp>
@@ -39,7 +44,7 @@ namespace rock {
 	*/
 
 	// NOTE: `M` is mineral count, `F` is formation count
-	template<int M, int F>
+	template<std::size_t M, std::size_t F>
     class CrustPhaseChange
     {
     	using pressure  = si::pressure<float>;

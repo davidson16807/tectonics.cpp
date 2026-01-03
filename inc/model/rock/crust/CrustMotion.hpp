@@ -1,11 +1,18 @@
 #pragma once
 
+// C libraries
 #include <cmath>
+#include <cstddef>
 
+// std libraries
 #include <vector>
 
-#include <unit/si.hpp>
+// 3rd-party libraries
+#include <glm/vec3.hpp>
+#include <glm/geometric.hpp>
 
+// in-house libraries
+#include <unit/si.hpp>
 #include <model/rock/formation/FormationSummary.hpp>
 
 /*
@@ -26,7 +33,7 @@ namespace rock {
 	*/
 
 	// NOTE: `M` is mineral count
-	template<int M, typename stored, typename handled, typename VectorCalculus, glm::qualifier quality=glm::defaultp>
+	template<std::size_t M, typename stored, typename handled, typename VectorCalculus, glm::qualifier quality=glm::defaultp>
     class CrustMotion
     {
 

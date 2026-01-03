@@ -1,8 +1,16 @@
 #pragma once
 
+// C libraries
 #include <cmath>
 
-#include <glm/vec3.hpp>               // *vec3
+// std libraries
+#include <vector>
+
+// 3rd-party libraries
+
+// in-house libraries
+#include <unit/si.hpp>
+#include <model/rock/formation/Formation.hpp>
 
 namespace rock {
 

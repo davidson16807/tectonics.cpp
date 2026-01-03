@@ -1,14 +1,20 @@
 #pragma once
 
+// C libraries
+#include <cstddef>
+
+// std libraries
 #include <algorithm> // std::max
+#include <vector>    // std::vector
 
 // in house libraries
+#include <unit/si.hpp>
 #include "Formation.hpp"
 
 namespace rock{
 
     // NOTE: `M` is mineral count
-    template<int M>
+    template<std::size_t M>
     class FormationMass
     {
 

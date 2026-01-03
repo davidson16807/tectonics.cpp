@@ -7,6 +7,7 @@
 // std libraries
 #include <algorithm>
 #include <array>
+#include <limits>
 
 // in-house libraries
 #include <unit/si.hpp>
@@ -33,7 +34,7 @@ namespace rock
     so to prevent users from doing so we encapsulate the class.
     */
     // NOTE: `M` is mineral count
-    template <int M>
+    template <std::size_t M>
     class StratumStore
     {
         std::array<rock::MineralStore, M> minerals;

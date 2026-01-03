@@ -4,6 +4,7 @@
 
 // std libraries
 #include <bitset>
+#include <limits>
 
 // 3rd party libraries
 

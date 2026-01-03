@@ -1,7 +1,9 @@
 #pragma once
 
-// in house libraries
+// C libraries
+#include <cstddef> // std::size_t
 
+// in house libraries
 #include <model/rock/crust/Crust.hpp>
 #include <model/rock/crust/CrustSummary.hpp>
 #include <model/rock/formation/FormationSummary.hpp>
@@ -9,7 +11,7 @@
 namespace rock{
 
     // NOTE: `M` is mineral count, `F` is formation count
-    template<int M, int F, typename FormationSummarization, typename CrustSummaryOps>
+    template<std::size_t M, std::size_t F, typename FormationSummarization, typename CrustSummaryOps>
     class CrustSummarization
     {
 
@@ -42,7 +44,7 @@ namespace rock{
 
     };
 
-    template<int M, int F, typename FormationSummarization, typename CrustSummaryOps>
+    template<std::size_t M, std::size_t F, typename FormationSummarization, typename CrustSummaryOps>
     auto crust_summarization(
         const FormationSummarization& summarize, 
         const CrustSummaryOps& ops

@@ -37,7 +37,7 @@ namespace rock
 	We therefore suffice to represent the fraction of the mineral 
 	that has undergone at least some kind of metamorphosis.
     */
-	enum struct GrainType
+	enum struct GrainType : std::size_t
 	{
 		unweathered_amorphous,
 		unweathered_extrusive,

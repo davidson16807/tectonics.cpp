@@ -1,12 +1,15 @@
 #pragma once
 
 // C libraries
+#include <cstddef>
 
 // std libraries
+#include <array>
 
 // 3rd party libraries
 
 // in-house libraries
+#include <model/rock/stratum/StratumStore.hpp>
 
 namespace rock
 {

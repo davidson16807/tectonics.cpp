@@ -1,6 +1,7 @@
 #pragma once
 
 // in house libraries
+#include <unit/si.hpp>
 #include <model/mix/rules.hpp>
 #include <model/rock/mineral/MineralProperties.hpp>
 #include <model/rock/stratum/StratumStore.hpp>

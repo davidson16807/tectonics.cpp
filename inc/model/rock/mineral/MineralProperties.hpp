@@ -1,5 +1,8 @@
 #pragma once
 
+// C libraries
+#include <cstddef> // std::size_t
+
 namespace rock{
 
     struct MineralMass
@@ -16,7 +19,7 @@ namespace rock{
     struct MineralMoles
     {
         MolarMassTable molar_masses;
-        MineralMoles(const MolarMassTable& molar_masses):
+        constexpr MineralMoles(const MolarMassTable& molar_masses):
             molar_masses(molar_masses)
         {}
         template<typename Minerallike>
@@ -30,7 +33,7 @@ namespace rock{
     struct MineralVolume
     {
         DensityTable densities;
-        MineralVolume(const DensityTable& densities):
+        constexpr MineralVolume(const DensityTable& densities):
             densities(densities)
         {}
         template<typename Minerallike>

@@ -1,5 +1,9 @@
 #pragma once
 
+// C libraries
+#include <cstddef>   // std::size_t
+
+// in house libraries
 #include <index/procedural/Map.hpp>     // procedural::map
 
 #include <field/Compose.hpp>        // field::compose
@@ -9,8 +13,6 @@
 
 #include <grid/dymaxion/GridSeries.hpp> // dymaxion::VertexPositions
 #include <grid/dymaxion/field.hpp> // dymaxion::NearestVertexId
-
-// in house libraries
 
 namespace rock{
 

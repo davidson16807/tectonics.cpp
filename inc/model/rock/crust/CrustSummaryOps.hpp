@@ -1,9 +1,16 @@
 #pragma once
 
-#include <model/rock/formation/FormationSummary.hpp>
+// C libraries
+#include <cstddef> // std::size_t
 
+// std libraries
+#include <vector>  // std::vector
+
+// in-house libraries
 #include <model/rock/column/ColumnSummary.hpp>
 #include <model/rock/column/ColumnSummaryOps.hpp>
+#include <model/rock/formation/FormationSummary.hpp>
+#include <model/rock/crust/CrustSummary.hpp>
 
 namespace rock{
 
