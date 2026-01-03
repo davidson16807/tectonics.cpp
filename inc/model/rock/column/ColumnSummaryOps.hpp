@@ -30,7 +30,7 @@ namespace rock{
             threshold(threshold)
         {}
 
-        StratumSummary flatten (const ColumnSummary& column) const
+        inline StratumSummary flatten (const ColumnSummary& column) const
         {
             return ops.combine(column.top, column.rest);
         }
