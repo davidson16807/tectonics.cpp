@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Identity.hpp"
+#include "Scaling.hpp"
+
 namespace analytic {
 
     /* 
@@ -91,6 +94,14 @@ namespace analytic {
         return y;
     }
     template<typename T, typename F>
+    constexpr ScaledComplement<T,F> operator-(const T k, const ScaledComplement<T,F>& fg)
+    {
+        ScaledComplement<T,F> y(fg);
+        y.f *= T(-1);
+        y.f += k;
+        return y;
+    }
+    template<typename T, typename F>
     constexpr ScaledComplement<T,F> operator*(const ScaledComplement<T,F>& fg, const T k)
     {
         ScaledComplement<T,F> y(fg);
@@ -115,15 +126,8 @@ namespace analytic {
     constexpr ScaledComplement<T,F> operator-(const ScaledComplement<T,F>& fg)
     {
         ScaledComplement<T,F> y(fg);
-        y.f *= -1;
+        y.f *= T(-1);
         return y;
-    }
-
-    // operators with reals that are closed under ScaledComplement<T,F> relations
-    template<typename T, typename F>
-    constexpr auto operator+(const ScaledComplement<T,F>& f, const ScaledComplement<T,F>& g)
-    {
-        return ScaledComplement<T,F>(f.f+g.f);
     }
 
     /*

@@ -28,13 +28,13 @@ namespace analytic {
             return x+offset;
         }
 
-        Shifting& operator+=(const T k)
+        constexpr Shifting& operator+=(const T k)
         {
             offset += k;
             return *this;
         }
 
-        Shifting& operator-=(const T k)
+        constexpr Shifting& operator-=(const T k)
         {
             offset -= k;
             return *this;
@@ -116,9 +116,9 @@ namespace analytic {
         return g+f.offset;
     }
 
-    template<typename T> constexpr T compose(const Shifting<T>& f, const int k)    { return f(k); }
-    template<typename T> constexpr T compose(const Shifting<T>& f, const float k)  { return f(k); }
-    template<typename T> constexpr T compose(const Shifting<T>& f, const double k) { return f(k); }
+    // template<typename T> constexpr T compose(const Shifting<T>& f, const int k)    { return f(k); }
+    // template<typename T> constexpr T compose(const Shifting<T>& f, const float k)  { return f(k); }
+    // template<typename T> constexpr T compose(const Shifting<T>& f, const double k) { return f(k); }
 
     template<typename T>
     constexpr Shifting<T> inverse(const Shifting<T> f) 
@@ -133,3 +133,4 @@ namespace analytic {
     }
 
 }
+

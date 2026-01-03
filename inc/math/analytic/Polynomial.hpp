@@ -26,7 +26,7 @@ namespace analytic {
     /* 
     `Polynomial<T,Nlo,Nhi>` is a class template that represents functions of the form f(x)=Σᵢaᵢxᵇⁱ where bᵢ∈ℤ.
     It is designed for high performance applications where a function must be composed from other functions.
-    To address data locality concerns, the data structure is stored on the heap, 
+    To address data locality concerns, the data structure is stored on the stack, 
     and users may control size in memory by specifying the highest and lowest exponent within the polynomial.
 
     A side effect of this design is that it allows the user to specify negative exponents.
@@ -128,7 +128,7 @@ namespace analytic {
         {
             return Nlo<=i&&i<=Nhi? k[i-Nlo] : T(0.0);
         }
-        template<int Qlo, int Qhi>
+        template<int Qlo, int Qhi, typename = std::enable_if_t<(Nlo <= Qlo&&Qhi <= Nhi)>>
         constexpr Polynomial<T,Nlo,Nhi>& operator+=(const Polynomial<T,Qlo,Qhi>& p)
         {
             for (int i = Qlo; i <= Qhi; ++i)
@@ -137,7 +137,7 @@ namespace analytic {
             }
             return *this;
         }
-        template<int Qlo, int Qhi>
+        template<int Qlo, int Qhi, typename = std::enable_if_t<(Nlo <= Qlo&&Qhi <= Nhi)>>
         constexpr Polynomial<T,Nlo,Nhi>& operator-=(const Polynomial<T,Qlo,Qhi>& p)
         {
             for (int i = Qlo; i <= Qhi; ++i)

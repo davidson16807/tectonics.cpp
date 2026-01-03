@@ -56,10 +56,13 @@ namespace analytic {
     template<typename T, typename F> constexpr F compose(const F& f, const Identity<T> e) { return f;    }
     template<typename F>             constexpr double compose(const double k, const F& f) { return k;    }
     template<typename F>             constexpr auto   compose(const F& f, const double k) { return f(k); }
+    template<typename F>             constexpr auto   compose(const double j, const double k) { return j; }
     template<typename F>             constexpr float  compose(const float k, const F& f)  { return k;    }
     template<typename F>             constexpr auto   compose(const F& f, const float k)  { return f(k); }
+    template<typename F>             constexpr auto   compose(const float j, const float k) { return j; }
     template<typename F>             constexpr int    compose(const int k, const F& f)    { return k;    }
     template<typename F>             constexpr auto   compose(const F& f, const int k)    { return f(k); }
+    template<typename F>             constexpr auto   compose(const int j, const int k)   { return j; }
 
     template<typename T>
     constexpr T distance(const Identity<T> a, const Identity<T> b, const T lo, const T hi){ return T(0); }

@@ -182,10 +182,9 @@ namespace analytic {
         return g*f.factor;
     }
 
-    template<typename T> constexpr T compose(const Scaling<T>& f, const int k)    { return f(k); }
-    template<typename T> constexpr T compose(const Scaling<T>& f, const float k)  { return f(k); }
-    template<typename T> constexpr T compose(const Scaling<T>& f, const double k) { return f(k); }
-
+    // template<typename T> constexpr T compose(const Scaling<T>& f, const int k)    { return f(k); }
+    // template<typename T> constexpr T compose(const Scaling<T>& f, const float k)  { return f(k); }
+    // template<typename T> constexpr T compose(const Scaling<T>& f, const double k) { return f(k); }
 
     template<typename T>
     constexpr Scaling<T> inverse(const Scaling<T> f) 
