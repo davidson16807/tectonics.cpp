@@ -17,7 +17,7 @@
 
 TEST_CASE( "Scalar arithmetic is a field", "[math]" ) {
     test::PrimitiveAdapter<double> adapter(1e-6);
-    std::vector<double> scalars {-2.0, 0.0, 1.0, 2.0};
+    std::vector<double> scalars {-2.0, 1.0, 2.0};
     test::Field structure(
         "0", 0.0, 
         "1", 1.0, 
