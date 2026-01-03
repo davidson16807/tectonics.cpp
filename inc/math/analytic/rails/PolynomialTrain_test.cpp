@@ -4,10 +4,18 @@
 #include <cmath>
 #include <limits>
 
+// 3rd-party libraries
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide main() - only do this in one cpp file
 #include <catch/catch.hpp>
 
+// in-house libraries
+#include <test/macros.hpp>
+#include <test/structures/ringlike.hpp>
+#include <test/structures/metriclike.hpp>
+
 #include "PolynomialTrain.hpp"
+
+#include "../test_tools.hpp"
 
 TEST_CASE( "PolynomialTrain arithmetic purity", "[math]" ) {
     const double threshold = 1e-2;
@@ -20,6 +28,9 @@ TEST_CASE( "PolynomialTrain arithmetic purity", "[math]" ) {
     const double midlo = -1e2;
     const double midhi =  1e2;
 
+    ExpressionAdapter<double> broad(threshold, midlo, midhi);
+    ExpressionAdapter<double> narrow(threshold, lo, hi);
+
     const double oo = std::numeric_limits<double>::max();
 
     using P0 = analytic::Polynomial<double,0,2>;
@@ -39,300 +50,28 @@ TEST_CASE( "PolynomialTrain arithmetic purity", "[math]" ) {
     // all polynomials
     analytic::Train<double,P1> t3 = analytic::Train<double,P1>(std::vector<P1>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
 
-    SECTION("t0+t1 must be called repeatedly without changing the output"){
-
-        CHECK(analytic::distance(t0+t0, t0+t0, lo, hi) < threshold );
-        CHECK(analytic::distance(t0+t1, t0+t1, lo, hi) < threshold );
-        CHECK(analytic::distance(t0+t2, t0+t2, lo, hi) < threshold );
-        CHECK(analytic::distance(t0+t3, t0+t3, lo, hi) < threshold );
-
-        CHECK(analytic::distance(t1+t0, t1+t0, lo, hi) < threshold );
-        CHECK(analytic::distance(t1+t1, t1+t1, lo, hi) < threshold );
-        CHECK(analytic::distance(t1+t2, t1+t2, lo, hi) < threshold );
-        CHECK(analytic::distance(t1+t3, t1+t3, lo, hi) < threshold );
-
-        CHECK(analytic::distance(t2+t0, t2+t0, lo, hi) < threshold );
-        CHECK(analytic::distance(t2+t1, t2+t1, lo, hi) < threshold );
-        CHECK(analytic::distance(t2+t2, t2+t2, lo, hi) < threshold );
-        CHECK(analytic::distance(t2+t3, t2+t3, lo, hi) < threshold );
-
-        CHECK(analytic::distance(t3+t0, t3+t0, lo, hi) < threshold );
-        CHECK(analytic::distance(t3+t1, t3+t1, lo, hi) < threshold );
-        CHECK(analytic::distance(t3+t2, t3+t2, lo, hi) < threshold );
-        CHECK(analytic::distance(t3+t3, t3+t3, lo, hi) < threshold );
-    }
-
-    SECTION("t0*t1 must be called repeatedly without changing the output"){
-        CHECK(analytic::distance(t0*t0, t0*t0, midlo, midhi) < threshold );
-        CHECK(analytic::distance(t0*t1, t0*t1, midlo, midhi) < threshold );
-        CHECK(analytic::distance(t0*t2, t0*t2, midlo, midhi) < threshold );
-        CHECK(analytic::distance(t0*t3, t0*t3, midlo, midhi) < threshold );
-
-        CHECK(analytic::distance(t1*t0, t1*t0, midlo, midhi) < threshold );
-        CHECK(analytic::distance(t1*t1, t1*t1, midlo, midhi) < threshold );
-        CHECK(analytic::distance(t1*t2, t1*t2, midlo, midhi) < threshold );
-        CHECK(analytic::distance(t1*t3, t1*t3, midlo, midhi) < threshold );
-
-        CHECK(analytic::distance(t2*t0, t2*t0, midlo, midhi) < threshold );
-        CHECK(analytic::distance(t2*t1, t2*t1, midlo, midhi) < threshold );
-        CHECK(analytic::distance(t2*t2, t2*t2, midlo, midhi) < threshold );
-        CHECK(analytic::distance(t2*t3, t2*t3, midlo, midhi) < threshold );
-
-        CHECK(analytic::distance(t3*t0, t3*t0, midlo, midhi) < threshold );
-        CHECK(analytic::distance(t3*t1, t3*t1, midlo, midhi) < threshold );
-        CHECK(analytic::distance(t3*t2, t3*t2, midlo, midhi) < threshold );
-        CHECK(analytic::distance(t3*t3, t3*t3, midlo, midhi) < threshold );
-    }
-
-    SECTION("t0-t1 must be called repeatedly without changing the output"){
-        CHECK(analytic::distance(t0-t0, t0-t0, lo, hi) < threshold );
-        CHECK(analytic::distance(t0-t1, t0-t1, lo, hi) < threshold );
-        CHECK(analytic::distance(t0-t2, t0-t2, lo, hi) < threshold );
-        CHECK(analytic::distance(t0-t3, t0-t3, lo, hi) < threshold );
-
-        CHECK(analytic::distance(t1-t0, t1-t0, lo, hi) < threshold );
-        CHECK(analytic::distance(t1-t1, t1-t1, lo, hi) < threshold );
-        CHECK(analytic::distance(t1-t2, t1-t2, lo, hi) < threshold );
-        CHECK(analytic::distance(t1-t3, t1-t3, lo, hi) < threshold );
-
-        CHECK(analytic::distance(t2-t0, t2-t0, lo, hi) < threshold );
-        CHECK(analytic::distance(t2-t1, t2-t1, lo, hi) < threshold );
-        CHECK(analytic::distance(t2-t2, t2-t2, lo, hi) < threshold );
-        CHECK(analytic::distance(t2-t3, t2-t3, lo, hi) < threshold );
-
-        CHECK(analytic::distance(t3-t0, t3-t0, lo, hi) < threshold );
-        CHECK(analytic::distance(t3-t1, t3-t1, lo, hi) < threshold );
-        CHECK(analytic::distance(t3-t2, t3-t2, lo, hi) < threshold );
-        CHECK(analytic::distance(t3-t3, t3-t3, lo, hi) < threshold );
-    }
-}
-
-TEST_CASE( "PolynomialTrain arithmetic identity", "[math]" ) {
-    const double threshold = 1e-4;
-
-    // `lo*` variables are used as bounds to a square integral 
-    // that is used to calculate deviation from the correct output.
-    const double lo = -1e3;
-    const double hi =  1e3;
-    // `mid*` variables are used when the degree of a polynomial is so large 
-    // that a square integral of it will produce nans for all but the smallest input.
-    // const double midlo = -1e2;
-    // const double midhi =  1e2;
-
-    const double oo = std::numeric_limits<double>::max();
-
-    using P0 = analytic::Polynomial<double,0,2>;
-    using P1 = analytic::Polynomial<double,0,3>;
-
-    P0 p0 = P0({3.0,2.0,1.0});
-    P0 p1 = P0({-1.0,0.0,1.0});
-    P1 p2 = P1({4.0,3.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
-
-
-    // standard polynomials, no overlap
-    analytic::Train<double,P0> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
-    // standard polynomials, with overlap
-    analytic::Train<double,P0> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
-    // laurent polynomials
-    analytic::Train<double,P1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
-    // all polynomials
-    analytic::Train<double,P1> t3 = analytic::Train<double,P1>(std::vector<P1>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
+    auto P0s = std::vector{t0,t1};
+    auto P1s = std::vector{t2,t3};
 
     analytic::Polynomial<double,0,0> zero = analytic::Polynomial<double,0,0>({0.0});
     analytic::Polynomial<double,0,0> one  = analytic::Polynomial<double,0,0>({1.0});
 
-    SECTION("t0+I must equal t0"){
-        CHECK(analytic::distance(t0+zero, t0, lo, hi) < threshold);
-        CHECK(analytic::distance(t0-zero, t0, lo, hi) < threshold);
-        CHECK(analytic::distance(t0*one , t0, lo, hi) < threshold);
-        CHECK(analytic::distance(t0-t0, zero, lo, hi) < threshold);
+    test::CommutativeRing commutative_ring(
+        "0", zero, 
+        "1", one, 
+        "polynomial addition",       TEST_SYMBOL(+),
+        "polynomial subtraction",    TEST_SYMBOL(-),
+        "polynomial multiplication", TEST_SYMBOL(*)
+    );
 
-        CHECK(analytic::distance(t1+zero, t1, lo, hi) < threshold);
-        CHECK(analytic::distance(t1-zero, t1, lo, hi) < threshold);
-        CHECK(analytic::distance(t1*one , t1, lo, hi) < threshold);
-        CHECK(analytic::distance(t1-t1, zero, lo, hi) < threshold);
+    // UNARY TESTS
+    REQUIRE(commutative_ring.valid(broad, P0s));
+    REQUIRE(commutative_ring.valid(broad, P1s));
 
-        CHECK(analytic::distance(t2+zero, t2, lo, hi) < threshold);
-        CHECK(analytic::distance(t2-zero, t2, lo, hi) < threshold);
-        CHECK(analytic::distance(t2*one , t2, lo, hi) < threshold);
-        CHECK(analytic::distance(t2-t2, zero, lo, hi) < threshold);
+    // BINARY TESTS
+    REQUIRE(commutative_ring.valid(broad, P0s, P1s));
 
-        CHECK(analytic::distance(t3+zero, t3, lo, hi) < threshold);
-        CHECK(analytic::distance(t3-zero, t3, lo, hi) < threshold);
-        CHECK(analytic::distance(t3*one , t3, lo, hi) < threshold);
-        CHECK(analytic::distance(t3-t3, zero, lo, hi) < threshold);
-    }
 }
-
-TEST_CASE( "PolynomialTrain arithmetic commutativity", "[math]" ) {
-    const double threshold = 1e-2;
-    // `lo*` variables are used as bounds to a square integral 
-    // that is used to calculate deviation from the correct output.
-    const double lo = -1e3;
-    const double hi =  1e3;
-    // `mid*` variables are used when the degree of a polynomial is so large 
-    // that a square integral of it will produce nans for all but the smallest input.
-    const double midlo = -1e2;
-    const double midhi =  1e2;
-
-    const double oo = std::numeric_limits<double>::max();
-
-    using P0 = analytic::Polynomial<double,0,2>;
-    using P1 = analytic::Polynomial<double,0,3>;
-
-    P0 p0 = P0({3.0,2.0,1.0});
-    P0 p1 = P0({-1.0,0.0,1.0});
-    P1 p2 = P1({4.0,3.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
-
-
-    // standard polynomials, no overlap
-    analytic::Train<double,P0> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
-    // standard polynomials, with overlap
-    analytic::Train<double,P0> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
-    // laurent polynomials
-    analytic::Train<double,P1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
-    // all polynomials
-    analytic::Train<double,P1> t3 = analytic::Train<double,P1>(std::vector<P1>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
-
-    SECTION("t0+t1 must equal t1+t0"){
-        CHECK(analytic::distance(t0+t1, t1+t0, lo, hi) < threshold);
-        CHECK(analytic::distance(t0+t2, t2+t0, lo, hi) < threshold);
-        CHECK(analytic::distance(t0+t3, t3+t0, lo, hi) < threshold);
-
-        CHECK(analytic::distance(t1+t0, t0+t1, lo, hi) < threshold);
-        CHECK(analytic::distance(t1+t2, t2+t1, lo, hi) < threshold);
-        CHECK(analytic::distance(t1+t3, t3+t1, lo, hi) < threshold);
-
-        CHECK(analytic::distance(t2+t0, t0+t2, lo, hi) < threshold);
-        CHECK(analytic::distance(t2+t1, t1+t2, lo, hi) < threshold);
-        CHECK(analytic::distance(t2+t3, t3+t2, lo, hi) < threshold);
-
-        CHECK(analytic::distance(t3+t0, t0+t3, lo, hi) < threshold);
-        CHECK(analytic::distance(t3+t1, t1+t3, lo, hi) < threshold);
-        CHECK(analytic::distance(t3+t2, t2+t3, lo, hi) < threshold);
-    }
-    SECTION("t0*t1 must equal t1*t0"){
-        CHECK(analytic::distance(t0*t1, t1*t0, midlo, midhi) < threshold);
-        CHECK(analytic::distance(t0*t2, t2*t0, midlo, midhi) < threshold);
-        CHECK(analytic::distance(t0*t3, t3*t0, midlo, midhi) < threshold);
-
-        CHECK(analytic::distance(t1*t0, t0*t1, midlo, midhi) < threshold);
-        CHECK(analytic::distance(t1*t2, t2*t1, midlo, midhi) < threshold);
-        CHECK(analytic::distance(t1*t3, t3*t1, midlo, midhi) < threshold);
-
-        CHECK(analytic::distance(t2*t0, t0*t2, midlo, midhi) < threshold);
-        CHECK(analytic::distance(t2*t1, t1*t2, midlo, midhi) < threshold);
-        CHECK(analytic::distance(t2*t3, t3*t2, midlo, midhi) < threshold);
-
-        CHECK(analytic::distance(t3*t0, t0*t3, midlo, midhi) < threshold);
-        CHECK(analytic::distance(t3*t1, t1*t3, midlo, midhi) < threshold);
-        CHECK(analytic::distance(t3*t2, t2*t3, midlo, midhi) < threshold);
-    }
-}
-
-TEST_CASE( "PolynomialTrain arithmetic associativity", "[math]" ) {
-    const double threshold = 1e-2;
-    // `lo*` variables are used as bounds to a square integral 
-    // that is used to calculate deviation from the correct output.
-    const double lo = -1e3;
-    const double hi =  1e3;
-    // `mid*` variables are used when the degree of a polynomial is so large 
-    // that a square integral of it will produce nans for all but the smallest input.
-    const double midlo = -1e2;
-    const double midhi =  1e2;
-
-    const double oo = std::numeric_limits<double>::max();
-
-    using P0 = analytic::Polynomial<double,0,2>;
-    using P1 = analytic::Polynomial<double,0,3>;
-
-    P0 p0 = P0({3.0,2.0,1.0});
-    P0 p1 = P0({-1.0,0.0,1.0});
-    P1 p2 = P1({4.0,3.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
-
-
-    // standard polynomials, no overlap
-    analytic::Train<double,P0> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
-    // standard polynomials, with overlap
-    analytic::Train<double,P0> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
-    // laurent polynomials
-    analytic::Train<double,P1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
-    // all polynomials
-    analytic::Train<double,P1> t3 = analytic::Train<double,P1>(std::vector<P1>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
-
-    SECTION("(t0+t1)+t2 must equal t0+(t1+t2)"){
-        CHECK(analytic::distance((t0+t1)+t2, t0+(t1+t2), lo, hi) < threshold);
-        CHECK(analytic::distance((t0+t1)+t3, t0+(t1+t3), lo, hi) < threshold);
-        CHECK(analytic::distance((t1+t2)+t3, t1+(t2+t3), lo, hi) < threshold);
-        CHECK(analytic::distance((t1+t2)+t0, t1+(t2+t0), lo, hi) < threshold);
-        CHECK(analytic::distance((t2+t3)+t0, t2+(t3+t0), lo, hi) < threshold);
-        CHECK(analytic::distance((t2+t3)+t1, t2+(t3+t1), lo, hi) < threshold);
-    }
-    SECTION("(t0*t1)*t2 must equal t0*(t1*t2)"){
-        CHECK(analytic::distance((t0*t1)*t2, t0*(t1*t2), midlo, midhi) < threshold);
-        CHECK(analytic::distance((t0*t1)*t3, t0*(t1*t3), midlo, midhi) < threshold);
-        CHECK(analytic::distance((t1*t2)*t3, t1*(t2*t3), midlo, midhi) < threshold);
-        CHECK(analytic::distance((t1*t2)*t0, t1*(t2*t0), midlo, midhi) < threshold);
-        CHECK(analytic::distance((t2*t3)*t0, t2*(t3*t0), midlo, midhi) < threshold);
-        CHECK(analytic::distance((t2*t3)*t1, t2*(t3*t1), midlo, midhi) < threshold);
-    }
-}
-
-TEST_CASE( "PolynomialTrain arithmetic distributivity", "[math]" ) {
-    const double threshold = 1e-2;
-    // `lo*` variables are used as bounds to a square integral 
-    // that is used to calculate deviation from the correct output.
-    // const double lo = -1e3;
-    // const double hi =  1e3;
-    // `mid*` variables are used when the degree of a polynomial is so large 
-    // that a square integral of it will produce nans for all but the smallest input.
-    const double midlo = -1e2;
-    const double midhi =  1e2;
-
-    const double oo = std::numeric_limits<double>::max();
-
-    using P0 = analytic::Polynomial<double,0,2>;
-    using P1 = analytic::Polynomial<double,0,3>;
-
-    P0 p0 = P0({3.0,2.0,1.0});
-    P0 p1 = P0({-1.0,0.0,1.0});
-    P1 p2 = P1({4.0,3.0,2.0,1.0});
-    P1 p3 = P1({-1.0,1.0,-2.0,2.0});
-
-
-    // standard polynomials, no overlap
-    analytic::Train<double,P0> t0 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,-1.0,oo}); 
-    // standard polynomials, with overlap
-    analytic::Train<double,P0> t1 = analytic::Train<double,P0>(std::vector<P0>{p0,p1},std::vector<double>{-oo,1.0,oo}); 
-    // laurent polynomials
-    analytic::Train<double,P1> t2 = analytic::Train<double,P1>(std::vector<P1>{p2,p3},std::vector<double>{-oo,0.0,oo}); 
-    // all polynomials
-    analytic::Train<double,P1> t3 = analytic::Train<double,P1>(std::vector<P1>{p3,p2,p1,p0},std::vector<double>{-oo,-2.0,0.0,2.0,oo});
-
-    SECTION("t0+t1 must equal t1+t0"){
-        CHECK(analytic::distance((t0+t1)*t2, t0*t2+t1*t2, midlo, midhi) < threshold);
-        CHECK(analytic::distance((t0+t1)*t3, t0*t3+t1*t3, midlo, midhi) < threshold);
-
-        CHECK(analytic::distance((t0+t2)*t1, t0*t1+t2*t1, midlo, midhi) < threshold);
-        CHECK(analytic::distance((t0+t2)*t3, t0*t3+t2*t3, midlo, midhi) < threshold);
-
-        CHECK(analytic::distance((t0+t3)*t1, t0*t1+t3*t1, midlo, midhi) < threshold);
-        CHECK(analytic::distance((t0+t3)*t2, t0*t2+t3*t2, midlo, midhi) < threshold);
-
-        CHECK(analytic::distance((t1+t2)*t0, t1*t0+t2*t0, midlo, midhi) < threshold);
-        CHECK(analytic::distance((t1+t2)*t3, t1*t3+t2*t3, midlo, midhi) < threshold);
-
-        CHECK(analytic::distance((t1+t3)*t0, t1*t0+t3*t0, midlo, midhi) < threshold);
-        CHECK(analytic::distance((t1+t3)*t2, t1*t2+t3*t2, midlo, midhi) < threshold);
-
-        CHECK(analytic::distance((t2+t3)*t0, t2*t0+t3*t0, midlo, midhi) < threshold);
-        CHECK(analytic::distance((t2+t3)*t1, t2*t1+t3*t1, midlo, midhi) < threshold);
-    }
-}
-
 
 
 
