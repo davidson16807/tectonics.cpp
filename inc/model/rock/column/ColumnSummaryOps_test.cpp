@@ -13,7 +13,7 @@
 #include <test/structures/grouplike.hpp>
 #include <test/macros.hpp>
 
-TEST_CASE( "ColumnSummary absorb() commutative monoid", "[rock]" ) {
+TEST_CASE( "ColumnSummary absorb() monoid", "[rock]" ) {
 
     using density = si::density<float>;
     using length = si::length<float>;

@@ -13,6 +13,16 @@ namespace rock{
         const StratumSummaryOps ops;
         const length threshold;
 
+        inline bool exists(const StratumSummary& stratum) const
+        {
+            return stratum.thickness() > threshold;
+        }
+
+        inline bool above(const StratumSummary& top, const StratumSummary& bottom) const
+        {
+            return exists(top) && (!exists(bottom) || (exists(bottom) && top.density() < bottom.density()));
+        }
+
     public:
 
         ColumnSummaryOps(const length threshold): 
@@ -20,35 +30,37 @@ namespace rock{
             threshold(threshold)
         {}
 
-        ColumnSummary absorb (const ColumnSummary& column, const StratumSummary& stratum) const
+        StratumSummary flatten (const ColumnSummary& column) const
         {
-            // TODO: we'll need to add a `bottom` attribute as well if we plan to model the melting of crust
-            return stratum.density() < column.top.density() && stratum.thickness() > threshold?
-                ColumnSummary(stratum, ops.combine(column.top, column.rest))
-              : ColumnSummary(column.top, ops.combine(stratum, column.rest));
+            return ops.combine(column.top, column.rest);
         }
 
         ColumnSummary absorb (const StratumSummary& stratum1, const StratumSummary& stratum2) const
         {
-            /* 
-            this function is included so that `absorb` can serve as a monoid, 
-            but it also serves pragmatic purposes of convenience
-            */
-            return absorb(ColumnSummary(stratum1), stratum2);
+            return above(stratum1, stratum2)?
+                ColumnSummary(stratum1, stratum2):
+                ColumnSummary(stratum2, stratum1);
         }
 
         ColumnSummary absorb (const ColumnSummary& column1, const ColumnSummary& column2) const
         {
-            /* 
-            this function is included so that `absorb` can serve as a monoid, 
-            but it also serves pragmatic purposes of convenience
-            */
-            return absorb(absorb(column1, column2.top), column2.rest);
+            return above(column1.top, column2.top)?
+                ColumnSummary(column1.top, ops.combine(column1.rest, flatten(column2))):
+                ColumnSummary(column2.top, ops.combine(column2.rest, flatten(column1)));
         }
 
-        StratumSummary flatten (const ColumnSummary& column) const
+        ColumnSummary absorb (const ColumnSummary& column, const StratumSummary& stratum) const
         {
-            return ops.combine(column.top, column.rest);
+            return above(column.top, stratum)?
+                ColumnSummary(column.top, ops.combine(column.rest, stratum)):
+                ColumnSummary(stratum,    flatten(column));
+        }
+
+        ColumnSummary absorb (const StratumSummary& stratum, const ColumnSummary& column) const
+        {
+            return above(column.top, stratum)?
+                ColumnSummary(column.top, ops.combine(column.rest, stratum)):
+                ColumnSummary(stratum,    flatten(column));
         }
 
     };
