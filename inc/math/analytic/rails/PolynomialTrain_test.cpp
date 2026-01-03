@@ -18,7 +18,7 @@
 #include "../test_tools.hpp"
 
 TEST_CASE( "PolynomialTrain arithmetic is a commutative ring", "[math]" ) {
-    const double threshold = 1e-2;
+    const double threshold = 3e-3;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
     const double lo = -1e3;
