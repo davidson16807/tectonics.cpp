@@ -54,7 +54,7 @@ namespace analytic {
             // regardless of Plo or Phi, if there is only one term, the caller unambiguously means to set its coefficient
             if (Plo==Phi) 
             {
-                k[Plo] = k2;
+                k[0] = k2;
             }
             else
             {

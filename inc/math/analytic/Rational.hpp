@@ -36,7 +36,7 @@ namespace analytic {
         Polynomial<T,Plo,Phi> p;
         Polynomial<T,Qlo,Qhi> q;
         template <int P2lo, int P2hi, int Q2lo, int Q2hi> 
-        constexpr explicit Rational(const Polynomial<T,P2lo,P2hi> p, const Polynomial<T,Q2lo,Q2hi> q):
+        constexpr explicit Rational(const Polynomial<T,P2lo,P2hi>& p, const Polynomial<T,Q2lo,Q2hi>& q):
             p(p), 
             q(q)
         {}
@@ -81,13 +81,13 @@ namespace analytic {
         // {
         // }
         template<int Nlo, int Nhi>
-        constexpr explicit Rational(const Polynomial<T,Nlo,Nhi> p): 
+        constexpr explicit Rational(const Polynomial<T,Nlo,Nhi>& p): 
             p(p), 
             q(1.0)
         {
         }
         template<int Nhi>
-        constexpr explicit Rational(const ScaledComplement<T,Polynomial<T,-1,Nhi>> f): 
+        constexpr explicit Rational(const ScaledComplement<T,Polynomial<T,-1,Nhi>>& f): 
             p(compose(f.f*Identity<T>(), T(1)-Scaling<T>(T(1)/f.scale))), 
             q(T(1)-Scaling<T>(T(1)/f.scale))
         {
