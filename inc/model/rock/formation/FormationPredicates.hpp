@@ -21,7 +21,7 @@ namespace rock {
 	They contains everything that's needed to simulate the geology of a planet.
 	*/
 
-	template<int M>
+	template<std::size_t M>
     class FormationPredicates
     {
 

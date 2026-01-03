@@ -17,7 +17,7 @@ namespace rock
 {
 
     // NOTE: `M` is mineral count
-    template<int M, typename StratumDensity>
+    template<std::size_t M, typename StratumDensity>
     class StratumSummarization
     {
 
@@ -45,7 +45,7 @@ namespace rock
         }
     };
 
-    template<int M, typename StratumDensity>
+    template<std::size_t M, typename StratumDensity>
     auto stratum_summarization(
         const StratumDensity& density_for_stratum, 
         const si::mass<float> mass_threshold

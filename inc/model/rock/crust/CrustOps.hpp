@@ -19,7 +19,7 @@
 namespace rock{
 
     // NOTE: `M` is mineral count, `F` is formation count
-    template <int M>
+    template <std::size_t M>
     class CrustOps
     {
 

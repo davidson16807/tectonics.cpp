@@ -49,14 +49,14 @@ namespace rock{
             density_for_age(density_for_age),
             age_of_world(age_of_world)
         {}
-        template<int M>
+        template<std::size_t M>
         auto operator() (const StratumStore<M>& stratum) const 
         {
             // return si::density<float>(1.0f);
             si::mass<float> mass(0.0f);
             si::mass<float> total_mass(0.0f);
             si::volume<float> total_volume(0.0f);
-            for (int i=0; i<M; i++)
+            for (std::size_t i=0; i<M; i++)
             {
                 mass = stratum[i].mass();
                 total_mass += mass;
@@ -73,7 +73,7 @@ namespace rock{
     struct StratumMass
     {
         StratumMass(){}
-        template<int M>
+        template<std::size_t M>
         auto operator() (const StratumStore<M>& stratum) const { return stratum.mass ();}
     };
 

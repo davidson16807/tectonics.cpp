@@ -102,7 +102,7 @@ namespace rock
         inline si::mass<float> mass () const 
         {
             si::mass<float> result;
-            for (int i = 0; i < M; ++i)
+            for (std::size_t i = 0; i < M; ++i)
             {
                 result += minerals[i].mass();
             }
@@ -111,7 +111,7 @@ namespace rock
 
         bool empty () const 
         {
-            for (int i = 0; i < M; ++i)
+            for (std::size_t i = 0; i < M; ++i)
             {
                 if (minerals[i].mass() > 0.0*si::kilogram) { return false; }
             }
