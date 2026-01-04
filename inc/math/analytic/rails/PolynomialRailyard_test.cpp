@@ -19,18 +19,17 @@
 
 TEST_CASE( "PolynomialRailyard arithmetic is a commutative ring", "[math]" ) {
 
-    const double threshold = 1e-2;
     // `lo*` variables are used as bounds to a square integral 
     // that is used to calculate deviation from the correct output.
-    const double lo = -1e3;
-    const double hi =  1e3;
+    const double lo = -3e1;
+    const double hi =  3e1;
     // `mid*` variables are used when the degree of a polynomial is so large 
     // that a square integral of it will produce nans for all but the smallest input.
     const double midlo = -1e1;
     const double midhi =  1e1;
 
-    ExpressionAdapter<double> broad(threshold, midlo, midhi);
-    ExpressionAdapter<double> narrow(threshold, lo, hi);
+    ExpressionAdapter<double> broad(1e-2, midlo, midhi);
+    ExpressionAdapter<double> narrow(1e-2, midlo, midhi);
 
     // const double oo = std::numeric_limits<double>::max();
 
@@ -38,10 +37,10 @@ TEST_CASE( "PolynomialRailyard arithmetic is a commutative ring", "[math]" ) {
     using P1 = analytic::Polynomial<double,-2,1>;
     using P2 = analytic::Polynomial<double,-2,2>;
 
-    P0 p0 = P0({3.0f,2.0f,1.0f});
-    P0 p1 = P0({-1.0f,0.0f,1.0f});
-    P1 p2 = P1({4.0f,3.0f,2.0f,1.0f});
-    P1 p3 = P1({-1.0f,1.0f,-2.0f,2.0f});
+    P0 p0 = P0({1.3,1.2,1.0});
+    P0 p1 = P0({-1.0,0.0,1.0});
+    P1 p2 = P1({1.4,1.3,1.2,1.0});
+    P1 p3 = P1({-1.0,1.0,-1.2,1.2});
 
     using C0 = analytic::Railcar<double,P0>;
     using C1 = analytic::Railcar<double,P1>;
@@ -49,8 +48,8 @@ TEST_CASE( "PolynomialRailyard arithmetic is a commutative ring", "[math]" ) {
 
     // standard polynomials, no overlap
     analytic::PolynomialRailyard<double,0,2> s0 = analytic::PolynomialRailyard<double,0,2>{
-        C0(lo, -1.0f, p0), 
-        C0(1.0f, hi,  p1) 
+        C0(lo, -1.0, p0), 
+        C0(1.0, hi,  p1) 
     }; 
 
     // standard polynomials, with overlap
@@ -60,27 +59,27 @@ TEST_CASE( "PolynomialRailyard arithmetic is a commutative ring", "[math]" ) {
     }; 
     // laurent polynomials
     analytic::PolynomialRailyard<double,-2,1> s2 = analytic::PolynomialRailyard<double,-2,1>{ 
-        C1(midlo, -1.0f, p2), 
-        C1(1.0f, midhi, p3) 
+        C1(midlo, -1.0, p2), 
+        C1(1.0, midhi, p3) 
     }; 
     // all polynomials
     analytic::PolynomialRailyard<double,-2,2> s3 = analytic::PolynomialRailyard<double,-2,2>{ 
         C2(lo, midlo, P2(p2)), 
         C2(midhi, hi, P2(p3)), 
-        C2(midlo, -1.0f, P2(p2)), 
-        C2(1.0f, midhi, P2(p3)) 
+        C2(midlo, -1.0, P2(p2)), 
+        C2(1.0, midhi, P2(p3)) 
     };
 
-    analytic::Polynomial<double,0,0> m0{2.0};
-    analytic::Polynomial<double,2,2> m1{2.0};
-    analytic::Polynomial<double,-2,-2> m2{2.0};
+    analytic::Polynomial<double,0,0> m0{1.2};
+    analytic::Polynomial<double,2,2> m1{1.2};
+    analytic::Polynomial<double,-2,-2> m2{1.2};
 
-    analytic::Shifting<double> f0(2.0);
-    analytic::Shifting<double> f1(-2.0);
+    analytic::Shifting<double> f0(1.25);
+    analytic::Shifting<double> f1(-1.25);
     analytic::Shifting<double> f2(0.0);
 
-    analytic::Scaling<double> g0(2.0);
-    analytic::Scaling<double> g1(-2.0);
+    analytic::Scaling<double> g0(1.25);
+    analytic::Scaling<double> g1(-1.25);
     analytic::Scaling<double> g2(0.0);
 
     auto S0s = std::vector{s0,s1};
@@ -90,7 +89,7 @@ TEST_CASE( "PolynomialRailyard arithmetic is a commutative ring", "[math]" ) {
     auto P0s = std::vector{p0,p1};
     auto P1s = std::vector{p2,p3};
 
-    auto ks = std::vector{0.0, 2.0, -2.0};
+    auto ks = std::vector{0.0, 1.25, -1.25};
 
     auto m0s = std::vector{m0};
     auto m1s = std::vector{m1};
@@ -138,17 +137,17 @@ TEST_CASE( "PolynomialRailyard arithmetic is a commutative ring", "[math]" ) {
     REQUIRE(commutative_ring.valid(broad, S2s,m1s));
     REQUIRE(commutative_ring.valid(broad, S2s,m2s));
 
-    REQUIRE(commutative_ring.valid(broad, S0s,fs));
-    REQUIRE(commutative_ring.valid(broad, S0s,gs));
-    REQUIRE(commutative_ring.valid(broad, S0s,ks));
+    REQUIRE(commutative_ring.valid(narrow, S0s,fs));
+    REQUIRE(commutative_ring.valid(narrow, S0s,gs));
+    REQUIRE(commutative_ring.valid(narrow, S0s,ks));
 
-    REQUIRE(commutative_ring.valid(broad, S1s,fs));
-    REQUIRE(commutative_ring.valid(broad, S1s,gs));
-    REQUIRE(commutative_ring.valid(broad, S1s,ks));
+    REQUIRE(commutative_ring.valid(narrow, S1s,fs));
+    REQUIRE(commutative_ring.valid(narrow, S1s,gs));
+    REQUIRE(commutative_ring.valid(narrow, S1s,ks));
 
-    REQUIRE(commutative_ring.valid(broad, S2s,fs));
-    REQUIRE(commutative_ring.valid(broad, S2s,gs));
-    REQUIRE(commutative_ring.valid(broad, S2s,ks));
+    REQUIRE(commutative_ring.valid(narrow, S2s,fs));
+    REQUIRE(commutative_ring.valid(narrow, S2s,gs));
+    REQUIRE(commutative_ring.valid(narrow, S2s,ks));
 
     // TRINARY TESTS, 3 railyards
     REQUIRE(commutative_ring.valid(broad, S0s,S1s,S2s));
@@ -173,15 +172,15 @@ TEST_CASE( "PolynomialRailyard arithmetic is a commutative ring", "[math]" ) {
     REQUIRE(commutative_ring.valid(broad, S1s,S2s,m1s));
     REQUIRE(commutative_ring.valid(broad, S1s,S2s,m2s));
 
-    REQUIRE(commutative_ring.valid(broad, S0s,S1s,fs));
-    REQUIRE(commutative_ring.valid(broad, S0s,S1s,gs));
-    REQUIRE(commutative_ring.valid(broad, S0s,S1s,ks));
-    REQUIRE(commutative_ring.valid(broad, S0s,S2s,fs));
-    REQUIRE(commutative_ring.valid(broad, S0s,S2s,gs));
-    REQUIRE(commutative_ring.valid(broad, S0s,S2s,ks));
-    REQUIRE(commutative_ring.valid(broad, S1s,S2s,fs));
-    REQUIRE(commutative_ring.valid(broad, S1s,S2s,gs));
-    REQUIRE(commutative_ring.valid(broad, S1s,S2s,ks));
+    REQUIRE(commutative_ring.valid(narrow, S0s,S1s,fs));
+    REQUIRE(commutative_ring.valid(narrow, S0s,S1s,gs));
+    REQUIRE(commutative_ring.valid(narrow, S0s,S1s,ks));
+    REQUIRE(commutative_ring.valid(narrow, S0s,S2s,fs));
+    REQUIRE(commutative_ring.valid(narrow, S0s,S2s,gs));
+    REQUIRE(commutative_ring.valid(narrow, S0s,S2s,ks));
+    REQUIRE(commutative_ring.valid(narrow, S1s,S2s,fs));
+    REQUIRE(commutative_ring.valid(narrow, S1s,S2s,gs));
+    REQUIRE(commutative_ring.valid(narrow, S1s,S2s,ks));
 
     // TRINARY TESTS
     // TRINARY TESTS, 1 railyard
@@ -326,27 +325,27 @@ TEST_CASE( "PolynomialRailyard arithmetic is a commutative ring", "[math]" ) {
     REQUIRE(commutative_ring.valid(broad, S1s,fs,m0s));
     REQUIRE(commutative_ring.valid(broad, S1s,fs,m1s));
     REQUIRE(commutative_ring.valid(broad, S1s,fs,m2s));
-    // REQUIRE(commutative_ring.valid(broad, S1s,fs,fs));
-    REQUIRE(commutative_ring.valid(broad, S1s,fs,gs));
-    REQUIRE(commutative_ring.valid(broad, S1s,fs,ks));
+    // REQUIRE(commutative_ring.valid(narrow, S1s,fs,fs));
+    REQUIRE(commutative_ring.valid(narrow, S1s,fs,gs));
+    REQUIRE(commutative_ring.valid(narrow, S1s,fs,ks));
 
     REQUIRE(commutative_ring.valid(broad, S1s,gs,P0s));
     REQUIRE(commutative_ring.valid(broad, S1s,gs,P1s));
     REQUIRE(commutative_ring.valid(broad, S1s,gs,m0s));
     REQUIRE(commutative_ring.valid(broad, S1s,gs,m1s));
     REQUIRE(commutative_ring.valid(broad, S1s,gs,m2s));
-    REQUIRE(commutative_ring.valid(broad, S1s,gs,fs));
-    // REQUIRE(commutative_ring.valid(broad, S1s,gs,gs));
-    REQUIRE(commutative_ring.valid(broad, S1s,gs,ks));
+    REQUIRE(commutative_ring.valid(narrow, S1s,gs,fs));
+    // REQUIRE(commutative_ring.valid(narrow, S1s,gs,gs));
+    REQUIRE(commutative_ring.valid(narrow, S1s,gs,ks));
 
     REQUIRE(commutative_ring.valid(broad, S1s,ks,P0s));
     REQUIRE(commutative_ring.valid(broad, S1s,ks,P1s));
     REQUIRE(commutative_ring.valid(broad, S1s,ks,m0s));
     REQUIRE(commutative_ring.valid(broad, S1s,ks,m1s));
     REQUIRE(commutative_ring.valid(broad, S1s,ks,m2s));
-    REQUIRE(commutative_ring.valid(broad, S1s,ks,fs));
-    REQUIRE(commutative_ring.valid(broad, S1s,ks,gs));
-    // REQUIRE(commutative_ring.valid(broad, S1s,ks,ks));
+    REQUIRE(commutative_ring.valid(narrow, S1s,ks,fs));
+    REQUIRE(commutative_ring.valid(narrow, S1s,ks,gs));
+    // REQUIRE(commutative_ring.valid(narrow, S1s,ks,ks));
 
 
     // REQUIRE(commutative_ring.valid(broad, S2s,P0s,P0s));
@@ -354,81 +353,83 @@ TEST_CASE( "PolynomialRailyard arithmetic is a commutative ring", "[math]" ) {
     REQUIRE(commutative_ring.valid(broad, S2s,P0s,m0s));
     REQUIRE(commutative_ring.valid(broad, S2s,P0s,m1s));
     REQUIRE(commutative_ring.valid(broad, S2s,P0s,m2s));
-    REQUIRE(commutative_ring.valid(broad, S2s,P0s,fs));
-    REQUIRE(commutative_ring.valid(broad, S2s,P0s,gs));
-    REQUIRE(commutative_ring.valid(broad, S2s,P0s,ks));
+    REQUIRE(commutative_ring.valid(narrow, S2s,P0s,fs));
+    REQUIRE(commutative_ring.valid(narrow, S2s,P0s,gs));
+    REQUIRE(commutative_ring.valid(narrow, S2s,P0s,ks));
 
     REQUIRE(commutative_ring.valid(broad, S2s,P1s,P0s));
     // REQUIRE(commutative_ring.valid(broad, S2s,P1s,P1s));
     REQUIRE(commutative_ring.valid(broad, S2s,P1s,m0s));
     REQUIRE(commutative_ring.valid(broad, S2s,P1s,m1s));
     REQUIRE(commutative_ring.valid(broad, S2s,P1s,m2s));
-    REQUIRE(commutative_ring.valid(broad, S2s,P1s,fs));
-    REQUIRE(commutative_ring.valid(broad, S2s,P1s,gs));
-    REQUIRE(commutative_ring.valid(broad, S2s,P1s,ks));
+    REQUIRE(commutative_ring.valid(narrow, S2s,P1s,fs));
+    REQUIRE(commutative_ring.valid(narrow, S2s,P1s,gs));
+    REQUIRE(commutative_ring.valid(narrow, S2s,P1s,ks));
 
     REQUIRE(commutative_ring.valid(broad, S2s,P1s,P0s));
     // REQUIRE(commutative_ring.valid(broad, S2s,P1s,P1s));
     REQUIRE(commutative_ring.valid(broad, S2s,P1s,m0s));
     REQUIRE(commutative_ring.valid(broad, S2s,P1s,m1s));
     REQUIRE(commutative_ring.valid(broad, S2s,P1s,m2s));
-    REQUIRE(commutative_ring.valid(broad, S2s,P1s,fs));
-    REQUIRE(commutative_ring.valid(broad, S2s,P1s,gs));
-    REQUIRE(commutative_ring.valid(broad, S2s,P1s,ks));
+    REQUIRE(commutative_ring.valid(narrow, S2s,P1s,fs));
+    REQUIRE(commutative_ring.valid(narrow, S2s,P1s,gs));
+    REQUIRE(commutative_ring.valid(narrow, S2s,P1s,ks));
 
     REQUIRE(commutative_ring.valid(broad, S2s,m0s,P0s));
     REQUIRE(commutative_ring.valid(broad, S2s,m0s,P1s));
     // REQUIRE(commutative_ring.valid(broad, S2s,m0s,m0s));
     REQUIRE(commutative_ring.valid(broad, S2s,m0s,m1s));
     REQUIRE(commutative_ring.valid(broad, S2s,m0s,m2s));
-    REQUIRE(commutative_ring.valid(broad, S2s,m0s,fs));
-    REQUIRE(commutative_ring.valid(broad, S2s,m0s,gs));
-    REQUIRE(commutative_ring.valid(broad, S2s,m0s,ks));
+    REQUIRE(commutative_ring.valid(narrow, S2s,m0s,fs));
+    REQUIRE(commutative_ring.valid(narrow, S2s,m0s,gs));
+    REQUIRE(commutative_ring.valid(narrow, S2s,m0s,ks));
 
     REQUIRE(commutative_ring.valid(broad, S2s,m1s,P0s));
     REQUIRE(commutative_ring.valid(broad, S2s,m1s,P1s));
     REQUIRE(commutative_ring.valid(broad, S2s,m1s,m0s));
     // REQUIRE(commutative_ring.valid(broad, S2s,m1s,m1s));
     REQUIRE(commutative_ring.valid(broad, S2s,m1s,m2s));
-    REQUIRE(commutative_ring.valid(broad, S2s,m1s,fs));
-    REQUIRE(commutative_ring.valid(broad, S2s,m1s,gs));
-    REQUIRE(commutative_ring.valid(broad, S2s,m1s,ks));
+    REQUIRE(commutative_ring.valid(narrow, S2s,m1s,fs));
+    REQUIRE(commutative_ring.valid(narrow, S2s,m1s,gs));
+    REQUIRE(commutative_ring.valid(narrow, S2s,m1s,ks));
 
     REQUIRE(commutative_ring.valid(broad, S2s,m2s,P0s));
     REQUIRE(commutative_ring.valid(broad, S2s,m2s,P1s));
     REQUIRE(commutative_ring.valid(broad, S2s,m2s,m0s));
     REQUIRE(commutative_ring.valid(broad, S2s,m2s,m1s));
     // REQUIRE(commutative_ring.valid(broad, S2s,m2s,m2s));
-    REQUIRE(commutative_ring.valid(broad, S2s,m2s,fs));
-    REQUIRE(commutative_ring.valid(broad, S2s,m2s,gs));
-    REQUIRE(commutative_ring.valid(broad, S2s,m2s,ks));
+    REQUIRE(commutative_ring.valid(narrow, S2s,m2s,fs));
+    REQUIRE(commutative_ring.valid(narrow, S2s,m2s,gs));
+    REQUIRE(commutative_ring.valid(narrow, S2s,m2s,ks));
 
     REQUIRE(commutative_ring.valid(broad, S2s,fs,P0s));
     REQUIRE(commutative_ring.valid(broad, S2s,fs,P1s));
     REQUIRE(commutative_ring.valid(broad, S2s,fs,m0s));
     REQUIRE(commutative_ring.valid(broad, S2s,fs,m1s));
     REQUIRE(commutative_ring.valid(broad, S2s,fs,m2s));
-    // REQUIRE(commutative_ring.valid(broad, S2s,fs,fs));
-    REQUIRE(commutative_ring.valid(broad, S2s,fs,gs));
-    REQUIRE(commutative_ring.valid(broad, S2s,fs,ks));
+    // REQUIRE(commutative_ring.valid(narrow, S2s,fs,fs));
+    REQUIRE(commutative_ring.valid(narrow, S2s,fs,gs));
+    REQUIRE(commutative_ring.valid(narrow, S2s,fs,ks));
 
     REQUIRE(commutative_ring.valid(broad, S2s,gs,P0s));
     REQUIRE(commutative_ring.valid(broad, S2s,gs,P1s));
     REQUIRE(commutative_ring.valid(broad, S2s,gs,m0s));
     REQUIRE(commutative_ring.valid(broad, S2s,gs,m1s));
     REQUIRE(commutative_ring.valid(broad, S2s,gs,m2s));
-    REQUIRE(commutative_ring.valid(broad, S2s,gs,fs));
-    // REQUIRE(commutative_ring.valid(broad, S2s,gs,gs));
-    REQUIRE(commutative_ring.valid(broad, S2s,gs,ks));
+    REQUIRE(commutative_ring.valid(narrow, S2s,gs,fs));
+    // REQUIRE(commutative_ring.valid(narrow, S2s,gs,gs));
+    REQUIRE(commutative_ring.valid(narrow, S2s,gs,ks));
 
     REQUIRE(commutative_ring.valid(broad, S2s,ks,P0s));
     REQUIRE(commutative_ring.valid(broad, S2s,ks,P1s));
     REQUIRE(commutative_ring.valid(broad, S2s,ks,m0s));
     REQUIRE(commutative_ring.valid(broad, S2s,ks,m1s));
     REQUIRE(commutative_ring.valid(broad, S2s,ks,m2s));
-    REQUIRE(commutative_ring.valid(broad, S2s,ks,fs));
-    REQUIRE(commutative_ring.valid(broad, S2s,ks,gs));
-    // REQUIRE(commutative_ring.valid(broad, S2s,ks,ks));
+    REQUIRE(commutative_ring.valid(narrow, S2s,ks,fs));
+    REQUIRE(commutative_ring.valid(narrow, S2s,ks,gs));
+    // REQUIRE(commutative_ring.valid(narrow, S2s,ks,ks));
+
+    // from observation, narrower comparisons can be made if the requirement for commutativity is dropped
 
 }
 

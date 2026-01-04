@@ -75,22 +75,22 @@ namespace analytic {
 
     // OPERATIONS WITH POLYNOMIAL CARS
     template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
-    constexpr auto operator+(const PolynomialRailyard<T,P1lo,P1hi>& p, const PolynomialRailcar<T,P2lo,P2hi> q)
+    constexpr auto operator+(const PolynomialRailyard<T,P1lo,P1hi>& p, const PolynomialRailcar<T,P2lo,P2hi>& q)
     {
         return p + PolynomialRailyard<T,P2lo,P2hi>(q);
     }
     template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
-    constexpr auto operator-(const PolynomialRailyard<T,P1lo,P1hi>& p, const PolynomialRailcar<T,P2lo,P2hi> q)
+    constexpr auto operator-(const PolynomialRailyard<T,P1lo,P1hi>& p, const PolynomialRailcar<T,P2lo,P2hi>& q)
     {
         return p - PolynomialRailyard<T,P2lo,P2hi>(q);
     }
     template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
-    constexpr auto operator*(const PolynomialRailyard<T,P1lo,P1hi>& p, const PolynomialRailcar<T,P2lo,P2hi> q)
+    constexpr auto operator*(const PolynomialRailyard<T,P1lo,P1hi>& p, const PolynomialRailcar<T,P2lo,P2hi>& q)
     {
         return p * PolynomialRailyard<T,P2lo,P2hi>(q);
     }
     // template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
-    // constexpr auto operator/(const PolynomialRailyard<T,P1lo,P1hi>& p, const PolynomialRailcar<T,P2lo,P2hi> q)
+    // constexpr auto operator/(const PolynomialRailyard<T,P1lo,P1hi>& p, const PolynomialRailcar<T,P2lo,P2hi>& q)
     // {
     //     return p / PolynomialRailyard<T,P2lo,P2hi>(q);
     // }
@@ -100,22 +100,22 @@ namespace analytic {
     */ 
 
     template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
-    constexpr auto operator+(const PolynomialRailcar<T,P2lo,P2hi> q, const PolynomialRailyard<T,P1lo,P1hi>& p)
+    constexpr auto operator+(const PolynomialRailcar<T,P2lo,P2hi>& q, const PolynomialRailyard<T,P1lo,P1hi>& p)
     {
         return PolynomialRailyard<T,P2lo,P2hi>(q) + p;
     }
     template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
-    constexpr auto operator-(const PolynomialRailcar<T,P2lo,P2hi> q, const PolynomialRailyard<T,P1lo,P1hi>& p)
+    constexpr auto operator-(const PolynomialRailcar<T,P2lo,P2hi>& q, const PolynomialRailyard<T,P1lo,P1hi>& p)
     {
         return PolynomialRailyard<T,P2lo,P2hi>(q) - p;
     }
     template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
-    constexpr auto operator*(const PolynomialRailcar<T,P2lo,P2hi> q, const PolynomialRailyard<T,P1lo,P1hi>& p)
+    constexpr auto operator*(const PolynomialRailcar<T,P2lo,P2hi>& q, const PolynomialRailyard<T,P1lo,P1hi>& p)
     {
         return PolynomialRailyard<T,P2lo,P2hi>(q) * p;
     }
     // template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
-    // constexpr auto operator/(const PolynomialRailcar<T,P2lo,P2hi> q, const PolynomialRailyard<T,P1lo,P1hi>& p)
+    // constexpr auto operator/(const PolynomialRailcar<T,P2lo,P2hi>& q, const PolynomialRailyard<T,P1lo,P1hi>& p)
     // {
     //     return PolynomialRailyard<T,P2lo,P2hi>(q) / p;
     // }
@@ -126,17 +126,17 @@ namespace analytic {
 
     // OPERATIONS WITH POLYNOMIALS
     template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
-    constexpr auto operator+(const PolynomialRailyard<T,P1lo,P1hi>& p, const Polynomial<T,P2lo,P2hi> q)
+    constexpr auto operator+(const PolynomialRailyard<T,P1lo,P1hi>& p, const Polynomial<T,P2lo,P2hi>& q)
     {
         return p + PolynomialRailyard<T,P2lo,P2hi>(q);
     }
     template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
-    constexpr auto operator-(const PolynomialRailyard<T,P1lo,P1hi>& p, const Polynomial<T,P2lo,P2hi> q)
+    constexpr auto operator-(const PolynomialRailyard<T,P1lo,P1hi>& p, const Polynomial<T,P2lo,P2hi>& q)
     {
         return p - PolynomialRailyard<T,P2lo,P2hi>(q);
     }
     template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
-    constexpr auto operator*(const PolynomialRailyard<T,P1lo,P1hi>& p, const Polynomial<T,P2lo,P2hi> q)
+    constexpr auto operator*(const PolynomialRailyard<T,P1lo,P1hi>& p, const Polynomial<T,P2lo,P2hi>& q)
     {
         return p * PolynomialRailyard<T,P2lo,P2hi>(q);
     }
@@ -154,22 +154,22 @@ namespace analytic {
     }
 
     template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
-    constexpr auto operator+(const Polynomial<T,P2lo,P2hi> q, const PolynomialRailyard<T,P1lo,P1hi>& p)
+    constexpr auto operator+(const Polynomial<T,P2lo,P2hi>& q, const PolynomialRailyard<T,P1lo,P1hi>& p)
     {
         return PolynomialRailyard<T,P2lo,P2hi>(q) + p;
     }
     template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
-    constexpr auto operator-(const Polynomial<T,P2lo,P2hi> q, const PolynomialRailyard<T,P1lo,P1hi>& p)
+    constexpr auto operator-(const Polynomial<T,P2lo,P2hi>& q, const PolynomialRailyard<T,P1lo,P1hi>& p)
     {
         return PolynomialRailyard<T,P2lo,P2hi>(q) - p;
     }
     template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
-    constexpr auto operator*(const Polynomial<T,P2lo,P2hi> q, const PolynomialRailyard<T,P1lo,P1hi>& p)
+    constexpr auto operator*(const Polynomial<T,P2lo,P2hi>& q, const PolynomialRailyard<T,P1lo,P1hi>& p)
     {
         return PolynomialRailyard<T,P2lo,P2hi>(q) * p;
     }
     // template<typename T, int P1lo, int P1hi, int P2lo, int P2hi>
-    // constexpr auto operator/(const Polynomial<T,P2lo,P2hi> q, const PolynomialRailyard<T,P1lo,P1hi>& p)
+    // constexpr auto operator/(const Polynomial<T,P2lo,P2hi>& q, const PolynomialRailyard<T,P1lo,P1hi>& p)
     // {
     //     return PolynomialRailyard<T,P2lo,P2hi>(q) / p;
     // }
@@ -356,10 +356,9 @@ namespace analytic {
 
 
 
-
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr Railyard<T,Polynomial<T,std::min(Plo*Qlo,Phi*Qhi),std::max(Plo*Qlo,Phi*Qhi)>> 
-        compose(const PolynomialRailcar<T,Plo,Phi>& p, const PolynomialRailcar<T,Qlo,Qhi> q)
+        compose(const PolynomialRailcar<T,Plo,Phi>& p, const PolynomialRailcar<T,Qlo,Qhi>& q)
     {
         // Each coupler in p needs an associated set of couplers for p∘q 
         //  that each represent where the output for q crosses a coupler for p.
@@ -392,7 +391,7 @@ namespace analytic {
     }
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr auto compose(const PolynomialRailyard<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi> q)
+    constexpr auto compose(const PolynomialRailyard<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi>& q)
     {
         using F = Polynomial<T,std::min(Plo*Qlo,Phi*Qhi),std::max(Plo*Qlo,Phi*Qhi)>;
         std::vector<Railcar<T,F>> cars;
@@ -458,13 +457,13 @@ namespace analytic {
 
     template<int N, typename T, int Plo, int Phi, 
         typename = std::enable_if_t<(N==0)>>
-    constexpr PolynomialRailyard<T,0,0> pow(const PolynomialRailyard<T,Plo,Phi>& p){
+    inline constexpr PolynomialRailyard<T,0,0> pow(const PolynomialRailyard<T,Plo,Phi>& p){
         return PolynomialRailyard<T,0,0>(T(1));
     }
 
     template<int N, typename T, int Plo, int Phi, 
         typename = std::enable_if_t<(N>0)>>
-    constexpr PolynomialRailyard<T,Plo*N,Phi*N> pow(const PolynomialRailyard<T,Plo,Phi>& p){
+    inline constexpr PolynomialRailyard<T,Plo*N,Phi*N> pow(const PolynomialRailyard<T,Plo,Phi>& p){
         return p*pow<N-1>(p);
     }
 
@@ -491,27 +490,27 @@ namespace analytic {
         const T lo, 
         const T hi
     ){
-        return std::sqrt((std::max(T(0), integral(pow<2>(p-q), lo, hi)) / (hi-lo)));
+        return std::sqrt((std::max(T(0), integral((p-q)*(p-q), lo, hi)) / (hi-lo)));
     }
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr T distance(const PolynomialRailyard<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi> q, const T lo, const T hi)
+    constexpr T distance(const PolynomialRailyard<T,Plo,Phi>& p, const Polynomial<T,Qlo,Qhi>& q, const T lo, const T hi)
     {
-        return std::sqrt(std::max(T(0), integral(pow<2>(p-q), lo, hi)) / (hi-lo));
+        return std::sqrt(std::max(T(0), integral((p-q)*(p-q), lo, hi)) / (hi-lo));
     }
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
     constexpr T distance(const Polynomial<T,Plo,Phi> p, const PolynomialRailyard<T,Qlo,Qhi> q, const T lo, const T hi)
     {
-        return std::sqrt(std::max(T(0), integral(pow<2>(p-q), lo, hi)) / (hi-lo));
+        return std::sqrt(std::max(T(0), integral((p-q)*(p-q), lo, hi)) / (hi-lo));
     }
     template<typename T, int Plo, int Phi>
     constexpr T distance(const PolynomialRailyard<T,Plo,Phi>& p, const T k, const T lo, const T hi)
     {
-        return std::sqrt(std::max(T(0), integral(pow<2>(p-k), lo, hi)) / (hi-lo));
+        return std::sqrt(std::max(T(0), integral((p-k)*(p-k), lo, hi)) / (hi-lo));
     }
     template<typename T, int Plo, int Phi>
-    constexpr T distance(const T k, const PolynomialRailyard<T,Plo, Phi> p, const T lo, const T hi)
+    constexpr T distance(const T k, const PolynomialRailyard<T,Plo, Phi>& p, const T lo, const T hi)
     {
-        return std::sqrt(std::max(T(0), integral(pow<2>(p-k), lo, hi)) / (hi-lo));
+        return std::sqrt(std::max(T(0), integral((p-k)*(p-k), lo, hi)) / (hi-lo));
     }
 
 
@@ -519,7 +518,7 @@ namespace analytic {
 
     template<typename T, typename F>
     PolynomialRailyard<T,0,1> linear_newton_polynomial(
-        const Railyard<T,F> yard
+        const Railyard<T,F>& yard
     ){
         PolynomialRailyard<T,0,1> y;
         for (auto car : yard.cars)
@@ -531,7 +530,7 @@ namespace analytic {
 
     template<typename T, typename F>
     PolynomialRailyard<T,0,2> quadratic_newton_polynomial(
-        const Railyard<T,F> yard
+        const Railyard<T,F>& yard
     ){
         PolynomialRailyard<T,0,2> y;
         for (auto car : yard.cars)
@@ -543,7 +542,7 @@ namespace analytic {
 
     template<typename T, typename F>
     PolynomialRailyard<T,0,3> cubic_newton_polynomial(
-        const Railyard<T,F> yard
+        const Railyard<T,F>& yard
     ){
         PolynomialRailyard<T,0,3> y;
         for (auto car : yard.cars)
@@ -555,7 +554,7 @@ namespace analytic {
 
     template<typename T, typename F>
     PolynomialRailyard<T,0,3> cubic_spline(
-        const Railyard<T,F> yard
+        const Railyard<T,F>& yard
     ){
         PolynomialRailyard<T,0,3> y;
         for (auto car : yard.cars)
