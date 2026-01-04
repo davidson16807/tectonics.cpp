@@ -162,7 +162,7 @@ namespace test {
             const std::string sub_name,  const Sub&  sub, 
             const std::string mult_name, const Mult& mult
         ): 
-            addition      (zero_name, zero, add_name,  add, sub_name,  sub),
+            addition  (zero_name, zero, add_name,  add, sub_name,  sub),
             multiplication(one_name,  one,  mult_name, mult),
             zero_name (zero_name), zero (zero), 
             one_name  (one_name),  one  (one), 

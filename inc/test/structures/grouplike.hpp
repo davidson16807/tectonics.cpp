@@ -185,7 +185,7 @@ namespace test {
     };
 
     // invertibility, identity
-    template<typename E, typename Finv, typename F>
+    template<typename E, typename F, typename Finv>
     struct Loop{
         const std::string e_name;    const E e; 
         const std::string f_name;    const F f; 
@@ -231,7 +231,7 @@ namespace test {
     };
 
     // associativity, invertibility, identity
-    template<typename E, typename Finv, typename F>
+    template<typename E, typename F, typename Finv>
     struct Group{
         const std::string e_name;    const E e; 
         const std::string f_name;    const F f; 
