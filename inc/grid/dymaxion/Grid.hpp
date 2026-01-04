@@ -72,7 +72,7 @@ namespace dymaxion
 
 		inline constexpr id2 arrow_offset_id(const id2 arrow_id) const noexcept
 		{
-			return math::residue(arrow_id, arrows_per_vertex);
+			return math::floormod(arrow_id, arrows_per_vertex);
 		}
 
 		constexpr id2 arrow_offset_id(const ivec2 arrow_offset_grid_position) const noexcept
@@ -177,9 +177,9 @@ namespace dymaxion
 		constexpr scalar arrow_dual_length(const id2 source_id, const id2 offset_id) const noexcept
 		{
 			const auto Oid(memory.grid_id(source_id));
-			const auto A(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(offset_id+1, arrows_per_vertex)) ));
-			const auto B(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(offset_id,   arrows_per_vertex)) ));
-			const auto C(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::residue(offset_id-1, arrows_per_vertex)) ));
+			const auto A(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::floormod(offset_id+1, arrows_per_vertex)) ));
+			const auto B(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::floormod(offset_id,   arrows_per_vertex)) ));
+			const auto C(voronoi.sphere_position( Oid + arrow_offset_grid_position(math::floormod(offset_id-1, arrows_per_vertex)) ));
 			const auto AB(glm::normalize(A+B));
 			const auto BC(glm::normalize(B+C));
 			return glm::distance(AB,BC);
