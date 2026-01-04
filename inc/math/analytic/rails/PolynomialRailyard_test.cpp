@@ -116,6 +116,7 @@ TEST_CASE( "PolynomialRailyard arithmetic is a commutative ring", "[math]" ) {
     REQUIRE(commutative_ring.valid(broad, S1s));
     REQUIRE(commutative_ring.valid(broad, S2s));
 
+    // BINARY TESTS
     REQUIRE(commutative_ring.valid(broad, S0s,S1s));
     REQUIRE(commutative_ring.valid(broad, S0s,S2s));
     REQUIRE(commutative_ring.valid(broad, S1s,S2s));
@@ -149,8 +150,10 @@ TEST_CASE( "PolynomialRailyard arithmetic is a commutative ring", "[math]" ) {
     REQUIRE(commutative_ring.valid(broad, S2s,gs));
     REQUIRE(commutative_ring.valid(broad, S2s,ks));
 
+    // TRINARY TESTS, 3 railyards
     REQUIRE(commutative_ring.valid(broad, S0s,S1s,S2s));
 
+    // TRINARY TESTS, 2 railyards
     REQUIRE(commutative_ring.valid(broad, S0s,S1s,P0s));
     REQUIRE(commutative_ring.valid(broad, S0s,S1s,P1s));
     REQUIRE(commutative_ring.valid(broad, S0s,S2s,P0s));
@@ -180,23 +183,252 @@ TEST_CASE( "PolynomialRailyard arithmetic is a commutative ring", "[math]" ) {
     REQUIRE(commutative_ring.valid(broad, S1s,S2s,gs));
     REQUIRE(commutative_ring.valid(broad, S1s,S2s,ks));
 
+    // TRINARY TESTS
+    // TRINARY TESTS, 1 railyard
+    // REQUIRE(commutative_ring.valid(broad, S0s,P0s,P0s));
+    REQUIRE(commutative_ring.valid(broad, S0s,P0s,P1s));
+    REQUIRE(commutative_ring.valid(broad, S0s,P0s,m0s));
+    REQUIRE(commutative_ring.valid(broad, S0s,P0s,m1s));
+    REQUIRE(commutative_ring.valid(broad, S0s,P0s,m2s));
+    REQUIRE(commutative_ring.valid(broad, S0s,P0s,fs));
+    REQUIRE(commutative_ring.valid(broad, S0s,P0s,gs));
+    REQUIRE(commutative_ring.valid(broad, S0s,P0s,ks));
 
-    // BINARY TESTS
-    // REQUIRE(commutative_ring.valid(broad, S0s, S1s));
+    REQUIRE(commutative_ring.valid(broad, S0s,P1s,P0s));
+    // REQUIRE(commutative_ring.valid(broad, S0s,P1s,P1s));
+    REQUIRE(commutative_ring.valid(broad, S0s,P1s,m0s));
+    REQUIRE(commutative_ring.valid(broad, S0s,P1s,m1s));
+    REQUIRE(commutative_ring.valid(broad, S0s,P1s,m2s));
+    REQUIRE(commutative_ring.valid(broad, S0s,P1s,fs));
+    REQUIRE(commutative_ring.valid(broad, S0s,P1s,gs));
+    REQUIRE(commutative_ring.valid(broad, S0s,P1s,ks));
 
-    // REQUIRE(commutative_ring.valid(broad, P0s, ks));
-    // REQUIRE(commutative_ring.valid(broad, P0s, m0s));
-    // REQUIRE(commutative_ring.valid(broad, P0s, m1s));
-    // REQUIRE(commutative_ring.valid(broad, P0s, m2s));
-    // REQUIRE(commutative_ring.valid(broad, P0s, fs));
-    // REQUIRE(commutative_ring.valid(broad, P0s, gs));
+    REQUIRE(commutative_ring.valid(broad, S0s,P1s,P0s));
+    // REQUIRE(commutative_ring.valid(broad, S0s,P1s,P1s));
+    REQUIRE(commutative_ring.valid(broad, S0s,P1s,m0s));
+    REQUIRE(commutative_ring.valid(broad, S0s,P1s,m1s));
+    REQUIRE(commutative_ring.valid(broad, S0s,P1s,m2s));
+    REQUIRE(commutative_ring.valid(broad, S0s,P1s,fs));
+    REQUIRE(commutative_ring.valid(broad, S0s,P1s,gs));
+    REQUIRE(commutative_ring.valid(broad, S0s,P1s,ks));
 
-    // REQUIRE(commutative_ring.valid(broad, P1s, ks));
-    // REQUIRE(commutative_ring.valid(broad, P1s, m0s));
-    // REQUIRE(commutative_ring.valid(broad, P1s, m1s));
-    // REQUIRE(commutative_ring.valid(broad, P1s, m2s));
-    // REQUIRE(commutative_ring.valid(broad, P1s, fs));
-    // REQUIRE(commutative_ring.valid(broad, P1s, gs));
+    REQUIRE(commutative_ring.valid(broad, S0s,m0s,P0s));
+    REQUIRE(commutative_ring.valid(broad, S0s,m0s,P1s));
+    // REQUIRE(commutative_ring.valid(broad, S0s,m0s,m0s));
+    REQUIRE(commutative_ring.valid(broad, S0s,m0s,m1s));
+    REQUIRE(commutative_ring.valid(broad, S0s,m0s,m2s));
+    REQUIRE(commutative_ring.valid(broad, S0s,m0s,fs));
+    REQUIRE(commutative_ring.valid(broad, S0s,m0s,gs));
+    REQUIRE(commutative_ring.valid(broad, S0s,m0s,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S0s,m1s,P0s));
+    REQUIRE(commutative_ring.valid(broad, S0s,m1s,P1s));
+    REQUIRE(commutative_ring.valid(broad, S0s,m1s,m0s));
+    // REQUIRE(commutative_ring.valid(broad, S0s,m1s,m1s));
+    REQUIRE(commutative_ring.valid(broad, S0s,m1s,m2s));
+    REQUIRE(commutative_ring.valid(broad, S0s,m1s,fs));
+    REQUIRE(commutative_ring.valid(broad, S0s,m1s,gs));
+    REQUIRE(commutative_ring.valid(broad, S0s,m1s,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S0s,m2s,P0s));
+    REQUIRE(commutative_ring.valid(broad, S0s,m2s,P1s));
+    REQUIRE(commutative_ring.valid(broad, S0s,m2s,m0s));
+    REQUIRE(commutative_ring.valid(broad, S0s,m2s,m1s));
+    // REQUIRE(commutative_ring.valid(broad, S0s,m2s,m2s));
+    REQUIRE(commutative_ring.valid(broad, S0s,m2s,fs));
+    REQUIRE(commutative_ring.valid(broad, S0s,m2s,gs));
+    REQUIRE(commutative_ring.valid(broad, S0s,m2s,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S0s,fs,P0s));
+    REQUIRE(commutative_ring.valid(broad, S0s,fs,P1s));
+    REQUIRE(commutative_ring.valid(broad, S0s,fs,m0s));
+    REQUIRE(commutative_ring.valid(broad, S0s,fs,m1s));
+    REQUIRE(commutative_ring.valid(broad, S0s,fs,m2s));
+    // REQUIRE(commutative_ring.valid(broad, S0s,fs,fs));
+    REQUIRE(commutative_ring.valid(broad, S0s,fs,gs));
+    REQUIRE(commutative_ring.valid(broad, S0s,fs,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S0s,gs,P0s));
+    REQUIRE(commutative_ring.valid(broad, S0s,gs,P1s));
+    REQUIRE(commutative_ring.valid(broad, S0s,gs,m0s));
+    REQUIRE(commutative_ring.valid(broad, S0s,gs,m1s));
+    REQUIRE(commutative_ring.valid(broad, S0s,gs,m2s));
+    REQUIRE(commutative_ring.valid(broad, S0s,gs,fs));
+    // REQUIRE(commutative_ring.valid(broad, S0s,gs,gs));
+    REQUIRE(commutative_ring.valid(broad, S0s,gs,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S0s,ks,P0s));
+    REQUIRE(commutative_ring.valid(broad, S0s,ks,P1s));
+    REQUIRE(commutative_ring.valid(broad, S0s,ks,m0s));
+    REQUIRE(commutative_ring.valid(broad, S0s,ks,m1s));
+    REQUIRE(commutative_ring.valid(broad, S0s,ks,m2s));
+    REQUIRE(commutative_ring.valid(broad, S0s,ks,fs));
+    REQUIRE(commutative_ring.valid(broad, S0s,ks,gs));
+    // REQUIRE(commutative_ring.valid(broad, S0s,ks,ks));
+
+
+    // REQUIRE(commutative_ring.valid(broad, S1s,P0s,P0s));
+    REQUIRE(commutative_ring.valid(broad, S1s,P0s,P1s));
+    REQUIRE(commutative_ring.valid(broad, S1s,P0s,m0s));
+    REQUIRE(commutative_ring.valid(broad, S1s,P0s,m1s));
+    REQUIRE(commutative_ring.valid(broad, S1s,P0s,m2s));
+    REQUIRE(commutative_ring.valid(broad, S1s,P0s,fs));
+    REQUIRE(commutative_ring.valid(broad, S1s,P0s,gs));
+    REQUIRE(commutative_ring.valid(broad, S1s,P0s,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S1s,P1s,P0s));
+    // REQUIRE(commutative_ring.valid(broad, S1s,P1s,P1s));
+    REQUIRE(commutative_ring.valid(broad, S1s,P1s,m0s));
+    REQUIRE(commutative_ring.valid(broad, S1s,P1s,m1s));
+    REQUIRE(commutative_ring.valid(broad, S1s,P1s,m2s));
+    REQUIRE(commutative_ring.valid(broad, S1s,P1s,fs));
+    REQUIRE(commutative_ring.valid(broad, S1s,P1s,gs));
+    REQUIRE(commutative_ring.valid(broad, S1s,P1s,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S1s,P1s,P0s));
+    // REQUIRE(commutative_ring.valid(broad, S1s,P1s,P1s));
+    REQUIRE(commutative_ring.valid(broad, S1s,P1s,m0s));
+    REQUIRE(commutative_ring.valid(broad, S1s,P1s,m1s));
+    REQUIRE(commutative_ring.valid(broad, S1s,P1s,m2s));
+    REQUIRE(commutative_ring.valid(broad, S1s,P1s,fs));
+    REQUIRE(commutative_ring.valid(broad, S1s,P1s,gs));
+    REQUIRE(commutative_ring.valid(broad, S1s,P1s,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S1s,m0s,P0s));
+    REQUIRE(commutative_ring.valid(broad, S1s,m0s,P1s));
+    // REQUIRE(commutative_ring.valid(broad, S1s,m0s,m0s));
+    REQUIRE(commutative_ring.valid(broad, S1s,m0s,m1s));
+    REQUIRE(commutative_ring.valid(broad, S1s,m0s,m2s));
+    REQUIRE(commutative_ring.valid(broad, S1s,m0s,fs));
+    REQUIRE(commutative_ring.valid(broad, S1s,m0s,gs));
+    REQUIRE(commutative_ring.valid(broad, S1s,m0s,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S1s,m1s,P0s));
+    REQUIRE(commutative_ring.valid(broad, S1s,m1s,P1s));
+    REQUIRE(commutative_ring.valid(broad, S1s,m1s,m0s));
+    // REQUIRE(commutative_ring.valid(broad, S1s,m1s,m1s));
+    REQUIRE(commutative_ring.valid(broad, S1s,m1s,m2s));
+    REQUIRE(commutative_ring.valid(broad, S1s,m1s,fs));
+    REQUIRE(commutative_ring.valid(broad, S1s,m1s,gs));
+    REQUIRE(commutative_ring.valid(broad, S1s,m1s,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S1s,m2s,P0s));
+    REQUIRE(commutative_ring.valid(broad, S1s,m2s,P1s));
+    REQUIRE(commutative_ring.valid(broad, S1s,m2s,m0s));
+    REQUIRE(commutative_ring.valid(broad, S1s,m2s,m1s));
+    // REQUIRE(commutative_ring.valid(broad, S1s,m2s,m2s));
+    REQUIRE(commutative_ring.valid(broad, S1s,m2s,fs));
+    REQUIRE(commutative_ring.valid(broad, S1s,m2s,gs));
+    REQUIRE(commutative_ring.valid(broad, S1s,m2s,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S1s,fs,P0s));
+    REQUIRE(commutative_ring.valid(broad, S1s,fs,P1s));
+    REQUIRE(commutative_ring.valid(broad, S1s,fs,m0s));
+    REQUIRE(commutative_ring.valid(broad, S1s,fs,m1s));
+    REQUIRE(commutative_ring.valid(broad, S1s,fs,m2s));
+    // REQUIRE(commutative_ring.valid(broad, S1s,fs,fs));
+    REQUIRE(commutative_ring.valid(broad, S1s,fs,gs));
+    REQUIRE(commutative_ring.valid(broad, S1s,fs,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S1s,gs,P0s));
+    REQUIRE(commutative_ring.valid(broad, S1s,gs,P1s));
+    REQUIRE(commutative_ring.valid(broad, S1s,gs,m0s));
+    REQUIRE(commutative_ring.valid(broad, S1s,gs,m1s));
+    REQUIRE(commutative_ring.valid(broad, S1s,gs,m2s));
+    REQUIRE(commutative_ring.valid(broad, S1s,gs,fs));
+    // REQUIRE(commutative_ring.valid(broad, S1s,gs,gs));
+    REQUIRE(commutative_ring.valid(broad, S1s,gs,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S1s,ks,P0s));
+    REQUIRE(commutative_ring.valid(broad, S1s,ks,P1s));
+    REQUIRE(commutative_ring.valid(broad, S1s,ks,m0s));
+    REQUIRE(commutative_ring.valid(broad, S1s,ks,m1s));
+    REQUIRE(commutative_ring.valid(broad, S1s,ks,m2s));
+    REQUIRE(commutative_ring.valid(broad, S1s,ks,fs));
+    REQUIRE(commutative_ring.valid(broad, S1s,ks,gs));
+    // REQUIRE(commutative_ring.valid(broad, S1s,ks,ks));
+
+
+    // REQUIRE(commutative_ring.valid(broad, S2s,P0s,P0s));
+    REQUIRE(commutative_ring.valid(broad, S2s,P0s,P1s));
+    REQUIRE(commutative_ring.valid(broad, S2s,P0s,m0s));
+    REQUIRE(commutative_ring.valid(broad, S2s,P0s,m1s));
+    REQUIRE(commutative_ring.valid(broad, S2s,P0s,m2s));
+    REQUIRE(commutative_ring.valid(broad, S2s,P0s,fs));
+    REQUIRE(commutative_ring.valid(broad, S2s,P0s,gs));
+    REQUIRE(commutative_ring.valid(broad, S2s,P0s,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S2s,P1s,P0s));
+    // REQUIRE(commutative_ring.valid(broad, S2s,P1s,P1s));
+    REQUIRE(commutative_ring.valid(broad, S2s,P1s,m0s));
+    REQUIRE(commutative_ring.valid(broad, S2s,P1s,m1s));
+    REQUIRE(commutative_ring.valid(broad, S2s,P1s,m2s));
+    REQUIRE(commutative_ring.valid(broad, S2s,P1s,fs));
+    REQUIRE(commutative_ring.valid(broad, S2s,P1s,gs));
+    REQUIRE(commutative_ring.valid(broad, S2s,P1s,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S2s,P1s,P0s));
+    // REQUIRE(commutative_ring.valid(broad, S2s,P1s,P1s));
+    REQUIRE(commutative_ring.valid(broad, S2s,P1s,m0s));
+    REQUIRE(commutative_ring.valid(broad, S2s,P1s,m1s));
+    REQUIRE(commutative_ring.valid(broad, S2s,P1s,m2s));
+    REQUIRE(commutative_ring.valid(broad, S2s,P1s,fs));
+    REQUIRE(commutative_ring.valid(broad, S2s,P1s,gs));
+    REQUIRE(commutative_ring.valid(broad, S2s,P1s,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S2s,m0s,P0s));
+    REQUIRE(commutative_ring.valid(broad, S2s,m0s,P1s));
+    // REQUIRE(commutative_ring.valid(broad, S2s,m0s,m0s));
+    REQUIRE(commutative_ring.valid(broad, S2s,m0s,m1s));
+    REQUIRE(commutative_ring.valid(broad, S2s,m0s,m2s));
+    REQUIRE(commutative_ring.valid(broad, S2s,m0s,fs));
+    REQUIRE(commutative_ring.valid(broad, S2s,m0s,gs));
+    REQUIRE(commutative_ring.valid(broad, S2s,m0s,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S2s,m1s,P0s));
+    REQUIRE(commutative_ring.valid(broad, S2s,m1s,P1s));
+    REQUIRE(commutative_ring.valid(broad, S2s,m1s,m0s));
+    // REQUIRE(commutative_ring.valid(broad, S2s,m1s,m1s));
+    REQUIRE(commutative_ring.valid(broad, S2s,m1s,m2s));
+    REQUIRE(commutative_ring.valid(broad, S2s,m1s,fs));
+    REQUIRE(commutative_ring.valid(broad, S2s,m1s,gs));
+    REQUIRE(commutative_ring.valid(broad, S2s,m1s,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S2s,m2s,P0s));
+    REQUIRE(commutative_ring.valid(broad, S2s,m2s,P1s));
+    REQUIRE(commutative_ring.valid(broad, S2s,m2s,m0s));
+    REQUIRE(commutative_ring.valid(broad, S2s,m2s,m1s));
+    // REQUIRE(commutative_ring.valid(broad, S2s,m2s,m2s));
+    REQUIRE(commutative_ring.valid(broad, S2s,m2s,fs));
+    REQUIRE(commutative_ring.valid(broad, S2s,m2s,gs));
+    REQUIRE(commutative_ring.valid(broad, S2s,m2s,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S2s,fs,P0s));
+    REQUIRE(commutative_ring.valid(broad, S2s,fs,P1s));
+    REQUIRE(commutative_ring.valid(broad, S2s,fs,m0s));
+    REQUIRE(commutative_ring.valid(broad, S2s,fs,m1s));
+    REQUIRE(commutative_ring.valid(broad, S2s,fs,m2s));
+    // REQUIRE(commutative_ring.valid(broad, S2s,fs,fs));
+    REQUIRE(commutative_ring.valid(broad, S2s,fs,gs));
+    REQUIRE(commutative_ring.valid(broad, S2s,fs,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S2s,gs,P0s));
+    REQUIRE(commutative_ring.valid(broad, S2s,gs,P1s));
+    REQUIRE(commutative_ring.valid(broad, S2s,gs,m0s));
+    REQUIRE(commutative_ring.valid(broad, S2s,gs,m1s));
+    REQUIRE(commutative_ring.valid(broad, S2s,gs,m2s));
+    REQUIRE(commutative_ring.valid(broad, S2s,gs,fs));
+    // REQUIRE(commutative_ring.valid(broad, S2s,gs,gs));
+    REQUIRE(commutative_ring.valid(broad, S2s,gs,ks));
+
+    REQUIRE(commutative_ring.valid(broad, S2s,ks,P0s));
+    REQUIRE(commutative_ring.valid(broad, S2s,ks,P1s));
+    REQUIRE(commutative_ring.valid(broad, S2s,ks,m0s));
+    REQUIRE(commutative_ring.valid(broad, S2s,ks,m1s));
+    REQUIRE(commutative_ring.valid(broad, S2s,ks,m2s));
+    REQUIRE(commutative_ring.valid(broad, S2s,ks,fs));
+    REQUIRE(commutative_ring.valid(broad, S2s,ks,gs));
+    // REQUIRE(commutative_ring.valid(broad, S2s,ks,ks));
 
 }
 
