@@ -75,7 +75,7 @@ namespace healpix
 		{
 			vec3 V3(sphere_position);
 			scalar longitude(std::atan2(V3.y,V3.x));
-			scalar dlongitude(math::remainder(turn+longitude-longitude0, turn));
+			scalar dlongitude(math::roundmod(turn+longitude-longitude0, turn));
 			scalar legscale(std::sqrt(s1-abs(V3.z)));
 			vec2 V2(glm::vec2(
 				legscale*s2*dlongitude/leglength,
@@ -132,7 +132,7 @@ namespace healpix
 			vec3 V3(sphere_position);
 			scalar longitude(std::atan2(V3.y,V3.x));
 			return vec2(
-				math::remainder(turn+longitude-longitude0, turn),
+				math::roundmod(turn+longitude-longitude0, turn),
 				V3.z);
 		}
 

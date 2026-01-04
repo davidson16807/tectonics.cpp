@@ -53,8 +53,8 @@ namespace adapted
 
 		ADAPTER_UNARY_METHOD(glm::fract, fract)
 		// ADAPTER_BINARY_METHOD(math::modulus, modulus)  
-		// ADAPTER_BINARY_METHOD(math::residue, residue)  
-		// ADAPTER_BINARY_METHOD(math::remainder, remainder)
+		// ADAPTER_BINARY_METHOD(math::floormod, floormod)  
+		// ADAPTER_BINARY_METHOD(math::roundmod, roundmod)
 
 		ADAPTER_UNARY_METHOD(glm::sqrt, sqrt)
 		ADAPTER_UNARY_METHOD(glm::cbrt, cbrt)

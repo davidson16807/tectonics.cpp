@@ -79,34 +79,37 @@ namespace math{
 	template <typename In1, typename In2> inline auto differ(const In1 a, const In2 b){return a && !b;}
 
 	/*
-	`remainder` implements a common definition for the "remainder"
-	it is the amount that is left unaccounted for after dividing by the nearest whole number, 
-	regardless of whether that whole number is bigger or smaller.
+	`roundmod` implements one of the common definitions for the "remainder" or "residue".
+	It is the amount that is left unaccounted for after dividing by the nearest whole number.
+	Its name is short for "round modulus", which extends the convention established by Java's `floorMod`.
+	It is equivalent to `math.remainder` in Python.
 	*/
 	template<typename In1, typename In2>
-	inline auto remainder(const In1& a, const In2& b) noexcept
+	inline auto roundmod(const In1& a, const In2& b) noexcept
 	{
 	    return a - b * std::round(a / b);
 	}
 
 	/*
-	`residue` implements what is known as the "residue" or "remainder" as understood by school children,
-	i.e. the amount that is left unaccounted for after dividing by the next smallest whole number
+	`floormod` implements one of the common definitions for the "remainder" or "residue".
+	It is the amount that is left unaccounted for after dividing by the next smallest whole number.
+	Its name is short for "floor modulus", which extends the convention established by Java's `floorMod`.
+	It is equivalent to `math.fmod` in Python, and `std::fmod` or `%` in C++.
 	*/
 	template<typename In1, typename In2>
-	inline auto residue(const In1& a, const In2& b) noexcept
+	inline auto floormod(const In1& a, const In2& b) noexcept
 	{
 	    return a - b * std::floor(a / b);
 	}
 
 	/*
 	`modulus` implements proper modulus as understood in modular arithmetic,
-	this is equivalent to the % operator in python
+	this is equivalent to the `%` operator in python
 	*/
 	template<typename In1, typename In2>
 	inline auto modulus(const In1& a, const In2& b) noexcept
 	{
-	    return residue(residue(a,b) + b, b);
+	    return floormod(floormod(a,b) + b, b);
 	}
 
 	template<typename T>

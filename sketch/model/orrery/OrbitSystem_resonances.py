@@ -3,7 +3,7 @@
 This file is a prototype for the `resonances()` function in OrbitSystem.hpp
 '''
 
-def residue(pq): 
+def roundmod(pq): 
 	return pq - round(pq)
 
 '''
@@ -28,7 +28,7 @@ Index and order reflect the most important aspects of the resonance to astronome
 p+q determines the number of times the larger cycle must repeat for all positions to reset.
 '''
 def closest_resonance_index(fraction, max_index):
-	return min(list(range(1,max_index)), key=lambda p: abs(residue(p*fraction)))
+	return min(list(range(1,max_index)), key=lambda p: abs(roundmod(p*fraction)))
 
 def resonance_index_error(p, fraction):
 	return p*fraction
@@ -42,7 +42,7 @@ def resonances(periods, max_index):
 		for i in range(j):
 			fraction = periods[i]/periods[j]
 			p = closest_resonance_index(fraction, max_index)
-			if abs(residue(p*fraction)) < 1e-3:
+			if abs(roundmod(p*fraction)) < 1e-3:
 				if i in resonances:
 					resonance_id = resonances[i]
 				else:

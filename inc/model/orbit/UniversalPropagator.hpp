@@ -216,7 +216,7 @@ namespace orbit {
 	        const scalar a  = s2 / r0 - (v0 * v0) / mu;
 	        const scalar sma  = s1/a; // semi-major axis
 	        const scalar p = s2*pi*std::sqrt(a*a*a/mu); // period
-	        const scalar dt = (a > s0 && force_congruence? math::residue(t,p):t) - t0;
+	        const scalar dt = (a > s0 && force_congruence? math::floormod(t,p):t) - t0;
 	        const scalar x = solve(
 	        	/* x0 */ a >= s0? 
 	        		  dt*sqrt_mu*a // elliptic or parabolic

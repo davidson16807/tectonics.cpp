@@ -181,9 +181,9 @@ namespace known
 	// KNOWN_BINARY_FUNCTION(Pow,   pow)  
 	// KNOWN_BINARY_FUNCTION(Atan2, atan2)
 
-	KNOWN_BINARY_FUNCTION(Residue,          residue)
+	KNOWN_BINARY_FUNCTION(Floormod,         floormod)
 	KNOWN_BINARY_FUNCTION(Modulus,          modulus)
-	KNOWN_BINARY_FUNCTION(Remainder,        remainder)
+	KNOWN_BINARY_FUNCTION(Roundmod,         roundmod)
 	KNOWN_BINARY_FUNCTION(Distance,         distance)  
 	KNOWN_BINARY_FUNCTION(Equal,            equal)
 	KNOWN_BINARY_FUNCTION(NotEqual,         notEqual)
