@@ -176,6 +176,9 @@ TEST_CASE( "CrustOps::absorb() mass conservation", "[rock]" ) {
             "mass",   [=](auto& a){
                 return crust_mass(a);
             },
+            "mass addition", [=](auto& a, auto&b){
+                return a+b;
+            },
             crusts, crusts
         ));
 

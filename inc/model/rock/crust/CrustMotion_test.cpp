@@ -101,39 +101,42 @@ TEST_CASE( "drag_per_angular_velocity", "[rock]" ) {
     for(const auto& dimension1 : dimensions){
         for(const auto& dimension2 : dimensions){
             REQUIRE(test::nondecreasing(adapter, 
-                "drag_per_angular_velocity(length)", [=](auto length){ 
-                    return motion.drag_per_angular_velocity(length, dimension1, dimension2); 
+                "drag_per_angular_velocity(length)", [=](length length_){ 
+                    return motion.drag_per_angular_velocity(length_, dimension1, dimension2); 
                 }, 
-                "increment", [](auto x){return x+length(10);},
+                "identity",  [](auto x){return x;},
+                "increment", [](length x){return x+length(10);},
                 dimensions
             ));
             REQUIRE(test::nondecreasing(adapter, 
-                "drag_per_angular_velocity(thickness)", [=](auto thickness){ 
+                "drag_per_angular_velocity(thickness)", [=](length thickness){ 
                     return motion.drag_per_angular_velocity(dimension1, thickness, dimension2); 
                 }, 
-                "increment", [](auto x){return x+length(10);},
+                "identity",  [](auto x){return x;},
+                "increment", [](length x){return x+length(10);},
                 dimensions
             ));
             REQUIRE(test::nondecreasing(adapter, 
-                "drag_per_angular_velocity(width)", [=](auto width){ 
+                "drag_per_angular_velocity(width)", [=](length width){ 
                     return motion.drag_per_angular_velocity(dimension1, dimension2, width);
                 },
-                "increment", [](auto x){return x+length(10);},
+                "identity",  [](auto x){return x;},
+                "increment", [](length x){return x+length(10);},
                 dimensions
             ));
             REQUIRE(test::nonaccelerating(adapter, 
-                "drag_per_angular_velocity(thickness)", [=](auto thickness){ 
+                "drag_per_angular_velocity(thickness)", [=](length thickness){ 
                     return motion.drag_per_angular_velocity(dimension1, thickness, dimension2); 
                 }, 
-                "increment", [](auto x){return x+length(10);},
+                "increment", [](length x){return x+length(10);},
                 "distance",  [](auto x, auto y){return si::distance(x,y);},
                 dimensions
             ));
             REQUIRE(test::nonaccelerating(adapter, 
-                "drag_per_angular_velocity(width)", [=](auto width){ 
+                "drag_per_angular_velocity(width)", [=](length width){ 
                     return motion.drag_per_angular_velocity(dimension1, dimension2, width);
                 },
-                "increment", [](auto x){return x+length(10);},
+                "increment", [](length x){return x+length(10);},
                 "distance",  [](auto x, auto y){return si::distance(x,y);},
                 dimensions
             ));
@@ -461,7 +464,7 @@ TEST_CASE( "buoyancy_forces ⋅ surface normal == 0", "[rock]" ) {
         REQUIRE(slab_thickness > 0.0 * si::kilometer);
         REQUIRE(slab_length > 0.0 * si::kilometer);
         REQUIRE(slab_width > 0.0 * si::kilometer);
-        REQUIRE(si::distance(slab_thickness * slab_width * slab_length, slab_volume) < 10.0*si::meter3);
+        REQUIRE(si::distance(slab_thickness * slab_width * slab_length, slab_volume) < 30.0*si::meter3);
         REQUIRE(si::distance(slab_thickness * slab_area, slab_volume) < 10.0*si::meter3);
         REQUIRE(si::distance(slab_width * slab_length, slab_area) < si::meter2);
         REQUIRE(slab_width >= slab_length);

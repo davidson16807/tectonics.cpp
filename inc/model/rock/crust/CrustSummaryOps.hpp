@@ -34,6 +34,14 @@ namespace rock{
             }
         }
 
+        void absorb (const FormationSummary& formation, const CrustSummary& crust, CrustSummary& out) const
+        {
+            for (auto i = 0*out.size(); i < out.size(); ++i)
+            {
+                out[i] = ops.absorb(crust[i], formation[i]);
+            }
+        }
+
         void absorb (const CrustSummary& crust1, const CrustSummary& crust2, CrustSummary& out) const
         {
             for (auto i = 0*out.size(); i < out.size(); ++i)
