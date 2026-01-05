@@ -95,7 +95,7 @@ namespace rock{
             const LithosphereSummary& formations,
             CrustSummary& out
         ) const {
-            std::fill(out.begin(), out.end(), StratumSummary{});
+            std::fill(out.begin(), out.end(), ColumnSummary{});
             for (std::size_t i = 0; i < formations.size(); ++i)
             {
                 ops.absorb(out, formations[i], out);

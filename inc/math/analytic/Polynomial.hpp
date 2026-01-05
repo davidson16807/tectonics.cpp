@@ -50,7 +50,8 @@ namespace analytic {
         // constant constructor
         constexpr explicit Polynomial(const T k2): k()
         {
-            static_assert(Plo==Phi || Plo<=0&&0<=Phi, "Polynomial<Plo,Phi> must satisfy Plo=Phi or Plo≤0≤Phi");
+            static_assert(Plo==Phi || (Plo<=0&&0<=Phi), 
+                "Polynomial<Plo,Phi> must satisfy Plo=Phi or Plo≤0≤Phi");
             // regardless of Plo or Phi, if there is only one term, the caller unambiguously means to set its coefficient
             if (Plo==Phi) 
             {
