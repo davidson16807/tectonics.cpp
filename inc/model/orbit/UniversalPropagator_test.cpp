@@ -94,7 +94,7 @@ TEST_CASE("UniversalPropagator::state()", "[body]") {
 	using Propagator = orbit::UniversalPropagator<double>;
 	using Adapter = orbit::Adapter<double>;
 
-    constexpr double pi = std::acos(-1.0);
+    constexpr double pi = 3.141592653589793238462;
 
 	constexpr auto m = si::meter;
 	constexpr auto au = si::astronomical_unit;

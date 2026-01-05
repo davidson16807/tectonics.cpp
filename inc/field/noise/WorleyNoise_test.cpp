@@ -22,6 +22,7 @@
 #include <index/procedural/noise/glm/UnitVectorNoise.hpp>
 
 #include "MosaicNoise.hpp"
+#include "MosaicOps.hpp"
 #include "WorleyNoise.hpp"
 
 #include <test/properties.hpp>  

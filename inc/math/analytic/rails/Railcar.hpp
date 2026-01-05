@@ -107,7 +107,7 @@ namespace analytic {
 
 
     template<typename T, typename F>
-    constexpr std::string to_string(const Railcar<T,F>& p)
+    std::string to_string(const Railcar<T,F>& p)
     {
         std::string output;
         const T oo (std::numeric_limits<T>::max());

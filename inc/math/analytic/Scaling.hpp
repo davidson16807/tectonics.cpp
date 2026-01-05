@@ -58,7 +58,7 @@ namespace analytic {
     };
 
     template<typename T>
-    constexpr std::string to_string(const Scaling<T>& f)
+    std::string to_string(const Scaling<T>& f)
     {
         // const std::string exponents("⁰¹²³⁴⁵⁶⁷⁸⁹");
         return std::to_string(f.factor) + "*x";

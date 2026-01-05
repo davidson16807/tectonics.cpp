@@ -1,5 +1,8 @@
 #pragma once
 
+#include <vector>
+#include <initializer_list>
+
 // in-house libraries
 #include <math/analytic/Scaling.hpp>
 #include <math/analytic/rails/PolynomialRailyard.hpp>
@@ -285,6 +288,19 @@ namespace relation {
         using scalar = typename Xs::value_type;
         assert(xs.size() == ys.size());
         return PolynomialRailyardRelation<Tx,Ty,0,1>(analytic::spline::linear_spline<scalar>(xs, ys), xunits, yunits);
+    }
+
+    // Overload for initializer_list to support brace-initialization
+    template<typename Tx, typename Ty, typename scalar>
+    PolynomialRailyardRelation<Tx,Ty,0,1> get_linear_interpolation_function(
+        const Tx xunits, const Ty yunits,
+        std::initializer_list<scalar> xs, 
+        std::initializer_list<scalar> ys
+    ){
+        std::vector<scalar> xvec(xs);
+        std::vector<scalar> yvec(ys);
+        assert(xvec.size() == yvec.size());
+        return PolynomialRailyardRelation<Tx,Ty,0,1>(analytic::spline::linear_spline<scalar>(xvec, yvec), xunits, yunits);
     }
     
 }

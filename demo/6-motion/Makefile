@@ -3,17 +3,20 @@
 # Subdirectory makefiles are not bad by themself, but recursive Makefiles are considered harmful! 
 
 CPP   = g++
-OS    = $(shell uname -o | sed 's|[^/]*/||')
+OS    = $(shell uname -s | sed 's/MINGW.*/Msys/' | sed 's/CYGWIN.*/Cygwin/')
 ROOT  = $(shell pwd | sed 's/tectonics.cpp.*/tectonics.cpp/')
 TEST  = $(shell find ./ -type f -name '*_test.*pp')
+BREW  = $(shell brew --prefix 2>/dev/null || echo /opt/homebrew)
 
 LIBS-Linux    =-lglfw -lGL -lGLEW
 LIBS-Msys     =-lglfw3 -lopengl32 -lgdi32 -lglew32
 LIBS-Cygwin   =-lglfw3 -lopengl32 -lgdi32 -lglew32
+LIBS-Darwin   =-L$(BREW)/lib -lglfw -lGLEW -framework OpenGL
 
 FLAGS-Linux   =-Wall -Werror -pedantic-errors -rdynamic -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL
 FLAGS-Msys    =-Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL
 FLAGS-Cygwin  =-Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL
+FLAGS-Darwin  =-Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL -I$(BREW)/include
 
 all: $(TEST) ./Makefile
 	rm -f test.cpp && \

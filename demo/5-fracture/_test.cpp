@@ -125,7 +125,7 @@ int main() {
   using density = si::density<float>;
   using length = si::length<float>;
   using pressure = si::pressure<float>;
-  using viscosity = si::dynamic_viscosity<float>;
+  // using viscosity = si::dynamic_viscosity<float>;
   using acceleration = si::acceleration<float>;
 
   using vec3 = glm::vec3;
@@ -134,7 +134,7 @@ int main() {
 
   length world_radius(6.371e6 * si::meter);
   density mantle_density(3000.0*si::kilogram/si::meter3);
-  viscosity mantle_viscosity(1.57e20*si::pascal*si::second);
+  // viscosity mantle_viscosity(1.57e20*si::pascal*si::second);
   int vertices_per_fine_square_side(30);
   int vertices_per_coarse_square_side(vertices_per_fine_square_side/2);
   dymaxion::Grid<int,int,float> fine(world_radius/meter, vertices_per_fine_square_side);
@@ -303,7 +303,7 @@ int main() {
   }
 
   iterated::Bitset bitset{adapted::BooleanBitset{}};
-  unlayered::Morphology morphology{bitset};
+  // unlayered::Morphology morphology{bitset};
 
   adapted::SymbolicOrder suborder;
   adapted::SiStrings substrings;

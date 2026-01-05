@@ -70,7 +70,7 @@ namespace relation {
         {
         }
 
-        constexpr GasPropertyStateRelation(
+        GasPropertyStateRelation(
             const ClampedExponentSum pexponents,
             const ClampedExponentSum Texponents,
             const ClampedSigmoidSum  Tsigmoids,
@@ -133,9 +133,6 @@ namespace relation {
         {
             const float p = float(pressure/punits);
             const float T = float(temperature/Tunits);
-            ClampedExponent exponent;
-            ClampedSigmoid sigmoid;
-            ClampedDippr102 dippr102;
             return (intercept + pexponents(p) + Texponents(T) + Tsigmoids(T) + Tdippr102s(T)) * yunits;
         }
 
@@ -143,9 +140,6 @@ namespace relation {
         {
             const float p = float(pressure/punits);
             const float T = float(temperature/Tunits);
-            ClampedExponent exponent;
-            ClampedSigmoid sigmoid;
-            ClampedDippr102 dippr102;
             return (intercept + pexponents(p) + Texponents(T) + Tsigmoids(T) + Tdippr102s(T)) * yunits;
         }
 
@@ -153,9 +147,6 @@ namespace relation {
         {
             const float p = float(point.pressure/punits);
             const float T = float(point.temperature/Tunits);
-            ClampedExponent exponent;
-            ClampedSigmoid sigmoid;
-            ClampedDippr102 dippr102;
             return (intercept + pexponents(p) + Texponents(T) + Tsigmoids(T) + Tdippr102s(T)) * yunits;
         }
 
@@ -170,31 +161,30 @@ namespace relation {
             const float phi = float(max_pressure/punits);
             const float Thi = float(max_temperature/Tunits);
             GasPropertyStateRelation<Ty> restricted(*this);
-            bool is_removal_occurring(true);
             float float_precision_of_error = 1e-6;
             float least_useful_term_error;
             while(restricted.known_max_fractional_error < known_max_fractional_error) {
                 auto least_useful_pexponent = std::min_element(restricted.pexponents.terms.begin(), restricted.pexponents.terms.end(),
                     [&](const ClampedExponent& f1, const ClampedExponent& f2){
-                        (maximum(f1,plo,phi)-minimum(f1,plo,phi)) < (maximum(f2,plo,phi)-minimum(f2,plo,phi));
+                        return (maximum(f1,plo,phi)-minimum(f1,plo,phi)) < (maximum(f2,plo,phi)-minimum(f2,plo,phi));
                     });
                 float least_useful_pexponent_error = maximum(least_useful_pexponent, plo,phi) - minimum(least_useful_pexponent, Tlo,Thi);
                 auto least_useful_Texponent = std::min_element(
                     restricted.Texponents.terms.begin(), restricted.Texponents.terms.end(),
                     [&](const ClampedExponent& f1, const ClampedExponent& f2){
-                        (maximum(f1,Tlo,Thi)-minimum(f1,Tlo,Thi)) < (maximum(f2,Tlo,Thi)-minimum(f2,Tlo,Thi));
+                        return (maximum(f1,Tlo,Thi)-minimum(f1,Tlo,Thi)) < (maximum(f2,Tlo,Thi)-minimum(f2,Tlo,Thi));
                     });
                 float least_useful_Texponent_error = maximum(least_useful_Texponent, plo,phi) - minimum(least_useful_Texponent, Tlo,Thi);
                 auto least_useful_Tsigmoid = std::min_element(
                     restricted.Tsigmoids.terms.begin(), restricted.Tsigmoids.terms.end(),
                     [&](const ClampedExponent& f1, const ClampedExponent& f2){
-                        (maximum(f1,Tlo,Thi)-minimum(f1,Tlo,Thi)) < (maximum(f2,Tlo,Thi)-minimum(f2,Tlo,Thi));
+                        return (maximum(f1,Tlo,Thi)-minimum(f1,Tlo,Thi)) < (maximum(f2,Tlo,Thi)-minimum(f2,Tlo,Thi));
                     });
                 float least_useful_Tsigmoid_error = maximum(least_useful_Tsigmoid, plo,phi) - minimum(least_useful_Tsigmoid, Tlo,Thi);
                 auto least_useful_Tdippr102 = std::min_element(
                     restricted.Tdippr102s.terms.begin(), restricted.Tdippr102s.terms.end(),
                     [&](const ClampedExponent& f1, const ClampedExponent& f2){
-                        (maximum(f1,Tlo,Thi)-minimum(f1,Tlo,Thi)) < (maximum(f2,Tlo,Thi)-minimum(f2,Tlo,Thi));
+                        return (maximum(f1,Tlo,Thi)-minimum(f1,Tlo,Thi)) < (maximum(f2,Tlo,Thi)-minimum(f2,Tlo,Thi));
                     });
                 float least_useful_Tdippr102_error = maximum(least_useful_Tdippr102, plo,phi) - minimum(least_useful_Tdippr102, Tlo,Thi);
 

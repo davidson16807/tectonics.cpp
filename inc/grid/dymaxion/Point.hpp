@@ -74,7 +74,7 @@ namespace dymaxion
 	};
 
     template<typename id, typename scalar, glm::qualifier precision>
-    constexpr std::string to_string(const Point<id,scalar,precision> point)
+    std::string to_string(const Point<id,scalar,precision> point)
     {
         return "Point(" + std::to_string(point.square_id) + "," +std::to_string(point.square_position.x) + "," +std::to_string(point.square_position.y) + ")";
     }
