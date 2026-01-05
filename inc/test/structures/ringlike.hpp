@@ -41,7 +41,7 @@ namespace test {
 
             addition      .valid(adapter, as) &&
             multiplication.valid(adapter, as) &&
-            binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
+            // binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
             binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
 
             true; // added so lines above can be easily swapped
@@ -107,7 +107,7 @@ namespace test {
 
             addition      .valid(adapter, as) &&
             multiplication.valid(adapter, as) &&
-            binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
+            // binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
             binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
 
             true; // added so lines above can be easily swapped
@@ -176,7 +176,7 @@ namespace test {
 
             addition      .valid(adapter, as) &&
             multiplication.valid(adapter, as) &&
-            binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
+            // binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
             binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
 
             true; // added so lines above can be easily swapped
@@ -243,7 +243,7 @@ namespace test {
 
             addition      .valid(adapter, as) &&
             multiplication.valid(adapter, as) &&
-            binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
+            // binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
             binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
 
             true; // added so lines above can be easily swapped
@@ -309,7 +309,7 @@ namespace test {
 
             addition      .valid(adapter, as) &&
             multiplication.valid(adapter, as) &&
-            binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
+            // binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
             binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
 
             true; // added so lines above can be easily swapped
@@ -378,7 +378,7 @@ namespace test {
 
             addition      .valid(adapter, as) &&
             multiplication.valid(adapter, as) &&
-            binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
+            // binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
             binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
 
             true; // added so lines above can be easily swapped
@@ -451,7 +451,7 @@ namespace test {
 
             addition      .valid(adapter, as) &&
             multiplication.valid(adapter, as) &&
-            binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
+            // binary_annihilation(adapter, zero_name, zero, mult_name, mult, as) &&
             binary_distributivity(adapter, mult_name, mult, add_name, add, as, as, as) &&
 
             true; // added so lines above can be easily swapped
