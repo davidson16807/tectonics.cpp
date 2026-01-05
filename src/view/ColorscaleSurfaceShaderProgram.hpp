@@ -76,7 +76,6 @@ namespace view
 	    GLint viewMatrixLocation;
 		GLint modelMatrixLocation;
 		GLint projectionMatrixLocation;
-		GLint existsThresholdLocation;
 		GLint colorscaleTypeLocation;
 		GLint minColorLocation;
 		GLint maxColorLocation;
@@ -118,7 +117,7 @@ namespace view
 			            we set vertex position outside clipspace if vertex_exists is toggled off.
 			            */
 		            	gl_Position = projection_matrix * view_matrix * model_matrix * vertex_position;
-			        };
+			        }
 				)"
 			),
 			fragmentShaderGlsl(

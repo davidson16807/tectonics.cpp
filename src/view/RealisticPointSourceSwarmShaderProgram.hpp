@@ -179,7 +179,7 @@ namespace view
 			        	fragment_element_position = element_position;
 
 			            gl_Position = clip_position;
-			        };
+			        }
 				)"
 			),
 			fragmentShaderGlsl(

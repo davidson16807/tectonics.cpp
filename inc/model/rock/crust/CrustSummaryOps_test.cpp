@@ -32,9 +32,9 @@ TEST_CASE( "CrustSummary absorb() commutative monoid", "[rock]" ) {
     using density = si::density<float>;
     using length = si::length<float>;
 
-    rock::CrustSummaryOps ops(
-        rock::ColumnSummaryOps(
-            length(si::centimeter)));
+    rock::CrustSummaryOps ops{
+        rock::ColumnSummaryOps{
+            length{si::centimeter}}};
     rock::CrustSummaryAdapter inexact;
 
     float oo = std::numeric_limits<float>::max();
@@ -120,9 +120,9 @@ TEST_CASE( "CrustSummary absorb() mass conservation", "[rock]" ) {
     using density = si::density<float>;
     using area_density = si::area_density<float>;
 
-    rock::CrustSummaryOps ops(
-        rock::ColumnSummaryOps(
-            length(si::centimeter)));
+    rock::CrustSummaryOps ops{
+        rock::ColumnSummaryOps{
+            length{si::centimeter}}};
     rock::CrustSummaryAdapter inexact;
 
     float oo = std::numeric_limits<float>::max();

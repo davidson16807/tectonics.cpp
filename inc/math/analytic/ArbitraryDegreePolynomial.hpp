@@ -177,7 +177,7 @@ namespace analytic {
     };
 
     template<typename T, typename I>
-    constexpr std::string to_string(const ArbitraryDegreePolynomial<T,I>& p)
+    std::string to_string(const ArbitraryDegreePolynomial<T,I>& p)
     {
         // const std::string exponents("⁰¹²³⁴⁵⁶⁷⁸⁹");
         std::string output;

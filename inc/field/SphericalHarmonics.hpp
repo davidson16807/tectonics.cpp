@@ -98,7 +98,7 @@ namespace field
 /*
 
     template<typename T, int Plo, int Phi>
-    constexpr std::string to_string(const SphericalHarmonic<T,Plo,Phi>& p)
+    std::string to_string(const SphericalHarmonic<T,Plo,Phi>& p)
     {
         // const std::string exponents("⁰¹²³⁴⁵⁶⁷⁸⁹");
         std::string output;

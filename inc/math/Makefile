@@ -6,10 +6,7 @@ CPP=g++
 ROOT = $(shell pwd | sed 's/tectonics.cpp.*/tectonics.cpp/')
 TEST = $(shell find ./ -type f -name '*_test.*pp')
 
-# GLM_FORCE_SWIZZLE       support swizzling in glm
-# GLM_FORCE_PURE          disable anonymous structs so we can build with ISO C++
-# GLM_ENABLE_EXPERIMENTAL disable anonymous structs so we can build with ISO C++
-FLAGS= -Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL
+FLAGS= -Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL -Wno-braced-scalar-init -Wno-unused-variable
 
 all: $(TEST) ./Makefile
 	rm -f test.cpp && \

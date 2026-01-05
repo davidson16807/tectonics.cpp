@@ -84,7 +84,7 @@ namespace view
 		            	gl_Position = projection_matrix * view_matrix * model_matrix * vertex_position;
 			        	fragment_color_in = smoothstep(min_values, max_values, 
 			        		vec4(vertex_red, vertex_green, vertex_blue, vertex_opacity));
-			        };
+			        }
 				)"
 			),
 			fragmentShaderGlsl(

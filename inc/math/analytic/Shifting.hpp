@@ -42,7 +42,7 @@ namespace analytic {
     };
 
     template<typename T>
-    constexpr std::string to_string(const Shifting<T>& f)
+    std::string to_string(const Shifting<T>& f)
     {
         // const std::string exponents("⁰¹²³⁴⁵⁶⁷⁸⁹");
         return std::string("x") + (f.offset>=0?"+":"") + std::to_string(f.offset);

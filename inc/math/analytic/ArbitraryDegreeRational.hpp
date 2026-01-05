@@ -211,7 +211,7 @@ namespace analytic {
     };
 
     template<typename T, typename I>
-    constexpr std::string to_string(const ArbitraryDegreeRational<T,I>& r)
+    std::string to_string(const ArbitraryDegreeRational<T,I>& r)
     {
         std::string numerator   = to_string(r.p);
         std::string denominator = to_string(r.q);
