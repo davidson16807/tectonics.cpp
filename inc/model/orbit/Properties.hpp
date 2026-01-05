@@ -77,8 +77,8 @@ namespace orbit {
 		const scalar pi;
 
 		Properties(
-			const vec3 vernal_equinox_direction, 
-			const vec3 north_pole_direction, 
+			const vec3& vernal_equinox_direction, 
+			const vec3& north_pole_direction, 
 			const scalar standard_gravitational_parameter,
 			const scalar pi
 		) noexcept : 
@@ -87,22 +87,26 @@ namespace orbit {
 			standard_gravitational_parameter(standard_gravitational_parameter),
 			pi(pi)
 		{}
+	    scalar gravity(const scalar point_mass, const scalar radius) const
+	    {
+	      return standard_gravitational_parameter * point_mass / (radius * radius);
+	    }
 		scalar period_from_semi_major_axis(const scalar semi_major_axis, const scalar combined_mass) const noexcept
 		{
 			const scalar a = semi_major_axis;
 			const scalar mu = standard_gravitational_parameter * combined_mass;
         	return 2*pi*std::sqrt(a*a*a/mu);
 		}
-		vec3 angular_momentum_vector_from_position_and_velocity(const vec3 position, const vec3 velocity) const noexcept
+		vec3 angular_momentum_vector_from_position_and_velocity(const vec3& position, const vec3& velocity) const noexcept
 		{
 			return glm::cross(position, velocity);
 		}
-		vec3 node_vector_from_momentum_vector(const vec3 momentum) const noexcept
+		vec3 node_vector_from_momentum_vector(const vec3& momentum) const noexcept
 		{
 			return glm::cross(north_pole_direction, momentum);
 		}
 		vec3 eccentricity_vector_from_position_and_velocity(
-			const vec3 position, const vec3 velocity, const scalar combined_mass
+			const vec3& position, const vec3& velocity, const scalar combined_mass
 		) const noexcept {
 			const scalar mu = standard_gravitational_parameter * combined_mass;
 			return (
@@ -111,27 +115,27 @@ namespace orbit {
 			) / mu;
 		}
 		// "i"
-		scalar inclination_from_momentum_vector(const vec3 momentum) const noexcept
+		scalar inclination_from_momentum_vector(const vec3& momentum) const noexcept
 		{
 			return std::acos(glm::dot(momentum, north_pole_direction) / glm::length(momentum));
 		}
 		// "Ω"
-		scalar longitude_of_ascending_node_from_node_vector(const vec3 node) const noexcept
+		scalar longitude_of_ascending_node_from_node_vector(const vec3& node) const noexcept
 		{
 			return std::acos(glm::dot(node, vernal_equinox_direction) / glm::length(node));
 		}
 		// "ω"
-		scalar argument_of_periapsis_from_node_and_eccentricity(const vec3 node, const vec3 eccentricity) const noexcept
+		scalar argument_of_periapsis_from_node_and_eccentricity(const vec3& node, const vec3& eccentricity) const noexcept
 		{
 			return std::acos(glm::dot(node, eccentricity) / (glm::length(node)*glm::length(eccentricity)));
 		}
 		// "ν₀"
-		scalar true_anomaly_from_position_and_eccentricity(const vec3 position, const vec3 eccentricity) const noexcept
+		scalar true_anomaly_from_position_and_eccentricity(const vec3& position, const vec3& eccentricity) const noexcept
 		{
 			return std::acos(glm::dot(position, eccentricity) / (glm::length(position)*glm::length(eccentricity)));
 		}
 		// "u₀"
-		scalar argument_of_latitude_from_position_and_node(const vec3 position, const vec3 node) const noexcept
+		scalar argument_of_latitude_from_position_and_node(const vec3& position, const vec3& node) const noexcept
 		{
 			return std::acos(glm::dot(position, node) / (glm::length(position)*glm::length(node)));
 		}
@@ -141,7 +145,7 @@ namespace orbit {
 			return longitude_of_ascending_node + argument_of_latitude;
 		}
 		// "p"
-		scalar semi_latus_rectum_from_momentum_vector(const vec3 momentum_vector, const scalar combined_mass) const noexcept
+		scalar semi_latus_rectum_from_momentum_vector(const vec3& momentum_vector, const scalar combined_mass) const noexcept
 		{
 			const scalar mu = standard_gravitational_parameter * combined_mass;
 			return glm::length2(momentum_vector) / mu;
@@ -207,5 +211,20 @@ namespace orbit {
 			return noneccentric_speed * (-std::sin(true_anomaly) * P + (eccentricity + std::cos(true_anomaly)) * Q);
 		}
 	};
+
+    template<typename scalar, glm::qualifier precision=glm::defaultp>
+	auto properties(
+		const glm::vec<3,scalar,precision>& vernal_equinox_direction, 
+		const glm::vec<3,scalar,precision>& north_pole_direction, 
+		const scalar standard_gravitational_parameter,
+		const scalar pi
+	) {
+		return Properties<scalar, precision>(
+			vernal_equinox_direction, 
+			north_pole_direction, 
+			standard_gravitational_parameter, 
+			pi 
+		);
+	}
 
 }
