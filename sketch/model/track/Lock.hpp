@@ -3,7 +3,7 @@
 // 3rd party libraries
 #include <glm/vec3.hpp>     // *vec3
 
-namespace body {
+namespace track {
 
 	template <typename scalar, typename id>
 	struct Lock
