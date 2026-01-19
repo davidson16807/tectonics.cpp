@@ -103,6 +103,24 @@ namespace math{
 	}
 
 	/*
+	`roundfract` implements a variant of `fract` that is the offset of `a` from the nearest whole number
+	*/
+	template<typename In1>
+	inline auto roundfract(const In1& a) noexcept
+	{
+	    return a - std::round(a);
+	}
+
+	/*
+	`floorfract` implements the standard definition of `fract`
+	*/
+	template<typename In1>
+	inline auto floorfract(const In1& a) noexcept
+	{
+	    return a - std::round(a);
+	}
+
+	/*
 	`modulus` implements proper modulus as understood in modular arithmetic,
 	this is equivalent to the `%` operator in python
 	*/
@@ -137,7 +155,7 @@ namespace math{
 	}
 
 	template <typename In1, int E> inline auto pow(const In1 a) { return std::pow(a,E); }
-	template <typename In1> inline auto fract(const In1 a) { return a-floor(a); }
+	// template <typename In1> inline auto fract(const In1 a) { return a-floor(a); }
 	template <typename In1> inline auto inversesqrt(const In1 a) { return In1(1)/std::sqrt(a); }
 	template <typename In1> inline auto negate(const In1 a) { return -a; }
 	template <typename In1> inline auto exp10(const In1 a) { return std::pow(In1(10),a); }

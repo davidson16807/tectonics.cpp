@@ -12,10 +12,9 @@ period	the amount of time at which a cycle repeats
 beeline	a position track where a body travels in a straight line
 orbit	a cyclical position track where a body travels according to gravity in a 2-body problem
 spin	a cyclical rotation track, including nutation and precession
-lock	a spin defined such that a direction in local coordinates always faces towards a body in global coordinates, possibly confined to an axis
+lock	a spin defined such that a direction is defined in local coordinates so as to always point towards a body in global coordinates, possibly confined to an axis
 perceptible	having an effect that can be perceived by the user, either due to a cycle whose period is longer than several frames or a motion that can be perceived after the user returns from sleep or work
 imperceptible	not perceptible
 resonance	a set of cycles whose periods are approximated as whole number fractions of each other, forming a larger cycle
 resonant	being a part of a resonance
-ergodic	occurring on timescales such that all states that can be assumed to occur in a single timestep, considered in the model as occurring for any imperceptible nonresonant motion
-	
+ergodic	occurring on timescales such that all states that can be assumed to occur will occur in a single timestep, considered in the model as occurring for any imperceptible nonresonant motion

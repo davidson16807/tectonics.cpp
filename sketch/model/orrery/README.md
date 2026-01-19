@@ -65,7 +65,7 @@ Expressions above are named/implemented as follows in C++:
 	Nⁿ 	std::vector<Node>
 	NPCT 	CycleSample
 	RPCT 	CycleSample
-	Nℝ³ 	TrajectoryPosition
+	Nℝ³ 	TrackPosition
 	NRCT 	Resonance
 	ℝ³  	vec3
 

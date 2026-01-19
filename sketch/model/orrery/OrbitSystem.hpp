@@ -13,6 +13,8 @@
 template<typename id, typename scalar>
 class OrbitSystem{
 
+    static constexpr oo = std::numeric_limits<scalar>::infinity();
+
     using Orbits = Components<orbit::Universals<scalar>>;
     using Cycles = std::vector<Cycle<id,scalar>>;
     using CycleSamples = std::vector<CycleSample<id,scalar>>;
@@ -22,18 +24,33 @@ class OrbitSystem{
     const orbit::UniversalPropagator<scalar> propagator;
     const orbit::Properties<scalar> elliptics;
 
-    bool is_resonant(scalar period1, scalar period2) const {
+    id closest_resonance_index(const scalar fraction, const id max_index) const
+    {
+        id best_p(1);
+        auto best_error = std::abs(roundfract(scalar(best_p) * fraction));
 
+        for (id p = id(2); p < max_index; ++p)
+        {
+            auto error = std::abs(roundfract(scalar(p) * fraction));
+            if (error < best_error)
+            {
+                best_error = error;
+                best_p = p;
+            }
+        }
+        return best_p;
     }
 
 public:
 
     OrbitSystem(
         const orbit::UniversalPropagator<scalar> propagator,
-        const orbit::Properties<scalar> elliptics
+        const orbit::Properties<scalar> elliptics,
+        const id max_index
     ) : 
         propagator(propagator),
-        elliptics(elliptics)
+        elliptics(elliptics),
+        max_index(max_index)
     {}
 
     void group(
@@ -65,15 +82,60 @@ public:
 
     void resonances(
         const Cycles& cycles,
-        Resonances& resonances
+        ids& resonances,
+        id& resonance_count
     ) const {
-        for (std::size_t i = 0; i < cycles.size(); ++i) {
-            for (std::size_t j = 0; j < i; ++j) {
-                if (is_resonant(cycles[i].period, cycles[j].period)){
-                    resonances.emplace_back(cycles[i].node, resonance);
+        std::fill(resonances.begin(), resonances.end(), id(-1));
+        id resonance_count = id(0);
+        for (id j = 0; j < cycles.size(); ++j) {
+            for (id i = 0; i < j; ++i) {
+                const scalar fraction = cycles[i].period / cycles[j].period;
+                const id p = closest_resonance_index(fraction, max_index);
+                if (std::abs(roundfract(scalar(p) * fraction)) < scalar(1e-3)) {
+                    id resonance_id;
+                    if resonances[resonance_id] > id(0){
+                        resonance_id = it->second;
+                    } else {
+                        resonance_id = resonance_count;
+                        ++resonance_count;
+                    }
+                    resonances[i] = resonance_id;
+                    resonances[j] = resonance_id;
                 }
             }
         }
+    }
+
+    std::vector<scalar> periods(
+        const Cycles& cycles,
+        const std::vector<id>& resonances,
+        id resonance_count,
+        id max_index
+    ) {
+
+        std::vector<std::pair<scalar, scalar>> resonance_period_range(
+            std::size_t(resonance_count),
+            { oo, scalar(0) }
+        );
+
+        for (std::size_t node = 0; node < cycles.size(); ++node)
+        {
+            const id resonance = id(resonances[node]);
+            if (0 <= resonance&&resonance < resonance_count) {
+                auto& pr = resonance_period_range[resonance];
+                pr.first  = std::min(pr.first,  cycles[node].period); // lo
+                pr.second = std::max(pr.second, cycles[node].period); // hi
+            }
+        }
+
+        std::vector<scalar> resonance_periods;
+        resonance_periods.reserve(resonance_count);
+        for (const auto& [lo, hi] : resonance_period_range) {
+            resonance_periods.push_back(closest_resonance_index(lo/hi, max_index) * lo);
+        }
+
+        return resonance_periods;
+
     }
 
     void sample(
@@ -171,8 +233,8 @@ public:
 }
 
 /*
-SⁿPᵐ→ℝ⁴⁴   return rotation of a spin for trajectories at phases
-BⁿNᵐt→(Nℝ³)ᵐ    update positions in scene tree for trajectories at time
+SⁿPᵐ→ℝ⁴⁴      return rotation of a spin for trajectories at phases
+BⁿNᵐt→(Nℝ³)ᵐ  update positions in scene tree for trajectories at time
 
 phase 2:
 Pⁿ → Rᵐ       identify resonances by indices with sample counts

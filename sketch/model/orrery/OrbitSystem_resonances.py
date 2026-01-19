@@ -3,9 +3,6 @@
 This file is a prototype for the `resonances()` function in OrbitSystem.hpp
 '''
 
-def roundmod(pq): 
-	return pq - round(pq)
-
 '''
 Resonance is expressed as a ratio p:p+q where p is the "index" and q is the "order".
 Index and order reflect the most important aspects of the resonance to astronomers.
@@ -22,16 +19,16 @@ def closest_resonance_index(fraction):
 		reversed(resonances[bisect.bisect_left(fractions, 1.0/fraction)])
 	)
 
+def roundfract(pq): 
+	return pq - round(pq)
+
 '''
 Resonance is expressed as a ratio p:p+q where p is the "index" and q is the "order".
 Index and order reflect the most important aspects of the resonance to astronomers.
 p+q determines the number of times the larger cycle must repeat for all positions to reset.
 '''
 def closest_resonance_index(fraction, max_index):
-	return min(list(range(1,max_index)), key=lambda p: abs(roundmod(p*fraction)))
-
-def resonance_index_error(p, fraction):
-	return p*fraction
+	return min(list(range(1,max_index)), key=lambda p: abs(roundfract(p*fraction)))
 
 print(closest_resonance_index(1.666,10))
 
@@ -42,7 +39,7 @@ def resonances(periods, max_index):
 		for i in range(j):
 			fraction = periods[i]/periods[j]
 			p = closest_resonance_index(fraction, max_index)
-			if abs(roundmod(p*fraction)) < 1e-3:
+			if abs(roundfract(p*fraction)) < 1e-3:
 				if i in resonances:
 					resonance_id = resonances[i]
 				else:
@@ -53,14 +50,14 @@ def resonances(periods, max_index):
 	return resonances, resonance_count
 
 def periods(periods_, resonances_, resonance_count, max_index):
-	period_range = [(float('inf'),0)]*resonance_count
+	resonance_period_range = [(float('inf'),0)]*resonance_count
 	for node, resonance in resonances_.items():
-		period_range[resonance] = (
-			min(period_range[resonance][0], periods_[node]), 
-			max(period_range[resonance][1], periods_[node])
+		resonance_period_range[resonance] = (
+			min(resonance_period_range[resonance][0], periods_[node]), 
+			max(resonance_period_range[resonance][1], periods_[node])
 		)
 	resonance_periods = [closest_resonance_index(lo/hi, max_index)*lo
-		for (lo, hi) in period_range]
+		for (lo, hi) in resonance_period_range]
 	return resonance_periods
 
 phi = 1.618033
