@@ -69,3 +69,6 @@ Expressions above are named/implemented as follows in C++:
 	NRCT 	Resonance
 	ℝ³  	vec3
 
+In a commutative diagram:
+
+https://davidson16807.github.io/cdcraft/?0&=-4392_392,7753&=nvnm,1_1,1_2,10,0_0,7:0,8:*Z3JvdXA=;nvnm,1_2,0_3,10,0_0,7:0,8:*aW1wZXJjZXB0aWJsZQ==;nvnm,1_2,2_3,10,0_0,7:0,8:*cGVyY2VwdGlibGU=;nvnm,0_3,-1_4,10,0_0,7:0,8:*cmVzb25hbmNlcw==;nvnm,0_3,1_4,10,0_0,7:0,8:*c2FtcGxl;nvnm,-1_3,0_3,10,0_0,7:0;nvnm,-1_3,-1_4,10,0_0,7:0;nvnm,-1_3,-2_4,10,0_0,7:0,8:*cGVyaW9kcw==;nvnm,1_3,0_3,10,0_0,7:0;nvnm,1_3,1_4,10,0_0,7:0;nvnm,1_3,2_4,10,0_0,7:0,8:*cG9zaXRpb25z;nvnm,2_3,3_4,10,0_0,7:0,8:*cG9zaXRpb25z;nvnm,2_5,2_4,10,0_0,7:0;nvnm,2_5,1_5,10,0_0,7:0;nvnm,3_5,3_4,10,0_0,7:0;nvnm,3_5,4_5,10,0_0,7:0;nvnm,2_5,2_6,10,0_0,7:0,8:*dXBkYXRl;nvnm,3_5,3_6,10,0_0,7:0,8:*dXBkYXRl&=3_5,2:*XFtcUGlcXQ==;2_5,2:*XFtcUGlcXQ==;-1_3,2:*XFtcUGlcXQ==;1_3,2:*XFtcUGlcXQ==;0_3,2:C;2_3,2:O;-1_4,2:R;1_2,2:*XFtcUGlcXQ==
