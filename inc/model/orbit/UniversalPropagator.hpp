@@ -194,12 +194,16 @@ namespace orbit {
 	        return x;
 	    }
 
-	    bool is_elliptic(const Universals& orbit) const noexcept {
+	    bool inverse_semi_major_axis(const Universals& orbit) const noexcept {
 	        const scalar mu = gravitational_constant * orbit.combined_mass;
 	        const scalar r0 = glm::length(orbit.initial_position);
 	        const scalar v0 = glm::length(orbit.initial_velocity);
 	        const scalar a  = s2 / r0 - (v0 * v0) / mu;
-	        return a > s0;
+	        return s1/semi_major_axis;
+	    }
+
+	    bool is_elliptic(const scalar inverse_semi_major_axis) const noexcept {
+	        return inverse_semi_major_axis > s0;
 	    }
 
 	    State state(const Universals& orbit, const scalar t) const noexcept {

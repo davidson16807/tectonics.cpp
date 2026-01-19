@@ -13,7 +13,7 @@ beeline	a position track where a body travels in a straight line
 orbit	a cyclical position track where a body travels according to gravity in a 2-body problem
 spin	a cyclical rotation track, including nutation and precession
 lock	a spin defined such that a direction is defined in local coordinates so as to always point towards a body in global coordinates, possibly confined to an axis
-perceptible	having an effect that can be perceived by the user, either due to a cycle whose period is longer than several frames or a motion that can be perceived after the user returns from sleep or work
+perceptible	having an effect that can be perceived by the user - as a cycle, it is defined as having a period longer than several frames and short enough to be perceived after the user returns from sleep or work
 imperceptible	not perceptible
 resonance	a set of cycles whose periods are approximated as whole number fractions of each other, forming a larger cycle
 resonant	being a part of a resonance
