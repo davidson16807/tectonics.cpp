@@ -52,6 +52,7 @@ namespace view
 
 		// instance buffer ids
 		GLuint instanceOriginBufferId;
+		GLuint instanceColorBufferId;
 		GLuint instanceRadiusBufferId;
 
 		// element attributes
@@ -59,6 +60,7 @@ namespace view
 
 	    // instance attributes
 		GLuint instanceOriginLocation;
+		GLuint instanceColorLocation;
 		GLuint instanceRadiusLocation;
 
 		// uniforms
@@ -79,9 +81,11 @@ namespace view
 			        uniform mat4  view_for_clip;
 			        in      vec3  element_position;
 			        in      vec3  instance_origin;
+			        in      vec4  instance_color;
 			        in      float instance_radius;
 			        out     mat4  element_for_clip;
 			        out     vec3  fragment_element_position;
+			        out     vec4  fragment_color_in;
 			        void main(){
 			        	/*
 			        	spheres are billboards, which must always face the camera:
@@ -90,6 +94,7 @@ namespace view
 			        	global→view is assumed not to represent scaling, so
 			            for scaling data:  local→view = local→global→view = local→global
 			        	*/
+			            fragment_color_in = instance_color;
 			            mat4 scale_map = mat4(instance_radius);
 			        	mat4 instance_for_element = mat4(scale_map[0], scale_map[1], scale_map[2], vec4(instance_origin,1));
 			        	mat4 global_for_element = global_for_local * instance_for_element;
@@ -107,6 +112,7 @@ namespace view
 				R"(#version 330
 			        precision mediump float;
 			        uniform vec2  resolution;
+			        in      vec4  fragment_color_in;
 			        in      mat4  element_for_clip;
 			        in      vec3  fragment_element_position;
 			        out     vec4  fragment_color;
@@ -128,7 +134,7 @@ namespace view
 			        	vec3 N = vec3(fragment_element_position.xy,z);
 			        	vec3 V = vec3(0,0,1);
 			        	vec3 L = normalize(vec3(1,1,1));
-			            fragment_color = vec4(vec3(dot(N,L)),1);
+			            fragment_color = vec4(vec3(dot(N,L)),1) * fragment_color_in;
 			        }
 				)"
 			),
@@ -215,6 +221,11 @@ namespace view
 		    glEnableVertexAttribArray(instanceOriginLocation);
 
 			// create a new vertex buffer object, VBO
+			glGenBuffers(1, &instanceColorBufferId);
+			instanceColorLocation = glGetAttribLocation(shaderProgramId, "instance_color");
+		    glEnableVertexAttribArray(instanceColorLocation);
+
+			// create a new vertex buffer object, VBO
 			glGenBuffers(1, &instanceRadiusBufferId);
 			instanceRadiusLocation = glGetAttribLocation(shaderProgramId, "instance_radius");
 		    glEnableVertexAttribArray(instanceRadiusLocation);
@@ -227,6 +238,7 @@ namespace view
         	{
 		        isDisposed = true;
 		        glDeleteBuffers(1, &elementPositionBufferId);
+		        glDeleteBuffers(1, &instanceColorBufferId);
 		        glDeleteBuffers(1, &instanceOriginBufferId);
 		        glDeleteBuffers(1, &instanceRadiusBufferId);
 		        glDeleteProgram(shaderProgramId);
@@ -243,6 +255,7 @@ namespace view
 		*/
 		void draw(
 			const std::vector<glm::vec3>& instance_origin,
+			const std::vector<glm::vec4>& instance_color, 
 			const std::vector<float>& instance_radius,
 			const glm::mat4 model_matrix,
 			const ViewState& view_state
@@ -276,6 +289,12 @@ namespace view
 		    glEnableVertexAttribArray(instanceOriginLocation);
             glVertexAttribPointer(instanceOriginLocation, 3, GL_FLOAT, normalize, stride, offset);
 		    glVertexAttribDivisor(instanceOriginLocation,1);
+
+			glBindBuffer(GL_ARRAY_BUFFER, instanceColorBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4)*instance_color.size(), &instance_color.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(instanceColorLocation);
+            glVertexAttribPointer(instanceColorLocation, 4, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceColorLocation,1);
 
 			glBindBuffer(GL_ARRAY_BUFFER, instanceRadiusBufferId);
 	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*instance_radius.size(), &instance_radius.front(), GL_DYNAMIC_DRAW);

@@ -58,6 +58,7 @@ int main() {
   /* OUR STUFF GOES HERE NEXT */
 
   using vec3 = glm::vec3;
+  using vec4 = glm::vec4;
   // using vec4 = glm::vec4;
 
   // flatten vector raster for OpenGL
@@ -92,6 +93,41 @@ int main() {
     vec3( 1, 1,-1),
     vec3( 1, 1, 0),
     vec3( 1, 1, 1)
+  };
+
+
+  std::vector<glm::vec4> instance_color{
+
+    vec4( 0, 0, 1, 1),
+    vec4( 0, 0, 0, 1),
+    vec4( 0, 0,.5, 1),
+    vec4( 0,.5,.5, 1),
+    vec4( 0,.5, 0, 1),
+    vec4( 0,.5, 1, 1),
+    vec4( 0, 1,.5, 1),
+    vec4( 0, 1, 0, 1),
+    vec4( 0, 1, 1, 1),
+
+    vec4(.5, 0, 1, 1),
+    vec4(.5, 0, 0, 1),
+    vec4(.5, 0,.5, 1),
+    vec4(.5,.5,.5, 1),
+    vec4(.5,.5, 0, 1),
+    vec4(.5,.5, 1, 1),
+    vec4(.5, 1,.5, 1),
+    vec4(.5, 1, 0, 1),
+    vec4(.5, 1, 1, 1),
+
+    vec4( 1, 0, 1, 1),
+    vec4( 1, 0, 0, 1),
+    vec4( 1, 0,.5, 1),
+    vec4( 1,.5,.5, 1),
+    vec4( 1,.5, 0, 1),
+    vec4( 1,.5, 1, 1),
+    vec4( 1, 1,.5, 1),
+    vec4( 1, 1, 0, 1),
+    vec4( 1, 1, 1, 1)
+
   };
 
   std::vector<float> instance_radii(instance_origins.size(),0.1);
@@ -129,6 +165,7 @@ int main() {
 
       sphere_program.draw(
         instance_origins,
+        instance_color,
         instance_radii,
         model_matrix,
         view_state
