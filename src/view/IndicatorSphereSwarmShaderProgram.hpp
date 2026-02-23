@@ -68,6 +68,7 @@ namespace view
 	    GLuint viewMatrixLocation;
 		GLuint projectionMatrixLocation;
 		GLuint resolutionLocation;
+		GLuint lightDirectionLocation;
 
 		bool isDisposed;
 
@@ -112,6 +113,7 @@ namespace view
 				R"(#version 330
 			        precision mediump float;
 			        uniform vec2  resolution;
+			        uniform vec3  light_direction;
 			        in      vec4  fragment_color_in;
 			        in      mat4  element_for_clip;
 			        in      vec3  fragment_element_position;
@@ -133,7 +135,7 @@ namespace view
 			        	if(z<0.0) { discard; }
 			        	vec3 N = vec3(fragment_element_position.xy,z);
 			        	vec3 V = vec3(0,0,1);
-			        	vec3 L = normalize(vec3(1,1,1));
+			        	vec3 L = normalize(light_direction);
 			            fragment_color = vec4(vec3(dot(N,L)),1) * fragment_color_in;
 			        }
 				)"
@@ -202,6 +204,7 @@ namespace view
 			modelMatrixLocation = glGetUniformLocation(shaderProgramId, "global_for_local");
 			projectionMatrixLocation = glGetUniformLocation(shaderProgramId, "clip_for_view");
 			resolutionLocation = glGetUniformLocation(shaderProgramId, "resolution");
+			lightDirectionLocation = glGetUniformLocation(shaderProgramId, "light_direction");
 
 	        // ATTRIBUTES
 
@@ -257,6 +260,7 @@ namespace view
 			const std::vector<glm::vec3>& instance_origin,
 			const std::vector<glm::vec4>& instance_color, 
 			const std::vector<float>& instance_radius,
+			const glm::vec3 light_direction,
 			const glm::mat4 model_matrix,
 			const ViewState& view_state
 		){
@@ -307,6 +311,7 @@ namespace view
 	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(model_matrix));
 	        glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(view_state.projection_matrix));
 	        glUniform2fv      (resolutionLocation,       1, glm::value_ptr(view_state.resolution));
+	        glUniform3fv      (lightDirectionLocation,   1, glm::value_ptr(light_direction));
 
 			glDrawArraysInstanced(GL_TRIANGLES, /*array offset*/ 0, /*vertex count*/ elementPositions.size(), instance_origin.size());
 		}

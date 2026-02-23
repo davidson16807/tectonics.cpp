@@ -167,6 +167,7 @@ int main() {
         instance_origins,
         instance_color,
         instance_radii,
+        vec3(0.5,0.5,1),
         model_matrix,
         view_state
       );
