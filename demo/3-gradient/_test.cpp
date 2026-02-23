@@ -56,7 +56,7 @@
 #include <update/OrbitalControlUpdater.hpp>         // update::OrbitalControlUpdater
 
 #include <view/ColorscaleSurfaceShaderProgram.hpp>  // view::ColorscaleSurfaceShaderProgram
-#include <view/IndicatorSwarmShaderProgram.hpp>     // view::IndicatorSwarmShaderProgram
+#include <view/IndicatorMeshSwarmShaderProgram.hpp>     // view::IndicatorMeshSwarmShaderProgram
 #include <view/MultichannelSurfaceShaderProgram.hpp>// view::MultichannelSurfaceShaderProgram
 
 int main() {
@@ -249,7 +249,7 @@ int main() {
 
   // initialize shader program
   view::ColorscaleSurfaceShaderProgram colorscale_program;  
-  view::IndicatorSwarmShaderProgram indicator_program;  
+  view::IndicatorMeshSwarmShaderProgram indicator_program;  
   view::MultichannelSurfaceShaderProgram debug_program;
 
   // initialize MessageQueue for MVU architecture

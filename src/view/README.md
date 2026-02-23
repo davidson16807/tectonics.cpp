@@ -79,8 +79,7 @@ We attempt definitions for them as follows:
 We also introduce or coopt the following terms:
 
 * graphic    either a primitive or an instance
-* pictorial  a graphic that is only meant to represent an abstract concept, such as an arrow or point
-* indicator  a pictorial instance
+* indicator  a graphic that is only meant to represent an abstract concept, such as an arrow or point
 * cloud      a static set of graphics where primitives do not share vertices, it either features instances or does not distinguish vertices and elements
 * swarm      a dynamic set of graphics where primitives do not share vertices, it either features instances or does not distinguish vertices and elements
 * surface    a set of graphics where primitives share vertices and vice versa, it features an element buffer object

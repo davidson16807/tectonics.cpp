@@ -14,7 +14,7 @@ namespace view
 {
 
 	/*
-	`IndicatorSwarmShaderProgram` renders a swarm of objects
+	`IndicatorMeshSwarmShaderProgram` renders a swarm of objects
 	that are each copies of a single abstract concept, such as directions or positions.
 	As abstract concepts, objects have no real world analog to imitate,
 	so surfaces could be depicted in any style.
@@ -22,7 +22,7 @@ namespace view
 	which is rough, nonmetallic, and textureless.
 	*/
 
-	class IndicatorSwarmShaderProgram
+	class IndicatorMeshSwarmShaderProgram
 	{
 	    // properties shared by all attributes within the program
 	    static constexpr GLenum normalize = GL_FALSE; // don't normalize the data
@@ -63,7 +63,7 @@ namespace view
 		bool isDisposed;
 
 	public:
-		explicit IndicatorSwarmShaderProgram() :
+		explicit IndicatorMeshSwarmShaderProgram() :
 			vertexShaderGlsl(
 				R"(#version 330
 			        uniform mat4  model_matrix;

@@ -15,7 +15,7 @@
 #include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
 #include <update/OrbitalControlUpdater.hpp>         // update::OrbitalControlUpdater
 
-#include <view/IndicatorSwarmShaderProgram.hpp>     // view::IndicatorSwarmShaderProgram
+#include <view/IndicatorMeshSwarmShaderProgram.hpp>     // view::IndicatorMeshSwarmShaderProgram
 
 int main() {
   // initialize GLFW
@@ -133,7 +133,7 @@ int main() {
   // view_state.view_matrix = glm::mat4(1);
 
   // initialize shader program
-  view::IndicatorSwarmShaderProgram indicator_program;  
+  view::IndicatorMeshSwarmShaderProgram indicator_program;  
 
   // initialize MessageQueue for MVU architecture
   messages::MessageQueue message_queue;

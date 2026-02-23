@@ -90,7 +90,7 @@ and gprof can't run on output using the -fopenmp flag and still provide accurate
 #include <update/OrbitalControlUpdater.hpp>         
 
 #include <view/ColorscaleSurfaceShaderProgram.hpp>  
-#include <view/IndicatorSwarmShaderProgram.hpp>     
+#include <view/IndicatorMeshSwarmShaderProgram.hpp>     
 #include <view/MultichannelSurfaceShaderProgram.hpp>
 
 int main() {
@@ -368,7 +368,7 @@ int main() {
   // initialize shader program
   view::ColorscaleSurfaceShaderProgram colorscale_program;  
   view::MultichannelSurfaceShaderProgram debug_program;
-  view::IndicatorSwarmShaderProgram indicator_program;  
+  view::IndicatorMeshSwarmShaderProgram indicator_program;  
 
   // initialize MessageQueue for MVU architecture
   messages::MessageQueue message_queue;
