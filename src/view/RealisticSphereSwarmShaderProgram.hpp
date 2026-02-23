@@ -50,9 +50,9 @@ namespace view
 		// instance buffer ids
 		GLuint instanceOriginBufferId;
 		GLuint instanceRadiusBufferId;
-		GLuint instanceIlluminationTemperatureBufferId;
-		GLuint instanceIlluminationRadiusBufferId;
-		GLuint instanceIlluminationPositionBufferId;
+		GLuint instanceIlluminatorTemperatureBufferId;
+		GLuint instanceIlluminatorRadiusBufferId;
+		GLuint instanceIlluminatorPositionBufferId;
 		GLuint instanceBetaRayBufferId;
 		GLuint instanceBetaMieBufferId;
 		GLuint instanceBetaAbsBufferId;
@@ -66,9 +66,9 @@ namespace view
 	    // instance attributes
 		GLuint instanceOriginLocation;
 		GLuint instanceRadiusLocation;
-		GLuint instanceIlluminationTemperatureLocation;
-		GLuint instanceIlluminationRadiusLocation;
-		GLuint instanceIlluminationPositionLocation;
+		GLuint instanceIlluminatorTemperatureLocation;
+		GLuint instanceIlluminatorRadiusLocation;
+		GLuint instanceIlluminatorPositionLocation;
 		GLuint instanceBetaRayLocation;
 		GLuint instanceBetaMieLocation;
 		GLuint instanceBetaAbsLocation;
@@ -96,9 +96,9 @@ namespace view
 			        uniform vec3  wavelength3;
 			        in      vec3  element_position;
 			        in      vec3  instance_origin;
-			        in      vec3  instance_illumination_source;
-			        in      float instance_illumination_temperature;
-			        in      float instance_illumination_radius;
+			        in      vec3  instance_illuminator_source;
+			        in      float instance_illuminator_temperature;
+			        in      float instance_illuminator_radius;
 
 					in      vec3  instance_beta_abs;
 					in      vec3  instance_beta_mie;
@@ -109,8 +109,8 @@ namespace view
 					in      float instance_atmosphere_scale_height;
 
 			        out     vec3  fragment_element_position;
-			        out     vec3  fragment_illumination_direction;
-			        out     vec3  fragment_illumination_intensity;
+			        out     vec3  fragment_illuminator_direction;
+			        out     vec3  fragment_illuminator_intensity;
 
 					out     vec3  fragment_beta_abs;
 					out     vec3  fragment_beta_mie;
@@ -220,18 +220,18 @@ namespace view
 			        	vec4 view_for_element_origin = view_for_global * global_for_local * vec4(instance_origin,1);
 			        	mat4 view_for_element = mat4(scale_map[0], scale_map[1], scale_map[2], view_for_element_origin);
 			        	vec4 clip_position = clip_for_view * view_for_element * vec4(element_position,1);
-			            vec3 instance_illumination_offset = instance_illumination_source-instance_origin;
+			            vec3 instance_illuminator_offset = instance_illuminator_source-instance_origin;
 			        	float v = length(view_for_element_origin);
-			        	float l = length(instance_illumination_offset);
-			        	fragment_illumination_intensity = max(vec3(0), 0.0) 
+			        	float l = length(instance_illuminator_offset);
+			        	fragment_illuminator_intensity = max(vec3(0), 0.0) 
 			        		/ (4.0*PI*l*l)
 			        		// / (4.0*PI*v*v)
 			        	;
-			        	fragment_illumination_direction = (
+			        	fragment_illuminator_direction = (
 			        		clip_for_view * 
 			        		view_for_global * 
 			        		global_for_local * 
-			        		vec4(instance_illumination_offset/l,0)
+			        		vec4(instance_illuminator_offset/l,0)
 			        	).xyz;
 			        	fragment_element_position = element_position;
 						fragment_beta_abs = instance_beta_abs;
@@ -256,8 +256,8 @@ namespace view
 			        uniform mat4  clip_for_view;
 			        in      vec3  instance_origin;
 			        in      vec3  fragment_element_position;
-			        in      vec3  fragment_illumination_direction;
-			        in      vec3  fragment_illumination_intensity;
+			        in      vec3  fragment_illuminator_direction;
+			        in      vec3  fragment_illuminator_intensity;
 
 					in      vec3  fragment_beta_abs;
 					in      vec3  fragment_beta_mie;
@@ -512,7 +512,7 @@ namespace view
 			        	if(XX>=1) { discard; }
 			        	vec3 N = vec3(X*r1/r,-sqrt(max(0,1-dot(X*r1/r, X*r1/r))));
     					vec3 V0 = vec3(X,-2)*r1; // origin of view ray, assumes orthographic projection, anywhere outside the sphere is sufficiently distant
-			        	vec3 L = fragment_illumination_direction;
+			        	vec3 L = fragment_illuminator_direction;
 			        	float l = length(L);
 			        	vec3 E_gas_emitted = vec3(0);
 			        	vec3 V  = vec3(0,0,1); 
@@ -546,7 +546,7 @@ namespace view
 						        );
 					    }
 			        	float fraction = dot(N,L);
-			        	vec3 E_surface_reflected = length(X*r1/r)>1.0? vec3(0) : fraction * fragment_illumination_intensity;
+			        	vec3 E_surface_reflected = length(X*r1/r)>1.0? vec3(0) : fraction * fragment_illuminator_intensity;
 			        	E_surface_reflected = any(isnan(E_surface_reflected))? vec3(0) : E_surface_reflected;
 			        	vec4 view_for_element_origin = view_for_global * global_for_local * vec4(instance_origin,1);
 			            mat4 scale_map = mat4(fragment_radius);
@@ -650,19 +650,19 @@ namespace view
 		    glEnableVertexAttribArray(instanceOriginLocation);
 
 			// create a new vertex buffer object, VBO
-			glGenBuffers(1, &instanceIlluminationRadiusBufferId);
-			instanceIlluminationRadiusLocation = glGetAttribLocation(shaderProgramId, "instance_illumination_radius");
-		    glEnableVertexAttribArray(instanceIlluminationRadiusLocation);
+			glGenBuffers(1, &instanceIlluminatorRadiusBufferId);
+			instanceIlluminatorRadiusLocation = glGetAttribLocation(shaderProgramId, "instance_illuminator_radius");
+		    glEnableVertexAttribArray(instanceIlluminatorRadiusLocation);
 
 			// create a new vertex buffer object, VBO
-			glGenBuffers(1, &instanceIlluminationTemperatureBufferId);
-			instanceIlluminationTemperatureLocation = glGetAttribLocation(shaderProgramId, "instance_illumination_temperature");
-		    glEnableVertexAttribArray(instanceIlluminationTemperatureLocation);
+			glGenBuffers(1, &instanceIlluminatorTemperatureBufferId);
+			instanceIlluminatorTemperatureLocation = glGetAttribLocation(shaderProgramId, "instance_illuminator_temperature");
+		    glEnableVertexAttribArray(instanceIlluminatorTemperatureLocation);
 
 			// create a new vertex buffer object, VBO
-			glGenBuffers(1, &instanceIlluminationPositionBufferId);
-			instanceIlluminationPositionLocation = glGetAttribLocation(shaderProgramId, "instance_illumination_source");
-		    glEnableVertexAttribArray(instanceIlluminationPositionLocation);
+			glGenBuffers(1, &instanceIlluminatorPositionBufferId);
+			instanceIlluminatorPositionLocation = glGetAttribLocation(shaderProgramId, "instance_illuminator_source");
+		    glEnableVertexAttribArray(instanceIlluminatorPositionLocation);
 
 			// create a new vertex buffer object, VBO
 			glGenBuffers(1, &instanceOriginBufferId);
@@ -714,7 +714,7 @@ namespace view
 		        glDeleteBuffers(1, &elementPositionBufferId);
 		        glDeleteBuffers(1, &instanceOriginBufferId);
 		        glDeleteBuffers(1, &instanceRadiusBufferId);
-		        glDeleteBuffers(1, &instanceIlluminationPositionBufferId);
+		        glDeleteBuffers(1, &instanceIlluminatorPositionBufferId);
 		        glDeleteProgram(shaderProgramId);
         	}
 		}
@@ -733,9 +733,9 @@ namespace view
 			const std::vector<float>& surface_temperature,
 			const std::vector<float>& temperature_change_per_radius2,
 			const std::vector<float>& atmosphere_scale_height,
-			const std::vector<float>& illumination_temperature,
-			const std::vector<float>& illumination_radius,
-			const std::vector<glm::vec3>& illumination_source,
+			const std::vector<float>& illuminator_temperature,
+			const std::vector<float>& illuminator_radius,
+			const std::vector<glm::vec3>& illuminator_source,
 			const std::vector<glm::vec3>& beta_ray,
 			const std::vector<glm::vec3>& beta_mie,
 			const std::vector<glm::vec3>& beta_abs,
@@ -774,23 +774,23 @@ namespace view
             glVertexAttribPointer(instanceOriginLocation, 3, GL_FLOAT, normalize, stride, offset);
 		    glVertexAttribDivisor(instanceOriginLocation,1);
 
-			glBindBuffer(GL_ARRAY_BUFFER, instanceIlluminationPositionBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*illumination_source.size(), &illumination_source.front(), GL_DYNAMIC_DRAW);
-		    glEnableVertexAttribArray(instanceIlluminationPositionLocation);
-            glVertexAttribPointer(instanceIlluminationPositionLocation, 3, GL_FLOAT, normalize, stride, offset);
-		    glVertexAttribDivisor(instanceIlluminationPositionLocation,1);
+			glBindBuffer(GL_ARRAY_BUFFER, instanceIlluminatorPositionBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*illuminator_source.size(), &illuminator_source.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(instanceIlluminatorPositionLocation);
+            glVertexAttribPointer(instanceIlluminatorPositionLocation, 3, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceIlluminatorPositionLocation,1);
 
-			glBindBuffer(GL_ARRAY_BUFFER, instanceIlluminationRadiusBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*illumination_radius.size(), &illumination_radius.front(), GL_DYNAMIC_DRAW);
-		    glEnableVertexAttribArray(instanceIlluminationRadiusLocation);
-            glVertexAttribPointer(instanceIlluminationRadiusLocation, 1, GL_FLOAT, normalize, stride, offset);
-		    glVertexAttribDivisor(instanceIlluminationRadiusLocation,1);
+			glBindBuffer(GL_ARRAY_BUFFER, instanceIlluminatorRadiusBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*illuminator_radius.size(), &illuminator_radius.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(instanceIlluminatorRadiusLocation);
+            glVertexAttribPointer(instanceIlluminatorRadiusLocation, 1, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceIlluminatorRadiusLocation,1);
 
-			glBindBuffer(GL_ARRAY_BUFFER, instanceIlluminationTemperatureBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*illumination_temperature.size(), &illumination_temperature.front(), GL_DYNAMIC_DRAW);
-		    glEnableVertexAttribArray(instanceIlluminationTemperatureLocation);
-            glVertexAttribPointer(instanceIlluminationTemperatureLocation, 1, GL_FLOAT, normalize, stride, offset);
-		    glVertexAttribDivisor(instanceIlluminationTemperatureLocation,1);
+			glBindBuffer(GL_ARRAY_BUFFER, instanceIlluminatorTemperatureBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*illuminator_temperature.size(), &illuminator_temperature.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(instanceIlluminatorTemperatureLocation);
+            glVertexAttribPointer(instanceIlluminatorTemperatureLocation, 1, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceIlluminatorTemperatureLocation,1);
 
 			glBindBuffer(GL_ARRAY_BUFFER, instanceBetaRayBufferId);
 	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*beta_ray.size(), &beta_ray.front(), GL_DYNAMIC_DRAW);
