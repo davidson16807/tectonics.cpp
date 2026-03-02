@@ -167,7 +167,9 @@ int main() {
         instance_origins,
         instance_color,
         instance_radii,
-        vec3(0.5,0.5,1),
+        vec3(0,0,1), // light direction
+        // vec3(0.5,0.5,1), // light direction
+        vec3(1.0), // ambient light
         model_matrix,
         view_state
       );

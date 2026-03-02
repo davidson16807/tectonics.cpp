@@ -47,6 +47,8 @@ namespace view
 		GLuint shaderProgramId;
 		GLuint vertexArrayId;
 
+		// BUFFER IDS
+
 		// element buffer ids
 		GLuint elementPositionBufferId;
 
@@ -54,6 +56,8 @@ namespace view
 		GLuint instanceOriginBufferId;
 		GLuint instanceColorBufferId;
 		GLuint instanceRadiusBufferId;
+
+		// LOCATIONS
 
 		// element attributes
 	    GLuint elementPositionLocation;
@@ -69,6 +73,7 @@ namespace view
 		GLuint projectionMatrixLocation;
 		GLuint resolutionLocation;
 		GLuint lightDirectionLocation;
+		GLuint ambientLightLocation;
 
 		bool isDisposed;
 
@@ -114,6 +119,7 @@ namespace view
 			        precision mediump float;
 			        uniform vec2  resolution;
 			        uniform vec3  light_direction;
+			        uniform vec3  ambient_light;
 			        in      vec4  fragment_color_in;
 			        in      mat4  element_for_clip;
 			        in      vec3  fragment_element_position;
@@ -136,7 +142,8 @@ namespace view
 			        	vec3 N = vec3(fragment_element_position.xy,z);
 			        	vec3 V = vec3(0,0,1);
 			        	vec3 L = normalize(light_direction);
-			            fragment_color = vec4(vec3(dot(N,L)),1) * fragment_color_in;
+			        	vec3 fraction_received = (vec3(dot(N,L)) + ambient_light) / (1.0 + ambient_light);
+			            fragment_color = vec4(fraction_received,1) * fragment_color_in;
 			        }
 				)"
 			),
@@ -205,6 +212,7 @@ namespace view
 			projectionMatrixLocation = glGetUniformLocation(shaderProgramId, "clip_for_view");
 			resolutionLocation = glGetUniformLocation(shaderProgramId, "resolution");
 			lightDirectionLocation = glGetUniformLocation(shaderProgramId, "light_direction");
+			ambientLightLocation = glGetUniformLocation(shaderProgramId, "ambient_light");
 
 	        // ATTRIBUTES
 
@@ -261,6 +269,7 @@ namespace view
 			const std::vector<glm::vec4>& instance_color, 
 			const std::vector<float>& instance_radius,
 			const glm::vec3 light_direction,
+			const glm::vec3 ambient_light,
 			const glm::mat4 model_matrix,
 			const ViewState& view_state
 		){
@@ -312,6 +321,7 @@ namespace view
 	        glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(view_state.projection_matrix));
 	        glUniform2fv      (resolutionLocation,       1, glm::value_ptr(view_state.resolution));
 	        glUniform3fv      (lightDirectionLocation,   1, glm::value_ptr(light_direction));
+	        glUniform3fv      (ambientLightLocation,   1, glm::value_ptr(ambient_light));
 
 			glDrawArraysInstanced(GL_TRIANGLES, /*array offset*/ 0, /*vertex count*/ elementPositions.size(), instance_origin.size());
 		}
