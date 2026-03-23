@@ -1,5 +1,8 @@
 #pragma once
 
+namespace orrery
+{
+
 template<typename id, typename scalar>
 struct TrackPosition {
 
@@ -17,3 +20,6 @@ struct TrackPosition {
     {}
 
 };
+    
+}
+

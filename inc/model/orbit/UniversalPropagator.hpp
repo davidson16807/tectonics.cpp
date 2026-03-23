@@ -199,7 +199,7 @@ namespace orbit {
 	        const scalar r0 = glm::length(orbit.initial_position);
 	        const scalar v0 = glm::length(orbit.initial_velocity);
 	        const scalar a  = s2 / r0 - (v0 * v0) / mu;
-	        return s1/semi_major_axis;
+	        return s1/a;
 	    }
 
 	    bool is_elliptic(const scalar inverse_semi_major_axis) const noexcept {

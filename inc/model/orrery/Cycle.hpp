@@ -3,23 +3,25 @@
 // std libraries
 #include <vector> // std::vector
 
-#include "CycleSample.hpp"
+namespace orrery {
 
-template<typename id, typename duration>
-struct Cycle {
+    template<typename id, typename duration>
+    struct Cycle {
 
-    const duration period; // period of the cycle for this node
-    const id cycle;        // node or resonance of the cycle
+        const duration period; // period of the cycle for this node
+        const id cycle;        // node or resonance of the cycle
 
-    Cycle(
-        const id cycle,
-        const duration period
-    ): 
-        period(period),
-        cycle(cycle)
-    {}
+        Cycle(
+            const id cycle,
+            const duration period
+        ): 
+            period(period),
+            cycle(cycle)
+        {}
 
-};
+    };
+
+}
 
 /*
 BⁿNᵐt→(Nℝ³)ᵐ   update positions in scene tree for trajectories at time

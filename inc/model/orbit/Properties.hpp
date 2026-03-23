@@ -210,6 +210,7 @@ namespace orbit {
 			const scalar noneccentric_speed = std::sqrt(mu / semi_latus_rectum);
 			return noneccentric_speed * (-std::sin(true_anomaly) * P + (eccentricity + std::cos(true_anomaly)) * Q);
 		}
+
 	};
 
     template<typename scalar, glm::qualifier precision=glm::defaultp>

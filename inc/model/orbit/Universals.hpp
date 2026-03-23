@@ -19,15 +19,15 @@ namespace orbit {
 	whatever units of measured that are used by parameters and `this`.
 	It is the developer's responsibility to ensure consistency of units.
 	*/
-	template <typename scalar, glm::qualifier=glm::defaultp>
+	template <typename scalar, glm::qualifier precision=glm::defaultp>
 	struct Universals
 	{
 		using vec3 = glm::vec<3,scalar,precision>;
 
-		const scalar combined_mass;
-		const vec3 initial_position;
-		const vec3 initial_velocity;
-		const scalar time_offset;
+		scalar combined_mass;
+		vec3 initial_position;
+		vec3 initial_velocity;
+		scalar time_offset;
 
 		constexpr Universals(
 			const scalar combined_mass,

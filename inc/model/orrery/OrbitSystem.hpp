@@ -8,12 +8,16 @@
 #include <vector>   // std::vector
 #include <algorithm>// std::min/max/fill
 #include <utility>  // std::pair
+#include <format>   // std::format
 
 // 3rd-party libraries
 #include <glm/vec3.hpp>          // *vec3
 
 // in-house libraries
-#include <math/special.hpp> // math::roundfract
+#include <math/special.hpp>           // math::roundfract
+#include <model/orbit/Properties.hpp> // orbit::Properties
+#include <model/orbit/Universals.hpp> // orbit::Universals
+#include <model/orbit/UniversalPropagator.hpp> // orbit::UniversalPropagator
 
 #include "Cycle.hpp"
 #include "CycleSample.hpp"
@@ -35,19 +39,18 @@ namespace orrery
 
         using vec3 = glm::vec<3,scalar,precision>;
 
-        using Orbits = Components<orbit::Universals<scalar>>;
+        using Orbits = Components<id, orbit::Universals<scalar>>;
         using Cycles = std::vector<Cycle<id,scalar>>;
-        using CycleSamples = std::vector<CycleSample<id,scalar>>;
-        using TrackPositions = std::vector<TrackPosition<scalar>>;
+        using CycleSamples = std::vector<CycleSample<id,scalar,scalar>>;
+        using TrackPositions = std::vector<TrackPosition<id,scalar>>;
         using Resonances = std::vector<Resonance<id,scalar>>;
         using ids = std::vector<id>;
         using vec3s = std::vector<vec3>;
 
         const orbit::UniversalPropagator<scalar> propagator;
         const orbit::Properties<scalar> elliptics;
-        const id max_index;
 
-        id closest_resonance_index(const scalar fraction) const
+        id closest_resonance_index(const scalar fraction, const id max_index) const
         {
             id best_p(1);
             auto best_error = std::abs(math::roundfract(scalar(best_p) * fraction));
@@ -68,12 +71,10 @@ namespace orrery
 
         OrbitSystem(
             const orbit::UniversalPropagator<scalar> propagator,
-            const orbit::Properties<scalar> elliptics,
-            const id max_index
+            const orbit::Properties<scalar> elliptics
         ) : 
             propagator(propagator),
-            elliptics(elliptics),
-            max_index(max_index)
+            elliptics(elliptics)
         {}
 
         // Oⁿ → Nᵐ
@@ -191,15 +192,15 @@ namespace orrery
         ) const {
             results.clear();
             results.reserve(samples.size());
-            CycleSample<id,scalar> sample;
+            CycleSample<id,scalar,scalar> sample;
             for (std::size_t i = 0; i < samples.size(); ++i) {
                 sample = samples[i];
                 results.emplace_back(
                     sample.node, 
-                    propagator.advance(
-                        orbits.get(i), 
+                    propagator.state(
+                        orbits.get(i),
                         sample.time()
-                    )); // TODO: add logic to consider time offsets in the orbit itself
+                    ).position); // TODO: add logic to consider time offsets in the orbit itself
             }
         }
 
@@ -215,10 +216,10 @@ namespace orrery
             for (std::size_t i = 0; i < filtered.size(); ++i) {
                 results.emplace_back(
                     filtered[i],
-                    propagator.advance(
+                    propagator.state(
                         orbits.get(filtered[i]),
                         time_offset
-                    )); // TODO: add logic to consider time offsets in the orbit itself
+                    ).position); // TODO: add logic to consider time offsets in the orbit itself
             }
         }
 
@@ -254,8 +255,8 @@ namespace orrery
                     updated.emplace_back(subsamples[i]);
                 }
             }
-            CycleSample period;
-            CycleSample subperiod;
+            CycleSample<id,scalar,scalar> period;
+            CycleSample<id,scalar,scalar> subperiod;
             for (std::size_t i = 0; i < samples.size(); ++i) {
                 period = samples[resonances[i].resonance];
                 subperiod = updated[resonances[i].node];
@@ -280,7 +281,5 @@ namespace orrery
     * 
 
     */
-
-
 
 }

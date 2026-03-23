@@ -1,11 +1,16 @@
+#pragma once
 
-#include <vector> // std::vector
+#include <vector>        // std::vector
+#include <unordered_map> // std::unordered_map
 
 /*
 `Components` represents a table of components within an Entity-Component-System pattern.
 It offers functionality beyond std::vector by managing lookups between component ids and entities,
 thereby accelerating checks for systems that operate on entities with several kinds of components.
 */
+
+namespace orrery 
+{
 
 template<typename id, typename Component>
 class Components
@@ -25,6 +30,34 @@ class Components
 
 public:
 
+	/*
+	Create an empty `Components<id,Component>` instance 
+	*/
+	Components():
+		components(),
+		index_of_entity(),
+		entity_of_index(),
+		size(0)
+	{
+	}
+
+	/*
+	Create a `Components<id,Component>` instance from the vector `components`
+	where each components corresponds to a unique and newly constructed entity
+	whose id is equal to the component's index.
+	*/
+	Components(const std::vector<Component>& components):
+		components(),
+		index_of_entity(),
+		entity_of_index(),
+		size(0)
+	{
+		for (id i = 0; i < components.size(); ++i)
+		{
+			add(i, components[i]);
+		}
+	}
+
 	void add(id entity, Component component)
 	{
 		assert(index_of_entity.find(entity) == index_of_entity.end() && "Component added to same entity more than once.");
@@ -33,7 +66,8 @@ public:
 		size_t new_index = size;
 		index_of_entity[entity] = new_index;
 		entity_of_index[new_index] = entity;
-		components[new_index] = component;
+		// components[new_index] = component;
+		components.push_back(component); // check if this is right or if the previous line should be used in circumstances
 		++size;
 	}
 
@@ -71,11 +105,18 @@ public:
 		return index_of_entity.find(entity) != index_of_entity.end();
 	}
 
-	Component& get(id entity) const
+	const Component& get(id entity) const
 	{
 		// assert(has(entity) && "Retrieving non-existent component.");
 		// Return a reference to the entity's component
-		return components[index_of_entity[entity]];
+		return components.at(index_of_entity.at(entity));
+	}
+
+	Component& get(id entity)
+	{
+		// assert(has(entity) && "Retrieving non-existent component.");
+		// Return a reference to the entity's component
+		return components.at(index_of_entity.at(entity));
 	}
 
 };
@@ -85,3 +126,6 @@ public:
 // orrery::Components<std::uint32_t, track::Beeline>;
 // orrery::Components<std::uint32_t, track::Spin>;
 // orrery::Components<std::uint32_t, track::Lock>;
+
+}
+
