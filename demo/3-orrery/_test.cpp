@@ -71,6 +71,7 @@ int main() {
   // using vec4 = glm::vec4;
 
   using mass = si::mass<double>;
+  using length = si::length<double>;
 
   constexpr double pi = 3.141592653589793238462643383271;
 
@@ -78,6 +79,8 @@ int main() {
   constexpr auto m3 = si::meter3;
   constexpr auto kg = si::kilogram;
   constexpr auto s = si::second;
+
+  float Rs(si::solar_radius / si::meter);
 
   constexpr auto au = si::astronomical_unit/m;
   constexpr auto G = si::gravitational_constant / (m3/(kg*s*s));
@@ -108,7 +111,6 @@ int main() {
       { mass_of_sun, Elements(39.482*au,    0.2488, 17.14  * si::degree, 0.0, 0.0, 0.0) }, // Pluto
   };
 
-
   // (mass, Universals)
   Orbits orbits;
   // Elliptics
@@ -120,10 +122,8 @@ int main() {
     orbits.add(entity_id_counter++, Orbit(body_kg, state));
   }
 
-
   TrackPositions positions;
   std::vector<int> filtered {0,1,2,3,4,5,6,7,8};
-
 
   orbit_system.positions(
     orbits, 
@@ -135,7 +135,7 @@ int main() {
   for (std::size_t i = 0; i < positions.size(); ++i)
   {
     instance_origins.push_back(positions[i].position);
-    std::cout << std::format("{},{},{}\n",positions[i].position.x, positions[i].position.y, positions[i].position.z) << std::endl;
+    std::cout << std::format("{}\t{}\t{}\n",positions[i].position.x, positions[i].position.y, positions[i].position.z) << std::endl;
   }
 
   std::vector<glm::vec4> instance_color{
@@ -155,21 +155,32 @@ int main() {
   // initialize control state
   update::OrbitalControlState control_state;
   control_state.min_zoom_distance = 1.0f;
-  control_state.log2_height = 2.5f;
+  control_state.log2_height = std::log2(40.0*Rs);
+  // control_state.log2_height = 20.0f;
   control_state.angular_position = glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f;
+
+  length procedural_terrain_far_distance(3e3*si::kilometer);
+  length planet_billboard_near_distance(1e7*si::kilometer); // ~10 * solar radius 
+  length point_source_near_distance(30.0*si::astronomical_unit); // semi-major axis of pluto
 
   // initialize view state
   view::ViewState view_state;
   view_state.projection_matrix = glm::perspective(
     3.14159f*45.0f/180.0f, 
     850.0f/640.0f, 
-    1e-3f, 1e16f
+    // 1e3f,
+    // 1e16f
+    float(planet_billboard_near_distance/m), 
+    float(point_source_near_distance/m)
   );
   view_state.view_matrix = control_state.get_view_matrix();
   view_state.resolution = glm::vec2(850, 640);
+  view_state.wavelength = glm::vec3(650e-9, 550e-9, 450e-9);
+  view_state.exposure_intensity = 1e3*si::global_solar_constant/(si::watt/si::meter2);
   // view_state.projection_type = view::ProjectionType::heads_up_display;
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
+
 
   // initialize shader program
   view::IndicatorSphereSwarmShaderProgram sphere_program;
@@ -185,7 +196,7 @@ int main() {
       sphere_program.draw(
         instance_origins,
         instance_color,
-        0.03,
+        10, //instance_pixel_radius
         vec3(0,0,1), // light direction
         // vec3(0.5,0.5,1), // light direction
         vec3(1.0), // ambient light

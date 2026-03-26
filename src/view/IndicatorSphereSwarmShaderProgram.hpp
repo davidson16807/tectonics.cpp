@@ -64,7 +64,7 @@ namespace view
 	    // instance attributes
 		GLuint instanceOriginLocation;
 		GLuint instanceColorLocation;
-		GLuint instanceScreenHeightFractionLocation;
+		GLuint instancePixelLocation;
 
 		// uniforms
 	    GLuint modelMatrixLocation;
@@ -85,7 +85,7 @@ namespace view
 			        uniform mat4  clip_for_view;
 			        uniform mat4  view_for_clip;
 			        uniform vec2  resolution;
-			        uniform float instance_screen_height_fraction;
+			        uniform float instance_pixel_radius;
 			        in      vec3  element_position;
 			        in      vec3  instance_origin;
 			        in      vec4  instance_color;
@@ -96,12 +96,17 @@ namespace view
 			        	spheres are billboards, which must always face the camera:
 			        	for position data: the local→view map is the usual implementation
 			        	for rotation data: the local→view map is identity
+			        	for scaling data: the element→clip map is a scaling operation
 			        	*/
 			            fragment_color_in = instance_color;
 			        	vec4 global_origin = global_for_local * vec4(instance_origin,1);
 			        	vec4 view_origin = view_for_global * global_origin;
 			        	vec4 clip_origin = clip_for_view * view_origin;
-			        	vec4 clip_position = clip_origin + vec4(instance_screen_height_fraction * element_position * clip_origin.w / vec3(resolution.x/resolution.y,1,1), 0.0);
+			        	vec4 clip_position = clip_origin + 
+			        		vec4(instance_pixel_radius/resolution.y * 
+			        			 element_position * 
+			        			 clip_origin.w / vec3(resolution.x/resolution.y,1,1), 
+			        			0.0);
 			        	fragment_element_position = element_position;
 			            gl_Position = clip_position;
 			        };
@@ -194,7 +199,7 @@ namespace view
 			resolutionLocation = glGetUniformLocation(shaderProgramId, "resolution");
 			lightDirectionLocation = glGetUniformLocation(shaderProgramId, "light_direction");
 			ambientLightLocation = glGetUniformLocation(shaderProgramId, "ambient_light");
-			instanceScreenHeightFractionLocation = glGetUniformLocation(shaderProgramId, "instance_screen_height_fraction");
+			instancePixelLocation = glGetUniformLocation(shaderProgramId, "instance_pixel_radius");
 
 	        // ATTRIBUTES
 
@@ -243,7 +248,7 @@ namespace view
 		void draw(
 			const std::vector<glm::vec3>& instance_origin,
 			const std::vector<glm::vec4>& instance_color, 
-			const float& instance_screen_height_fraction,
+			const float& instance_pixel_radius,
 			const glm::vec3 light_direction,
 			const glm::vec3 ambient_light,
 			const glm::mat4 model_matrix,
@@ -292,7 +297,7 @@ namespace view
 	        glUniform2fv      (resolutionLocation,       1, glm::value_ptr(view_state.resolution));
 	        glUniform3fv      (lightDirectionLocation,   1, glm::value_ptr(light_direction));
 	        glUniform3fv      (ambientLightLocation,     1, glm::value_ptr(ambient_light));
-	        glUniform1f       (instanceScreenHeightFractionLocation, instance_screen_height_fraction);
+	        glUniform1f       (instancePixelLocation, instance_pixel_radius);
 
 			glDrawArraysInstanced(GL_TRIANGLES, /*array offset*/ 0, /*vertex count*/ elementPositions.size(), instance_origin.size());
 		}

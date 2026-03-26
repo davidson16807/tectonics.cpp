@@ -165,7 +165,7 @@ int main() {
       sphere_program.draw(
         instance_origins,
         instance_color,
-        0.03,
+        10, //instance_pixel_radius
         vec3(0,0,1), // light direction
         // vec3(0.5,0.5,1), // light direction
         vec3(1.0), // ambient light
