@@ -55,7 +55,6 @@ namespace view
 		// instance buffer ids
 		GLuint instanceOriginBufferId;
 		GLuint instanceColorBufferId;
-		GLuint instanceRadiusBufferId;
 
 		// LOCATIONS
 
@@ -65,7 +64,7 @@ namespace view
 	    // instance attributes
 		GLuint instanceOriginLocation;
 		GLuint instanceColorLocation;
-		GLuint instanceRadiusLocation;
+		GLuint instanceScreenHeightFractionLocation;
 
 		// uniforms
 	    GLuint modelMatrixLocation;
@@ -85,11 +84,11 @@ namespace view
 			        uniform mat4  view_for_global;
 			        uniform mat4  clip_for_view;
 			        uniform mat4  view_for_clip;
+			        uniform vec2  resolution;
+			        uniform float instance_screen_height_fraction;
 			        in      vec3  element_position;
 			        in      vec3  instance_origin;
 			        in      vec4  instance_color;
-			        in      float instance_radius;
-			        out     mat4  element_for_clip;
 			        out     vec3  fragment_element_position;
 			        out     vec4  fragment_color_in;
 			        void main(){
@@ -97,18 +96,12 @@ namespace view
 			        	spheres are billboards, which must always face the camera:
 			        	for position data: the local→view map is the usual implementation
 			        	for rotation data: the local→view map is identity
-			        	global→view is assumed not to represent scaling, so
-			            for scaling data:  local→view = local→global→view = local→global
 			        	*/
 			            fragment_color_in = instance_color;
-			            mat4 scale_map = mat4(instance_radius);
-			        	mat4 instance_for_element = mat4(scale_map[0], scale_map[1], scale_map[2], vec4(instance_origin,1));
-			        	mat4 global_for_element = global_for_local * instance_for_element;
-			        	mat4 position_map = view_for_global * global_for_element;
-			        	mat4 view_for_element = mat4(global_for_element[0], global_for_element[1], global_for_element[2], position_map[3]);
-			        	mat4 clip_for_element = clip_for_view * view_for_element;
-			        	vec4 clip_position = clip_for_element * vec4(element_position,1);
-			        	element_for_clip = inverse(clip_for_element);
+			        	vec4 global_origin = global_for_local * vec4(instance_origin,1);
+			        	vec4 view_origin = view_for_global * global_origin;
+			        	vec4 clip_origin = clip_for_view * view_origin;
+			        	vec4 clip_position = clip_origin + vec4(instance_screen_height_fraction * element_position * clip_origin.w / vec3(resolution.x/resolution.y,1,1), 0.0);
 			        	fragment_element_position = element_position;
 			            gl_Position = clip_position;
 			        };
@@ -121,22 +114,10 @@ namespace view
 			        uniform vec3  light_direction;
 			        uniform vec3  ambient_light;
 			        in      vec4  fragment_color_in;
-			        in      mat4  element_for_clip;
 			        in      vec3  fragment_element_position;
 			        out     vec4  fragment_color;
 
 			        void main() {
-			        	/*
-			        	We tried implementing this to consider projection 
-			        	by setting element_position = element_for_clip * clip_position,
-			        	where clip_position = 2 * gl_FragCoord/resolution - 1, 
-			        	however element_for_clip assumes a single value for all fragments.
-			        	Fortunately, this shader program is intended for rendering distant objects,
-			        	so projection can be assumed to be roughly orthographic,
-			        	such that vec3(0,0,1) is the view direction.
-			        	Element vertices are hard coded so that x and y element coordinates
-			        	approximate those of a unit sphere.
-			        	*/
 			        	float z = 1-dot(fragment_element_position.xy, fragment_element_position.xy);
 			        	if(z<0.0) { discard; }
 			        	vec3 N = vec3(fragment_element_position.xy,z);
@@ -213,6 +194,7 @@ namespace view
 			resolutionLocation = glGetUniformLocation(shaderProgramId, "resolution");
 			lightDirectionLocation = glGetUniformLocation(shaderProgramId, "light_direction");
 			ambientLightLocation = glGetUniformLocation(shaderProgramId, "ambient_light");
+			instanceScreenHeightFractionLocation = glGetUniformLocation(shaderProgramId, "instance_screen_height_fraction");
 
 	        // ATTRIBUTES
 
@@ -236,11 +218,6 @@ namespace view
 			instanceColorLocation = glGetAttribLocation(shaderProgramId, "instance_color");
 		    glEnableVertexAttribArray(instanceColorLocation);
 
-			// create a new vertex buffer object, VBO
-			glGenBuffers(1, &instanceRadiusBufferId);
-			instanceRadiusLocation = glGetAttribLocation(shaderProgramId, "instance_radius");
-		    glEnableVertexAttribArray(instanceRadiusLocation);
-
 		}
 
 		void dispose()
@@ -251,7 +228,6 @@ namespace view
 		        glDeleteBuffers(1, &elementPositionBufferId);
 		        glDeleteBuffers(1, &instanceColorBufferId);
 		        glDeleteBuffers(1, &instanceOriginBufferId);
-		        glDeleteBuffers(1, &instanceRadiusBufferId);
 		        glDeleteProgram(shaderProgramId);
         	}
 		}
@@ -267,7 +243,7 @@ namespace view
 		void draw(
 			const std::vector<glm::vec3>& instance_origin,
 			const std::vector<glm::vec4>& instance_color, 
-			const std::vector<float>& instance_radius,
+			const float& instance_screen_height_fraction,
 			const glm::vec3 light_direction,
 			const glm::vec3 ambient_light,
 			const glm::mat4 model_matrix,
@@ -309,19 +285,14 @@ namespace view
             glVertexAttribPointer(instanceColorLocation, 4, GL_FLOAT, normalize, stride, offset);
 		    glVertexAttribDivisor(instanceColorLocation,1);
 
-			glBindBuffer(GL_ARRAY_BUFFER, instanceRadiusBufferId);
-	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*instance_radius.size(), &instance_radius.front(), GL_DYNAMIC_DRAW);
-		    glEnableVertexAttribArray(instanceRadiusLocation);
-            glVertexAttribPointer(instanceRadiusLocation, 1, GL_FLOAT, normalize, stride, offset);
-		    glVertexAttribDivisor(instanceRadiusLocation,1);
-
     		// UNIFORMS
 	        glUniformMatrix4fv(viewMatrixLocation,       1, GL_FALSE, glm::value_ptr(view_state.view_matrix));
 	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(model_matrix));
 	        glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(view_state.projection_matrix));
 	        glUniform2fv      (resolutionLocation,       1, glm::value_ptr(view_state.resolution));
 	        glUniform3fv      (lightDirectionLocation,   1, glm::value_ptr(light_direction));
-	        glUniform3fv      (ambientLightLocation,   1, glm::value_ptr(ambient_light));
+	        glUniform3fv      (ambientLightLocation,     1, glm::value_ptr(ambient_light));
+	        glUniform1f       (instanceScreenHeightFractionLocation, instance_screen_height_fraction);
 
 			glDrawArraysInstanced(GL_TRIANGLES, /*array offset*/ 0, /*vertex count*/ elementPositions.size(), instance_origin.size());
 		}
