@@ -26,7 +26,7 @@ class Components
 	// Map from an array index to an entity ID.
 	std::unordered_map<size_t, id> entity_of_index;
 	// Total size of valid entries in the array.
-	size_t size;
+	size_t _size;
 
 public:
 
@@ -37,7 +37,7 @@ public:
 		components(),
 		index_of_entity(),
 		entity_of_index(),
-		size(0)
+		_size(0)
 	{
 	}
 
@@ -50,7 +50,7 @@ public:
 		components(),
 		index_of_entity(),
 		entity_of_index(),
-		size(0)
+		_size(0)
 	{
 		for (id i = 0; i < components.size(); ++i)
 		{
@@ -58,17 +58,22 @@ public:
 		}
 	}
 
+	std::size_t size() const
+	{
+		return _size;
+	}
+
 	void add(id entity, Component component)
 	{
 		assert(index_of_entity.find(entity) == index_of_entity.end() && "Component added to same entity more than once.");
 
 		// Put new entry at end and update the maps
-		size_t new_index = size;
+		size_t new_index = _size;
 		index_of_entity[entity] = new_index;
 		entity_of_index[new_index] = entity;
 		// components[new_index] = component;
 		components.push_back(component); // check if this is right or if the previous line should be used in circumstances
-		++size;
+		++_size;
 	}
 
 	void entity_destroyed(id entity)
@@ -86,7 +91,7 @@ public:
 
 		// Copy element at end into deleted element's place to maintain density
 		size_t index_of_removed_entity = index_of_entity[entity];
-		size_t index_of_last_element = size - 1;
+		size_t index_of_last_element = _size - 1;
 		components[index_of_removed_entity] = components[index_of_last_element];
 
 		// Update map to point to moved spot
@@ -97,7 +102,7 @@ public:
 		index_of_entity.erase(entity);
 		entity_of_index.erase(index_of_last_element);
 
-		--size;
+		--_size;
 	}
 
 	bool has(id entity) const

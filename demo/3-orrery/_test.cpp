@@ -71,6 +71,7 @@ int main() {
   // using vec4 = glm::vec4;
 
   using mass = si::mass<double>;
+  using time = si::time<double>;
   using length = si::length<double>;
 
   constexpr double pi = 3.141592653589793238462643383271;
@@ -125,18 +126,7 @@ int main() {
   TrackPositions positions;
   std::vector<int> filtered {0,1,2,3,4,5,6,7,8};
 
-  orbit_system.positions(
-    orbits, 
-    filtered, 
-    1.0, // time_offset
-    positions);
-
-  std::vector<vec3> instance_origins{};
-  for (std::size_t i = 0; i < positions.size(); ++i)
-  {
-    instance_origins.push_back(positions[i].position);
-    std::cout << std::format("{}\t{}\t{}\n",positions[i].position.x, positions[i].position.y, positions[i].position.z) << std::endl;
-  }
+  std::vector<vec3> instance_origins(orbits.size());
 
   std::vector<glm::vec4> instance_color{
     vec4(1.0, 1.0, 1.0, 1.0),
@@ -155,13 +145,13 @@ int main() {
   // initialize control state
   update::OrbitalControlState control_state;
   control_state.min_zoom_distance = 1.0f;
-  control_state.log2_height = std::log2(40.0*Rs);
+  control_state.log2_height = std::log2(60.0*Rs);
   // control_state.log2_height = 20.0f;
   control_state.angular_position = glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f;
 
   length procedural_terrain_far_distance(3e3*si::kilometer);
   length planet_billboard_near_distance(1e7*si::kilometer); // ~10 * solar radius 
-  length point_source_near_distance(30.0*si::astronomical_unit); // semi-major axis of pluto
+  length point_source_near_distance(1e3*si::astronomical_unit);
 
   // initialize view state
   view::ViewState view_state;
@@ -189,7 +179,23 @@ int main() {
   messages::MessageQueue message_queue;
   message_queue.activate(window);
 
+
+  time t(0);
   while(!glfwWindowShouldClose(window)) {
+
+      t+=si::week;
+      
+      orbit_system.positions(
+        orbits, 
+        filtered, 
+        t/si::second, // time_offset
+        positions);
+
+      for (std::size_t i = 0; i < positions.size(); ++i)
+      {
+        instance_origins[i] = positions[i].position;
+      }
+
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
