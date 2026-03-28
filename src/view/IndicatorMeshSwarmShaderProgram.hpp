@@ -126,10 +126,10 @@ namespace view
 			glShaderSource(fragmentShaderId, 1, &fragment_shader_glsl, NULL);
 			glCompileShader(fragmentShaderId);
 		    // check for shader compile errors
-		    glGetShaderiv(vertexShaderId, GL_COMPILE_STATUS, &success);
+		    glGetShaderiv(fragmentShaderId, GL_COMPILE_STATUS, &success);
 		    if (!success)
 		    {
-		        glGetShaderInfoLog(vertexShaderId, 512, NULL, infoLog);
+		        glGetShaderInfoLog(fragmentShaderId, 512, NULL, infoLog);
 		        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 		    }
 

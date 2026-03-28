@@ -14,22 +14,7 @@ namespace view
 {
 
 	/*
-	`IndicatorSphereSwarmShaderProgram` renders a swarm of physically realistic spheres.
-	The spheres are held together by gravity.
-	Phases of matter within the spheres are sorted by density in the usual order (solid>liquid>gas>plasma).
-	Each phase has uniform material properties aside from temperature and density in gases and plasmas. 
-	In gases and plasmas, density drops exponentially with radius,
-	and temperature varies with radius in the same manner seen in main sequence stars
-	(for planets with atmospheres, this assumption is inconsequential).
-	The spheres are illuminated by no more than one point light source, 
-	or one point light source overwhelms all others,
-	and the spheres do not create light in any way aside from thermal emission.
-	No further assumptions are made about the spheres. 
-
-	The assumptions above are designed so that `IndicatorSphereSwarmShaderProgram` 
-	should be able to approximate virtually all heavenly spherical bodies when viewed from a distance.
-	`IndicatorSphereSwarmShaderProgram` can be combined with other shaders 
-	to capture notable nonspherical effects such as black hole discs and ringed bodies.
+	`IndicatorSphereSwarmShaderProgram` renders a swarm of spheres that represent abstract concepts.
 	*/
 
 	class IndicatorSphereSwarmShaderProgram
@@ -64,7 +49,6 @@ namespace view
 	    // instance attributes
 		GLuint instanceOriginLocation;
 		GLuint instanceColorLocation;
-		GLuint instancePixelLocation;
 
 		// uniforms
 	    GLuint modelMatrixLocation;
@@ -73,6 +57,7 @@ namespace view
 		GLuint resolutionLocation;
 		GLuint lightDirectionLocation;
 		GLuint ambientLightLocation;
+		GLuint pixelRadiusLocation;
 
 		bool isDisposed;
 
@@ -85,7 +70,7 @@ namespace view
 			        uniform mat4  clip_for_view;
 			        uniform mat4  view_for_clip;
 			        uniform vec2  resolution;
-			        uniform float instance_pixel_radius;
+			        uniform float pixel_radius;
 			        in      vec3  element_position;
 			        in      vec3  instance_origin;
 			        in      vec4  instance_color;
@@ -103,7 +88,7 @@ namespace view
 			        	vec4 view_origin = view_for_global * global_origin;
 			        	vec4 clip_origin = clip_for_view * view_origin;
 			        	vec4 clip_position = clip_origin + 
-			        		vec4(instance_pixel_radius/resolution.y * 
+			        		vec4(pixel_radius/resolution.y * 
 			        			 element_position * 
 			        			 clip_origin.w / vec3(resolution.x/resolution.y,1,1), 
 			        			0.0);
@@ -123,9 +108,9 @@ namespace view
 			        out     vec4  fragment_color;
 
 			        void main() {
-			        	float z = 1-dot(fragment_element_position.xy, fragment_element_position.xy);
-			        	if(z<0.0) { discard; }
-			        	vec3 N = vec3(fragment_element_position.xy,z);
+			        	float z2 = 1-dot(fragment_element_position.xy, fragment_element_position.xy);
+			        	if(z2<0.0) { discard; }
+			        	vec3 N = vec3(fragment_element_position.xy,sqrt(z2));
 			        	vec3 V = vec3(0,0,1);
 			        	vec3 L = normalize(light_direction);
 			        	vec3 fraction_received = (vec3(dot(N,L)) + ambient_light) / (1.0 + ambient_light);
@@ -169,10 +154,10 @@ namespace view
 			glShaderSource(fragmentShaderId, 1, &fragment_shader_glsl, NULL);
 			glCompileShader(fragmentShaderId);
 		    // check for shader compile errors
-		    glGetShaderiv(vertexShaderId, GL_COMPILE_STATUS, &success);
+		    glGetShaderiv(fragmentShaderId, GL_COMPILE_STATUS, &success);
 		    if (!success)
 		    {
-		        glGetShaderInfoLog(vertexShaderId, 512, NULL, infoLog);
+		        glGetShaderInfoLog(fragmentShaderId, 512, NULL, infoLog);
 		        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 		    }
 
@@ -199,7 +184,7 @@ namespace view
 			resolutionLocation = glGetUniformLocation(shaderProgramId, "resolution");
 			lightDirectionLocation = glGetUniformLocation(shaderProgramId, "light_direction");
 			ambientLightLocation = glGetUniformLocation(shaderProgramId, "ambient_light");
-			instancePixelLocation = glGetUniformLocation(shaderProgramId, "instance_pixel_radius");
+			pixelRadiusLocation = glGetUniformLocation(shaderProgramId, "pixel_radius");
 
 	        // ATTRIBUTES
 
@@ -248,7 +233,7 @@ namespace view
 		void draw(
 			const std::vector<glm::vec3>& instance_origin,
 			const std::vector<glm::vec4>& instance_color, 
-			const float& instance_pixel_radius,
+			const float& pixel_radius,
 			const glm::vec3 light_direction,
 			const glm::vec3 ambient_light,
 			const glm::mat4 model_matrix,
@@ -297,7 +282,7 @@ namespace view
 	        glUniform2fv      (resolutionLocation,       1, glm::value_ptr(view_state.resolution));
 	        glUniform3fv      (lightDirectionLocation,   1, glm::value_ptr(light_direction));
 	        glUniform3fv      (ambientLightLocation,     1, glm::value_ptr(ambient_light));
-	        glUniform1f       (instancePixelLocation, instance_pixel_radius);
+	        glUniform1f       (pixelRadiusLocation, pixel_radius);
 
 			glDrawArraysInstanced(GL_TRIANGLES, /*array offset*/ 0, /*vertex count*/ elementPositions.size(), instance_origin.size());
 		}
