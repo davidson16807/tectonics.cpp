@@ -231,7 +231,7 @@ namespace view
 			{
 				return;
 			}
-			if (view_state.render_pass != RenderPassType::solids)
+			if (view_state.render_pass != RenderPassType::overlays)
 			{
 				return; 
 			}
@@ -247,7 +247,7 @@ namespace view
 	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*element_position.size(), &element_position.front(), GL_STATIC_DRAW);
 		    glEnableVertexAttribArray(elementPositionLocation);
             glVertexAttribPointer(elementPositionLocation, 3, GL_FLOAT, normalize, stride, offset);
-		    glVertexAttribDivisor(instanceOriginBufferId,0);
+		    glVertexAttribDivisor(elementPositionLocation,0);
 
 			glBindBuffer(GL_ARRAY_BUFFER, instanceOriginBufferId);
 	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*instance_origin.size(), &instance_origin.front(), GL_DYNAMIC_DRAW);

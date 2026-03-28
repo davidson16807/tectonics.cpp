@@ -11,6 +11,7 @@ namespace view
 		solids,
 		volumetrics,
 		lens_effects,
+		overlays
 	};
 	enum ProjectionType
 	{

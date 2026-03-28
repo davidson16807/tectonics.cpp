@@ -245,7 +245,7 @@ namespace view
 				return;
 			}
 
-			if (view_state.render_pass != RenderPassType::solids)
+			if (view_state.render_pass != RenderPassType::overlays)
 			{
 				return; 
 			}

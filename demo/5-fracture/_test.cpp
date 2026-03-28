@@ -425,6 +425,7 @@ int main() {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+      view_state.render_pass = view::RenderPassType::solids;
       colorscale_state.max_color_value = whole::max(buffer_scalars1);
       colorscale_state.min_color_value = whole::min(buffer_scalars1);
       colorscale_program.draw(
@@ -440,6 +441,7 @@ int main() {
         GL_TRIANGLE_STRIP
       );
 
+      view_state.render_pass = view::RenderPassType::overlays;
       indicator_program.draw(
         vectors_element_position,
         vectors_instance_position,

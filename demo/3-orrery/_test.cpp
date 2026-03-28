@@ -170,6 +170,7 @@ int main() {
   // view_state.projection_type = view::ProjectionType::heads_up_display;
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
+  view_state.render_pass = view::RenderPassType::overlays;
 
 
   // initialize shader program
