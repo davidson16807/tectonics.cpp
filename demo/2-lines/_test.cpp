@@ -73,7 +73,7 @@ int main() {
   };
 
   // one color per segment between consecutive node positions
-  std::vector<vec4> segment_colors{
+  std::vector<vec4> instance_colors{
     vec4(1,0,0,1),
     vec4(0,1,0,1),
     vec4(0,0,1,1),
@@ -81,6 +81,20 @@ int main() {
     vec4(1,0,1,1),
     vec4(0,1,1,1)
   };
+
+  std::size_t segment_count = instance_colors.size();
+
+  std::vector<glm::vec3> instance_start;
+  std::vector<glm::vec3> instance_stop;
+
+  instance_start.reserve(segment_count);
+  instance_stop.reserve(segment_count);
+
+  for (std::size_t i = 0; i < segment_count; ++i)
+  {
+    instance_start.push_back(node_positions[i]);
+    instance_stop.push_back(node_positions[i+1]);
+  }
 
   glm::mat4 model_matrix(1);
 
@@ -113,9 +127,11 @@ int main() {
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
       line_program.draw(
-        node_positions,
-        segment_colors,
+        instance_start,
+        instance_stop,
+        instance_colors,
         4, // pixel_width
+        0, // scale_height_count
         model_matrix,
         view_state
       );

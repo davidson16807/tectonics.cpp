@@ -61,6 +61,7 @@ namespace view
 		GLuint projectionMatrixLocation;
 		GLuint resolutionLocation;
 		GLuint pixelWidthLocation;
+		GLuint scaleHeightCountLocation;
 
 		bool isDisposed;
 
@@ -125,12 +126,13 @@ namespace view
 			fragmentShaderGlsl(
 				R"(#version 330
 			        precision mediump float;
+			        uniform float scale_height_count;
 			        in      vec2  fragment_element_position;
 			        in      vec4  fragment_color_in;
 			        out     vec4  fragment_color;
 			        void main() {
 			        	fragment_color = fragment_color_in
-			        		* vec4(1,1,1,exp(-pow(fragment_element_position.y*2.0,2.0)));
+			        		* vec4(1,1,1,exp(-pow(fragment_element_position.y*scale_height_count,2.0)));
 			        }
 				)"
 			),
@@ -201,6 +203,7 @@ namespace view
 			projectionMatrixLocation = glGetUniformLocation(shaderProgramId, "clip_for_view");
 			resolutionLocation = glGetUniformLocation(shaderProgramId, "resolution");
 			pixelWidthLocation = glGetUniformLocation(shaderProgramId, "pixel_width");
+			scaleHeightCountLocation = glGetUniformLocation(shaderProgramId, "scale_height_count");
 
 	        // ATTRIBUTES
 
@@ -250,12 +253,14 @@ namespace view
 		}
 
 		/*
+		A line with sharp boundaries is accounted for by the degenerate case where scale_height_count = 1 
 		*/
 		void draw(
 			const std::vector<glm::vec3>& instance_start,
 			const std::vector<glm::vec3>& instance_end,
 			const std::vector<glm::vec4>& instance_color,
 			const float& pixel_width,
+			const float& scale_height_count,
 			const glm::mat4 model_matrix,
 			const ViewState& view_state
 		){
@@ -310,87 +315,13 @@ namespace view
 	        glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(view_state.projection_matrix));
 	        glUniform2fv      (resolutionLocation,       1, glm::value_ptr(view_state.resolution));
 	        glUniform1f       (pixelWidthLocation, pixel_width);
+	        glUniform1f       (scaleHeightCountLocation, scale_height_count);
 
 			glDrawArraysInstanced(
 				GL_TRIANGLES,
 				/*array offset*/ 0,
 				/*vertex count*/ elementPositions.size(),
 				instance_start.size()
-			);
-		}
-
-		/*
-		Convenience wrapper for the `draw` method above.
-		`node_positions` are the N+1 positions for bounds of N abutted line segments.
-		`segment_colors` are the N colors of line segments.
-		*/
-		void draw(
-			const std::vector<glm::vec3>& node_positions,
-			const std::vector<glm::vec4>& segment_colors,
-			const float& pixel_width,
-			const glm::mat4 model_matrix,
-			const ViewState& view_state
-		){
-			if (node_positions.size() < 2)
-			{
-				return;
-			}
-
-			const std::size_t segment_count = node_positions.size() - 1;
-			if (segment_colors.size() != segment_count)
-			{
-				return;
-			}
-
-			std::vector<glm::vec3> instance_start;
-			std::vector<glm::vec3> instance_end;
-
-			instance_start.reserve(segment_count);
-			instance_end.reserve(segment_count);
-
-			for (std::size_t i = 0; i < segment_count; ++i)
-			{
-				instance_start.push_back(node_positions[i]);
-				instance_end.push_back(node_positions[i+1]);
-			}
-
-			draw(
-				instance_start,
-				instance_end,
-				segment_colors,
-				pixel_width,
-				model_matrix,
-				view_state
-			);
-		}
-
-		/*
-		Convenience wrapper for the `draw` method above.
-		`node_positions` are the N+1 positions for bounds of N abutted line segments.
-		`color` is the color applied to all line segments.
-		*/
-		void draw(
-			const std::vector<glm::vec3>& node_positions,
-			const glm::vec4& color,
-			const float& pixel_width,
-			const glm::mat4 model_matrix,
-			const ViewState& view_state
-		){
-			if (node_positions.size() < 2)
-			{
-				return;
-			}
-
-			const std::size_t segment_count = node_positions.size() - 1;
-
-			std::vector<glm::vec4> segment_colors(segment_count, color);
-
-			draw(
-				node_positions,
-				segment_colors,
-				pixel_width,
-				model_matrix,
-				view_state
 			);
 		}
 

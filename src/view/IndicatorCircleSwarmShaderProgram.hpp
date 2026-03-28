@@ -232,6 +232,7 @@ namespace view
 		}
 
 		/*
+		A circle with sharp boundaries is accounted for by the degenerate case where scale_height_count = 1
 		*/
 		void draw(
 			const std::vector<glm::vec3>& instance_origin,
@@ -292,5 +293,6 @@ namespace view
 
 			glDrawArraysInstanced(GL_TRIANGLES, /*array offset*/ 0, /*vertex count*/ elementPositions.size(), instance_origin.size());
 		}
+
 	};
 }
