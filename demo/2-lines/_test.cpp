@@ -131,7 +131,7 @@ int main() {
         instance_stop,
         instance_colors,
         4, // pixel_width
-        0, // scale_height_count
+        2, // scale_height_count
         model_matrix,
         view_state
       );

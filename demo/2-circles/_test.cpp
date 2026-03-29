@@ -28,7 +28,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // we don't want the old OpenGL
 
   // open a window
-  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Points", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Circles", NULL, NULL);
   if (!window) {
     std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
@@ -95,6 +95,39 @@ int main() {
     vec3( 1, 1, 1)
   };
 
+  std::vector<float> instance_radii{
+
+    0.1f,
+    0.1f,
+    0.1f,
+    0.1f,
+    0.1f,
+    0.1f,
+    0.1f,
+    0.1f,
+    0.1f,
+
+    0.2f,
+    0.2f,
+    0.2f,
+    0.2f,
+    0.2f,
+    0.2f,
+    0.2f,
+    0.2f,
+    0.2f,
+
+    0.3f,
+    0.3f,
+    0.3f,
+    0.3f,
+    0.3f,
+    0.3f,
+    0.3f,
+    0.3f,
+    0.3f,
+
+  };
 
   std::vector<glm::vec4> instance_color{
 
@@ -165,10 +198,11 @@ int main() {
 
       sphere_program.draw(
         instance_origins,
+        instance_radii,
         instance_color,
-        20.0, //inner_pixel_radius
-        30.0, //outer_pixel_radius
-        10.0, // scale_height_count
+        20.0, // pixel_separation
+        10.0,  // pixel_width
+        3.0,  // scale_height_count
         model_matrix,
         view_state
       );

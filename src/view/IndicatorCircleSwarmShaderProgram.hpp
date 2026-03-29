@@ -41,6 +41,7 @@ namespace view
 
 		// instance buffer ids
 		GLuint instanceOriginBufferId;
+		GLuint instanceRadiusBufferId;
 		GLuint instanceColorBufferId;
 
 		// LOCATIONS
@@ -50,9 +51,10 @@ namespace view
 
 	    // instance attributes
 		GLuint instanceOriginLocation;
+		GLuint instanceRadiusLocation;
 		GLuint instanceColorLocation;
-		GLuint outerPixelRadiusLocation;
-		GLuint innerPixelRadiusLocation;
+		GLuint pixelWidthLocation;
+		GLuint pixelSeparationLocation;
 		GLuint scaleHeightCountLocation;
 
 		// uniforms
@@ -71,10 +73,14 @@ namespace view
 			        uniform mat4  view_for_global;
 			        uniform mat4  clip_for_view;
 			        uniform vec2  resolution;
-			        uniform float outer_pixel_radius;
+			        uniform float pixel_width;
+			        uniform float pixel_separation;
 			        in      vec3  element_position;
 			        in      vec3  instance_origin;
+			        in      float instance_radius;
 			        in      vec4  instance_color;
+			        out     float fragment_inner_pixel_radius;
+					out     float fragment_outer_pixel_radius;
 			        out     vec3  fragment_element_position;
 			        out     vec4  fragment_color_in;
 			        void main(){
@@ -82,18 +88,28 @@ namespace view
 			        	spheres are billboards, which must always face the camera:
 			        	for position data: the local→view map is the usual implementation
 			        	for rotation data: the local→view map is identity
-			        	for scaling data: the element→clip map is a scaling operation
+			        	for scaling data: the element→clip map is a scaling operation,
+			            	except we specify width and separation in clip space
 			        	*/
-			            fragment_color_in = instance_color;
-			        	vec4 global_origin = global_for_local * vec4(instance_origin,1);
-			        	vec4 view_origin = view_for_global * global_origin;
-			        	vec4 clip_origin = clip_for_view * view_origin;
-			        	vec4 clip_position = clip_origin + 
-			        		vec4(outer_pixel_radius/resolution.y * 
-			        			 element_position * 
-			        			 clip_origin.w / vec3(resolution.x/resolution.y,1,1), 
+			            mat4 scale_map = mat4(instance_radius);
+			        	vec4 view_for_element_origin = view_for_global * global_for_local * vec4(instance_origin,1);
+			        	mat4 view_for_element = mat4(scale_map[0], scale_map[1], scale_map[2], view_for_element_origin);
+			        	vec4 clip_origin = clip_for_view * view_for_element_origin;
+			        	vec4 clip_position = clip_for_view * view_for_element * vec4(element_position,1)
+			        	    + vec4((pixel_separation+pixel_width)/resolution.y * 
+			        			element_position * 
+			        			clip_origin.w / vec3(resolution.x/resolution.y,1,1), 
 			        			0.0);
+
+						float clip_radius = (clip_for_view * view_for_element * vec4(1,0,0,0)).x;
+						float pixel_radius = clip_radius / clip_origin.w * resolution.y;
+
+						fragment_inner_pixel_radius = pixel_radius + pixel_separation;
+						fragment_outer_pixel_radius = pixel_radius + pixel_separation + pixel_width;
+
+			            fragment_color_in = instance_color;
 			        	fragment_element_position = element_position;
+
 			            gl_Position = clip_position;
 			        };
 				)"
@@ -101,23 +117,24 @@ namespace view
 
 			fragmentShaderGlsl(
 				R"(#version 330
-			        precision mediump float;
 			        uniform vec2  resolution;
-			        uniform float outer_pixel_radius;
-			        uniform float inner_pixel_radius;
 			        uniform float scale_height_count;
 			        in      vec4  fragment_color_in;
 			        in      vec3  fragment_element_position;
+			        in      float  fragment_inner_pixel_radius;
+					in      float  fragment_outer_pixel_radius;
 			        out     vec4  fragment_color;
 
 			        void main() {
 			        	const float rhi = 1.0;
-			        	float rlo = inner_pixel_radius / outer_pixel_radius;
+			        	float rlo = fragment_inner_pixel_radius / fragment_outer_pixel_radius;
 			        	float rmid = 0.5*(rlo+rhi);
 			        	float r2 = dot(fragment_element_position.xy, fragment_element_position.xy);
 			        	float r = sqrt(r2);
 			        	if(!(rlo*rlo<r2&&r2<1.0)) { discard; }
-			            fragment_color = fragment_color_in * vec4(1,1,1, exp(-pow((r-rmid)*scale_height_count,2.0)));
+			        	float width = rhi-rlo;
+			        	float scale_height = width/scale_height_count;
+			            fragment_color = fragment_color_in * vec4(1,1,1, exp(-pow((r-rmid)/scale_height,2.0)));
 			        }
 				)"
 			),
@@ -161,7 +178,7 @@ namespace view
 		    if (!success)
 		    {
 		        glGetShaderInfoLog(fragmentShaderId, 512, NULL, infoLog);
-		        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+		        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
 		    }
 
 			shaderProgramId = glCreateProgram();
@@ -185,8 +202,8 @@ namespace view
 			modelMatrixLocation = glGetUniformLocation(shaderProgramId, "global_for_local");
 			projectionMatrixLocation = glGetUniformLocation(shaderProgramId, "clip_for_view");
 			resolutionLocation = glGetUniformLocation(shaderProgramId, "resolution");
-			outerPixelRadiusLocation = glGetUniformLocation(shaderProgramId, "outer_pixel_radius");
-			innerPixelRadiusLocation = glGetUniformLocation(shaderProgramId, "inner_pixel_radius");
+			pixelWidthLocation = glGetUniformLocation(shaderProgramId, "pixel_width");
+			pixelSeparationLocation = glGetUniformLocation(shaderProgramId, "pixel_separation");
 			scaleHeightCountLocation = glGetUniformLocation(shaderProgramId, "scale_height_count");
 
 	        // ATTRIBUTES
@@ -207,6 +224,11 @@ namespace view
 		    glEnableVertexAttribArray(instanceOriginLocation);
 
 			// create a new vertex buffer object, VBO
+			glGenBuffers(1, &instanceRadiusBufferId);
+			instanceRadiusLocation = glGetAttribLocation(shaderProgramId, "instance_radius");
+		    glEnableVertexAttribArray(instanceRadiusLocation);
+
+			// create a new vertex buffer object, VBO
 			glGenBuffers(1, &instanceColorBufferId);
 			instanceColorLocation = glGetAttribLocation(shaderProgramId, "instance_color");
 		    glEnableVertexAttribArray(instanceColorLocation);
@@ -221,6 +243,7 @@ namespace view
 		        glDeleteBuffers(1, &elementPositionBufferId);
 		        glDeleteBuffers(1, &instanceColorBufferId);
 		        glDeleteBuffers(1, &instanceOriginBufferId);
+		        glDeleteBuffers(1, &instanceRadiusBufferId);
 		        glDeleteProgram(shaderProgramId);
         	}
 		}
@@ -236,9 +259,10 @@ namespace view
 		*/
 		void draw(
 			const std::vector<glm::vec3>& instance_origin,
+			const std::vector<float>& instance_radius,
 			const std::vector<glm::vec4>& instance_color,
-			const float& inner_pixel_radius,
-			const float& outer_pixel_radius,
+			const float& pixel_separation,
+			const float& pixel_width,
 			const float& scale_height_count,
 			const glm::mat4 model_matrix,
 			const ViewState& view_state
@@ -276,6 +300,12 @@ namespace view
             glVertexAttribPointer(instanceOriginLocation, 3, GL_FLOAT, normalize, stride, offset);
 		    glVertexAttribDivisor(instanceOriginLocation,1);
 
+			glBindBuffer(GL_ARRAY_BUFFER, instanceRadiusBufferId);
+	        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*instance_radius.size(), &instance_radius.front(), GL_DYNAMIC_DRAW);
+		    glEnableVertexAttribArray(instanceRadiusLocation);
+            glVertexAttribPointer(instanceRadiusLocation, 1, GL_FLOAT, normalize, stride, offset);
+		    glVertexAttribDivisor(instanceRadiusLocation,1);
+
 			glBindBuffer(GL_ARRAY_BUFFER, instanceColorBufferId);
 	        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4)*instance_color.size(), &instance_color.front(), GL_DYNAMIC_DRAW);
 		    glEnableVertexAttribArray(instanceColorLocation);
@@ -287,8 +317,8 @@ namespace view
 	        glUniformMatrix4fv(modelMatrixLocation,      1, GL_FALSE, glm::value_ptr(model_matrix));
 	        glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(view_state.projection_matrix));
 	        glUniform2fv      (resolutionLocation,       1, glm::value_ptr(view_state.resolution));
-	        glUniform1f       (outerPixelRadiusLocation, outer_pixel_radius);
-	        glUniform1f       (innerPixelRadiusLocation, inner_pixel_radius);
+	        glUniform1f       (pixelSeparationLocation,  pixel_separation);
+	        glUniform1f       (pixelWidthLocation,       pixel_width);
 	        glUniform1f       (scaleHeightCountLocation, scale_height_count);
 
 			glDrawArraysInstanced(GL_TRIANGLES, /*array offset*/ 0, /*vertex count*/ elementPositions.size(), instance_origin.size());

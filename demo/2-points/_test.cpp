@@ -95,7 +95,6 @@ int main() {
     vec3( 1, 1, 1)
   };
 
-
   std::vector<glm::vec4> instance_color{
 
     vec4( 0, 0, 1, 1),
