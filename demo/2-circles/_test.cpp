@@ -201,8 +201,8 @@ int main() {
         instance_radii,
         instance_color,
         20.0, // pixel_separation
-        10.0,  // pixel_width
-        3.0,  // scale_height_count
+        5.0,  // pixel_width
+        2.0,  // scale_height_count
         model_matrix,
         view_state
       );

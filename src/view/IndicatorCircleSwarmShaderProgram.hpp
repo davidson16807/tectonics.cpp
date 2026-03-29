@@ -89,7 +89,7 @@ namespace view
 			        	for position data: the local→view map is the usual implementation
 			        	for rotation data: the local→view map is identity
 			        	for scaling data: the element→clip map is a scaling operation,
-			            	except we specify width and separation in clip space
+			            	except we specify width and separation in ndc space
 			        	*/
 			            mat4 scale_map = mat4(instance_radius);
 			        	vec4 view_for_element_origin = view_for_global * global_for_local * vec4(instance_origin,1);
@@ -101,8 +101,8 @@ namespace view
 			        			clip_origin.w / vec3(resolution.x/resolution.y,1,1), 
 			        			0.0);
 
-						float clip_radius = (clip_for_view * view_for_element * vec4(1,0,0,0)).x;
-						float pixel_radius = clip_radius / clip_origin.w * resolution.y;
+						float ndc_radius = (clip_for_view * view_for_element * vec4(1,0,0,0)).x / clip_origin.w;
+						float pixel_radius = ndc_radius * resolution.y;
 
 						fragment_inner_pixel_radius = pixel_radius + pixel_separation;
 						fragment_outer_pixel_radius = pixel_radius + pixel_separation + pixel_width;
