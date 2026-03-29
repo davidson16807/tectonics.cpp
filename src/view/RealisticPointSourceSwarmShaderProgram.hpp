@@ -277,7 +277,7 @@ namespace view
 		    if (!success)
 		    {
 		        glGetShaderInfoLog(fragmentShaderId, 512, NULL, infoLog);
-		        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+		        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
 		    }
 
 			shaderProgramId = glCreateProgram();

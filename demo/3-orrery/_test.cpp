@@ -36,7 +36,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // we don't want the old OpenGL
 
   // open a window
-  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Points", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Orrery", NULL, NULL);
   if (!window) {
     std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
@@ -184,7 +184,7 @@ int main() {
   time t(0);
   while(!glfwWindowShouldClose(window)) {
 
-      t+=si::week;
+      t+=si::year;
       
       orbit_system.positions(
         orbits, 
