@@ -12,6 +12,8 @@
 
 // in house libraries
 
+#include <index/iterated/Nary.hpp>           // iterated::Cast
+
 #include <unit/si.hpp>                       // si::unit
 #include <model/orbit/Elements.hpp>          // orbit::Elements
 #include <model/orbit/ElementsAndState.hpp>  // 
@@ -65,7 +67,7 @@ int main() {
 
   /* OUR STUFF GOES HERE NEXT */
 
-  using dvec3 = glm::vec3;
+  using dvec3 = glm::dvec3;
   using vec3 = glm::vec3;
   using vec4 = glm::vec4;
   // using vec4 = glm::vec4;
@@ -97,9 +99,12 @@ int main() {
   Properties properties(dvec3(1,0,0), dvec3(0,0,1), G, pi);
   Propagator propagator(G);
   ElementsAndState converter(properties);
+  iterated::Cast cast;
 
   orrery::OrbitSystem<int,double> orbit_system(propagator, properties);
 
+  std::vector<int> parent_ids {0,0,0,0,0,0,0,0,0,0}; // all children of sun
+  std::vector<int> filtered {1,2,3,4,5,6,7,8,9}; // those that have orbits
   std::vector<std::pair<mass, Elements>> planets = {
       { mass_of_sun, Elements(5.790905e10,  0.2056, 7.005  * si::degree, 0.0, 0.0, 0.0) }, // Mercury
       { mass_of_sun, Elements(1.082080e11,  0.0068, 3.3947 * si::degree, 0.0, 0.0, 0.0) }, // Venus
@@ -115,7 +120,7 @@ int main() {
   // (mass, Universals)
   Orbits orbits;
   // Elliptics
-  int entity_id_counter = 0;
+  int entity_id_counter = 1;
   for (const auto& mass_elements : planets) {
     const auto body_kg = mass_elements.first/kg;
     const Elements& elements = mass_elements.second;
@@ -123,21 +128,24 @@ int main() {
     orbits.add(entity_id_counter++, Orbit(body_kg, state));
   }
 
-  TrackPositions positions;
-  std::vector<int> filtered {0,1,2,3,4,5,6,7,8};
+  TrackPositions orbital_parent_offsets;
+  std::vector<dvec3> parent_offsets(parent_ids.size());
+  std::vector<bool> is_origin_ancestor(parent_ids.size());
 
-  std::vector<vec3> instance_origins(orbits.size());
+  std::vector<dvec3> body_origins(parent_ids.size());    // stores positions at double precision
+  std::vector<vec3> instance_origins(parent_ids.size()); // stores positions for the shader
 
   std::vector<glm::vec4> instance_color{
-    vec4(1.0, 1.0, 1.0, 1.0),
-    vec4(1.0, 1.0, 0.0, 1.0),
-    vec4(0.0, 0.0, 1.0, 1.0),
-    vec4(1.0, 0.0, 0.0, 1.0),
-    vec4(1.0, 0.5, 0.0, 1.0),
-    vec4(1.0, 1.0, 0.5, 1.0),
-    vec4(0.5, 1.0, 0.5, 1.0),
-    vec4(0.5, 0.5, 1.0, 1.0),
-    vec4(1.0, 0.5, 0.5, 1.0),
+    vec4(1.0, 1.0, 0.0, 1.0), // Sun
+    vec4(1.0, 1.0, 1.0, 1.0), // Mercury
+    vec4(0.5, 0.5, 0.0, 1.0), // Venus
+    vec4(0.0, 0.0, 1.0, 1.0), // Earth
+    vec4(1.0, 0.0, 0.0, 1.0), // Mars
+    vec4(1.0, 0.5, 0.0, 1.0), // Jupiter
+    vec4(1.0, 1.0, 0.5, 1.0), // Saturn
+    vec4(0.5, 1.0, 0.5, 1.0), // Uranus
+    vec4(0.5, 0.5, 1.0, 1.0), // Neptune
+    vec4(1.0, 0.5, 0.5, 1.0), // Pluto
   };
 
   glm::mat4 model_matrix(1);
@@ -172,7 +180,6 @@ int main() {
   // view_state.view_matrix = glm::mat4(1);
   view_state.render_pass = view::RenderPassType::overlays;
 
-
   // initialize shader program
   view::IndicatorSphereSwarmShaderProgram sphere_program;
 
@@ -180,22 +187,39 @@ int main() {
   messages::MessageQueue message_queue;
   message_queue.activate(window);
 
-
+  const int origin_id(3); // earth
   time t(0);
   while(!glfwWindowShouldClose(window)) {
 
-      t+=si::year;
-      
-      orbit_system.positions(
+      t+=si::day;
+
+      orbit_system.offsets(
         orbits, 
         filtered, 
         t/si::second, // time_offset
-        positions);
+        orbital_parent_offsets);
 
-      for (std::size_t i = 0; i < positions.size(); ++i)
-      {
-        instance_origins[i] = positions[i].position;
-      }
+      orbit_system.update(
+        orbital_parent_offsets,
+        parent_offsets,
+        parent_offsets
+      );
+
+      orbit_system.is_ancestor(
+        parent_ids,
+        origin_id, //earth
+        is_origin_ancestor
+      );
+
+      orbit_system.positions(
+        parent_offsets,
+        parent_ids,
+        is_origin_ancestor,
+        origin_id,
+        body_origins
+      );
+
+      cast(body_origins, instance_origins);
 
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

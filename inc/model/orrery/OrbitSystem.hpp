@@ -15,6 +15,7 @@
 
 // in-house libraries
 #include <math/special.hpp>           // math::roundfract
+#include <index/iterated/Nary.hpp>    // iterated::Nary.hpp
 #include <model/orbit/Properties.hpp> // orbit::Properties
 #include <model/orbit/Universals.hpp> // orbit::Universals
 #include <model/orbit/UniversalPropagator.hpp> // orbit::UniversalPropagator
@@ -44,11 +45,14 @@ namespace orrery
         using CycleSamples = std::vector<CycleSample<id,scalar,scalar>>;
         using TrackPositions = std::vector<TrackPosition<id,scalar>>;
         using Resonances = std::vector<Resonance<id,scalar>>;
+
         using ids = std::vector<id>;
         using vec3s = std::vector<vec3>;
+        using bools = std::vector<bool>;
 
         const orbit::UniversalPropagator<scalar> propagator;
         const orbit::Properties<scalar> elliptics;
+        const iterated::Identity copy;
 
         id closest_resonance_index(const scalar fraction, const id max_index) const
         {
@@ -185,7 +189,7 @@ namespace orrery
         }
 
         // Oⁿ(NPCT)ⁿ → (Nℝ³)ᵐ
-        void positions(
+        void offsets(
             const Orbits& orbits,
             const CycleSamples& samples,
             TrackPositions& results
@@ -205,7 +209,7 @@ namespace orrery
         }
 
         // OⁿNᵐt→(Nℝ³)ᵐ
-        void positions(
+        void offsets(
             const Orbits& orbits,
             const ids& filtered,
             const scalar time_offset,
@@ -220,24 +224,6 @@ namespace orrery
                         orbits.get(filtered[i]),
                         time_offset
                     ).position); // TODO: add logic to consider time offsets in the orbit itself
-            }
-        }
-
-        // (Nℝ³)ᵐ(ℝ³)ⁿ → (ℝ³)ⁿ
-        void update(
-            const TrackPositions& updates,
-            const vec3s& tree,
-            vec3s& updated
-        ) const {
-            if(&updated != &tree) {
-                updated.clear();
-                updated.reserve(tree.size());
-                for (std::size_t i = 0; i < tree.size(); ++i) {
-                    updated.emplace_back(tree[i]);
-                }
-            }
-            for (std::size_t i = 0; i < updates.size(); ++i) {
-                updated[updates[i].node] = updates[i].position;
             }
         }
 
@@ -262,6 +248,71 @@ namespace orrery
                 subperiod = updated[resonances[i].node];
                 updated[resonances[i].node] = updated[subperiod].with_time(period.time());
             }
+        }
+
+        // (Nℝ³)ᵐ(ℝ³)ⁿ → (ℝ³)ⁿ
+        void update(
+            const TrackPositions& updates,
+            const vec3s& parent_offsets,
+            vec3s& updated
+        ) const {
+            if(&updated != &parent_offsets) {
+                updated.clear();
+                updated.reserve(parent_offsets.size());
+                for (std::size_t i = 0; i < parent_offsets.size(); ++i) {
+                    updated.emplace_back(parent_offsets[i]);
+                }
+            }
+            for (std::size_t i = 0; i < updates.size(); ++i) {
+                updated[updates[i].node] = updates[i].position;
+            }
+        }
+
+        void is_ancestor(
+            const ids& parent_ids,
+            const id first_ancestor_id,
+            bools& results
+        ) const {
+            std::fill(results.begin(), results.end(), false);
+            id ancestor_id(first_ancestor_id);
+            while(ancestor_id > 0)
+            {
+                results[ancestor_id] = true;
+                ancestor_id = parent_ids[ancestor_id];
+            }
+            results[ancestor_id] = true;
+        }
+
+        void positions(
+            const vec3s& parent_offsets,
+            const ids& parent_ids,
+            const bools& is_origin_ancestor,
+            const id origin_id,
+            vec3s& results
+        ) const {
+
+            auto size = parent_offsets.size();
+            copy(parent_offsets, results);
+
+            id ancestor_id(origin_id);
+            vec3 ancestor_offset(0);
+            vec3 parent_to_child_offset(0);
+            while(ancestor_id > 0)
+            {
+                parent_to_child_offset = parent_offsets[ancestor_id];
+                results[ancestor_id] = ancestor_offset;
+                ancestor_offset -= parent_to_child_offset;
+                ancestor_id = parent_ids[ancestor_id];
+            }
+            results[ancestor_id] = ancestor_offset;
+
+            for (std::size_t i = 0; i < size; ++i)
+            {
+                results[i] = is_origin_ancestor[i]? 
+                    results[i] 
+                  : results[parent_ids[i]] + parent_offsets[i];
+            }
+
         }
 
     };
