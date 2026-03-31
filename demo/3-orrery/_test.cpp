@@ -88,6 +88,8 @@ int main() {
   constexpr auto au = si::astronomical_unit/m;
   constexpr auto G = si::gravitational_constant / (m3/(kg*s*s));
   const auto mass_of_sun = si::solar_mass; 
+  const auto mass_of_earth_moon = 6.0457e24 * si::kilogram;    
+  const auto mass_of_jupiter = si::jupiter_mass;     
 
   using Elements = orbit::Elements<double>;
   using ElementsAndState = orbit::ElementsAndState<double>;
@@ -103,8 +105,8 @@ int main() {
 
   orrery::OrbitSystem<int,double> orbit_system(propagator, properties);
 
-  std::vector<int> parent_ids {0,0,0,0,0,0,0,0,0,0}; // all children of sun
-  std::vector<int> filtered {1,2,3,4,5,6,7,8,9}; // those that have orbits
+  std::vector<int> parent_ids {0,0,0,0,0,0,0,0,0,0,3,5,5,5,5}; // 0 is sun, 3 is earth, 5 is jupiter
+  std::vector<int> filtered {1,2,3,4,5,6,7,8,9,10,11,12,13,14}; // those that have orbits
   std::vector<std::pair<mass, Elements>> planets = {
       { mass_of_sun, Elements(5.790905e10,  0.2056, 7.005  * si::degree, 0.0, 0.0, 0.0) }, // Mercury
       { mass_of_sun, Elements(1.082080e11,  0.0068, 3.3947 * si::degree, 0.0, 0.0, 0.0) }, // Venus
@@ -115,6 +117,29 @@ int main() {
       { mass_of_sun, Elements(2.87246e12,   0.046,  0.770  * si::degree, 0.0, 0.0, 0.0) }, // Uranus
       { mass_of_sun, Elements(4.49506e12,   0.009,  1.769  * si::degree, 0.0, 0.0, 0.0) }, // Neptune
       { mass_of_sun, Elements(39.482*au,    0.2488, 17.14  * si::degree, 0.0, 0.0, 0.0) }, // Pluto
+      { mass_of_earth_moon, Elements(384e6, 0.0549, 0.0   * si::degree, 0.0, 0.0, 0.0) }, // Moon
+      { mass_of_jupiter, Elements(421.8e6,  0.0041, 0.050 * si::degree, 0.0, 0.0, 0.0) }, // Io
+      { mass_of_jupiter, Elements(671.1e6,  0.0090, 0.470 * si::degree, 0.0, 0.0, 0.0) }, // Europa
+      { mass_of_jupiter, Elements(1070.4e6, 0.0013, 0.200 * si::degree, 0.0, 0.0, 0.0) }, // Ganymede
+      { mass_of_jupiter, Elements(1882.7e6, 0.0074, 0.192 * si::degree, 0.0, 0.0, 0.0) }, // Callisto
+  };
+
+  std::vector<glm::vec4> instance_color{
+    vec4(1.0, 1.0, 0.0, 1.0), // Sun
+    vec4(0.5, 0.5, 0.5, 1.0), // Mercury
+    vec4(0.5, 0.5, 0.0, 1.0), // Venus
+    vec4(0.0, 0.0, 1.0, 1.0), // Earth
+    vec4(1.0, 0.0, 0.0, 1.0), // Mars
+    vec4(1.0, 0.5, 0.0, 1.0), // Jupiter
+    vec4(1.0, 1.0, 0.5, 1.0), // Saturn
+    vec4(0.5, 1.0, 0.5, 1.0), // Uranus
+    vec4(0.5, 0.5, 1.0, 1.0), // Neptune
+    vec4(1.0, 0.5, 0.5, 1.0), // Pluto
+    vec4(1.0, 1.0, 1.0, 1.0), // Moon
+    vec4(0.5, 0.5, 0.0, 1.0), // Io
+    vec4(0.5, 0.5, 1.0, 1.0), // Europa
+    vec4(0.5, 0.5, 0.5, 1.0), // Ganymede
+    vec4(0.5, 0.5, 0.5, 1.0), // Callisto
   };
 
   // (mass, Universals)
@@ -135,18 +160,6 @@ int main() {
   std::vector<dvec3> body_origins(parent_ids.size());    // stores positions at double precision
   std::vector<vec3> instance_origins(parent_ids.size()); // stores positions for the shader
 
-  std::vector<glm::vec4> instance_color{
-    vec4(1.0, 1.0, 0.0, 1.0), // Sun
-    vec4(1.0, 1.0, 1.0, 1.0), // Mercury
-    vec4(0.5, 0.5, 0.0, 1.0), // Venus
-    vec4(0.0, 0.0, 1.0, 1.0), // Earth
-    vec4(1.0, 0.0, 0.0, 1.0), // Mars
-    vec4(1.0, 0.5, 0.0, 1.0), // Jupiter
-    vec4(1.0, 1.0, 0.5, 1.0), // Saturn
-    vec4(0.5, 1.0, 0.5, 1.0), // Uranus
-    vec4(0.5, 0.5, 1.0, 1.0), // Neptune
-    vec4(1.0, 0.5, 0.5, 1.0), // Pluto
-  };
 
   glm::mat4 model_matrix(1);
 
@@ -168,7 +181,7 @@ int main() {
     850.0f/640.0f, 
     // 1e3f,
     // 1e16f
-    float(planet_billboard_near_distance/m), 
+    float(planet_billboard_near_distance/10.0/m), 
     float(point_source_near_distance/m)
   );
   view_state.view_matrix = control_state.get_view_matrix();
@@ -197,7 +210,8 @@ int main() {
         orbits, 
         filtered, 
         t/si::second, // time_offset
-        orbital_parent_offsets);
+        orbital_parent_offsets
+      );
 
       orbit_system.update(
         orbital_parent_offsets,
@@ -227,7 +241,7 @@ int main() {
       sphere_program.draw(
         instance_origins,
         instance_color,
-        10, //instance_pixel_radius
+        5, //instance_pixel_radius
         vec3(0,0,1), // light direction
         // vec3(0.5,0.5,1), // light direction
         vec3(1.0), // ambient light
