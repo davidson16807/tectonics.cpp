@@ -90,6 +90,9 @@ int main() {
   const auto mass_of_sun = si::solar_mass; 
   const auto mass_of_earth_moon = 6.0457e24 * si::kilogram;    
   const auto mass_of_jupiter = si::jupiter_mass;     
+  const auto mass_of_saturn = 5.683e26 * si::kilogram;     
+  const auto mass_of_uranus = 8.681e25 * si::kilogram;     
+  const auto mass_of_neptune = 1.024e26 * si::kilogram;     
 
   using Elements = orbit::Elements<double>;
   using ElementsAndState = orbit::ElementsAndState<double>;
@@ -105,8 +108,10 @@ int main() {
 
   orrery::OrbitSystem<int,double> orbit_system(propagator, properties);
 
-  std::vector<int> parent_ids {0,0,0,0,0,0,0,0,0,0,3,5,5,5,5}; // 0 is sun, 3 is earth, 5 is jupiter
-  std::vector<int> filtered {1,2,3,4,5,6,7,8,9,10,11,12,13,14}; // those that have orbits
+  std::vector<int> parent_ids {0,0,0,0,0,0,0,0,0,0,3,5,5,5,5,6,6,6,6,6,6,6,6,7,7,7,7,7,8}; 
+  // 0 is sun, 3 is earth, 5 is jupiter
+  std::vector<int> filtered {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28};
+   // those that have orbits
   std::vector<std::pair<mass, Elements>> planets = {
       { mass_of_sun, Elements(5.790905e10,  0.2056, 7.005  * si::degree, 0.0, 0.0, 0.0) }, // Mercury
       { mass_of_sun, Elements(1.082080e11,  0.0068, 3.3947 * si::degree, 0.0, 0.0, 0.0) }, // Venus
@@ -122,6 +127,20 @@ int main() {
       { mass_of_jupiter, Elements(671.1e6,  0.0090, 0.470 * si::degree, 0.0, 0.0, 0.0) }, // Europa
       { mass_of_jupiter, Elements(1070.4e6, 0.0013, 0.200 * si::degree, 0.0, 0.0, 0.0) }, // Ganymede
       { mass_of_jupiter, Elements(1882.7e6, 0.0074, 0.192 * si::degree, 0.0, 0.0, 0.0) }, // Callisto
+      { mass_of_saturn, Elements(186e6,     0.0196, 1.53  * si::degree, 0.0, 0.0, 0.0) }, // Mimas
+      { mass_of_saturn, Elements(238.4e6,   0.0047, 0.02  * si::degree, 0.0, 0.0, 0.0) }, // Enceladus
+      { mass_of_saturn, Elements(295e6,     0.0001, 1.09  * si::degree, 0.0, 0.0, 0.0) }, // Tethys
+      { mass_of_saturn, Elements(377.7e6,   0.0022, 0.02  * si::degree, 0.0, 0.0, 0.0) }, // Dione
+      { mass_of_saturn, Elements(527.2e6,   0.001,  0.35  * si::degree, 0.0, 0.0, 0.0) }, // Rhea
+      { mass_of_saturn, Elements(1221.9e6,  0.0288, 0.33  * si::degree, 0.0, 0.0, 0.0) }, // Titan
+      { mass_of_saturn, Elements(1481.5e6,  0.0274, 0.43  * si::degree, 0.0, 0.0, 0.0) }, // Hyperion
+      { mass_of_saturn, Elements(3561.7e6,  0.0283, 157.0 * si::degree, 0.0, 0.0, 0.0) }, // Iapetus
+      { mass_of_uranus, Elements(129846e3,  0.0014, 4.421 * si::degree, 0.0, 0.0, 0.0) }, // Miranda
+      { mass_of_uranus, Elements(190929e3,  0.0014, 0.026 * si::degree, 0.0, 0.0, 0.0) }, // Ariel
+      { mass_of_uranus, Elements(265986e3,  0.0039, 0.083 * si::degree, 0.0, 0.0, 0.0) }, // Umbriel
+      { mass_of_uranus, Elements(265986e3,  0.0016, 0.114 * si::degree, 0.0, 0.0, 0.0) }, // Titania
+      { mass_of_uranus, Elements(583511e3,  0.0016, 0.125 * si::degree, 0.0, 0.0, 0.0) }, // Oberon
+      { mass_of_neptune, Elements(354759e3, 0.0000, 156.865*si::degree, 0.0, 0.0, 0.0) }, // Triton
   };
 
   std::vector<glm::vec4> instance_color{
@@ -140,6 +159,20 @@ int main() {
     vec4(0.5, 0.5, 1.0, 1.0), // Europa
     vec4(0.5, 0.5, 0.5, 1.0), // Ganymede
     vec4(0.5, 0.5, 0.5, 1.0), // Callisto
+    vec4(0.5, 0.5, 0.5, 1.0), // Mimas
+    vec4(0.5, 0.5, 0.5, 1.0), // Enceladus
+    vec4(0.5, 0.5, 0.5, 1.0), // Tethys
+    vec4(0.5, 0.5, 0.5, 1.0), // Dione
+    vec4(0.5, 0.5, 0.5, 1.0), // Rhea
+    vec4(1.0, 1.0, 0.0, 1.0), // Titan
+    vec4(0.5, 0.5, 0.5, 1.0), // Hyperion
+    vec4(0.5, 0.5, 0.5, 1.0), // Iapetus
+    vec4(0.5, 0.5, 0.5, 1.0), // Miranda
+    vec4(0.5, 0.5, 0.5, 1.0), // Ariel
+    vec4(0.5, 0.5, 0.5, 1.0), // Umbriel
+    vec4(0.5, 0.5, 0.5, 1.0), // Titania
+    vec4(0.5, 0.5, 0.5, 1.0), // Oberon
+    vec4(1.0, 0.5, 0.5, 1.0), // Triton
   };
 
   // (mass, Universals)
@@ -200,7 +233,7 @@ int main() {
   messages::MessageQueue message_queue;
   message_queue.activate(window);
 
-  const int origin_id(3); // earth
+  const int origin_id(3);
   time t(0);
   while(!glfwWindowShouldClose(window)) {
 
