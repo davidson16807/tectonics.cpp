@@ -22,7 +22,7 @@
 #include "CycleSample.hpp"
 #include "TrackPosition.hpp"
 #include "Resonance.hpp"
-#include "UnsortedEphemeralComponents.hpp"
+#include "CommonComponents.hpp"
 
 namespace orrery
 {
@@ -38,7 +38,7 @@ namespace orrery
 
         using vec3 = glm::vec<3,scalar,precision>;
 
-        using Orbits = UnsortedEphemeralComponents<id, orbit::Universals<scalar>>;
+        using Orbits = CommonComponents<id, orbit::Universals<scalar>>;
         using Cycles = std::vector<Cycle<id,scalar>>;
         using CycleSamples = std::vector<CycleSample<id,scalar,scalar>>;
         using TrackPositions = std::vector<TrackPosition<id,scalar>>;
@@ -93,17 +93,19 @@ namespace orrery
             imperceptible.reserve(orbits.size());
             orbit::Universals<scalar> orbit;
             scalar inverse_semi_major_axis;
-            for (std::size_t i = 0; i < orbits.size(); ++i) {
-                orbit = orbits.for_component(i);
-                inverse_semi_major_axis = propagator.inverse_semi_major_axis(orbit);
-                if (!propagator.is_elliptic(inverse_semi_major_axis)) {
-                    perceptible.emplace_back(id(i));
-                } else {
-                    scalar period = elliptics.period_from_semi_major_axis(s1/inverse_semi_major_axis, orbit.combined_mass);
-                    if (min_perceivable_period <= period && period <= max_perceivable_period) {
-                        perceptible.emplace_back(id(i));
+            for (std::size_t entity = 0; entity < orbits.size(); ++entity) {
+                if (orbits.has(entity)) {
+                    orbit = orbits.component_for_entity(entity);
+                    inverse_semi_major_axis = propagator.inverse_semi_major_axis(orbit);
+                    if (!propagator.is_elliptic(inverse_semi_major_axis)) {
+                        perceptible.emplace_back(id(entity));
                     } else {
-                        imperceptible.emplace_back(id(i), period);
+                        scalar period = elliptics.period_from_semi_major_axis(s1/inverse_semi_major_axis, orbit.combined_mass);
+                        if (min_perceivable_period <= period && period <= max_perceivable_period) {
+                            perceptible.emplace_back(id(entity));
+                        } else {
+                            imperceptible.emplace_back(id(entity), period);
+                        }
                     }
                 }
             }
@@ -205,7 +207,7 @@ namespace orrery
                 results.emplace_back(
                     sample.node, 
                     propagator.state(
-                        orbits.component_for_entity(i),
+                        orbits.component_for_entity(sample.cycle),
                         sample.time()
                     ).position); // TODO: add logic to consider time offsets in the orbit itself
             }
@@ -216,17 +218,17 @@ namespace orrery
         // this is motivated by the need to track hyperbolic, parabolic, and perceptible elliptic orbits
         void offsets(
             const Orbits& orbits,
-            const ids& filtered,
+            const ids& entities,
             const scalar time_offset,
             TrackPositions& results
         ) const {
             results.clear();
-            results.reserve(filtered.size());
-            for (std::size_t i = 0; i < filtered.size(); ++i) {
+            results.reserve(entities.size());
+            for (std::size_t i = 0; i < entities.size(); ++i) {
                 results.emplace_back(
-                    filtered[i],
+                    entities[i],
                     propagator.state(
-                        orbits.component_for_entity(filtered[i]),
+                        orbits.component_for_entity(entities[i]),
                         time_offset
                     ).position); // TODO: add logic to consider time offsets in the orbit itself
             }

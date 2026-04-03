@@ -24,8 +24,6 @@ class CommonComponents
 	std::vector<Component> component_store;
 	// Whether a given entity currently owns a component.
 	std::vector<bool> exists;
-	// Number of entities that currently have a component.
-	std::size_t component_count;
 
 public:
 
@@ -33,8 +31,7 @@ public:
 	Create an empty `CommonComponents<id,Component>` instance.
 	*/
 	CommonComponents():
-		component_store(),
-		component_count(0)
+		component_store()
 	{
 	}
 
@@ -45,8 +42,7 @@ public:
 	*/
 	CommonComponents(const std::vector<Component>& components_):
 		component_store(components_),
-		exists(components_.size()),
-		component_count(components_.size())
+		exists(components_.size())
 	{
 	}
 
@@ -56,8 +52,7 @@ public:
 	*/
 	CommonComponents(const id& entity_count):
 		component_store(std::size_t(entity_count)),
-		exists(std::size_t(entity_count), false),
-		component_count(0)
+		exists(std::size_t(entity_count), false)
 	{
 	}
 
@@ -68,8 +63,7 @@ public:
 	*/
 	CommonComponents(const id& entity_count, const bool exists):
 		component_store(std::size_t(entity_count)),
-		exists(std::size_t(entity_count), exists),
-		component_count(exists? std::size_t(entity_count) : 0)
+		exists(std::size_t(entity_count), exists)
 	{
 	}
 
@@ -79,30 +73,28 @@ public:
 	*/
 	CommonComponents(const id& entity_count, const Component component):
 		component_store(std::size_t(entity_count)),
-		exists(std::size_t(entity_count), true),
-		component_count(std::size_t(entity_count))
+		exists(std::size_t(entity_count), true)
 	{
 	}
 
 	std::size_t size() const
 	{
-		return component_count;
+		return component_store.size();
 	}
 
 	void add(const id entity, const Component& component)
 	{
 		const std::size_t index = std::size_t(entity);
-		if (index >= components.size())
+		if (index >= component_store.size())
 		{
-			components.resize(index + 1);
+			component_store.resize(index + 1);
 			exists.resize(index + 1, false);
 		}
 
 		assert(!exists[index] && "Component added to same entity more than once.");
 
-		components[index] = component;
+		component_store[index] = component;
 		exists[index] = true;
-		++_size;
 	}
 
 	void entity_destroyed(const id entity)
@@ -117,14 +109,13 @@ public:
 	{
 		assert(has(entity) && "Removing non-existent component.");
 
-		exists[index] = false;
-		--_size;
+		exists[std::size_t(entity)] = false;
 	}
 
 	inline bool has(const id entity) const
 	{
 		const std::size_t index = std::size_t(entity);
-		return index < component_store.size() && component_store[index].has_value();
+		return index < exists.size() && exists[index];
 	}
 
 	const id entity_for_index(std::size_t component) const
@@ -135,13 +126,13 @@ public:
 	const Component& component_for_entity(const id entity) const
 	{
 		assert(has(entity) && "Retrieving non-existent component.");
-		return *component_store[std::size_t(entity)];
+		return component_store[std::size_t(entity)];
 	}
 
 	Component& component_for_entity(const id entity)
 	{
 		assert(has(entity) && "Retrieving non-existent component.");
-		return *component_store[std::size_t(entity)];
+		return component_store[std::size_t(entity)];
 	}
 
 	const Component& vector() const

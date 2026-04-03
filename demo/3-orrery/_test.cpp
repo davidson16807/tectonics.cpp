@@ -19,7 +19,7 @@
 #include <model/orbit/ElementsAndState.hpp>  // 
 #include <model/orrery/OrbitSystem.hpp>      // orrery:OrbitSystem
 #include <model/orrery/SceneTrees.hpp>       // orrery:SceneTrees
-#include <model/orrery/UnsortedEphemeralComponents.hpp>       // orrery:UnsortedEphemeralComponents
+#include <model/orrery/CommonComponents.hpp> // orrery:UnsortedEphemeralComponents
 
 #include <update/OrbitalControlState.hpp>    // update::OrbitalControlState
 #include <update/OrbitalControlUpdater.hpp>  // update::OrbitalControlUpdater
@@ -100,7 +100,7 @@ int main() {
   using Propagator = orbit::UniversalPropagator<double>;
   using Properties = orbit::Properties<double>;
   using Orbit = orbit::Universals<double>;
-  using Orbits = orrery::UnsortedEphemeralComponents<int,Orbit>;
+  using Orbits = orrery::CommonComponents<int,Orbit>;
   using TrackPositions = std::vector<orrery::TrackPosition<int,double>>;
   Properties properties(dvec3(1,0,0), dvec3(0,0,1), G, pi);
   Propagator propagator(G);

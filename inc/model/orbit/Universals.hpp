@@ -73,6 +73,9 @@ namespace orbit {
 			time_offset(time_offset)
 		{}
 
+		constexpr Universals()
+		{}
+
 		vec3 angular_momentum_vector() const noexcept {
 			return glm::cross(initial_position, initial_velocity);
 		}
