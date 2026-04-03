@@ -6,16 +6,14 @@
 // std libraries
 #include <limits>   // std::numeric_limits
 #include <vector>   // std::vector
-#include <algorithm>// std::min/max/fill
+#include <algorithm>// std::min/max
 #include <utility>  // std::pair
-#include <format>   // std::format
 
 // 3rd-party libraries
 #include <glm/vec3.hpp>          // *vec3
 
 // in-house libraries
 #include <math/special.hpp>           // math::roundfract
-#include <index/iterated/Nary.hpp>    // iterated::Nary.hpp
 #include <model/orbit/Properties.hpp> // orbit::Properties
 #include <model/orbit/Universals.hpp> // orbit::Universals
 #include <model/orbit/UniversalPropagator.hpp> // orbit::UniversalPropagator
@@ -52,7 +50,6 @@ namespace orrery
 
         const orbit::UniversalPropagator<scalar> propagator;
         const orbit::Properties<scalar> elliptics;
-        const iterated::Identity copy;
 
         id closest_resonance_index(const scalar fraction, const id max_index) const
         {
@@ -258,78 +255,6 @@ namespace orrery
                 subperiod = updated[resonances[i].node];
                 updated[resonances[i].node] = updated[subperiod].with_time(period.time());
             }
-        }
-
-        // (Nℝ³)ᵐ(ℝ³)ⁿ → (ℝ³)ⁿ
-        // the contents of `updated` after invocation are those of `parent_offsets` merged with `updates`
-        void update(
-            const TrackPositions& updates,
-            const vec3s& parent_offsets,
-            vec3s& updated
-        ) const {
-            if(&updated != &parent_offsets) {
-                updated.clear();
-                updated.reserve(parent_offsets.size());
-                for (std::size_t i = 0; i < parent_offsets.size(); ++i) {
-                    updated.emplace_back(parent_offsets[i]);
-                }
-            }
-            for (std::size_t i = 0; i < updates.size(); ++i) {
-                updated[updates[i].node] = updates[i].position;
-            }
-        }
-
-        // the contents of `results` after invocation indicate whether each node in a scene tree
-        // is an ancestor of the node whose first ancestor is `parent_id`.
-        // nodes have parents given by `parent_ids`
-        void is_ancestor(
-            const ids& parent_ids,
-            const id parent_id,
-            bools& results
-        ) const {
-            std::fill(results.begin(), results.end(), false);
-            id ancestor_id(parent_id);
-            while(ancestor_id > 0)
-            {
-                results[ancestor_id] = true;
-                ancestor_id = parent_ids[ancestor_id];
-            }
-            results[ancestor_id] = true;
-        }
-
-        // the contents of `results` after invocation are the positions of nodes in a scene tree
-        // in a coordinate system where the node given by `origin_id` is the origin.
-        // nodes have parents given by `parent_ids` and are offset from their parents by `parent_offsets`.
-        void positions(
-            const vec3s& parent_offsets,
-            const ids& parent_ids,
-            const bools& is_origin_ancestor,
-            const id origin_id,
-            vec3s& results
-        ) const {
-
-            auto size = parent_offsets.size();
-            copy(parent_offsets, results);
-
-            id ancestor_id(origin_id);
-            vec3 ancestor_offset(0);
-            vec3 parent_to_child_offset(0);
-            while(ancestor_id > 0)
-            {
-                parent_to_child_offset = parent_offsets[ancestor_id];
-                results[ancestor_id] = ancestor_offset;
-                ancestor_offset -= parent_to_child_offset;
-                ancestor_id = parent_ids[ancestor_id];
-            }
-            results[ancestor_id] = ancestor_offset;
-
-            for (std::size_t i = 0; i < size; ++i)
-            {
-                results[i] = is_origin_ancestor[i]? 
-                    results[i] 
-                  : results[parent_ids[i]] + parent_offsets[i];
-            }
-
         }
 
     };

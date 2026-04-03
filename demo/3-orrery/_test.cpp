@@ -18,7 +18,8 @@
 #include <model/orbit/Elements.hpp>          // orbit::Elements
 #include <model/orbit/ElementsAndState.hpp>  // 
 #include <model/orrery/OrbitSystem.hpp>      // orrery:OrbitSystem
-#include <model/orrery/Components.hpp>       // orrery:Components
+#include <model/orrery/SceneTrees.hpp>       // orrery:SceneTrees
+#include <model/orrery/UnsortedEphemeralComponents.hpp>       // orrery:UnsortedEphemeralComponents
 
 #include <update/OrbitalControlState.hpp>    // update::OrbitalControlState
 #include <update/OrbitalControlUpdater.hpp>  // update::OrbitalControlUpdater
@@ -99,7 +100,7 @@ int main() {
   using Propagator = orbit::UniversalPropagator<double>;
   using Properties = orbit::Properties<double>;
   using Orbit = orbit::Universals<double>;
-  using Orbits = orrery::Components<int,Orbit>;
+  using Orbits = orrery::UnsortedEphemeralComponents<int,Orbit>;
   using TrackPositions = std::vector<orrery::TrackPosition<int,double>>;
   Properties properties(dvec3(1,0,0), dvec3(0,0,1), G, pi);
   Propagator propagator(G);
@@ -107,6 +108,7 @@ int main() {
   iterated::Cast cast;
 
   orrery::OrbitSystem<int,double> orbit_system(propagator, properties);
+  orrery::SceneTrees<int,double> scene_trees;
 
   // within the confines of this ECS implementation, parent_ids are one-to-one with entities, so we store them using a std::vector
   std::vector<int> parent_ids {0,0,0,0,0,0,0,0,0,0,3,5,5,5,5,6,6,6,6,6,6,6,6,7,7,7,7,7,8}; 
@@ -254,19 +256,19 @@ int main() {
       and remove the need for `TrackPositions` and its `node` attribute.
       The major downside is the loss of conceptual purity.
       */ 
-      orbit_system.update(
+      scene_trees.update(
         orbital_parent_offsets,
         parent_offsets,
         parent_offsets
       );
 
-      orbit_system.is_ancestor(
+      scene_trees.is_ancestor(
         parent_ids,
         origin_id, //earth
         is_origin_ancestor
       );
 
-      orbit_system.positions(
+      scene_trees.positions(
         parent_offsets,
         parent_ids,
         is_origin_ancestor,
