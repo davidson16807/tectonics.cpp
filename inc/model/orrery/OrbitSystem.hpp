@@ -82,6 +82,7 @@ namespace orrery
         {}
 
         // Oⁿ → Nᵐ
+        // partitions orbits among imperceptible cyclic and perceptible/noncyclic groups
         void group(
             const Orbits& orbits, 
             const scalar min_perceivable_period,
@@ -96,7 +97,7 @@ namespace orrery
             orbit::Universals<scalar> orbit;
             scalar inverse_semi_major_axis;
             for (std::size_t i = 0; i < orbits.size(); ++i) {
-                orbit = orbits.get(i);
+                orbit = orbits.for_component(i);
                 inverse_semi_major_axis = propagator.inverse_semi_major_axis(orbit);
                 if (!propagator.is_elliptic(inverse_semi_major_axis)) {
                     perceptible.emplace_back(id(i));
@@ -112,6 +113,7 @@ namespace orrery
         }
 
         // Tⁿ→RⁿI
+        // detects resonant systems between cycles
         void resonances(
             const Cycles& cycles,
             ids& resonances,
@@ -139,6 +141,7 @@ namespace orrery
         }
 
         // TⁿRⁿI→Tʳ
+        // calculates the periods of resonant systems
         std::vector<scalar> periods(
             const Cycles& cycles,
             const std::vector<id>& resonances,
@@ -171,6 +174,7 @@ namespace orrery
         }
 
         // (IT)ⁿII → (NPCT)ⁿ
+        // for a given sample id, this generates that sample's cycle configuration
         void sample(
             const Cycles& cycles, 
             const id samples_per_cycle, 
@@ -189,6 +193,8 @@ namespace orrery
         }
 
         // Oⁿ(NPCT)ⁿ → (Nℝ³)ᵐ
+        // generates barycentric offsets for each cyclic orbit and configuration
+        // this is motivated by the need to quickly track imperceptible elliptic orbits
         void offsets(
             const Orbits& orbits,
             const CycleSamples& samples,
@@ -202,13 +208,15 @@ namespace orrery
                 results.emplace_back(
                     sample.node, 
                     propagator.state(
-                        orbits.get(i),
+                        orbits.for_entity(i),
                         sample.time()
                     ).position); // TODO: add logic to consider time offsets in the orbit itself
             }
         }
 
         // OⁿNᵐt→(Nℝ³)ᵐ
+        // generates barycentric offsets at a given time offset for each orbit
+        // this is motivated by the need to track hyperbolic, parabolic, and perceptible elliptic orbits
         void offsets(
             const Orbits& orbits,
             const ids& filtered,
@@ -221,13 +229,15 @@ namespace orrery
                 results.emplace_back(
                     filtered[i],
                     propagator.state(
-                        orbits.get(filtered[i]),
+                        orbits.for_entity(filtered[i]),
                         time_offset
                     ).position); // TODO: add logic to consider time offsets in the orbit itself
             }
         }
 
         // (NPCT)ⁿ(RPCT)ᵐ → (NPCT)ⁿ
+        // updates the given sample configuration of cycles, `subsamples`, 
+        // to reflect a given sample configuration for resonance systems, `samples`
         void update(
             const Resonances& resonances,
             const CycleSamples& samples,
@@ -251,6 +261,7 @@ namespace orrery
         }
 
         // (Nℝ³)ᵐ(ℝ³)ⁿ → (ℝ³)ⁿ
+        // the contents of `updated` after invocation are those of `parent_offsets` merged with `updates`
         void update(
             const TrackPositions& updates,
             const vec3s& parent_offsets,
@@ -268,13 +279,16 @@ namespace orrery
             }
         }
 
+        // the contents of `results` after invocation indicate whether each node in a scene tree
+        // is an ancestor of the node whose first ancestor is `parent_id`.
+        // nodes have parents given by `parent_ids`
         void is_ancestor(
             const ids& parent_ids,
-            const id first_ancestor_id,
+            const id parent_id,
             bools& results
         ) const {
             std::fill(results.begin(), results.end(), false);
-            id ancestor_id(first_ancestor_id);
+            id ancestor_id(parent_id);
             while(ancestor_id > 0)
             {
                 results[ancestor_id] = true;
@@ -283,6 +297,9 @@ namespace orrery
             results[ancestor_id] = true;
         }
 
+        // the contents of `results` after invocation are the positions of nodes in a scene tree
+        // in a coordinate system where the node given by `origin_id` is the origin.
+        // nodes have parents given by `parent_ids` and are offset from their parents by `parent_offsets`.
         void positions(
             const vec3s& parent_offsets,
             const ids& parent_ids,

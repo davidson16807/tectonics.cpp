@@ -108,11 +108,13 @@ int main() {
 
   orrery::OrbitSystem<int,double> orbit_system(propagator, properties);
 
+  // within the confines of this ECS implementation, parent_ids are one-to-one with entities, so we store them using a std::vector
   std::vector<int> parent_ids {0,0,0,0,0,0,0,0,0,0,3,5,5,5,5,6,6,6,6,6,6,6,6,7,7,7,7,7,8}; 
+  // entities that have perceptible orbits, we use 32-bit ints for entity ids and more than 1 out of 32 are represented, so a bool mask is more sparse, but checking the mask introduces branching logic
   // 0 is sun, 3 is earth, 5 is jupiter
   std::vector<int> filtered {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28};
-   // those that have orbits
-  std::vector<std::pair<mass, Elements>> planets = {
+  // entities that have orbits, this is just a temporary construct used for initialization so we don't care if we use std::vector
+  std::vector<std::pair<mass, Elements>> elliptics = {
       { mass_of_sun, Elements(5.790905e10,  0.2056, 7.005  * si::degree, 0.0, 0.0, 0.0) }, // Mercury
       { mass_of_sun, Elements(1.082080e11,  0.0068, 3.3947 * si::degree, 0.0, 0.0, 0.0) }, // Venus
       { mass_of_sun, Elements(1.49598023e11,0.0167, 0.0    * si::degree, 0.0, 0.0, 0.0) }, // Earth
@@ -143,6 +145,7 @@ int main() {
       { mass_of_neptune, Elements(354759e3, 0.0000, 156.865*si::degree, 0.0, 0.0, 0.0) }, // Triton
   };
 
+  // TODO: store this using `Components<vec4>`
   std::vector<glm::vec4> instance_color{
     vec4(1.0, 1.0, 0.0, 1.0), // Sun
     vec4(0.5, 0.5, 0.5, 1.0), // Mercury
@@ -179,7 +182,7 @@ int main() {
   Orbits orbits;
   // Elliptics
   int entity_id_counter = 1;
-  for (const auto& mass_elements : planets) {
+  for (const auto& mass_elements : elliptics) {
     const auto body_kg = mass_elements.first/kg;
     const Elements& elements = mass_elements.second;
     const auto state = converter.get_state_from_elements(elements, body_kg);
@@ -192,7 +195,6 @@ int main() {
 
   std::vector<dvec3> body_origins(parent_ids.size());    // stores positions at double precision
   std::vector<vec3> instance_origins(parent_ids.size()); // stores positions for the shader
-
 
   glm::mat4 model_matrix(1);
 
@@ -246,6 +248,12 @@ int main() {
         orbital_parent_offsets
       );
 
+      /*
+      TODO: `update` should be unecessary when using components,
+      `.offsets` could instead set results to a `Components` objects,
+      and remove the need for `TrackPositions` and its `node` attribute.
+      The major downside is the loss of conceptual purity.
+      */ 
       orbit_system.update(
         orbital_parent_offsets,
         parent_offsets,
