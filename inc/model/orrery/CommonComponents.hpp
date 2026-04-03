@@ -77,11 +77,6 @@ public:
 	{
 	}
 
-	std::size_t size() const
-	{
-		return component_store.size();
-	}
-
 	void add(const id entity, const Component& component)
 	{
 		const std::size_t index = std::size_t(entity);
@@ -110,6 +105,12 @@ public:
 		assert(has(entity) && "Removing non-existent component.");
 
 		exists[std::size_t(entity)] = false;
+	}
+
+	// `entity_count` returns the number of entities tracked by this component store
+	std::size_t entity_count() const
+	{
+		return component_store.size();
 	}
 
 	inline bool has(const id entity) const
@@ -143,3 +144,4 @@ public:
 };
 
 }
+

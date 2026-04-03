@@ -35,7 +35,7 @@ class UnsortedEphemeralComponents
 	// Map from an entity ID to an array index.
 	std::unordered_map<id, std::size_t> index_of_entity;
 	// Total size of valid entries in the array.
-	std::size_t _size;
+	std::size_t size;
 
 public:
 
@@ -46,7 +46,7 @@ public:
 		components(),
 		entity_of_index(),
 		index_of_entity(),
-		_size(0)
+		size(0)
 	{
 	}
 
@@ -59,7 +59,7 @@ public:
 		components(components_),
 		entity_of_index(),
 		index_of_entity(),
-		_size(components_.size())
+		size(components_.size())
 	{
 		for (std::size_t i = 0; i < components_.size(); ++i)
 		{
@@ -76,15 +76,10 @@ public:
 		components(),
 		entity_of_index(),
 		index_of_entity(),
-		_size(0)
+		size(0)
 	{
 	    components.reserve(std::size_t(entity_count));
 	    entity_of_index.reserve(std::size_t(entity_count));
-	}
-
-	std::size_t size() const
-	{
-		return _size;
 	}
 
 	void add(const id entity, const Component& component)
@@ -92,10 +87,10 @@ public:
 		assert(index_of_entity.find(entity) == index_of_entity.end() && "Component added to same entity more than once.");
 
 		// Put new entry at end and update the maps
-		std::size_t new_index = _size;
+		std::size_t new_index = size;
 		index_of_entity[entity] = new_index;
-		++_size;
-		if (components.size() < _size)
+		++size;
+		if (components.size() < size)
 		{
 			components.push_back(component);
 			entity_of_index.push_back(entity);
@@ -122,7 +117,7 @@ public:
 
 		// Copy element at end into deleted element's place to maintain density
 		std::size_t index_of_removed_entity = index_of_entity[entity];
-		std::size_t index_of_last_element = _size - 1;
+		std::size_t index_of_last_element = size - 1;
 
 		if (index_of_removed_entity != index_of_last_element)
 		{
@@ -136,7 +131,19 @@ public:
 
 		index_of_entity.erase(entity);
 
-		--_size;
+		--size;
+	}
+
+	// `entity_count` returns the number of entities tracked by this component store
+	std::size_t entity_count() const
+	{
+		return size;
+	}
+
+	// `component_count` returns the number of components in this component store
+	std::size_t component_count() const
+	{
+		return size;
 	}
 
 	bool has(id entity) const
