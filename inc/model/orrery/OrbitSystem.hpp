@@ -24,7 +24,7 @@
 #include "CycleSample.hpp"
 #include "TrackPosition.hpp"
 #include "Resonance.hpp"
-#include "Components.hpp"
+#include "UnsortedEphemeralComponents.hpp"
 
 namespace orrery
 {
@@ -40,7 +40,7 @@ namespace orrery
 
         using vec3 = glm::vec<3,scalar,precision>;
 
-        using Orbits = Components<id, orbit::Universals<scalar>>;
+        using Orbits = UnsortedEphemeralComponents<id, orbit::Universals<scalar>>;
         using Cycles = std::vector<Cycle<id,scalar>>;
         using CycleSamples = std::vector<CycleSample<id,scalar,scalar>>;
         using TrackPositions = std::vector<TrackPosition<id,scalar>>;
@@ -208,7 +208,7 @@ namespace orrery
                 results.emplace_back(
                     sample.node, 
                     propagator.state(
-                        orbits.for_entity(i),
+                        orbits.component_for_entity(i),
                         sample.time()
                     ).position); // TODO: add logic to consider time offsets in the orbit itself
             }
@@ -229,7 +229,7 @@ namespace orrery
                 results.emplace_back(
                     filtered[i],
                     propagator.state(
-                        orbits.for_entity(filtered[i]),
+                        orbits.component_for_entity(filtered[i]),
                         time_offset
                     ).position); // TODO: add logic to consider time offsets in the orbit itself
             }

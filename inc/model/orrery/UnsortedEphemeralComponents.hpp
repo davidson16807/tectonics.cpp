@@ -6,7 +6,7 @@
 #include <unordered_map> // std::unordered_map
 
 /*
-`Components` represents a table of components within an Entity-Component-System ("ECS") pattern
+`UnsortedEphemeralComponents` represents a table of components within an Entity-Component-System ("ECS") pattern
 where components or entities are frequently added or removed. `add` and `remove` are done in O(1) time.
 It offers functionality beyond std::vector by managing lookups between component ids and entities,
 thereby accelerating checks for systems that operate on entities with several kinds of components.
@@ -15,9 +15,9 @@ Since we want to avoid expensive memory reallocation,
 The size of the std::vector is allocated according to the number of entities,
 and components in the std::vector are rearranged to minimize changes in memory when entities are added or removed.
 However this will mean that components are not sorted by their entity id,
-so avoid `Components` if sorting by entity id will better exploit cache memory in traversals involving multiple component types.
+so avoid `UnsortedEphemeralComponents` if sorting by entity id will better exploit cache memory in traversals involving multiple component types.
 
-`Components` is best suited if components are expected to be added or removed frequently,
+`UnsortedEphemeralComponents` is best suited if components are expected to be added or removed frequently,
 and interaction between multiple component types is not expected so that contents here can be traversed in-order.
 */
 
@@ -25,7 +25,7 @@ namespace orrery
 {
 
 template<typename id, typename Component>
-class Components
+class UnsortedEphemeralComponents
 {
 
 	// The packed array of components (of generic type Component)
@@ -40,9 +40,9 @@ class Components
 public:
 
 	/*
-	Create an empty `Components<id,Component>` instance 
+	Create an empty `UnsortedEphemeralComponents<id,Component>` instance 
 	*/
-	Components():
+	UnsortedEphemeralComponents():
 		components(),
 		entity_of_index(),
 		index_of_entity(),
@@ -51,11 +51,11 @@ public:
 	}
 
 	/*
-	Create a `Components<id,Component>` instance from the vector `components`
+	Create a `UnsortedEphemeralComponents<id,Component>` instance from the vector `components`
 	where each components corresponds to a unique and newly constructed entity
 	whose id is equal to the component's index.
 	*/
-	Components(const std::vector<Component>& components_):
+	UnsortedEphemeralComponents(const std::vector<Component>& components_):
 		components(components_),
 		entity_of_index(),
 		index_of_entity(),
@@ -69,10 +69,10 @@ public:
 	}
 
 	/*
-	Create a `Components<id,Component>` 
+	Create a `UnsortedEphemeralComponents<id,Component>` 
 	that has memory preallocated to serve a given number of entities.
 	*/
-	Components(const id& entity_count):
+	UnsortedEphemeralComponents(const id& entity_count):
 		components(),
 		entity_of_index(),
 		index_of_entity(),
@@ -144,27 +144,35 @@ public:
 		return index_of_entity.find(entity) != index_of_entity.end();
 	}
 
-	const Component& for_entity(id entity) const
+	const id entity_for_index(std::size_t component) const
 	{
-		// assert(has(entity) && "Retrieving non-existent component.");
+		assert(component < components.size() && "Retrieving non-existent component.");
+		return index_of_entity.at(component);
+	}
+
+	const Component& component_for_entity(id entity) const
+	{
+		assert(has(entity) && "Retrieving non-existent component.");
 		// Return a reference to the entity's component
 		return components.at(index_of_entity.at(entity));
 	}
 
-	Component& for_entity(id entity)
+	Component& component_for_entity(id entity)
 	{
-		// assert(has(entity) && "Retrieving non-existent component.");
+		assert(has(entity) && "Retrieving non-existent component.");
 		// Return a reference to the entity's component
 		return components.at(index_of_entity.at(entity));
 	}
 
-	const Component& for_component(std::size_t component) const
+	const Component& component_for_index(std::size_t component) const
 	{
+		assert(component < components.size() && "Retrieving non-existent component.");
 		return components[component];
 	}
 
-	Component& for_component(std::size_t component)
+	Component& component_for_index(std::size_t component)
 	{
+		assert(component < components.size() && "Retrieving non-existent component.");
 		return components[component];
 	}
 };
