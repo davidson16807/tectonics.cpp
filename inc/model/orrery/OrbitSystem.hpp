@@ -85,10 +85,9 @@ namespace orrery
             const scalar min_perceivable_period,
             const scalar max_perceivable_period,
             Cycles& imperceptible, 
-            ids& perceptible
+            bools& perceptible
         ) const {
-            perceptible.clear();
-            perceptible.reserve(orbits.size());
+            perceptible.resize(orbits.size());
             imperceptible.clear();
             imperceptible.reserve(orbits.size());
             orbit::Universals<scalar> orbit;
@@ -98,12 +97,13 @@ namespace orrery
                     orbit = orbits.component_for_entity(entity);
                     inverse_semi_major_axis = propagator.inverse_semi_major_axis(orbit);
                     if (!propagator.is_elliptic(inverse_semi_major_axis)) {
-                        perceptible.emplace_back(id(entity));
+                        perceptible.emplace_back(true);
                     } else {
                         scalar period = elliptics.period_from_semi_major_axis(s1/inverse_semi_major_axis, orbit.combined_mass);
                         if (min_perceivable_period <= period && period <= max_perceivable_period) {
-                            perceptible.emplace_back(id(entity));
+                            perceptible.emplace_back(true);
                         } else {
+                            perceptible.emplace_back(false);
                             imperceptible.emplace_back(id(entity), period);
                         }
                     }
@@ -218,19 +218,21 @@ namespace orrery
         // this is motivated by the need to track hyperbolic, parabolic, and perceptible elliptic orbits
         void offsets(
             const Orbits& orbits,
-            const ids& entities,
+            const bools& filter,
             const scalar time_offset,
             TrackPositions& results
         ) const {
             results.clear();
-            results.reserve(entities.size());
-            for (std::size_t i = 0; i < entities.size(); ++i) {
-                results.emplace_back(
-                    entities[i],
-                    propagator.state(
-                        orbits.component_for_entity(entities[i]),
-                        time_offset
-                    ).position); // TODO: add logic to consider time offsets in the orbit itself
+            results.reserve(orbits.entity_count());
+            for (std::size_t i = 0; i < orbits.entity_count(); ++i) {
+                if (filter[i]){
+                    results.emplace_back(
+                        i,
+                        propagator.state(
+                            orbits.component_for_entity(i),
+                            time_offset
+                        ).position); // TODO: add logic to consider time offsets in the orbit itself
+                }
             }
         }
 

@@ -94,6 +94,9 @@ int main() {
   const auto mass_of_saturn = 5.683e26 * si::kilogram;     
   const auto mass_of_uranus = 8.681e25 * si::kilogram;     
   const auto mass_of_neptune = 1.024e26 * si::kilogram;     
+  const auto mass_of_pluto             = 1.3e22 * si::kilogram; 
+  const auto mass_of_charon            = 1.5e21 * si::kilogram; 
+  const auto mass_of_pluto_charon      = mass_of_pluto + mass_of_charon;
 
   using Elements = orbit::Elements<double>;
   using ElementsAndState = orbit::ElementsAndState<double>;
@@ -111,74 +114,69 @@ int main() {
   orrery::SceneTrees<int,double> scene_trees;
 
   // within the confines of this ECS implementation, parent_ids are one-to-one with entities, so we store them using a std::vector
-  std::vector<int> parent_ids {0,0,0,0,0,0,0,0,0,0,3,5,5,5,5,6,6,6,6,6,6,6,6,7,7,7,7,7,8}; 
+  std::vector<int> parent_ids {0,0,0,0,0,0,0,0,0,0,0,10,10,3,5,5,5,5,6,6,6,6,6,6,6,6,7,7,7,7,7,8,9,9,9,9,9,9,}; 
   // entities that have perceptible orbits, we use 32-bit ints for entity ids and more than 1 out of 32 are represented, so a bool mask is more sparse, but checking the mask introduces branching logic
-  // 0 is sun, 3 is earth, 5 is jupiter
-  std::vector<int> filtered {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28};
-  // entities that have orbits, this is just a temporary construct used for initialization so we don't care if we use std::vector
+  std::vector<bool> perceptible(parent_ids.size(), true);
+  perceptible[0] = false;// 0 is sun
+  // entities that have orbits, this is just a temporary construct used for initialization 
+  // so we don't care if we use std::vector or std::pair
   std::vector<std::pair<mass, Elements>> elliptics = {
-      { mass_of_sun, Elements(5.790905e10,  0.2056, 7.005  * si::degree, 0.0, 0.0, 0.0) }, // Mercury
-      { mass_of_sun, Elements(1.082080e11,  0.0068, 3.3947 * si::degree, 0.0, 0.0, 0.0) }, // Venus
-      { mass_of_sun, Elements(1.49598023e11,0.0167, 0.0    * si::degree, 0.0, 0.0, 0.0) }, // Earth
-      { mass_of_sun, Elements(2.279392e11,  0.0934, 1.851  * si::degree, 0.0, 0.0, 0.0) }, // Mars
-      { mass_of_sun, Elements(7.78570e11,   0.0489, 1.305  * si::degree, 0.0, 0.0, 0.0) }, // Jupiter
-      { mass_of_sun, Elements(1.43353e12,   0.0565, 2.484  * si::degree, 0.0, 0.0, 0.0) }, // Saturn
-      { mass_of_sun, Elements(2.87246e12,   0.046,  0.770  * si::degree, 0.0, 0.0, 0.0) }, // Uranus
-      { mass_of_sun, Elements(4.49506e12,   0.009,  1.769  * si::degree, 0.0, 0.0, 0.0) }, // Neptune
-      { mass_of_sun, Elements(39.482*au,    0.2488, 17.14  * si::degree, 0.0, 0.0, 0.0) }, // Pluto
-      { mass_of_earth_moon, Elements(384e6, 0.0549, 0.0   * si::degree, 0.0, 0.0, 0.0) }, // Moon
-      { mass_of_jupiter, Elements(421.8e6,  0.0041, 0.050 * si::degree, 0.0, 0.0, 0.0) }, // Io
-      { mass_of_jupiter, Elements(671.1e6,  0.0090, 0.470 * si::degree, 0.0, 0.0, 0.0) }, // Europa
-      { mass_of_jupiter, Elements(1070.4e6, 0.0013, 0.200 * si::degree, 0.0, 0.0, 0.0) }, // Ganymede
-      { mass_of_jupiter, Elements(1882.7e6, 0.0074, 0.192 * si::degree, 0.0, 0.0, 0.0) }, // Callisto
-      { mass_of_saturn, Elements(186e6,     0.0196, 1.53  * si::degree, 0.0, 0.0, 0.0) }, // Mimas
-      { mass_of_saturn, Elements(238.4e6,   0.0047, 0.02  * si::degree, 0.0, 0.0, 0.0) }, // Enceladus
-      { mass_of_saturn, Elements(295e6,     0.0001, 1.09  * si::degree, 0.0, 0.0, 0.0) }, // Tethys
-      { mass_of_saturn, Elements(377.7e6,   0.0022, 0.02  * si::degree, 0.0, 0.0, 0.0) }, // Dione
-      { mass_of_saturn, Elements(527.2e6,   0.001,  0.35  * si::degree, 0.0, 0.0, 0.0) }, // Rhea
-      { mass_of_saturn, Elements(1221.9e6,  0.0288, 0.33  * si::degree, 0.0, 0.0, 0.0) }, // Titan
-      { mass_of_saturn, Elements(1481.5e6,  0.0274, 0.43  * si::degree, 0.0, 0.0, 0.0) }, // Hyperion
-      { mass_of_saturn, Elements(3561.7e6,  0.0283, 157.0 * si::degree, 0.0, 0.0, 0.0) }, // Iapetus
-      { mass_of_uranus, Elements(129846e3,  0.0014, 4.421 * si::degree, 0.0, 0.0, 0.0) }, // Miranda
-      { mass_of_uranus, Elements(190929e3,  0.0014, 0.026 * si::degree, 0.0, 0.0, 0.0) }, // Ariel
-      { mass_of_uranus, Elements(265986e3,  0.0039, 0.083 * si::degree, 0.0, 0.0, 0.0) }, // Umbriel
-      { mass_of_uranus, Elements(265986e3,  0.0016, 0.114 * si::degree, 0.0, 0.0, 0.0) }, // Titania
-      { mass_of_uranus, Elements(583511e3,  0.0016, 0.125 * si::degree, 0.0, 0.0, 0.0) }, // Oberon
-      { mass_of_neptune, Elements(354759e3, 0.0000, 156.865*si::degree, 0.0, 0.0, 0.0) }, // Triton
+    //  combined mass         sma           ecc     inclination          lan  aop  ma
+      { mass_of_sun, Elements(5.790905e10,  0.2056, 7.005  * si::degree, 0.0, 0.0, 0.0) },   // 1   Mercury
+      { mass_of_sun, Elements(1.082080e11,  0.0068, 3.3947 * si::degree, 0.0, 0.0, 0.0) },   // 2   Venus
+      { mass_of_sun, Elements(1.49598023e11,0.0167, 0.0    * si::degree, 0.0, 0.0, 0.0) },   // 3   Earth
+      { mass_of_sun, Elements(2.279392e11,  0.0934, 1.851  * si::degree, 0.0, 0.0, 0.0) },   // 4   Mars
+      { mass_of_sun, Elements(7.78570e11,   0.0489, 1.305  * si::degree, 0.0, 0.0, 0.0) },   // 5   Jupiter
+      { mass_of_sun, Elements(1.43353e12,   0.0565, 2.484  * si::degree, 0.0, 0.0, 0.0) },   // 6   Saturn
+      { mass_of_sun, Elements(2.87246e12,   0.046,  0.770  * si::degree, 0.0, 0.0, 0.0) },   // 7   Uranus
+      { mass_of_sun, Elements(4.49506e12,   0.009,  1.769  * si::degree, 0.0, 0.0, 0.0) },   // 8   Neptune
+      { mass_of_sun, Elements(39.482*au,    0.2488, 17.14  * si::degree, 0.0, 0.0, 0.0) },   // 9   Pluto-Charon
+      { mass_of_sun, Elements(1.6442*au, 0.38385,3.4079*si::degree, 73.196*si::degree, 319.32*si::degree, 232.01) }, // 10  Didymos
+      { mass_of_sun, Elements(1.206e3,   0.0,  169.3*si::degree, 0.0, 0.0, 0.0) },   // 11  Dimorphos, "Didymoon", pre-impact
+      { mass_of_sun, Elements(1.144e3,   0.02, 169.3*si::degree, 0.0, 0.0, 0.0) },   // 12  Dimorphos, "Didymoon", post-impact
+      { mass_of_earth_moon, Elements(384e6, 0.0549, 0.0   * si::degree, 0.0, 0.0, 0.0) },    // 13  Moon
+      { mass_of_jupiter, Elements(421.8e6,  0.0041, 0.050 * si::degree, 0.0, 0.0, 0.0) },    // 14  Io
+      { mass_of_jupiter, Elements(671.1e6,  0.0090, 0.470 * si::degree, 0.0, 0.0, 0.0) },    // 15  Europa
+      { mass_of_jupiter, Elements(1070.4e6, 0.0013, 0.200 * si::degree, 0.0, 0.0, 0.0) },    // 16  Ganymede
+      { mass_of_jupiter, Elements(1882.7e6, 0.0074, 0.192 * si::degree, 0.0, 0.0, 0.0) },    // 17  Callisto
+      { mass_of_saturn, Elements(186e6,     0.0196, 1.53  * si::degree, 0.0, 0.0, 0.0) },    // 18  Mimas
+      { mass_of_saturn, Elements(238.4e6,   0.0047, 0.02  * si::degree, 0.0, 0.0, 0.0) },    // 19  Enceladus
+      { mass_of_saturn, Elements(295e6,     0.0001, 1.09  * si::degree, 0.0, 0.0, 0.0) },    // 20  Tethys
+      { mass_of_saturn, Elements(377.7e6,   0.0022, 0.02  * si::degree, 0.0, 0.0, 0.0) },    // 21  Dione
+      { mass_of_saturn, Elements(527.2e6,   0.001,  0.35  * si::degree, 0.0, 0.0, 0.0) },    // 22  Rhea
+      { mass_of_saturn, Elements(1221.9e6,  0.0288, 0.33  * si::degree, 0.0, 0.0, 0.0) },    // 23  Titan
+      { mass_of_saturn, Elements(1481.5e6,  0.0274, 0.43  * si::degree, 0.0, 0.0, 0.0) },    // 24  Hyperion
+      { mass_of_saturn, Elements(3561.7e6,  0.0283, 157.0 * si::degree, 0.0, 0.0, 0.0) },    // 25  Iapetus
+      { mass_of_uranus, Elements(129846e3,  0.0014, 4.421 * si::degree, 0.0, 0.0, 0.0) },    // 26  Miranda
+      { mass_of_uranus, Elements(190929e3,  0.0014, 0.026 * si::degree, 0.0, 0.0, 0.0) },    // 27  Ariel
+      { mass_of_uranus, Elements(265986e3,  0.0039, 0.083 * si::degree, 0.0, 0.0, 0.0) },    // 28  Umbriel
+      { mass_of_uranus, Elements(265986e3,  0.0016, 0.114 * si::degree, 0.0, 0.0, 0.0) },    // 29  Titania
+      { mass_of_uranus, Elements(583511e3,  0.0016, 0.125 * si::degree, 0.0, 0.0, 0.0) },    // 30  Oberon
+      { mass_of_neptune, Elements(354759e3, 0.0000, 156.865*si::degree, 0.0, 0.0, 0.0) },    // 31  Triton
+      { mass_of_pluto_charon, Elements(2126e3,  0.0000, 0.000*si::degree, 0.0, 0.0, 0.0) },  // 32  Pluto
+      { mass_of_pluto_charon, Elements(17470e3, 0.0000, 0.000*si::degree, 0.0, 0.0, 0.0) },  // 33  Charon
+      { mass_of_pluto_charon, Elements(42656e3, 5.787,  0.809*si::degree, 0.0, 0.0, 0.0) },  // 34  Styx
+      { mass_of_pluto_charon, Elements(48694e3, 2.036,  0.133*si::degree, 0.0, 0.0, 0.0) },  // 35  Nix
+      { mass_of_pluto_charon, Elements(57783e3, 3.280,  0.389*si::degree, 0.0, 0.0, 0.0) },  // 36  Kerberos
+      { mass_of_pluto_charon, Elements(64738e3, 5.862,  0.242*si::degree, 0.0, 0.0, 0.0) },  // 37  Hydra
   };
 
   // TODO: store this using `Components<vec4>`
-  std::vector<glm::vec4> instance_color{
-    vec4(1.0, 1.0, 0.0, 1.0), // Sun
-    vec4(0.5, 0.5, 0.5, 1.0), // Mercury
-    vec4(0.5, 0.5, 0.0, 1.0), // Venus
-    vec4(0.0, 0.0, 1.0, 1.0), // Earth
-    vec4(1.0, 0.0, 0.0, 1.0), // Mars
-    vec4(1.0, 0.5, 0.0, 1.0), // Jupiter
-    vec4(1.0, 1.0, 0.5, 1.0), // Saturn
-    vec4(0.5, 1.0, 0.5, 1.0), // Uranus
-    vec4(0.5, 0.5, 1.0, 1.0), // Neptune
-    vec4(1.0, 0.5, 0.5, 1.0), // Pluto
-    vec4(1.0, 1.0, 1.0, 1.0), // Moon
-    vec4(0.5, 0.5, 0.0, 1.0), // Io
-    vec4(0.5, 0.5, 1.0, 1.0), // Europa
-    vec4(0.5, 0.5, 0.5, 1.0), // Ganymede
-    vec4(0.5, 0.5, 0.5, 1.0), // Callisto
-    vec4(0.5, 0.5, 0.5, 1.0), // Mimas
-    vec4(0.5, 0.5, 0.5, 1.0), // Enceladus
-    vec4(0.5, 0.5, 0.5, 1.0), // Tethys
-    vec4(0.5, 0.5, 0.5, 1.0), // Dione
-    vec4(0.5, 0.5, 0.5, 1.0), // Rhea
-    vec4(1.0, 1.0, 0.0, 1.0), // Titan
-    vec4(0.5, 0.5, 0.5, 1.0), // Hyperion
-    vec4(0.5, 0.5, 0.5, 1.0), // Iapetus
-    vec4(0.5, 0.5, 0.5, 1.0), // Miranda
-    vec4(0.5, 0.5, 0.5, 1.0), // Ariel
-    vec4(0.5, 0.5, 0.5, 1.0), // Umbriel
-    vec4(0.5, 0.5, 0.5, 1.0), // Titania
-    vec4(0.5, 0.5, 0.5, 1.0), // Oberon
-    vec4(1.0, 0.5, 0.5, 1.0), // Triton
-  };
+  std::vector<glm::vec4> instance_color(32, vec4(1));
+  instance_color[0 ] = vec4(1.0, 1.0, 0.0, 1.0); // Sun
+  instance_color[1 ] = vec4(0.5, 0.5, 0.5, 1.0); // Mercury
+  instance_color[2 ] = vec4(0.5, 0.5, 0.0, 1.0); // Venus
+  instance_color[3 ] = vec4(0.0, 0.0, 1.0, 1.0); // Earth
+  instance_color[4 ] = vec4(1.0, 0.0, 0.0, 1.0); // Mars
+  instance_color[5 ] = vec4(1.0, 0.5, 0.0, 1.0); // Jupiter
+  instance_color[6 ] = vec4(1.0, 1.0, 0.5, 1.0); // Saturn
+  instance_color[7 ] = vec4(0.5, 1.0, 0.5, 1.0); // Uranus
+  instance_color[8 ] = vec4(0.5, 0.5, 1.0, 1.0); // Neptune
+  instance_color[9 ] = vec4(1.0, 0.5, 0.5, 0.0); // Pluto-Charon
+  instance_color[14] = vec4(0.5, 0.5, 0.0, 1.0); // Io
+  instance_color[15] = vec4(0.5, 0.5, 1.0, 1.0); // Europa
+  instance_color[23] = vec4(1.0, 1.0, 0.0, 1.0); // Titan
+  instance_color[31] = vec4(1.0, 0.5, 0.5, 1.0); // Triton
 
   // (mass, Universals)
   Orbits orbits;
@@ -208,7 +206,7 @@ int main() {
   control_state.angular_position = glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f;
 
   length procedural_terrain_far_distance(3e3*si::kilometer);
-  length planet_billboard_near_distance(1e7*si::kilometer); // ~10 * solar radius 
+  length planet_billboard_near_distance(1e8*si::kilometer); // ~10 * solar radius 
   length point_source_near_distance(1e3*si::astronomical_unit);
 
   // initialize view state
@@ -218,13 +216,13 @@ int main() {
     850.0f/640.0f, 
     // 1e3f,
     // 1e16f
-    float(planet_billboard_near_distance/10.0/m), 
+    float(planet_billboard_near_distance/1e5/m), 
     float(point_source_near_distance/m)
   );
   view_state.view_matrix = control_state.get_view_matrix();
   view_state.resolution = glm::vec2(850, 640);
   view_state.wavelength = glm::vec3(650e-9, 550e-9, 450e-9);
-  view_state.exposure_intensity = 1e3*si::global_solar_constant/(si::watt/si::meter2);
+  view_state.exposure_intensity = 1e2*si::global_solar_constant/(si::watt/si::meter2);
   // view_state.projection_type = view::ProjectionType::heads_up_display;
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
@@ -237,7 +235,7 @@ int main() {
   messages::MessageQueue message_queue;
   message_queue.activate(window);
 
-  const int origin_id(3);
+  const int origin_id(10);
   time t(0);
   while(!glfwWindowShouldClose(window)) {
 
@@ -245,7 +243,7 @@ int main() {
 
       orbit_system.offsets(
         orbits, 
-        filtered, 
+        perceptible, 
         t/si::second, // time_offset
         orbital_parent_offsets
       );
