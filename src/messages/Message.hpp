@@ -90,54 +90,22 @@ namespace messages
 	};
 
 	/*
-	A "KeyDownMessage" represents when a key on a keyboard is pressed down
+	A "KeyboardMessage" represents when a key on a keyboard is pressed down
 	*/
-	struct KeyDownMessage 
+	struct KeyboardMessage 
 	{
 		std::string character;
 		KeyboardModifier modifiers;
-		~KeyDownMessage() {} 
-		KeyDownMessage(
+		KeyboardAction action;
+		~KeyboardMessage() {} 
+		KeyboardMessage(
 			const std::string character, 
-			const KeyboardModifier modifiers
+			const KeyboardModifier modifiers,
+			KeyboardAction action
 		) :
 			character(character),
-			modifiers(modifiers)
-		{} 
-	};
-
-	/*
-	A "KeyRepeatMessage" represents when a key on a keyboard is held down 
-	for a system specified length of time necessary to repeat the action
-	*/
-	struct KeyRepeatMessage 
-	{
-		std::string character;
-		KeyboardModifier modifiers;
-		~KeyRepeatMessage() {} 
-		KeyRepeatMessage(
-			const std::string character, 
-			const KeyboardModifier modifiers
-		) :
-			character(character),
-			modifiers(modifiers)
-		{} 
-	};
-
-	/*
-	A "KeyUpMessage" represents when a key on a keyboard is released
-	*/
-	struct KeyUpMessage 
-	{
-		std::string character;
-		KeyboardModifier modifiers;
-		~KeyUpMessage() {} 
-		KeyUpMessage(
-			const std::string character, 
-			const KeyboardModifier modifiers
-		) :
-			character(character),
-			modifiers(modifiers)
+			modifiers(modifiers),
+			action(action)
 		{} 
 	};
 
@@ -145,9 +113,7 @@ namespace messages
 			MouseMotionMessage, 
 			MouseClickMessage, 
 			ScrollMessage,
-			KeyDownMessage,
-			KeyRepeatMessage,
-			KeyUpMessage
+			KeyboardMessage
 		> Message;
 
 }

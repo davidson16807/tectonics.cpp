@@ -38,14 +38,14 @@ namespace messages
 	*/
 	class MessageQueue
 	{
-		std::unordered_map<int, std::string> registered_keys;
+		std::unordered_map<int, std::string> registered_nonalphanumerics;
 		std::queue<Message> queue;
 		glm::vec2 last_position;
 
 public:
 
 		MessageQueue():
-			registered_keys({
+			registered_nonalphanumerics({
 				{GLFW_KEY_LEFT,  "←"},
 				{GLFW_KEY_RIGHT, "→"},
 				{GLFW_KEY_UP,    "↑"},
@@ -55,8 +55,8 @@ public:
 			})
 		{}
 
-		MessageQueue(const std::unordered_map<int, std::string> registered_keys):
-			registered_keys(registered_keys)
+		MessageQueue(const std::unordered_map<int, std::string> registered_nonalphanumerics):
+			registered_nonalphanumerics(registered_nonalphanumerics)
 		{}
 
 		// NONREGULAR/IMPURE METHODS, methods with deliberate side effects
@@ -112,9 +112,9 @@ public:
 			    std::string character = "";
 
 			    // try checking the keys that we've specially handled:
-			    if (self.registered_keys.contains(key))
+			    if (self.registered_nonalphanumerics.contains(key))
 			    {
-			    	character = self.registered_keys[key];
+			    	character = self.registered_nonalphanumerics[key];
 			    }
 			    // if that fails, try the keys that GLFW represents using chars:
 			    else
@@ -125,25 +125,14 @@ public:
 					    character = std::string(1, *maybe_character);
 				    }
 				    // if all else fails, y'all didn't see nothing, 
-				    // the caller should have specified registered_keys if he was interested
+				    // the caller should have specified registered_nonalphanumerics if he was interested
 				    else
 				    {
 				    	return;
 				    }
 			    }
 
-				switch(action)
-				{
-				case GLFW_PRESS:
-					self.queue.push(KeyDownMessage(character, KeyboardModifier(mods)));
-					break;
-				case GLFW_REPEAT:
-					self.queue.push(KeyRepeatMessage(character, KeyboardModifier(mods)));
-					break;
-				case GLFW_RELEASE:
-					self.queue.push(KeyUpMessage(character, KeyboardModifier(mods)));
-					break;
-				}
+				self.queue.push(KeyboardMessage(character, KeyboardModifier(mods), KeyboardAction(action)));
 
 			});
 

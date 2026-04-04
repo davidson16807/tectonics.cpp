@@ -309,17 +309,19 @@ int main() {
       {
         auto message = message_poll.front();
         update::OrbitalControlUpdater::update(control_state, message, control_state);
-        if (std::holds_alternative<messages::KeyDownMessage>(message))
+        if (std::holds_alternative<messages::KeyboardMessage>(message))
         {
-          auto keydown = std::get<messages::KeyDownMessage>(message);
-          if (keydown.character == "→")
+          auto key_message = std::get<messages::KeyboardMessage>(message);
+          if (key_message.action != messages::release)
           {
-            origin_id = std::clamp(origin_id+1, std::size_t(0), parent_ids.size()-1);
-            break;
-          }
-          else if (keydown.character == "←")
-          {
-            origin_id = std::clamp(origin_id-1, std::size_t(0), parent_ids.size()-1);
+            if (key_message.character == "→")
+            {
+              origin_id = std::clamp(origin_id+1, std::size_t(0), parent_ids.size()-1);
+            }
+            else if (key_message.character == "←")
+            {
+              origin_id = std::clamp(origin_id-1, std::size_t(0), parent_ids.size()-1);
+            }
           }
         }
         message_poll.pop();
