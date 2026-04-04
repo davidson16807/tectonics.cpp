@@ -1,6 +1,7 @@
 #pragma once
 
 // std libraries
+#include <unordered_map>
 #include <queue>
 
 // 3rd party libraries
@@ -37,11 +38,25 @@ namespace messages
 	*/
 	class MessageQueue
 	{
+		std::unordered_map<int, std::string> registered_keys;
 		std::queue<Message> queue;
 		glm::vec2 last_position;
 
 public:
-		MessageQueue()
+
+		MessageQueue():
+			registered_keys({
+				{GLFW_KEY_LEFT,  "←"},
+				{GLFW_KEY_RIGHT, "→"},
+				{GLFW_KEY_UP,    "↑"},
+				{GLFW_KEY_DOWN,  "↓"},
+				{GLFW_KEY_TAB,   "\t"},
+				{GLFW_KEY_ENTER, "\n"},
+			})
+		{}
+
+		MessageQueue(const std::unordered_map<int, std::string> registered_keys):
+			registered_keys(registered_keys)
 		{}
 
 		// NONREGULAR/IMPURE METHODS, methods with deliberate side effects
@@ -56,9 +71,12 @@ public:
 			std::swap( queue, empty );
 			return output;
 		}
+
 		void activate(GLFWwindow* window)
 		{
+
     		glfwSetWindowUserPointer(window, reinterpret_cast<void *>(this));
+
 			glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xpos, double ypos){
 			    // NOTE: GLFWWindow contains a void* member that we are free to change and access 
 			    // to work around capture limitations within C-style function pointers, 
@@ -68,6 +86,7 @@ public:
 				self.queue.push(MouseMotionMessage(position, position-self.last_position));
 				self.last_position = position;
 			});
+
 			glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods){
 			    // NOTE: GLFWWindow contains a void* member that we are free to change and access 
 			    // to work around capture limitations within C-style function pointers, 
@@ -75,6 +94,7 @@ public:
 			    MessageQueue& self = *reinterpret_cast<MessageQueue*>(glfwGetWindowUserPointer(window));
 				self.queue.push(MouseClickMessage(button, action == GLFW_PRESS, mods));
 			});
+
 			glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset){
 			    // NOTE: GLFWWindow contains a void* member that we are free to change and access 
 			    // to work around capture limitations within C-style function pointers, 
@@ -82,30 +102,58 @@ public:
 			    MessageQueue& self = *reinterpret_cast<MessageQueue*>(glfwGetWindowUserPointer(window));
 				self.queue.push(ScrollMessage(glm::vec2(xoffset, yoffset)));
 			});
+
 			glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods){
 			    // NOTE: GLFWWindow contains a void* member that we are free to change and access 
 			    // to work around capture limitations within C-style function pointers, 
 			    // from https://stackoverflow.com/questions/39731561/use-lambda-as-glfwkeyfun
 			    MessageQueue& self = *reinterpret_cast<MessageQueue*>(glfwGetWindowUserPointer(window));
 
+			    std::string character = "";
+
+			    // try checking the keys that we've specially handled:
+			    if (self.registered_keys.contains(key))
+			    {
+			    	character = self.registered_keys[key];
+			    }
+			    // if that fails, try the keys that GLFW represents using chars:
+			    else
+			    {
+				    const char* maybe_character = glfwGetKeyName(key, scancode);
+				    if (maybe_character != NULL)
+				    {
+					    character = std::string(1, *maybe_character);
+				    }
+				    // if all else fails, y'all didn't see nothing, 
+				    // the caller should have specified registered_keys if he was interested
+				    else
+				    {
+				    	return;
+				    }
+			    }
+
 				switch(action)
 				{
 				case GLFW_PRESS:
-					self.queue.push(KeyDownMessage(*glfwGetKeyName(key, scancode), KeyboardModifier(mods)));
+					self.queue.push(KeyDownMessage(character, KeyboardModifier(mods)));
 					break;
 				case GLFW_REPEAT:
-					self.queue.push(KeyRepeatMessage(*glfwGetKeyName(key, scancode), KeyboardModifier(mods)));
+					self.queue.push(KeyRepeatMessage(character, KeyboardModifier(mods)));
 					break;
 				case GLFW_RELEASE:
-					self.queue.push(KeyUpMessage(*glfwGetKeyName(key, scancode), KeyboardModifier(mods)));
+					self.queue.push(KeyUpMessage(character, KeyboardModifier(mods)));
 					break;
 				}
+
 			});
+
 		}
+
 		void deactivate(GLFWwindow* window)
 		{
 			glfwSetCursorPosCallback(window, NULL);
 		}
+
 	};
 
 }

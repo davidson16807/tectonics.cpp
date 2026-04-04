@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <format>   // std::format
+#include <algorithm>// std::clamp
 
 // gl libraries
 #include <GL/glew.h>
@@ -14,7 +15,10 @@
 
 #include <index/iterated/Nary.hpp>           // iterated::Cast
 
+#include <math/special.hpp>                  // math::floormod
+
 #include <unit/si.hpp>                       // si::unit
+
 #include <model/orbit/Elements.hpp>          // orbit::Elements
 #include <model/orbit/ElementsAndState.hpp>  // 
 #include <model/orrery/OrbitSystem.hpp>      // orrery:OrbitSystem
@@ -242,7 +246,7 @@ int main() {
   messages::MessageQueue message_queue;
   message_queue.activate(window);
 
-  int origin_id(0);
+  std::size_t origin_id(0);
   time t(0);
   while(!glfwWindowShouldClose(window)) {
 
@@ -308,9 +312,14 @@ int main() {
         if (std::holds_alternative<messages::KeyDownMessage>(message))
         {
           auto keydown = std::get<messages::KeyDownMessage>(message);
-          if (keydown.character == 'a')
+          if (keydown.character == "→")
           {
-            origin_id = (origin_id+1) % (parent_ids.size()-1);
+            origin_id = std::clamp(origin_id+1, std::size_t(0), parent_ids.size()-1);
+            break;
+          }
+          else if (keydown.character == "←")
+          {
+            origin_id = std::clamp(origin_id-1, std::size_t(0), parent_ids.size()-1);
           }
         }
         message_poll.pop();

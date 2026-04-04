@@ -1,7 +1,8 @@
 #pragma once
 
 // std libraries
-#include <variant>   // *vec2
+#include <variant> // std::variant
+#include <string>  // std::string
 
 // 3rd party libraries
 
@@ -46,6 +47,14 @@ namespace messages
 		num   = 20
 	};
 
+	enum KeyboardAction
+	{
+		release = 0,
+		press   = 1,
+		repeat  = 2,
+		unknown = -1,
+	};
+
 	/*
 	A "MouseClickMessage" represents a mouse click as reported by glfw.
 	*/
@@ -85,11 +94,11 @@ namespace messages
 	*/
 	struct KeyDownMessage 
 	{
-		char character;
+		std::string character;
 		KeyboardModifier modifiers;
 		~KeyDownMessage() {} 
 		KeyDownMessage(
-			const char character, 
+			const std::string character, 
 			const KeyboardModifier modifiers
 		) :
 			character(character),
@@ -103,11 +112,11 @@ namespace messages
 	*/
 	struct KeyRepeatMessage 
 	{
-		char character;
+		std::string character;
 		KeyboardModifier modifiers;
 		~KeyRepeatMessage() {} 
 		KeyRepeatMessage(
-			const char character, 
+			const std::string character, 
 			const KeyboardModifier modifiers
 		) :
 			character(character),
@@ -120,11 +129,11 @@ namespace messages
 	*/
 	struct KeyUpMessage 
 	{
-		char character;
+		std::string character;
 		KeyboardModifier modifiers;
 		~KeyUpMessage() {} 
 		KeyUpMessage(
-			const char character, 
+			const std::string character, 
 			const KeyboardModifier modifiers
 		) :
 			character(character),
