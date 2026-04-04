@@ -20,7 +20,10 @@ namespace messages
 		glm::vec2 position;
 		glm::vec2 offset;
 		~MouseMotionMessage() {} 
-		MouseMotionMessage(glm::vec2 position, glm::vec2 offset) :
+		MouseMotionMessage(
+			const glm::vec2 position, 
+			const glm::vec2 offset
+		) :
 			position(position),
 			offset(offset)
 		{} 
@@ -52,7 +55,11 @@ namespace messages
 		int is_pressed; 
 		int modifiers;
 		~MouseClickMessage() {} 
-		MouseClickMessage(int button, bool is_pressed, int modifiers) :
+		MouseClickMessage(
+			const int button, 
+			const bool is_pressed, 
+			const int modifiers
+		) :
 			button(button),
 			is_pressed(is_pressed),
 			modifiers(modifiers)
@@ -66,11 +73,72 @@ namespace messages
 	{
 		glm::vec2 offset;
 		~ScrollMessage() {} 
-		ScrollMessage(glm::vec2 offset) :
+		ScrollMessage(
+			const glm::vec2 offset
+		) :
 			offset(offset)
 		{} 
 	};
 
-	typedef std::variant<MouseMotionMessage, MouseClickMessage, ScrollMessage> Message;
+	/*
+	A "KeyDownMessage" represents when a key on a keyboard is pressed down
+	*/
+	struct KeyDownMessage 
+	{
+		char character;
+		KeyboardModifier modifiers;
+		~KeyDownMessage() {} 
+		KeyDownMessage(
+			const char character, 
+			const KeyboardModifier modifiers
+		) :
+			character(character),
+			modifiers(modifiers)
+		{} 
+	};
+
+	/*
+	A "KeyRepeatMessage" represents when a key on a keyboard is held down 
+	for a system specified length of time necessary to repeat the action
+	*/
+	struct KeyRepeatMessage 
+	{
+		char character;
+		KeyboardModifier modifiers;
+		~KeyRepeatMessage() {} 
+		KeyRepeatMessage(
+			const char character, 
+			const KeyboardModifier modifiers
+		) :
+			character(character),
+			modifiers(modifiers)
+		{} 
+	};
+
+	/*
+	A "KeyUpMessage" represents when a key on a keyboard is released
+	*/
+	struct KeyUpMessage 
+	{
+		char character;
+		KeyboardModifier modifiers;
+		~KeyUpMessage() {} 
+		KeyUpMessage(
+			const char character, 
+			const KeyboardModifier modifiers
+		) :
+			character(character),
+			modifiers(modifiers)
+		{} 
+	};
+
+	typedef std::variant<
+			MouseMotionMessage, 
+			MouseClickMessage, 
+			ScrollMessage,
+			KeyDownMessage,
+			KeyRepeatMessage,
+			KeyUpMessage
+		> Message;
 
 }

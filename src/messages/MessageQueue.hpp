@@ -40,22 +40,6 @@ namespace messages
 		std::queue<Message> queue;
 		glm::vec2 last_position;
 
-		void cursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
-		{
-			glm::vec2 position(xpos, ypos);
-			queue.push(MouseMotionMessage(position, position-last_position));
-			last_position = position;
-		}
-		void mouseButtonCallback(GLFWwindow* window, int button, bool action, int mods)
-		{
-			queue.push(MouseClickMessage(button, action == GLFW_PRESS, mods));
-		}
-		void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
-		{
-			queue.push(ScrollMessage(glm::vec2(xoffset, yoffset)));
-		}
-
-
 public:
 		MessageQueue()
 		{}
@@ -98,6 +82,25 @@ public:
 			    MessageQueue& self = *reinterpret_cast<MessageQueue*>(glfwGetWindowUserPointer(window));
 				self.queue.push(ScrollMessage(glm::vec2(xoffset, yoffset)));
 			});
+			glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods){
+			    // NOTE: GLFWWindow contains a void* member that we are free to change and access 
+			    // to work around capture limitations within C-style function pointers, 
+			    // from https://stackoverflow.com/questions/39731561/use-lambda-as-glfwkeyfun
+			    MessageQueue& self = *reinterpret_cast<MessageQueue*>(glfwGetWindowUserPointer(window));
+
+				switch(action)
+				{
+				case GLFW_PRESS:
+					self.queue.push(KeyDownMessage(*glfwGetKeyName(key, scancode), KeyboardModifier(mods)));
+					break;
+				case GLFW_REPEAT:
+					self.queue.push(KeyRepeatMessage(*glfwGetKeyName(key, scancode), KeyboardModifier(mods)));
+					break;
+				case GLFW_RELEASE:
+					self.queue.push(KeyUpMessage(*glfwGetKeyName(key, scancode), KeyboardModifier(mods)));
+					break;
+				}
+			});
 		}
 		void deactivate(GLFWwindow* window)
 		{
@@ -106,3 +109,4 @@ public:
 	};
 
 }
+

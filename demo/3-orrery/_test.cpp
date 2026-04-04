@@ -110,6 +110,13 @@ int main() {
   ElementsAndState converter(properties);
   iterated::Cast cast;
 
+  /*
+  TODO:
+  * spins
+  * sampling for imperceptibles
+  * insolation
+  */
+
   orrery::OrbitSystem<int,double> orbit_system(propagator, properties);
   orrery::SceneTrees<int,double> scene_trees;
 
@@ -162,7 +169,7 @@ int main() {
   };
 
   // TODO: store this using `Components<vec4>`
-  std::vector<glm::vec4> instance_color(32, vec4(1));
+  std::vector<glm::vec4> instance_color(parent_ids.size(), vec4(1));
   instance_color[0 ] = vec4(1.0, 1.0, 0.0, 1.0); // Sun
   instance_color[1 ] = vec4(0.5, 0.5, 0.5, 1.0); // Mercury
   instance_color[2 ] = vec4(0.5, 0.5, 0.0, 1.0); // Venus
@@ -235,7 +242,7 @@ int main() {
   messages::MessageQueue message_queue;
   message_queue.activate(window);
 
-  const int origin_id(10);
+  int origin_id(0);
   time t(0);
   while(!glfwWindowShouldClose(window)) {
 
@@ -296,7 +303,16 @@ int main() {
       std::queue<messages::Message> message_poll = message_queue.poll();
       while (!message_poll.empty())
       {
-        update::OrbitalControlUpdater::update(control_state, message_poll.front(), control_state);
+        auto message = message_poll.front();
+        update::OrbitalControlUpdater::update(control_state, message, control_state);
+        if (std::holds_alternative<messages::KeyDownMessage>(message))
+        {
+          auto keydown = std::get<messages::KeyDownMessage>(message);
+          if (keydown.character == 'a')
+          {
+            origin_id = (origin_id+1) % (parent_ids.size()-1);
+          }
+        }
         message_poll.pop();
       }
       // control_state.angular_position.x += 1.0f * 3.1415926f/180.0f;
