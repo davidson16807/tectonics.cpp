@@ -1,0 +1,14 @@
+
+write demo to calculate average insolation raster: test sampling for imperceptible periodic orbits, and spins
+write unit test to verify global solar constant
+fix shader for stars
+
+write unit tests for observed properties:
+	earth surface gravity
+	earth year length
+	earth aphelion
+	earth perihelion
+	earth average orbital velocity
+	earth direction of orbit
+	earth direction of spin
+

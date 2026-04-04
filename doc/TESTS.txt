@@ -175,7 +175,8 @@ light propagation
 	spectrum
 
 orrery
-	spin
+x	offsets
+	spins
 
 star field
 barnes hut field

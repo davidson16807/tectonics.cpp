@@ -1,8 +1,6 @@
-TODO:
 
 PROVEN DESIGN:
   refactor: transform FormationGeneration to map: grid×id → stratum
-  sealevel calculation
   physically based surface rendering
   physically based atmospheric rendering
   physically based solar disc rendering

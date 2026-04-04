@@ -29,7 +29,7 @@
 | regular methods     | `snake_case`, brevity is allowed³, use standard prefixes where applicable (see `doc/function-prefixes.tsv` for details)  |
 | regular functions   | `snake_case`, err toward verbosity, use standard prefixes where applicable (see `doc/function-prefixes.tsv` for details)  |
 | parameters          | `snake_case`, err toward verbosity  |
-| private variables   | `snake_case`, err toward verbosity  |
+| private attributes  | `snake_case`, err toward verbosity  |
 | local variables     | `snake_case`, brevity is allowed³  |
 | booleans            | `snake_case`, prefix with `is_*`, `has_*`, `can_*`, etc.  |
 | boolean vectors     | `snake_case`, prefix with `are_*`, `have_*`, `can_*`, etc.   |
