@@ -28,6 +28,9 @@
 #include <update/OrbitalNavigationState.hpp>    // update::OrbitalNavigationState
 #include <update/OrbitalNavigationUpdater.hpp>  // update::OrbitalNavigationUpdater
 #include <update/TreeNavigationUpdater.hpp>     // update::TreeNavigationUpdater
+#include <update/ValueHotkeyPresetUpdater.hpp>  // update::ValueHotkeyPresetUpdater
+#include <update/BoundedOptionNavigationUpdater.hpp> // update::BoundedOptionNavigationUpdater
+#include <update/CyclingOptionNavigationUpdater.hpp> // update::CyclingOptionNavigationUpdater
 
 #include <view/IndicatorSphereSwarmShaderProgram.hpp>     // view::IndicatorSphereSwarmShaderProgram
 
@@ -213,7 +216,10 @@ int main() {
   // initialize control state
   update::OrbitalNavigationState control_state;
   update::OrbitalNavigationUpdater orbit_updater;
-  update::TreeNavigationUpdater<int> tree_updater("9","0","[","]");
+  update::TreeNavigationUpdater<int> scene_tree_updater("9","0","[","]");
+  update::CyclingOptionNavigationUpdater<std::size_t> scene_node_updater("m","n");
+  update::BoundedOptionNavigationUpdater<std::size_t> timewarp_updater(",", ".");
+  update::ValueHotkeyPresetUpdater<std::size_t> pause_updater("/",0);
   control_state.min_zoom_distance = 1.0f;
   control_state.log2_height = std::log2(60.0*Rs);
   // control_state.log2_height = 20.0f;
@@ -331,19 +337,10 @@ int main() {
       {
         auto message = message_poll.front();
         orbit_updater.update(control_state, message, control_state);
-        origin_id = tree_updater.update(origin_id, parent_ids, message);
-        if (std::holds_alternative<messages::KeyboardMessage>(message))
-        {
-          auto key_message = std::get<messages::KeyboardMessage>(message);
-          if (key_message.action != messages::release)
-          {
-            auto c = key_message.character;
-            /* < slower   */     if (c == ",") { timestep_id = std::clamp(timestep_id-1, 0, int(timesteps.size()-1)); } 
-            /* > faster   */else if (c == ".") { timestep_id = std::clamp(timestep_id+1, 0, int(timesteps.size()-1)); } 
-            /* || pause   */else if (c == "/") { timestep_id = 0; } 
-            std::cout << timestep_id << std::endl;
-          }
-        }
+        origin_id = scene_tree_updater.update(origin_id, parent_ids, message);
+        origin_id = scene_node_updater.update(origin_id, parent_ids, message);
+        timestep_id = timewarp_updater.update(timestep_id, timesteps, message);
+        timestep_id = pause_updater.update(timestep_id, message);
         message_poll.pop();
       }
       // control_state.angular_position.x += 1.0f * 3.1415926f/180.0f;

@@ -46,10 +46,10 @@ public:
       if (message.action != messages::release)
       {
         auto c = message.character;
-        if      (c == parent_key)       { return std::clamp(focus_id+1, id(0), id(parent_ids.size()-1)); }
-        else if (c == child_key)        { return std::clamp(focus_id-1, id(0), id(parent_ids.size()-1)); }
-        else if (c == last_sibling_key) { return parent_ids[focus_id]; } 
-        else if (c == next_sibling_key) { for(std::size_t i=0; i<parent_ids.size(); i++) { if(parent_ids[i]==focus_id){ return id(i); } } }
+        if      (c == parent_key)       { return parent_ids[focus_id]; } 
+        else if (c == child_key)        { for(std::size_t i=0; i<parent_ids.size(); i++) { if(parent_ids[i]==focus_id){ return id(i); } } }
+        else if (c == last_sibling_key) { return (focus_id-1 >= 0 && parent_ids[focus_id-1] == parent_ids[focus_id])? focus_id-1 : focus_id; }
+        else if (c == next_sibling_key) { return (focus_id+1 < id(parent_ids.size()) && parent_ids[focus_id+1] == parent_ids[focus_id])? focus_id+1 : focus_id;}
       }
       return focus_id;
     }
