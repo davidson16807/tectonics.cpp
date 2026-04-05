@@ -4,7 +4,7 @@
 #include <string>
 #include <format>   // std::format
 #include <algorithm>// std::clamp
-
+#include <chrono>   // std::chrono::high_resolution_clock
 // gl libraries
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -75,6 +75,8 @@ int main() {
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
   /* OUR STUFF GOES HERE NEXT */
+
+  using clock = std::chrono::high_resolution_clock;
 
   using dvec3 = glm::dvec3;
   using vec3 = glm::vec3;
@@ -217,8 +219,8 @@ int main() {
   update::OrbitalNavigationState control_state;
   update::OrbitalNavigationUpdater orbit_updater;
   update::TreeNavigationUpdater<int> scene_tree_updater("9","0","[","]");
-  update::CyclingOptionNavigationUpdater<std::size_t> scene_node_updater("m","n");
-  update::BoundedOptionNavigationUpdater<std::size_t> timewarp_updater(",", ".");
+  update::CyclingOptionNavigationUpdater<std::size_t> scene_node_updater("m","n", true);
+  update::BoundedOptionNavigationUpdater<std::size_t> timewarp_updater(",", ".", false);
   update::ValueHotkeyPresetUpdater<std::size_t> pause_updater("/",0);
   control_state.min_zoom_distance = 1.0f;
   control_state.log2_height = std::log2(60.0*Rs);
@@ -273,12 +275,20 @@ int main() {
     100.0*si::megayear,
   };
 
+
   int timestep_id(0);
   std::size_t origin_id(0);
   time t(0);
+  auto real_time_now = clock::now();
+  auto real_start_time = real_time_now;
+  std::chrono::duration<double> real_frame_time = (real_time_now - real_start_time);
   while(!glfwWindowShouldClose(window)) {
 
-      t+=timesteps[timestep_id]/60.0;
+      real_start_time = real_time_now;
+      real_time_now = clock::now();
+      real_frame_time = (real_time_now - real_start_time);
+
+      t+=timesteps[timestep_id] * real_frame_time.count();
 
       orbit_system.offsets(
         orbits, 
