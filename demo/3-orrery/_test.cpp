@@ -246,14 +246,30 @@ int main() {
   messages::MessageQueue message_queue;
   message_queue.activate(window);
 
-  std::vector<> timesteps{
-    
+  std::vector<time> timesteps{
+    si::second,
+    si::minute,
+    si::hour,
+    si::day,
+    si::week,
+    si::month,
+    si::year,
+    si::decayear,
+    si::hectoyear,
+    si::kiloyear,
+    10.0*si::kiloyear,
+    100.0*si::kiloyear,
+    si::megayear,
+    10.0*si::megayear,
+    100.0*si::megayear,
   };
 
+  int timestep_id(0);
   std::size_t origin_id(0);
+  time t(0);
   while(!glfwWindowShouldClose(window)) {
 
-      t+=si::day;
+      t+=timesteps[timestep_id]/60.0;
 
       orbit_system.offsets(
         orbits, 
@@ -320,7 +336,10 @@ int main() {
             if      (key_message.character == "→") { origin_id = std::clamp(origin_id+1, std::size_t(0), parent_ids.size()-1); }
             else if (key_message.character == "←") { origin_id = std::clamp(origin_id-1, std::size_t(0), parent_ids.size()-1); }
             else if (key_message.character == "↑") { origin_id = parent_ids[origin_id]; }
-            else if (key_message.character == ".") { ti; } // >
+            else if (key_message.character == ",") { timestep_id = std::clamp(timestep_id-1, 0, int(timesteps.size()-1)); } // <
+            else if (key_message.character == ".") { timestep_id = std::clamp(timestep_id+1, 0, int(timesteps.size()-1)); } // >
+            else if (key_message.character == "/") { timestep_id = 0; } // ||
+            std::cout << timestep_id << std::endl;
           }
         }
         message_poll.pop();
