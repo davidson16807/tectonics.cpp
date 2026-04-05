@@ -211,6 +211,7 @@ int main() {
 
   // initialize control state
   update::OrbitalControlState control_state;
+  update::OrbitalControlUpdater orbit_updater;
   control_state.min_zoom_distance = 1.0f;
   control_state.log2_height = std::log2(60.0*Rs);
   // control_state.log2_height = 20.0f;
@@ -327,20 +328,21 @@ int main() {
       while (!message_poll.empty())
       {
         auto message = message_poll.front();
-        update::OrbitalControlUpdater::update(control_state, message, control_state);
+        orbit_updater.update(control_state, message, control_state);
         if (std::holds_alternative<messages::KeyboardMessage>(message))
         {
           auto key_message = std::get<messages::KeyboardMessage>(message);
           if (key_message.action != messages::release)
           {
-            /* < slower   */else if (key_message.character == ",") { timestep_id = std::clamp(timestep_id-1, 0, int(timesteps.size()-1)); } 
-            /* > faster   */else if (key_message.character == ".") { timestep_id = std::clamp(timestep_id+1, 0, int(timesteps.size()-1)); } 
-            /* || pause   */else if (key_message.character == "/") { timestep_id = 0; } 
-            /* ] next     */     if (key_message.character == "]") { origin_id = std::clamp(origin_id+1, std::size_t(0), parent_ids.size()-1); }
-            /* [ last     */else if (key_message.character == "[") { origin_id = std::clamp(origin_id-1, std::size_t(0), parent_ids.size()-1); }
-            /* ( parent   */else if (key_message.character == "9") { origin_id = parent_ids[origin_id]; } 
-            /* ) 1st child*/else if (key_message.character == "0") { for(std::size_t i=0; i<parent_ids.size(); i++) { if(parent_ids[i]==int(origin_id)){origin_id = i; break;} } } 
-            std::cout << key_message.character << std::endl;
+            auto c = key_message.character;
+            /* < slower   */     if (c == ",") { timestep_id = std::clamp(timestep_id-1, 0, int(timesteps.size()-1)); } 
+            /* > faster   */else if (c == ".") { timestep_id = std::clamp(timestep_id+1, 0, int(timesteps.size()-1)); } 
+            /* || pause   */else if (c == "/") { timestep_id = 0; } 
+            /* ] next     */else if (c == "]") { origin_id = std::clamp(origin_id+1, std::size_t(0), parent_ids.size()-1); }
+            /* [ last     */else if (c == "[") { origin_id = std::clamp(origin_id-1, std::size_t(0), parent_ids.size()-1); }
+            /* ( parent   */else if (c == "9") { origin_id = parent_ids[origin_id]; } 
+            /* ) 1st child*/else if (c == "0") { for(std::size_t i=0; i<parent_ids.size(); i++) { if(parent_ids[i]==int(origin_id)){origin_id = i; break;} } } 
+            std::cout << timestep_id << std::endl;
           }
         }
         message_poll.pop();

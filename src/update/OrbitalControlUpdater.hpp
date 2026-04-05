@@ -12,9 +12,29 @@
 
 namespace update
 {
-  struct OrbitalControlUpdater
+
+  class OrbitalControlUpdater
   {
-    static void update(
+
+    float pan_speed;
+    float zoom_speed;
+
+public:
+
+    OrbitalControlUpdater():
+      pan_speed(0.01f),
+      zoom_speed(0.1f)
+    {}
+
+    OrbitalControlUpdater(
+      const float pan_speed,
+      const float zoom_speed
+    ):
+      pan_speed(pan_speed),
+      zoom_speed(zoom_speed)
+    {}
+
+    void update(
       const OrbitalControlState& state_in,
       const messages::MouseMotionMessage message,
       OrbitalControlState& state_out
@@ -26,16 +46,16 @@ namespace update
       switch(state_out.drag_state)
       {
         case OrbitalControlDragState::pan: 
-          OrbitalControlState::pan(state_in, 0.01f*message.offset, state_out);
+          OrbitalControlState::pan(state_in, pan_speed*message.offset, state_out);
           break;
         case OrbitalControlDragState::zoom: 
-          OrbitalControlState::zoom(state_in, 0.1f*message.offset.y, state_out);
+          OrbitalControlState::zoom(state_in, zoom_speed*message.offset.y, state_out);
           break;
         default: break;
       }
     }
 
-    static void update(
+    void update(
       const OrbitalControlState& state_in,
       const messages::MouseClickMessage message,
       OrbitalControlState& state_out
@@ -62,7 +82,7 @@ namespace update
       }
     }
 
-    static void update(
+    void update(
       const OrbitalControlState& state_in,
       const messages::ScrollMessage message,
       OrbitalControlState& state_out
@@ -70,7 +90,7 @@ namespace update
       OrbitalControlState::zoom(state_in, message.offset.y, state_out);
     }
 
-    static void update(
+    void update(
       const OrbitalControlState& state_in,
       const messages::Message message,
       OrbitalControlState& state_out
