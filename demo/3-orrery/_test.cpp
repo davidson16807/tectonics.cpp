@@ -321,7 +321,7 @@ int main() {
 
       scene_trees.is_ancestor(
         parent_ids,
-        origin_id, //earth
+        origin_id, //first ancestor
         is_origin_ancestor
       );
 
