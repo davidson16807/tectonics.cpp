@@ -10,8 +10,8 @@
 // glm libraries
 
 // in house libraries
-#include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
-#include <update/OrbitalControlUpdater.hpp>         // update::OrbitalControlUpdater
+#include <update/OrbitalNavigationState.hpp>           // update::OrbitalNavigationState
+#include <update/OrbitalNavigationUpdater.hpp>         // update::OrbitalNavigationUpdater
 
 #include <view/RealisticPointSourceSwarmShaderProgram.hpp>     // view::RealisticPointSourceSwarmShaderProgram
 
@@ -130,8 +130,8 @@ int main() {
   glm::mat4 model_matrix(1);
 
   // initialize control state
-  update::OrbitalControlState control_state;
-  update::OrbitalControlUpdater orbit_updater;
+  update::OrbitalNavigationState control_state;
+  update::OrbitalNavigationUpdater orbit_updater;
   control_state.min_zoom_distance = 1.0f;
   control_state.log2_height = 2.5f;
   control_state.angular_position = glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f;

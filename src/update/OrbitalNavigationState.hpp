@@ -11,14 +11,16 @@
 
 namespace update 
 {
-	enum OrbitalControlDragState
+
+	enum OrbitalNavigationDragState
 	{
 		released,
 		zoom,
 		pan,
 		rotate
 	};
-	struct OrbitalControlState
+
+	struct OrbitalNavigationState
 	{
 		static constexpr float pi =3.141592653589793238462643383279;
 
@@ -31,9 +33,9 @@ namespace update
 		// log2 of height above the min_zoom_distance
 		float log2_height;
 		// the last mouse button event recorded
-		OrbitalControlDragState drag_state;
+		OrbitalNavigationDragState drag_state;
 
-		OrbitalControlState(
+		OrbitalNavigationState(
 			glm::vec2 angular_position = glm::vec2(0),
 			glm::vec2 angular_direction = glm::vec2(0),
 			float min_zoom_distance = 1.0, 
@@ -46,7 +48,7 @@ namespace update
 			drag_state(released)
 		{}
 
-		// DERIVED ATTRIBUTES, functions of the form: OrbitalControlState → T
+		// DERIVED ATTRIBUTES, functions of the form: OrbitalNavigationState → T
 		glm::mat4 get_view_matrix()
 		{
 			glm::mat4 I   = glm::mat4(1.0f);
@@ -59,13 +61,13 @@ namespace update
 			return out;
 		}
 
-		static void zoom(const OrbitalControlState& state_in, float log_outward_motion, OrbitalControlState& state_out)
+		static void zoom(const OrbitalNavigationState& state_in, float log_outward_motion, OrbitalNavigationState& state_out)
 		{
 			if (&state_in != &state_out) { state_out = state_in; }
 			state_out.log2_height += log_outward_motion;
 		}
 
-		static void pan(const OrbitalControlState& state_in, glm::vec2 motion, OrbitalControlState& state_out)
+		static void pan(const OrbitalNavigationState& state_in, glm::vec2 motion, OrbitalNavigationState& state_out)
 		{
 			if (&state_in != &state_out) { state_out = state_in; }
 			state_out.angular_position = state_in.angular_position + motion;

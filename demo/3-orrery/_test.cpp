@@ -25,8 +25,8 @@
 #include <model/orrery/SceneTrees.hpp>       // orrery:SceneTrees
 #include <model/orrery/CommonComponents.hpp> // orrery:UnsortedEphemeralComponents
 
-#include <update/OrbitalControlState.hpp>    // update::OrbitalControlState
-#include <update/OrbitalControlUpdater.hpp>  // update::OrbitalControlUpdater
+#include <update/OrbitalNavigationState.hpp>    // update::OrbitalNavigationState
+#include <update/OrbitalNavigationUpdater.hpp>  // update::OrbitalNavigationUpdater
 
 #include <view/IndicatorSphereSwarmShaderProgram.hpp>     // view::IndicatorSphereSwarmShaderProgram
 
@@ -210,8 +210,8 @@ int main() {
   glm::mat4 model_matrix(1);
 
   // initialize control state
-  update::OrbitalControlState control_state;
-  update::OrbitalControlUpdater orbit_updater;
+  update::OrbitalNavigationState control_state;
+  update::OrbitalNavigationUpdater orbit_updater;
   control_state.min_zoom_distance = 1.0f;
   control_state.log2_height = std::log2(60.0*Rs);
   // control_state.log2_height = 20.0f;

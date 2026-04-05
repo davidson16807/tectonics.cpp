@@ -94,8 +94,8 @@ and gprof can't run on output using the -fopenmp flag and still provide accurate
 #include <model/rock/lithosphere/LithosphereSummarization.hpp>
 #include <model/rock/lithosphere/LithosphereReferenceFrames.hpp>
 
-#include <update/OrbitalControlState.hpp>           
-#include <update/OrbitalControlUpdater.hpp>         
+#include <update/OrbitalNavigationState.hpp>           
+#include <update/OrbitalNavigationUpdater.hpp>         
 
 #include <view/ColorscaleSurfaceShaderProgram.hpp>  
 #include <view/IndicatorMeshSwarmShaderProgram.hpp>     
@@ -384,7 +384,7 @@ int main(int argc, char *argv[]) {
   length planet_billboard_near_distance(1e7*si::kilometer); // ~10 * solar radius 
 
   // initialize control state
-  update::OrbitalControlState control_state(
+  update::OrbitalNavigationState control_state(
       glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f, // angular_position
       glm::vec2(0), // angular_direction
       (world_radius+procedural_terrain_far_distance)/meter, // min_zoom_distance
