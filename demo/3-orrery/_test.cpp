@@ -97,16 +97,15 @@ int main() {
   float Rs(si::solar_radius / si::meter);
 
   constexpr auto au = si::astronomical_unit/m;
-  constexpr auto G = si::gravitational_constant / (m3/(kg*s*s));
   const auto mass_of_sun = si::solar_mass; 
-  const auto mass_of_earth_moon = 6.0457e24 * si::kilogram;    
-  const auto mass_of_jupiter = si::jupiter_mass;     
-  const auto mass_of_saturn = 5.683e26 * si::kilogram;     
-  const auto mass_of_uranus = 8.681e25 * si::kilogram;     
-  const auto mass_of_neptune = 1.024e26 * si::kilogram;     
-  const auto mass_of_pluto             = 1.3e22 * si::kilogram; 
-  const auto mass_of_charon            = 1.5e21 * si::kilogram; 
-  const auto mass_of_pluto_charon      = mass_of_pluto + mass_of_charon;
+  const auto mass_of_earth_moon = 6.0457e24 * kg;    
+  const auto mass_of_jupiter    = si::jupiter_mass;     
+  const auto mass_of_saturn     = 5.683e26 * kg;     
+  const auto mass_of_uranus     = 8.681e25 * kg;     
+  const auto mass_of_neptune    = 1.024e26 * kg;     
+  const auto mass_of_pluto         = 1.3e22 * kg; 
+  const auto mass_of_charon        = 1.5e21 * kg; 
+  const auto mass_of_pluto_charon  = mass_of_pluto + mass_of_charon;
 
   using Elements = orbit::Elements<double>;
   using ElementsAndState = orbit::ElementsAndState<double>;
@@ -203,11 +202,12 @@ int main() {
   instance_color[6 ] = vec4(1.0, 1.0, 0.5, 1.0); // Saturn
   instance_color[7 ] = vec4(0.5, 1.0, 0.5, 1.0); // Uranus
   instance_color[8 ] = vec4(0.5, 0.5, 1.0, 1.0); // Neptune
-  instance_color[9 ] = vec4(1.0, 0.5, 0.5, 0.0); // Pluto-Charon
   instance_color[14] = vec4(0.5, 0.5, 0.0, 1.0); // Io
   instance_color[15] = vec4(0.5, 0.5, 1.0, 1.0); // Europa
   instance_color[23] = vec4(1.0, 1.0, 0.0, 1.0); // Titan
   instance_color[31] = vec4(1.0, 0.5, 0.5, 1.0); // Triton
+  instance_color[32] = vec4(1.0, 0.5, 0.5, 1.0); // Pluto
+  instance_color[33] = vec4(1.0, 0.5, 0.5, 1.0); // Charon
 
   // (mass, Universals)
   Orbits orbits;
@@ -289,7 +289,6 @@ int main() {
     100.0*si::megayear,
   };
 
-
   int timestep_id(0);
   std::size_t origin_id(0);
   time t(0);
@@ -356,6 +355,7 @@ int main() {
       // put stuff we've been drawing onto the display
       glfwSwapBuffers(window);
 
+      // now the model updates based on human feedback
       std::queue<messages::Message> message_poll = message_queue.poll();
       while (!message_poll.empty())
       {
@@ -367,7 +367,8 @@ int main() {
         timestep_id = pause_updater.update(timestep_id, message);
         message_poll.pop();
       }
-      // control_state.angular_position.x += 1.0f * 3.1415926f/180.0f;
+
+      // update the state of the view matrix to reflect the control state
       view_state.view_matrix = control_state.get_view_matrix();
   }
 

@@ -143,7 +143,7 @@ namespace orrery
         // calculates the periods of resonant systems
         std::vector<scalar> periods(
             const Cycles& cycles,
-            const std::vector<id>& resonances,
+            const ids& resonances,
             const id resonance_count
         ) {
 
