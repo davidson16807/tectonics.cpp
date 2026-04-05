@@ -73,13 +73,16 @@ namespace orrery
         // the contents of `results` after invocation are the positions of nodes in a scene tree
         // in a coordinate system where the node given by `origin_id` is the origin.
         // nodes have parents given by `parent_ids` and are offset from their parents by `parent_offsets`.
+        template<typename ovec3s> // output vec3s
         void positions(
             const vec3s& parent_offsets,
             const ids& parent_ids,
             const bools& is_origin_ancestor,
             const id origin_id,
-            vec3s& results
+            ovec3s& results
         ) const {
+
+            using ovec3 = typename ovec3s::value_type;
 
             auto size = parent_offsets.size();
             copy(parent_offsets, results);
@@ -90,17 +93,18 @@ namespace orrery
             while(ancestor_id > 0)
             {
                 parent_to_child_offset = parent_offsets[ancestor_id];
-                results[ancestor_id] = ancestor_offset;
+                results[ancestor_id] = ovec3(ancestor_offset);
                 ancestor_offset -= parent_to_child_offset;
                 ancestor_id = parent_ids[ancestor_id];
             }
-            results[ancestor_id] = ancestor_offset;
+            results[ancestor_id] = ovec3(ancestor_offset);
 
             for (std::size_t i = 0; i < size; ++i)
             {
-                results[i] = is_origin_ancestor[i]? 
-                    results[i] 
-                  : results[parent_ids[i]] + parent_offsets[i];
+                results[i] = 
+                    is_origin_ancestor[i]? 
+                        results[i] 
+                      : results[parent_ids[i]] + ovec3(parent_offsets[i]);
             }
 
         }
@@ -108,3 +112,4 @@ namespace orrery
     };
 
 }
+

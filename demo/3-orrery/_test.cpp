@@ -13,8 +13,6 @@
 
 // in house libraries
 
-#include <index/iterated/Nary.hpp>           // iterated::Cast
-
 #include <math/special.hpp>                  // math::floormod
 
 #include <unit/si.hpp>                       // si::unit
@@ -131,7 +129,6 @@ int main() {
   );
 
   ElementsAndState converter(properties);
-  iterated::Cast cast;
 
   /*
   TODO:
@@ -151,44 +148,44 @@ int main() {
   // entities that have orbits, this is just a temporary construct used for initialization 
   // so we don't care if we use std::vector or std::pair
   std::vector<std::pair<mass, Elements>> elliptics = {
-    //  combined mass         sma           ecc     inclination          lan  aop  ma
-      { mass_of_sun, Elements(5.790905e10,  0.2056, 7.005  * si::degree, 0.0, 0.0, 0.0) },   // 1   Mercury
-      { mass_of_sun, Elements(1.082080e11,  0.0068, 3.3947 * si::degree, 0.0, 0.0, 0.0) },   // 2   Venus
-      { mass_of_sun, Elements(1.49598023e11,0.0167, 0.0    * si::degree, 0.0, 0.0, 0.0) },   // 3   Earth
-      { mass_of_sun, Elements(2.279392e11,  0.0934, 1.851  * si::degree, 0.0, 0.0, 0.0) },   // 4   Mars
-      { mass_of_sun, Elements(7.78570e11,   0.0489, 1.305  * si::degree, 0.0, 0.0, 0.0) },   // 5   Jupiter
-      { mass_of_sun, Elements(1.43353e12,   0.0565, 2.484  * si::degree, 0.0, 0.0, 0.0) },   // 6   Saturn
-      { mass_of_sun, Elements(2.87246e12,   0.046,  0.770  * si::degree, 0.0, 0.0, 0.0) },   // 7   Uranus
-      { mass_of_sun, Elements(4.49506e12,   0.009,  1.769  * si::degree, 0.0, 0.0, 0.0) },   // 8   Neptune
-      { mass_of_sun, Elements(39.482*au,    0.2488, 17.14  * si::degree, 0.0, 0.0, 0.0) },   // 9   Pluto-Charon
-      { mass_of_sun, Elements(1.6442*au, 0.38385,3.4079*si::degree, 73.196*si::degree, 319.32*si::degree, 232.01) }, // 10  Didymos
-      { mass_of_sun, Elements(1.206e3,   0.0,  169.3*si::degree, 0.0, 0.0, 0.0) },   // 11  Dimorphos, "Didymoon", pre-impact
-      { mass_of_sun, Elements(1.144e3,   0.02, 169.3*si::degree, 0.0, 0.0, 0.0) },   // 12  Dimorphos, "Didymoon", post-impact
-      { mass_of_earth_moon, Elements(384e6, 0.0549, 0.0   * si::degree, 0.0, 0.0, 0.0) },    // 13  Moon
-      { mass_of_jupiter, Elements(421.8e6,  0.0041, 0.050 * si::degree, 0.0, 0.0, 0.0) },    // 14  Io
-      { mass_of_jupiter, Elements(671.1e6,  0.0090, 0.470 * si::degree, 0.0, 0.0, 0.0) },    // 15  Europa
-      { mass_of_jupiter, Elements(1070.4e6, 0.0013, 0.200 * si::degree, 0.0, 0.0, 0.0) },    // 16  Ganymede
-      { mass_of_jupiter, Elements(1882.7e6, 0.0074, 0.192 * si::degree, 0.0, 0.0, 0.0) },    // 17  Callisto
-      { mass_of_saturn, Elements(186e6,     0.0196, 1.53  * si::degree, 0.0, 0.0, 0.0) },    // 18  Mimas
-      { mass_of_saturn, Elements(238.4e6,   0.0047, 0.02  * si::degree, 0.0, 0.0, 0.0) },    // 19  Enceladus
-      { mass_of_saturn, Elements(295e6,     0.0001, 1.09  * si::degree, 0.0, 0.0, 0.0) },    // 20  Tethys
-      { mass_of_saturn, Elements(377.7e6,   0.0022, 0.02  * si::degree, 0.0, 0.0, 0.0) },    // 21  Dione
-      { mass_of_saturn, Elements(527.2e6,   0.001,  0.35  * si::degree, 0.0, 0.0, 0.0) },    // 22  Rhea
-      { mass_of_saturn, Elements(1221.9e6,  0.0288, 0.33  * si::degree, 0.0, 0.0, 0.0) },    // 23  Titan
-      { mass_of_saturn, Elements(1481.5e6,  0.0274, 0.43  * si::degree, 0.0, 0.0, 0.0) },    // 24  Hyperion
-      { mass_of_saturn, Elements(3561.7e6,  0.0283, 157.0 * si::degree, 0.0, 0.0, 0.0) },    // 25  Iapetus
-      { mass_of_uranus, Elements(129846e3,  0.0014, 4.421 * si::degree, 0.0, 0.0, 0.0) },    // 26  Miranda
-      { mass_of_uranus, Elements(190929e3,  0.0014, 0.026 * si::degree, 0.0, 0.0, 0.0) },    // 27  Ariel
-      { mass_of_uranus, Elements(265986e3,  0.0039, 0.083 * si::degree, 0.0, 0.0, 0.0) },    // 28  Umbriel
-      { mass_of_uranus, Elements(265986e3,  0.0016, 0.114 * si::degree, 0.0, 0.0, 0.0) },    // 29  Titania
-      { mass_of_uranus, Elements(583511e3,  0.0016, 0.125 * si::degree, 0.0, 0.0, 0.0) },    // 30  Oberon
-      { mass_of_neptune, Elements(354759e3, 0.0000, 156.865*si::degree, 0.0, 0.0, 0.0) },    // 31  Triton
-      { mass_of_pluto_charon, Elements(2126e3,  0.0000, 0.000*si::degree, 0.0, 0.0, 0.0) },  // 32  Pluto
-      { mass_of_pluto_charon, Elements(17470e3, 0.0000, 0.000*si::degree, 0.0, 0.0, 0.0) },  // 33  Charon
-      { mass_of_pluto_charon, Elements(42656e3, 5.787,  0.809*si::degree, 0.0, 0.0, 0.0) },  // 34  Styx
-      { mass_of_pluto_charon, Elements(48694e3, 2.036,  0.133*si::degree, 0.0, 0.0, 0.0) },  // 35  Nix
-      { mass_of_pluto_charon, Elements(57783e3, 3.280,  0.389*si::degree, 0.0, 0.0, 0.0) },  // 36  Kerberos
-      { mass_of_pluto_charon, Elements(64738e3, 5.862,  0.242*si::degree, 0.0, 0.0, 0.0) },  // 37  Hydra
+    //  combined mass         sma (m)       ecc     inclination (°)       lan(°) aop(°) ma
+      { mass_of_sun, Elements(5.790905e10,  0.2056, 7.005   * si::degree, 0.0,   0.0,  0.0) },  // 1   Mercury
+      { mass_of_sun, Elements(1.082080e11,  0.0068, 3.3947  * si::degree, 0.0,   0.0,  0.0) },  // 2   Venus
+      { mass_of_sun, Elements(1.49598023e11,0.0167, 0.0     * si::degree, 0.0,   0.0,  0.0) },  // 3   Earth
+      { mass_of_sun, Elements(2.279392e11,  0.0934, 1.851   * si::degree, 0.0,   0.0,  0.0) },  // 4   Mars
+      { mass_of_sun, Elements(7.78570e11,   0.0489, 1.305   * si::degree, 0.0,   0.0,  0.0) },  // 5   Jupiter
+      { mass_of_sun, Elements(1.43353e12,   0.0565, 2.484   * si::degree, 0.0,   0.0,  0.0) },  // 6   Saturn
+      { mass_of_sun, Elements(2.87246e12,   0.046,  0.770   * si::degree, 0.0,   0.0,  0.0) },  // 7   Uranus
+      { mass_of_sun, Elements(4.49506e12,   0.009,  1.769   * si::degree, 0.0,   0.0,  0.0) },  // 8   Neptune
+      { mass_of_sun, Elements(39.482*au,    0.2488, 17.14   * si::degree, 0.0,   0.0,  0.0) },  // 9   Pluto-Charon
+      { mass_of_sun, Elements(1.6442*au,    0.38385,3.4079  * si::degree, 73.196*si::degree, 319.32*si::degree, 232.01) }, // 10  Didymos
+      { mass_of_sun, Elements(1.206e3,      0.0,    169.3   * si::degree, 0.0,   0.0,  0.0) },  // 11  Dimorphos, "Didymoon", pre-impact
+      { mass_of_sun, Elements(1.144e3,      0.02,   169.3   * si::degree, 0.0,   0.0,  0.0) },  // 12  Dimorphos, "Didymoon", post-impact
+      { mass_of_earth_moon, Elements(384e6, 0.0549, 0.0     * si::degree, 0.0,   0.0,  0.0) },  // 13  Moon
+      { mass_of_jupiter, Elements(421.8e6,  0.0041, 0.050   * si::degree, 0.0,   0.0,  0.0) },  // 14  Io
+      { mass_of_jupiter, Elements(671.1e6,  0.0090, 0.470   * si::degree, 0.0,   0.0,  0.0) },  // 15  Europa
+      { mass_of_jupiter, Elements(1070.4e6, 0.0013, 0.200   * si::degree, 0.0,   0.0,  0.0) },  // 16  Ganymede
+      { mass_of_jupiter, Elements(1882.7e6, 0.0074, 0.192   * si::degree, 0.0,   0.0,  0.0) },  // 17  Callisto
+      { mass_of_saturn, Elements(186e6,     0.0196, 1.53    * si::degree, 0.0,   0.0,  0.0) },  // 18  Mimas
+      { mass_of_saturn, Elements(238.4e6,   0.0047, 0.02    * si::degree, 0.0,   0.0,  0.0) },  // 19  Enceladus
+      { mass_of_saturn, Elements(295e6,     0.0001, 1.09    * si::degree, 0.0,   0.0,  0.0) },  // 20  Tethys
+      { mass_of_saturn, Elements(377.7e6,   0.0022, 0.02    * si::degree, 0.0,   0.0,  0.0) },  // 21  Dione
+      { mass_of_saturn, Elements(527.2e6,   0.001,  0.35    * si::degree, 0.0,   0.0,  0.0) },  // 22  Rhea
+      { mass_of_saturn, Elements(1221.9e6,  0.0288, 0.33    * si::degree, 0.0,   0.0,  0.0) },  // 23  Titan
+      { mass_of_saturn, Elements(1481.5e6,  0.0274, 0.43    * si::degree, 0.0,   0.0,  0.0) },  // 24  Hyperion
+      { mass_of_saturn, Elements(3561.7e6,  0.0283, 157.0   * si::degree, 0.0,   0.0,  0.0) },  // 25  Iapetus
+      { mass_of_uranus, Elements(129846e3,  0.0014, 4.421   * si::degree, 0.0,   0.0,  0.0) },  // 26  Miranda
+      { mass_of_uranus, Elements(190929e3,  0.0014, 0.026   * si::degree, 0.0,   0.0,  0.0) },  // 27  Ariel
+      { mass_of_uranus, Elements(265986e3,  0.0039, 0.083   * si::degree, 0.0,   0.0,  0.0) },  // 28  Umbriel
+      { mass_of_uranus, Elements(265986e3,  0.0016, 0.114   * si::degree, 0.0,   0.0,  0.0) },  // 29  Titania
+      { mass_of_uranus, Elements(583511e3,  0.0016, 0.125   * si::degree, 0.0,   0.0,  0.0) },  // 30  Oberon
+      { mass_of_neptune, Elements(354759e3, 0.0000, 156.865 * si::degree, 0.0,   0.0,  0.0) },  // 31  Triton
+      { mass_of_pluto_charon, Elements(2126e3,  0.0000, 0.000*si::degree, 0.0,   0.0,  0.0) },  // 32  Pluto
+      { mass_of_pluto_charon, Elements(17470e3, 0.0000, 0.000*si::degree, 0.0,   0.0,  0.0) },  // 33  Charon
+      { mass_of_pluto_charon, Elements(42656e3, 5.787,  0.809*si::degree, 0.0,   0.0,  0.0) },  // 34  Styx
+      { mass_of_pluto_charon, Elements(48694e3, 2.036,  0.133*si::degree, 0.0,   0.0,  0.0) },  // 35  Nix
+      { mass_of_pluto_charon, Elements(57783e3, 3.280,  0.389*si::degree, 0.0,   0.0,  0.0) },  // 36  Kerberos
+      { mass_of_pluto_charon, Elements(64738e3, 5.862,  0.242*si::degree, 0.0,   0.0,  0.0) },  // 37  Hydra
   };
 
   // TODO: store this using `Components<vec4>`
@@ -333,10 +330,8 @@ int main() {
         parent_ids,
         is_origin_ancestor,
         origin_id,
-        body_origins
+        instance_origins
       );
-
-      cast(body_origins, instance_origins);
 
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
