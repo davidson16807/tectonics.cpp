@@ -27,6 +27,7 @@
 
 #include <update/OrbitalNavigationState.hpp>    // update::OrbitalNavigationState
 #include <update/OrbitalNavigationUpdater.hpp>  // update::OrbitalNavigationUpdater
+#include <update/TreeNavigationUpdater.hpp>     // update::TreeNavigationUpdater
 
 #include <view/IndicatorSphereSwarmShaderProgram.hpp>     // view::IndicatorSphereSwarmShaderProgram
 
@@ -212,6 +213,7 @@ int main() {
   // initialize control state
   update::OrbitalNavigationState control_state;
   update::OrbitalNavigationUpdater orbit_updater;
+  update::TreeNavigationUpdater<int> tree_updater("9","0","[","]");
   control_state.min_zoom_distance = 1.0f;
   control_state.log2_height = std::log2(60.0*Rs);
   // control_state.log2_height = 20.0f;
@@ -329,6 +331,7 @@ int main() {
       {
         auto message = message_poll.front();
         orbit_updater.update(control_state, message, control_state);
+        origin_id = tree_updater.update(origin_id, parent_ids, message);
         if (std::holds_alternative<messages::KeyboardMessage>(message))
         {
           auto key_message = std::get<messages::KeyboardMessage>(message);
@@ -338,10 +341,6 @@ int main() {
             /* < slower   */     if (c == ",") { timestep_id = std::clamp(timestep_id-1, 0, int(timesteps.size()-1)); } 
             /* > faster   */else if (c == ".") { timestep_id = std::clamp(timestep_id+1, 0, int(timesteps.size()-1)); } 
             /* || pause   */else if (c == "/") { timestep_id = 0; } 
-            /* ] next     */else if (c == "]") { origin_id = std::clamp(origin_id+1, std::size_t(0), parent_ids.size()-1); }
-            /* [ last     */else if (c == "[") { origin_id = std::clamp(origin_id-1, std::size_t(0), parent_ids.size()-1); }
-            /* ( parent   */else if (c == "9") { origin_id = parent_ids[origin_id]; } 
-            /* ) 1st child*/else if (c == "0") { for(std::size_t i=0; i<parent_ids.size(); i++) { if(parent_ids[i]==int(origin_id)){origin_id = i; break;} } } 
             std::cout << timestep_id << std::endl;
           }
         }
