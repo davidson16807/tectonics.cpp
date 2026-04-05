@@ -246,8 +246,11 @@ int main() {
   messages::MessageQueue message_queue;
   message_queue.activate(window);
 
+  std::vector<> timesteps{
+    
+  };
+
   std::size_t origin_id(0);
-  time t(0);
   while(!glfwWindowShouldClose(window)) {
 
       t+=si::day;
@@ -314,14 +317,10 @@ int main() {
           auto key_message = std::get<messages::KeyboardMessage>(message);
           if (key_message.action != messages::release)
           {
-            if (key_message.character == "→")
-            {
-              origin_id = std::clamp(origin_id+1, std::size_t(0), parent_ids.size()-1);
-            }
-            else if (key_message.character == "←")
-            {
-              origin_id = std::clamp(origin_id-1, std::size_t(0), parent_ids.size()-1);
-            }
+            if      (key_message.character == "→") { origin_id = std::clamp(origin_id+1, std::size_t(0), parent_ids.size()-1); }
+            else if (key_message.character == "←") { origin_id = std::clamp(origin_id-1, std::size_t(0), parent_ids.size()-1); }
+            else if (key_message.character == "↑") { origin_id = parent_ids[origin_id]; }
+            else if (key_message.character == ".") { ti; } // >
           }
         }
         message_poll.pop();

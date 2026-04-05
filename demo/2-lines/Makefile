@@ -20,7 +20,7 @@ all: $(TEST) ./Makefile
 	cp $(ROOT)/lib/glew/bin/Release/x64/glew32.dll . && \
 	find ./ -type f -name '*_specialization.*pp' -exec echo "#include \"{}\"" >> test.cpp \; && \
 	find ./ -type f -name '*_test.*pp' -exec echo "#include \"{}\"" >> test.cpp \; && \
-	$(CPP) -std=c++17 -o test.out test.cpp  $(FLAGS-$(OS)) \
+	$(CPP) -std=c++20 -o test.out test.cpp  $(FLAGS-$(OS)) \
 	-I $(ROOT)/lib/ -I $(ROOT)/inc/ -I $(ROOT)/src/ $(LIBS-$(OS)) && \
 	chmod a+x test.out && \
 	./test.out
