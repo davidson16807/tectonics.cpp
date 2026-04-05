@@ -16,18 +16,21 @@ namespace update
   class CyclingOptionNavigationUpdater
   {
 
-    std::string last_key;
-    std::string next_key;
+    const std::string last_key;
+    const std::string next_key;
+    const bool typematic;
 
 public:
 
     template<typename String1, typename String2>
     CyclingOptionNavigationUpdater(
       const String2 last_key,
-      const String1 next_key
+      const String1 next_key,
+      const bool typematic
     ):
       last_key(last_key),
-      next_key(next_key)
+      next_key(next_key),
+      typematic(typematic)
     {}
 
     id update(
@@ -35,7 +38,8 @@ public:
       const auto& options,
       const messages::KeyboardMessage message
     ) const { 
-      if (message.action != messages::release)
+      if ((message.action != messages::release && typematic)
+          || message.action == messages::press)
       {
         auto c = message.character;
         if      (c == last_key)  { return std::clamp(option_id-1, id(0), id(options.size()-1)); }

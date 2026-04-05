@@ -218,7 +218,7 @@ int main() {
   // initialize control state
   update::OrbitalNavigationState control_state;
   update::OrbitalNavigationUpdater orbit_updater;
-  update::TreeNavigationUpdater<int> scene_tree_updater("9","0","[","]");
+  update::TreeNavigationUpdater<int> scene_tree_updater("9","0",false, "[","]",true);
   update::CyclingOptionNavigationUpdater<std::size_t> scene_node_updater("m","n", true);
   update::BoundedOptionNavigationUpdater<std::size_t> timewarp_updater(",", ".", false);
   update::ValueHotkeyPresetUpdater<std::size_t> pause_updater("/",0);

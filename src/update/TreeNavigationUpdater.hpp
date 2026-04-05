@@ -18,10 +18,12 @@ namespace update
 
     using ids = std::vector<id>;
 
-    std::string parent_key;
-    std::string child_key;
-    std::string last_sibling_key;
-    std::string next_sibling_key;
+    const std::string parent_key;
+    const std::string child_key;
+    const bool typematic_generations;
+    const std::string last_sibling_key;
+    const std::string next_sibling_key;
+    const bool typematic_siblings;
 
 public:
 
@@ -29,13 +31,17 @@ public:
     TreeNavigationUpdater(
       const String1 parent_key,
       const String2 child_key,
+      const bool typematic_generations,
       const String3 last_sibling_key,
-      const String4 next_sibling_key
+      const String4 next_sibling_key,
+      const bool typematic_siblings
     ):
       parent_key(parent_key),
       child_key(child_key),
+      typematic_generations(typematic_generations),
       last_sibling_key(last_sibling_key),
-      next_sibling_key(next_sibling_key)
+      next_sibling_key(next_sibling_key),
+      typematic_siblings(typematic_siblings)
     {}
 
     id update(
@@ -43,12 +49,16 @@ public:
       const ids& parent_ids,
       const messages::KeyboardMessage message
     ) const { 
-      if (message.action != messages::release)
+      if ((message.action != messages::release && typematic_generations) || message.action == messages::press)
       {
         auto c = message.character;
         if      (c == parent_key)       { return parent_ids[focus_id]; } 
         else if (c == child_key)        { for(std::size_t i=0; i<parent_ids.size(); i++) { if(parent_ids[i]==focus_id){ return id(i); } } }
-        else if (c == last_sibling_key) { return (focus_id-1 >= 0 && parent_ids[focus_id-1] == parent_ids[focus_id])? focus_id-1 : focus_id; }
+      }
+      if ((message.action != messages::release && typematic_siblings) || message.action == messages::press)
+      {
+        auto c = message.character;
+             if (c == last_sibling_key) { return (focus_id-1 >= 0 && parent_ids[focus_id-1] == parent_ids[focus_id])? focus_id-1 : focus_id; }
         else if (c == next_sibling_key) { return (focus_id+1 < id(parent_ids.size()) && parent_ids[focus_id+1] == parent_ids[focus_id])? focus_id+1 : focus_id;}
       }
       return focus_id;
