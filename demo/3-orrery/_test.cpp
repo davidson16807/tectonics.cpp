@@ -333,13 +333,14 @@ int main() {
           auto key_message = std::get<messages::KeyboardMessage>(message);
           if (key_message.action != messages::release)
           {
-            if      (key_message.character == "→") { origin_id = std::clamp(origin_id+1, std::size_t(0), parent_ids.size()-1); }
-            else if (key_message.character == "←") { origin_id = std::clamp(origin_id-1, std::size_t(0), parent_ids.size()-1); }
-            else if (key_message.character == "↑") { origin_id = parent_ids[origin_id]; }
-            else if (key_message.character == ",") { timestep_id = std::clamp(timestep_id-1, 0, int(timesteps.size()-1)); } // <
-            else if (key_message.character == ".") { timestep_id = std::clamp(timestep_id+1, 0, int(timesteps.size()-1)); } // >
-            else if (key_message.character == "/") { timestep_id = 0; } // ||
-            std::cout << timestep_id << std::endl;
+            /* < slower   */else if (key_message.character == ",") { timestep_id = std::clamp(timestep_id-1, 0, int(timesteps.size()-1)); } 
+            /* > faster   */else if (key_message.character == ".") { timestep_id = std::clamp(timestep_id+1, 0, int(timesteps.size()-1)); } 
+            /* || pause   */else if (key_message.character == "/") { timestep_id = 0; } 
+            /* ] next     */     if (key_message.character == "]") { origin_id = std::clamp(origin_id+1, std::size_t(0), parent_ids.size()-1); }
+            /* [ last     */else if (key_message.character == "[") { origin_id = std::clamp(origin_id-1, std::size_t(0), parent_ids.size()-1); }
+            /* ( parent   */else if (key_message.character == "9") { origin_id = parent_ids[origin_id]; } 
+            /* ) 1st child*/else if (key_message.character == "0") { for(std::size_t i=0; i<parent_ids.size(); i++) { if(parent_ids[i]==int(origin_id)){origin_id = i; break;} } } 
+            std::cout << key_message.character << std::endl;
           }
         }
         message_poll.pop();

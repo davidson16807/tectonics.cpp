@@ -3,6 +3,7 @@
 // std libraries
 #include <unordered_map>
 #include <queue>
+#include <algorithm> // std::transform
 
 // 3rd party libraries
 #include <GLFW/glfw3.h>
@@ -46,12 +47,44 @@ public:
 
 		MessageQueue():
 			registered_nonalphanumerics({
-				{GLFW_KEY_LEFT,  "←"},
-				{GLFW_KEY_RIGHT, "→"},
-				{GLFW_KEY_UP,    "↑"},
-				{GLFW_KEY_DOWN,  "↓"},
-				{GLFW_KEY_TAB,   "\t"},
-				{GLFW_KEY_ENTER, "\n"},
+				{GLFW_KEY_F1,   "f1"},
+				{GLFW_KEY_F2,   "f2"},
+				{GLFW_KEY_F3,   "f3"},
+				{GLFW_KEY_F4,   "f4"},
+				{GLFW_KEY_F5,   "f5"},
+				{GLFW_KEY_F6,   "f6"},
+				{GLFW_KEY_F7,   "f7"},
+				{GLFW_KEY_F8,   "f8"},
+				{GLFW_KEY_F9,   "f9"},
+				{GLFW_KEY_F10,  "f10"},
+				{GLFW_KEY_F11,  "f11"},
+				{GLFW_KEY_F12,  "f12"},
+				{GLFW_KEY_F13,  "f13"},
+				{GLFW_KEY_F14,  "f14"},
+				{GLFW_KEY_F15,  "f15"},
+				{GLFW_KEY_F16,  "f16"},
+				{GLFW_KEY_F17,  "f17"},
+				{GLFW_KEY_F18,  "f18"},
+				{GLFW_KEY_F19,  "f19"},
+				{GLFW_KEY_F20,  "f20"},
+				{GLFW_KEY_F21,  "f21"},
+				{GLFW_KEY_F22,  "f22"},
+				{GLFW_KEY_F23,  "f23"},
+				{GLFW_KEY_F24,  "f24"},
+				{GLFW_KEY_F25,  "f25"},
+				{GLFW_KEY_LEFT,   "←"},
+				{GLFW_KEY_RIGHT,  "→"},
+				{GLFW_KEY_UP,     "↑"},
+				{GLFW_KEY_DOWN,   "↓"},
+				{GLFW_KEY_TAB,    "\t"},
+				{GLFW_KEY_ENTER,  "\n"},
+				{GLFW_KEY_BACKSPACE,  "backspace"},
+				{GLFW_KEY_DELETE,     "delete"},
+				{GLFW_KEY_HOME,       "home"},
+				{GLFW_KEY_INSERT,     "insert"},
+				{GLFW_KEY_END,        "end"},
+				{GLFW_KEY_PAGE_UP,    "page up"},
+				{GLFW_KEY_PAGE_DOWN,  "page down"},
 			})
 		{}
 
