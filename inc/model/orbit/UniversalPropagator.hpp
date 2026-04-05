@@ -119,7 +119,7 @@ namespace orbit {
 	        int   max_refinement_count = 35,
 	        scalar max_precision       = 1e-15,
 	        int   laguerre_method_n    = 5,
-	        bool  force_congruence   = false
+	        bool  force_congruence     = false
 	    ) : 
 	    	gravitational_constant(gravitational_constant),
 	    	max_refinement_count(max_refinement_count),
@@ -217,9 +217,9 @@ namespace orbit {
 	        const scalar sqrt_mu = std::sqrt(mu);
 	        const scalar r0 = glm::length(R0);
 	        const scalar v0 = glm::length(V0);
-	        const scalar a  = s2 / r0 - (v0 * v0) / mu;
+	        const scalar a  = s2 / r0 - (v0 * v0) / mu; // alpha, the inverse semi-major axis
 	        const scalar sma  = s1/a; // semi-major axis
-	        const scalar p = s2*pi*std::sqrt(a*a*a/mu); // period
+	        const scalar p = s2*pi*std::sqrt(sma*sma*sma/mu); // period
 	        const scalar dt = (a > s0 && force_congruence? math::floormod(t,p):t) - t0;
 	        const scalar x = solve(
 	        	/* x0 */ a >= s0? 

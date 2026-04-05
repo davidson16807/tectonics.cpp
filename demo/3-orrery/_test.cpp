@@ -115,8 +115,22 @@ int main() {
   using Orbit = orbit::Universals<double>;
   using Orbits = orrery::CommonComponents<int,Orbit>;
   using TrackPositions = std::vector<orrery::TrackPosition<int,double>>;
-  Properties properties(dvec3(1,0,0), dvec3(0,0,1), G, pi);
-  Propagator propagator(G);
+
+  Properties properties(
+    dvec3(1,0,0), 
+    dvec3(0,0,1), 
+    si::gravitational_constant / (m3/(kg*s*s)), 
+    pi
+  );
+
+  Propagator propagator(
+    si::gravitational_constant / (m3/(kg*s*s)), 
+    35,    // max_refinement_count
+    1e-15, // max_precision
+    5,     // laguerre_method_n
+    true   // force_congruence
+  );
+
   ElementsAndState converter(properties);
   iterated::Cast cast;
 
