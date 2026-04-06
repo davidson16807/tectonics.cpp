@@ -3,10 +3,13 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <sstream>
+#include <iomanip>
+#include <limits>
 
 #include <model/orbit/Elements.hpp>
 
-namespace orbit {
+namespace codecs {
 
 	template <typename scalar>
 	class ElementsVectorCodec
@@ -14,34 +17,49 @@ namespace orbit {
 
 		using strings = std::vector<std::string>;
 
-	public:
-		ElementsVectorCodec() = default;
+	    static scalar decode(const std::string& s) {
+	        std::istringstream iss(s);
+	        scalar value;
+	        iss >> value;
+	        return value;
+	    }
 
-		Elements<scalar> decode(const std::vector<std::string>& vector) const
+	    static std::string encode(const scalar& value) {
+	        std::ostringstream oss;
+	        oss << std::setprecision(std::numeric_limits<scalar>::max_digits10) << value;
+	        return oss.str();
+	    }
+
+	public:
+		ElementsVectorCodec(){};
+
+		orbit::Elements<scalar> decode(const std::vector<std::string>& fields) const
 		{
-			if (vector.size() != 6) {
-				throw std::invalid_argument("ElementsVectorCodec::decode requires exactly 6 fields");
+			if (fields.size() != 6) {
+				throw std::invalid_argument("Exactly 6 fields must be supplied to create an Element");
 			}
 
-			return Elements<scalar>(
-				scalar(std::stod(vector[0])),
-				scalar(std::stod(vector[1])),
-				scalar(std::stod(vector[2])),
-				scalar(std::stod(vector[3])),
-				scalar(std::stod(vector[4])),
-				scalar(std::stod(vector[5]))
+			return orbit::Elements<scalar>(
+				decode(fields[0]),
+				decode(fields[1]),
+				decode(fields[2]),
+				decode(fields[3]),
+				decode(fields[4]),
+				decode(fields[5])
 			);
 		}
 
-		void encode(const Elements<scalar>& elements, strings& vector) const
+		void encode(const orbit::Elements<scalar>& elements, strings& fields) const
 		{
-			vector.push_back(std::to_string(elements.semi_major_axis));
-			vector.push_back(std::to_string(elements.eccentricity));
-			vector.push_back(std::to_string(elements.inclination));
-			vector.push_back(std::to_string(elements.longitude_of_ascending_node));
-			vector.push_back(std::to_string(elements.argument_of_periapsis));
-			vector.push_back(std::to_string(elements.mean_anomaly));
+			fields.clear();
+			fields.push_back(encode(elements.semi_major_axis));
+			fields.push_back(encode(elements.eccentricity));
+			fields.push_back(encode(elements.inclination));
+			fields.push_back(encode(elements.longitude_of_ascending_node));
+			fields.push_back(encode(elements.argument_of_periapsis));
+			fields.push_back(encode(elements.mean_anomaly));
 		}
+
 	};
 
 }
