@@ -154,8 +154,10 @@ int main() {
   std::vector<std::vector<std::string>> scratch_table;
   std::vector<vec4> instance_color;
 
-  tsvs.read("elliptics.tsv", scratch_table);
+  tsvs.read("elliptics-j2000.tsv", scratch_table);
   body_rows.decode(scratch_table,  elliptics, parent_ids, masses, labels, instance_color);
+  body_rows.encode(scratch_table,  elliptics, parent_ids, masses, labels, instance_color);
+  tsvs.write("read-back-test.tsv", scratch_table);
 
   // entities that have perceptible orbits, we use 32-bit ints for entity ids and more than 1 out of 32 are represented, so a bool mask is more sparse, but checking the mask introduces branching logic
   std::vector<bool> perceptible(parent_ids.size(), true);

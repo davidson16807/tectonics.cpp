@@ -2,6 +2,7 @@
 
 #include <cstddef>       // std::size_t
 
+#include <format>
 #include <string>
 #include <vector>
 #include <unordered_map> // 
@@ -29,12 +30,15 @@ namespace codecs {
 		static constexpr mass kg = si::kilogram;
 
 		ElementsVectorCodec<scalar> elements_vector_codec;
+		std::size_t header_count;
 
 	public:
 		BodyVectorCodec(
-			ElementsVectorCodec<scalar> elements_vector_codec = {}
+			ElementsVectorCodec<scalar> elements_vector_codec = {},
+			std::size_t header_count = 1
 		) noexcept :
-			elements_vector_codec(std::move(elements_vector_codec))
+			elements_vector_codec(std::move(elements_vector_codec)),
+			header_count(header_count)
 		{}
 
 		void decode(
@@ -51,13 +55,18 @@ namespace codecs {
 			std::unordered_map<std::string, id> id_for_label;
 			label_for_id.clear();
 			label_for_id.reserve(table.size());
-			for (std::size_t i = 0; i < table.size(); ++i) {
-				if (table[i].size() != 13) { 
-					throw std::runtime_error("Body rows require 13 columns.");
+			for (std::size_t row_id = header_count; row_id < table.size(); ++row_id) {
+				const auto& row = table[row_id];
+				std::size_t record_id = row_id - header_count;
+				if (row.size() < 8) { 
+					throw std::runtime_error(
+						std::format("Body rows require at least 8 columns, {} were found, row {}, label {} ", 
+							row.size(), row_id, row[0])
+					);
 				}
-				const std::string& label = table[i][0];
-				label_for_id.push_back(table[i][0]);
-				id_for_label[label] = id(i);
+				const std::string& label = row[0];
+				label_for_id.push_back(row[0]);
+				id_for_label[label] = id(record_id);
 			}
 
 			// next, build `parent_ids` output
@@ -69,22 +78,35 @@ namespace codecs {
 			colors.reserve(table.size());
 			elements.clear();
 			elements.reserve(table.size());
-			for (const auto& row : table) {
+			for (std::size_t row_id = header_count; row_id < table.size(); ++row_id) {
+				const auto& row = table[row_id];
 				const auto it = id_for_label.find(row[1]);
 				if (it == id_for_label.end()) {
-					throw std::runtime_error("Encountered unknown parent label: " + row[1]);
+					throw std::runtime_error(std::format("Encountered unknown parent label, row {}, label {}", row_id, row[1]));
 				}
 				std::vector<std::string> element_vector(row.begin() + 7, row.end());
 				parent_ids.push_back(it->second);
-				masses.push_back(
-					scalar(std::stod(row[2]))*kg
-				);
-				colors.push_back(vec4(
-					scalar(std::stod(row[3])), 
-					scalar(std::stod(row[4])), 
-					scalar(std::stod(row[5])), 
-					scalar(std::stod(row[6]))
-				));
+				try
+				{
+					colors.push_back(vec4(
+						scalar(std::stod(row[2])), 
+						scalar(std::stod(row[3])), 
+						scalar(std::stod(row[4])), 
+						scalar(std::stod(row[5]))
+					));
+				}
+				catch (const std::invalid_argument& e)
+				{
+					throw std::runtime_error(std::format("Error parsing number in color value, row {}, values {},{},{},{}", row_id, row[3], row[4], row[5], row[6]));
+				}
+				try
+				{
+					masses.push_back(scalar(row[6].size() < 1? 0.0: std::stod(row[6]))*kg);
+				} 
+				catch (const std::invalid_argument& e)
+				{
+					throw std::runtime_error(std::format("Error parsing mass, row {}, value {}", row_id, row[6]));
+				}
 				elements.push_back(elements_vector_codec.decode(element_vector));
 			}
 
@@ -107,14 +129,14 @@ namespace codecs {
 				throw std::invalid_argument("Vectors must be of equal length");
 			}
 
-			std::vector<std::string> row_vector;
 			std::vector<std::string> element_vector;
 
 			table.clear();
 			table.reserve(elements.size());
-			for (std::size_t i = 0; i < elements.size(); ++i) {
+			for (std::size_t record_id = 0; record_id < elements.size(); ++record_id) {
+				std::vector<std::string> row_vector;
 
-				const id parent_id = parent_ids[i];
+				const id parent_id = parent_ids[record_id];
 				if (std::size_t(parent_id) >= label_for_id.size()) {
 					throw std::out_of_range("parent_id out of range");
 				}
@@ -122,15 +144,15 @@ namespace codecs {
 				row_vector.clear();
 				element_vector.clear();
 
-				row_vector.push_back(label_for_id[i]);
+				row_vector.push_back(label_for_id[record_id]);
 				row_vector.push_back(label_for_id[std::size_t(parent_id)]);
-				row_vector.push_back(std::to_string(masses[i]/kg));
-				row_vector.push_back(std::to_string(colors[i].r));
-				row_vector.push_back(std::to_string(colors[i].g));
-				row_vector.push_back(std::to_string(colors[i].b));
-				row_vector.push_back(std::to_string(colors[i].a));
+				row_vector.push_back(std::to_string(colors[record_id].r));
+				row_vector.push_back(std::to_string(colors[record_id].g));
+				row_vector.push_back(std::to_string(colors[record_id].b));
+				row_vector.push_back(std::to_string(colors[record_id].a));
+				row_vector.push_back(std::to_string(masses[record_id]/kg));
 
-				elements_vector_codec.encode(elements[i], element_vector);
+				elements_vector_codec.encode(elements[record_id], element_vector);
 				row_vector.insert(row_vector.end(), element_vector.begin(), element_vector.end());
 
 				table.push_back(row_vector);

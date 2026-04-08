@@ -49,6 +49,10 @@ namespace files {
 			for (std::size_t i = 0; i < table.size(); ++i) {
 				file << codec.encode(table[i]) << "\n";
 			}
+			file.flush();
+			if (!file) {
+			    throw std::runtime_error("Failed to finalize file: " + filename);
+			}
 		}
 
 	};

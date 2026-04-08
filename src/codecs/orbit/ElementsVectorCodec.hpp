@@ -7,6 +7,8 @@
 #include <iomanip>
 #include <limits>
 
+#include <unit/si.hpp>
+
 #include <model/orbit/Elements.hpp>
 
 namespace codecs {
@@ -14,6 +16,10 @@ namespace codecs {
 	template <typename scalar>
 	class ElementsVectorCodec
 	{
+
+		static constexpr scalar pi = 3.141592653589793238462643383279502884197;
+		static constexpr scalar radians_per_degree = pi/180.0;
+		static constexpr scalar s0   =   0.0;
 
 		using strings = std::vector<std::string>;
 
@@ -36,17 +42,18 @@ namespace codecs {
 		orbit::Elements<scalar> decode(const std::vector<std::string>& fields) const
 		{
 			if (fields.size() != 6) {
-				throw std::invalid_argument("Exactly 6 fields must be supplied to create an Element");
+				throw std::invalid_argument("An orbit must have at least a semi-major axis");
 			}
 
 			return orbit::Elements<scalar>(
-				decode(fields[0]),
-				decode(fields[1]),
-				decode(fields[2]),
-				decode(fields[3]),
-				decode(fields[4]),
-				decode(fields[5])
+				decode(fields[0]),// semi major axis
+				fields.size() > 1? decode(fields[1])            : s0, // eccentricity
+				fields.size() > 2? decode(fields[2])            : s0, // inclination
+				false && fields.size() > 3? decode(fields[3])*si::degree : s0, // longitude of ascending node
+				false && fields.size() > 4? decode(fields[4])*si::degree : s0, // argument of periapsis
+				false && fields.size() > 5? decode(fields[5])*si::degree : s0  // mean anomaly
 			);
+
 		}
 
 		void encode(const orbit::Elements<scalar>& elements, strings& fields) const
@@ -55,11 +62,12 @@ namespace codecs {
 			fields.push_back(encode(elements.semi_major_axis));
 			fields.push_back(encode(elements.eccentricity));
 			fields.push_back(encode(elements.inclination));
-			fields.push_back(encode(elements.longitude_of_ascending_node));
-			fields.push_back(encode(elements.argument_of_periapsis));
-			fields.push_back(encode(elements.mean_anomaly));
+			fields.push_back(encode(elements.longitude_of_ascending_node * si::radian));
+			fields.push_back(encode(elements.argument_of_periapsis       * si::radian));
+			fields.push_back(encode(elements.mean_anomaly                * si::radian));
 		}
 
 	};
 
 }
+

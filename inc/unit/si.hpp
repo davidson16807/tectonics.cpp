@@ -906,7 +906,7 @@ namespace si{
   IAU UNITS FOR ASTRONOMY AND CONSTANTS FOR EARTH
   */
   constexpr time<double>         earth_age            ( 4.54e9 * year );
-  constexpr mass<double>         earth_mass           ( 5.972e24 );
+  constexpr mass<double>         earth_mass           ( 5.9721671e24 ); // from NASA Jet Propulsion Laboratory
   constexpr length<double>       earth_radius         ( 6.367e6 );
   constexpr acceleration<double> standard_gravity     ( 9.80665 );
   constexpr temperature<double>  standard_temperature ( 273.15 );
@@ -915,7 +915,7 @@ namespace si{
   constexpr length<double>       astronomical_unit    ( 149597870700.0 );
   constexpr intensity<double>    global_solar_constant( 1361.0 );
 
-  constexpr mass<double>         jupiter_mass         ( 1.898e27 );
+  constexpr mass<double>         jupiter_mass         ( 1.8985172e27 ); // from NASA Jet Propulsion Laboratory
   constexpr length<double>       jupiter_radius       ( 71e6 ); 
 
   constexpr mass<double>         solar_mass           ( 1.988475e30 );
