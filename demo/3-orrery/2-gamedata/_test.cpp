@@ -156,8 +156,8 @@ int main() {
 
   tsvs.read("elliptics-j2000.tsv", scratch_table);
   body_rows.decode(scratch_table,  elliptics, parent_ids, masses, labels, instance_color);
-  body_rows.encode(scratch_table,  elliptics, parent_ids, masses, labels, instance_color);
-  tsvs.write("read-back-test.tsv", scratch_table);
+  // body_rows.encode(scratch_table,  elliptics, parent_ids, masses, labels, instance_color);
+  // tsvs.write("read-back-test.tsv", scratch_table);
 
   // entities that have perceptible orbits, we use 32-bit ints for entity ids and more than 1 out of 32 are represented, so a bool mask is more sparse, but checking the mask introduces branching logic
   std::vector<bool> perceptible(parent_ids.size(), true);
@@ -166,7 +166,7 @@ int main() {
   // (mass, Universals)
   Orbits orbits;
   // Elliptics
-  int entity_id_counter = 1;
+  int entity_id_counter = 0;
   for(std::size_t i=0; i<elliptics.size(); i++)
   {
     const auto body_kg = masses[i]/kg;
