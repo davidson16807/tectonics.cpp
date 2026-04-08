@@ -169,7 +169,7 @@ int main() {
   int entity_id_counter = 0;
   for(std::size_t i=0; i<elliptics.size(); i++)
   {
-    const auto body_kg = masses[i]/kg;
+    const auto body_kg = masses[parent_ids[i]]/kg;
     const Elements& elements = elliptics[i];
     const auto state = converter.get_state_from_elements(elements, body_kg);
     orbits.add(entity_id_counter++, Orbit(body_kg, state));
