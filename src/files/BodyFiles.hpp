@@ -2,12 +2,13 @@
 
 #include <cstddef>       // std::size_t
 
-#include <format>
-#include <string>
-#include <vector>
-#include <unordered_map> // 
+#include <format>        // std::format
+#include <string>        // std:;string
+#include <vector>        // std::vector
+#include <unordered_map> // std::unordered_map
 #include <stdexcept>     // std::runtime_error
 #include <utility>       // std::move
+#include <fstream>       // std::ofstream, std::ifstream
 
 #include <glm/vec4.hpp>
 
@@ -15,35 +16,38 @@
 #include <model/orbit/Elements.hpp>
 #include <codecs/orbit/ElementsVectorCodec.hpp>
 
-namespace codecs {
+namespace files {
 
 	template <typename id, typename scalar, typename TableLineCodec>
-	class BodyVectorCodec
+	class BodyFiles
 	{
 
 		using mass = si::mass<scalar>;
 
 		using vec4 = glm::vec4;
 
-		using Table = std::vector<std::vector<std::string>>;
+		using Row = std::vector<std::string>;
 
 		static constexpr mass kg = si::kilogram;
 
-		ElementsVectorCodec<scalar> elements_vector_codec;
+		const TableLineCodec table_line_codec;
+		const codecs::ElementsVectorCodec<scalar> elements_vector_codec;
 		std::size_t header_count;
 
 	public:
 
-		BodyVectorCodec(
-			ElementsVectorCodec<scalar> elements_vector_codec = {},
-			std::size_t header_count = 1
+		BodyFiles(
+			const TableLineCodec table_line_codec = {},
+			const codecs::ElementsVectorCodec<scalar> elements_vector_codec = {},
+			const std::size_t header_count = 1
 		) noexcept :
+			table_line_codec(std::move(table_line_codec)),
 			elements_vector_codec(std::move(elements_vector_codec)),
 			header_count(header_count)
 		{}
 
-		void decode(
-			const Table& table,
+		void read(
+			const std::string& filename,
 			std::vector<orbit::Elements<scalar>>& elements,
 			std::vector<id>& parent_ids,
 			std::vector<mass>& masses,
@@ -52,40 +56,56 @@ namespace codecs {
 		) const
 		{
 
-			// first, build lookups for the human-readable primary keys, the "labels"
+			std::ifstream file(filename);
+			if (!file) {
+				throw std::runtime_error("Failed to open file: " + filename);
+			}
+
 			std::unordered_map<std::string, id> id_for_label;
 			label_for_id.clear();
-			label_for_id.reserve(table.size());
-			for (std::size_t row_id = header_count; row_id < table.size(); ++row_id) {
-				const auto& row = table[row_id];
-				std::size_t record_id = row_id - header_count;
-				if (row.size() < 8) { 
+			parent_ids.clear();
+			masses.clear();
+			colors.clear();
+			elements.clear();
+
+			std::string line;
+			for (std::size_t row_id = 0; row_id < header_count; ++row_id)
+			{
+				std::getline(file, line);
+			}
+
+			std::size_t row_id(0);
+			std::size_t record_id(0);
+			std::vector<std::string> row;
+			while (std::getline(file, line)) {
+				row_id = record_id + header_count;
+
+				std::vector<std::string> cells;
+
+				table_line_codec.decode(line, row);
+
+				if (row.size() < 1) {
+					throw std::runtime_error(
+						std::format("Body rows require at least 8 columns, {} were found, row {}", 
+							row.size(), row_id)
+					);
+				} else if (row.size() < 8) { 
 					throw std::runtime_error(
 						std::format("Body rows require at least 8 columns, {} were found, row {}, label {} ", 
 							row.size(), row_id, row[0])
 					);
 				}
+
 				const std::string& label = row[0];
 				label_for_id.push_back(row[0]);
 				id_for_label[label] = id(record_id);
-			}
 
-			// next, build `parent_ids` output
-			parent_ids.clear();
-			parent_ids.reserve(table.size());
-			masses.clear();
-			masses.reserve(table.size());
-			colors.clear();
-			colors.reserve(table.size());
-			elements.clear();
-			elements.reserve(table.size());
-			for (std::size_t row_id = header_count; row_id < table.size(); ++row_id) {
-				const auto& row = table[row_id];
+				// next, build `parent_ids` output
 				const auto it = id_for_label.find(row[1]);
 				if (it == id_for_label.end()) {
 					throw std::runtime_error(std::format("Encountered unknown parent label, row {}, label {}", row_id, row[1]));
 				}
-				std::vector<std::string> element_vector(row.begin() + 7, row.end());
+
 				parent_ids.push_back(it->second);
 				try
 				{
@@ -100,6 +120,7 @@ namespace codecs {
 				{
 					throw std::runtime_error(std::format("Error parsing number in color value, row {}, values {},{},{},{}", row_id, row[3], row[4], row[5], row[6]));
 				}
+
 				try
 				{
 					masses.push_back(scalar(row[6].size() < 1? 0.0: std::stod(row[6]))*kg);
@@ -108,13 +129,17 @@ namespace codecs {
 				{
 					throw std::runtime_error(std::format("Error parsing mass, row {}, value {}", row_id, row[6]));
 				}
+
+				std::vector<std::string> element_vector(row.begin() + 7, row.end());
 				elements.push_back(elements_vector_codec.decode(element_vector));
+
+				++record_id;
 			}
 
 		}
 
-		void encode(
-			Table& table,
+		void write(
+			const std::string& filename,
 			const std::vector<orbit::Elements<scalar>>& elements,
 			const std::vector<id>& parent_ids,
 			const std::vector<mass>& masses,
@@ -131,8 +156,13 @@ namespace codecs {
 
 			std::vector<std::string> element_vector;
 
-			table.clear();
-			table.reserve(elements.size());
+			std::ofstream file(filename);
+			if (!file) {
+				throw std::runtime_error("Failed to open file: " + filename);
+			}
+
+			file << "label\tparent\tr\tg\tb\ta\tmass (kg)\tsma (m)\tecc (m)\tinc (°)\tlan (°)\taop (°)\tma (°)\n";
+
 			for (std::size_t record_id = 0; record_id < elements.size(); ++record_id) {
 				std::vector<std::string> row_vector;
 
@@ -155,9 +185,14 @@ namespace codecs {
 				elements_vector_codec.encode(elements[record_id], element_vector);
 				row_vector.insert(row_vector.end(), element_vector.begin(), element_vector.end());
 
-				table.push_back(row_vector);
-
+				file << table_line_codec.encode(row_vector) << "\n";
 			}
+
+			file.flush();
+			if (!file) {
+			    throw std::runtime_error("Failed to finalize file: " + filename);
+			}
+
 		}
 
 	};
