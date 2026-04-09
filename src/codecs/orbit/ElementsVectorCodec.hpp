@@ -41,17 +41,17 @@ namespace codecs {
 
 		orbit::Elements<scalar> decode(const std::vector<std::string>& fields) const
 		{
-			if (fields.size() != 6) {
+			if (fields.size() < 1) {
 				throw std::invalid_argument("An orbit must have at least a semi-major axis");
 			}
 
 			return orbit::Elements<scalar>(
-				decode(fields[0]),// semi major axis
+				decode(fields[0]), // semi major axis
 				fields.size() > 1? decode(fields[1])            : s0, // eccentricity
-				fields.size() > 2? decode(fields[2])            : s0, // inclination
-				false && fields.size() > 3? decode(fields[3])*si::degree : s0, // longitude of ascending node
-				false && fields.size() > 4? decode(fields[4])*si::degree : s0, // argument of periapsis
-				false && fields.size() > 5? decode(fields[5])*si::degree : s0  // mean anomaly
+				fields.size() > 2? decode(fields[2])*si::degree : s0, // inclination
+				fields.size() > 3? decode(fields[3])*si::degree : s0, // longitude of ascending node
+				fields.size() > 4? decode(fields[4])*si::degree : s0, // argument of periapsis
+				fields.size() > 5? decode(fields[5])*si::degree : s0  // mean anomaly
 			);
 
 		}
@@ -61,10 +61,10 @@ namespace codecs {
 			fields.clear();
 			fields.push_back(encode(elements.semi_major_axis));
 			fields.push_back(encode(elements.eccentricity));
-			fields.push_back(encode(elements.inclination));
-			fields.push_back(encode(elements.longitude_of_ascending_node * si::radian));
-			fields.push_back(encode(elements.argument_of_periapsis       * si::radian));
-			fields.push_back(encode(elements.mean_anomaly                * si::radian));
+			fields.push_back(encode(elements.inclination                 / si::degree));
+			fields.push_back(encode(elements.longitude_of_ascending_node / si::degree));
+			fields.push_back(encode(elements.argument_of_periapsis       / si::degree));
+			fields.push_back(encode(elements.mean_anomaly                / si::degree));
 		}
 
 	};

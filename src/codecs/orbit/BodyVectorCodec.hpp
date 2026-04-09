@@ -102,7 +102,7 @@ namespace codecs {
 				try
 				{
 					masses.push_back(scalar(row[6].size() < 1? 0.0: std::stod(row[6]))*kg);
-				} 
+				}
 				catch (const std::invalid_argument& e)
 				{
 					throw std::runtime_error(std::format("Error parsing mass, row {}, value {}", row_id, row[6]));
@@ -119,8 +119,7 @@ namespace codecs {
 			const std::vector<mass>& masses,
 			const std::vector<std::string>& label_for_id,
 			const std::vector<vec4>& colors
-		) const
-		{
+		) const {
 
 			if (elements.size() != parent_ids.size() || 
 				elements.size() != label_for_id.size() || 
