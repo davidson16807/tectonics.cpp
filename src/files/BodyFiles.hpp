@@ -18,31 +18,33 @@
 
 namespace files {
 
-	template <typename id, typename scalar, typename TableLineCodec>
+	template <typename id, typename scalar, typename length, typename mass, typename time, typename TableLineCodec>
 	class BodyFiles
 	{
-
-		using mass = si::mass<scalar>;
 
 		using vec4 = glm::vec4;
 
 		using Row = std::vector<std::string>;
 
-		static constexpr mass kg = si::kilogram;
-
 		const TableLineCodec table_line_codec;
-		const codecs::ElementsVectorCodec<scalar> elements_vector_codec;
+		const codecs::ElementsVectorCodec<scalar,length> elements_vector_codec;
+		const mass mass_unit;
+		const time time_unit;
 		std::size_t header_count;
 
 	public:
 
 		BodyFiles(
-			const TableLineCodec table_line_codec = {},
-			const codecs::ElementsVectorCodec<scalar> elements_vector_codec = {},
+			const TableLineCodec table_line_codec,
+			const codecs::ElementsVectorCodec<scalar,length> elements_vector_codec,
+			const mass mass_unit,
+			const time time_unit,
 			const std::size_t header_count = 1
 		) noexcept :
 			table_line_codec(std::move(table_line_codec)),
 			elements_vector_codec(std::move(elements_vector_codec)),
+			mass_unit(mass_unit),
+			time_unit(time_unit),
 			header_count(header_count)
 		{}
 
@@ -51,7 +53,9 @@ namespace files {
 			std::vector<orbit::Elements<scalar>>& elements,
 			std::vector<id>& parent_ids,
 			std::vector<mass>& masses,
+			std::vector<time>& epochs,
 			std::vector<std::string>& label_for_id,
+			std::unordered_map<std::string, id>& id_for_label,
 			std::vector<vec4>& colors
 		) const
 		{
@@ -61,7 +65,7 @@ namespace files {
 				throw std::runtime_error("Failed to open file: " + filename);
 			}
 
-			std::unordered_map<std::string, id> id_for_label;
+			id_for_label.clear();
 			label_for_id.clear();
 			parent_ids.clear();
 			masses.clear();
@@ -80,8 +84,6 @@ namespace files {
 			while (std::getline(file, line)) {
 				row_id = record_id + header_count;
 
-				std::vector<std::string> cells;
-
 				table_line_codec.decode(line, row);
 
 				if (row.size() < 1) {
@@ -97,13 +99,14 @@ namespace files {
 				}
 
 				const std::string& label = row[0];
-				label_for_id.push_back(row[0]);
+				label_for_id.push_back(label);
 				id_for_label[label] = id(record_id);
 
 				// next, build `parent_ids` output
-				const auto it = id_for_label.find(row[1]);
+				const std::string& parent = row[1];
+				const auto it = id_for_label.find(parent);
 				if (it == id_for_label.end()) {
-					throw std::runtime_error(std::format("Encountered unknown parent label, row {}, label {}", row_id, row[1]));
+					throw std::runtime_error(std::format("Encountered unknown parent label, row {}, label {}", row_id, parent));
 				}
 
 				parent_ids.push_back(it->second);
@@ -123,14 +126,23 @@ namespace files {
 
 				try
 				{
-					masses.push_back(scalar(row[6].size() < 1? 0.0: std::stod(row[6]))*kg);
+					masses.push_back(scalar(row[6].size() < 1? 0.0: std::stod(row[6])) * mass_unit);
 				}
 				catch (const std::invalid_argument& e)
 				{
 					throw std::runtime_error(std::format("Error parsing mass, row {}, value {}", row_id, row[6]));
 				}
 
-				std::vector<std::string> element_vector(row.begin() + 7, row.end());
+				try
+				{
+					epochs.push_back(scalar(std::stod(row[7])) * time_unit);
+				}
+				catch (const std::invalid_argument& e)
+				{
+					throw std::runtime_error(std::format("Error parsing epoch, row {}, value {}", row_id, row[7]));
+				}
+
+				std::vector<std::string> element_vector(row.begin() + 8, row.end());
 				elements.push_back(elements_vector_codec.decode(element_vector));
 
 				++record_id;
@@ -143,7 +155,9 @@ namespace files {
 			const std::vector<orbit::Elements<scalar>>& elements,
 			const std::vector<id>& parent_ids,
 			const std::vector<mass>& masses,
+			const std::vector<time>& epochs,
 			const std::vector<std::string>& label_for_id,
+			const std::unordered_map<std::string, id>& id_for_label,
 			const std::vector<vec4>& colors
 		) const {
 
@@ -161,31 +175,32 @@ namespace files {
 				throw std::runtime_error("Failed to open file: " + filename);
 			}
 
-			file << "label\tparent\tr\tg\tb\ta\tmass (kg)\tsma (m)\tecc (m)\tinc (°)\tlan (°)\taop (°)\tma (°)\n";
+			file << "label\tparent\tr\tg\tb\ta\tmass\tsma (m)\tecc (m)\tinc (°)\tlan (°)\taop (°)\tma (°)\n";
 
 			for (std::size_t record_id = 0; record_id < elements.size(); ++record_id) {
-				std::vector<std::string> row_vector;
+				std::vector<std::string> row;
 
 				const id parent_id = parent_ids[record_id];
 				if (std::size_t(parent_id) >= label_for_id.size()) {
 					throw std::out_of_range("parent_id out of range");
 				}
 
-				row_vector.clear();
+				row.clear();
 				element_vector.clear();
 
-				row_vector.push_back(label_for_id[record_id]);
-				row_vector.push_back(label_for_id[std::size_t(parent_id)]);
-				row_vector.push_back(std::to_string(colors[record_id].r));
-				row_vector.push_back(std::to_string(colors[record_id].g));
-				row_vector.push_back(std::to_string(colors[record_id].b));
-				row_vector.push_back(std::to_string(colors[record_id].a));
-				row_vector.push_back(std::to_string(masses[record_id]/kg));
+				row.push_back(label_for_id[record_id]);
+				row.push_back(label_for_id[std::size_t(parent_id)]);
+				row.push_back(std::to_string(colors[record_id].r));
+				row.push_back(std::to_string(colors[record_id].g));
+				row.push_back(std::to_string(colors[record_id].b));
+				row.push_back(std::to_string(colors[record_id].a));
+				row.push_back(std::to_string(masses[record_id]/mass_unit));
+				row.push_back(std::to_string(epochs[record_id]/time_unit));
 
 				elements_vector_codec.encode(elements[record_id], element_vector);
-				row_vector.insert(row_vector.end(), element_vector.begin(), element_vector.end());
+				row.insert(row.end(), element_vector.begin(), element_vector.end());
 
-				file << table_line_codec.encode(row_vector) << "\n";
+				file << table_line_codec.encode(row) << "\n";
 			}
 
 			file.flush();

@@ -17,7 +17,7 @@
 
 namespace codecs {
 
-	template <typename id, typename scalar, typename TableLineCodec>
+	template <typename id, typename scalar, typename length, typename TableLineCodec>
 	class BodyVectorCodec
 	{
 
@@ -29,13 +29,13 @@ namespace codecs {
 
 		static constexpr mass kg = si::kilogram;
 
-		ElementsVectorCodec<scalar> elements_vector_codec;
+		ElementsVectorCodec<scalar,length> elements_vector_codec;
 		std::size_t header_count;
 
 	public:
 
 		BodyVectorCodec(
-			ElementsVectorCodec<scalar> elements_vector_codec = {},
+			ElementsVectorCodec<scalar,length> elements_vector_codec = {},
 			std::size_t header_count = 1
 		) noexcept :
 			elements_vector_codec(std::move(elements_vector_codec)),

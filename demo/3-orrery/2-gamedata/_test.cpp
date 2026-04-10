@@ -141,18 +141,23 @@ int main() {
 
   orrery::OrbitSystem<int,double> orbit_system(propagator, properties);
   orrery::SceneTrees<int,double> scene_trees;
-  files::BodyFiles<int,double,codecs::DelimitedTableLineCodec> body_tsvs(codecs::DelimitedTableLineCodec("\t"));
+  files::BodyFiles<int,double,double,mass,time,codecs::DelimitedTableLineCodec> body_tsvs(
+    codecs::DelimitedTableLineCodec("\t"), 
+    codecs::ElementsVectorCodec<double, double>(m/m), kg, si::day
+  );
 
   // within the confines of this ECS implementation, parent_ids are one-to-one with entities, so we store them using a std::vector
   std::vector<Elements> elliptics;
   std::vector<int> parent_ids; 
   std::vector<mass> masses; 
-  std::vector<std::string> labels; 
+  std::vector<time> epochs; 
+  std::vector<std::string> label_for_id; 
   std::vector<std::vector<std::string>> scratch_table;
   std::vector<vec4> instance_color;
+  std::unordered_map<std::string, int> id_for_label;
 
-  body_tsvs.read("elliptics-j2000.tsv", elliptics, parent_ids, masses, labels, instance_color);
-  // body_rows.encode(scratch_table,  elliptics, parent_ids, masses, labels, instance_color);
+  body_tsvs.read("elliptics-j2000.tsv", elliptics, parent_ids, masses, epochs, label_for_id, id_for_label, instance_color);
+  // body_rows.encode(scratch_table,  elliptics, parent_ids, masses, epochs, label_for_id, instance_color);
   // tsvs.write("read-back-test.tsv", scratch_table);
 
   // entities that have perceptible orbits, we use 32-bit ints for entity ids and more than 1 out of 32 are represented, so a bool mask is more sparse, but checking the mask introduces branching logic
