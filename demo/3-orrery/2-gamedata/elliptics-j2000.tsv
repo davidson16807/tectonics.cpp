@@ -1,5 +1,5 @@
 label	parent	mass (kg)	epoch	sma (m)	ecc	inc(°)	lan(°)	aop(°)	ma(°)
-sagitarius a*	sagitarius a*	8.54e36	0	0	0	0	0	0	0
+sagitarius a*	sagitarius a*	8.54e36	0	8.54e36	0	0	0	0	0
 sol	sagitarius a*	1.988475e30	0	2.5540e20					
 mercury	sol	0.330103e24	0	57909226500	0.20563593	7.00497902	48.33076593	29.124	174.796
 venus	sol	4.86731e24	0	108209474000	0.00677672	3.39467605	76.67984255	54.884	50.115
