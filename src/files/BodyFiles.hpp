@@ -55,8 +55,7 @@ namespace files {
 			std::vector<mass>& masses,
 			std::vector<time>& epochs,
 			std::vector<std::string>& label_for_id,
-			std::unordered_map<std::string, id>& id_for_label,
-			std::vector<vec4>& colors
+			std::unordered_map<std::string, id>& id_for_label
 		) const
 		{
 
@@ -69,7 +68,6 @@ namespace files {
 			label_for_id.clear();
 			parent_ids.clear();
 			masses.clear();
-			colors.clear();
 			elements.clear();
 
 			std::string line;
@@ -108,41 +106,27 @@ namespace files {
 				if (it == id_for_label.end()) {
 					throw std::runtime_error(std::format("Encountered unknown parent label, row {}, label {}", row_id, parent));
 				}
-
 				parent_ids.push_back(it->second);
+
 				try
 				{
-					colors.push_back(vec4(
-						scalar(std::stod(row[2])), 
-						scalar(std::stod(row[3])), 
-						scalar(std::stod(row[4])), 
-						scalar(std::stod(row[5]))
-					));
+					masses.push_back(scalar(row[2].size() < 1? 0.0: std::stod(row[2])) * mass_unit);
 				}
 				catch (const std::invalid_argument& e)
 				{
-					throw std::runtime_error(std::format("Error parsing number in color value, row {}, values {},{},{},{}", row_id, row[3], row[4], row[5], row[6]));
+					throw std::runtime_error(std::format("Error parsing mass, row {}, value {}", row_id, row[2]));
 				}
 
 				try
 				{
-					masses.push_back(scalar(row[6].size() < 1? 0.0: std::stod(row[6])) * mass_unit);
+					epochs.push_back(scalar(std::stod(row[3])) * time_unit);
 				}
 				catch (const std::invalid_argument& e)
 				{
-					throw std::runtime_error(std::format("Error parsing mass, row {}, value {}", row_id, row[6]));
+					throw std::runtime_error(std::format("Error parsing epoch, row {}, value {}", row_id, row[3]));
 				}
 
-				try
-				{
-					epochs.push_back(scalar(std::stod(row[7])) * time_unit);
-				}
-				catch (const std::invalid_argument& e)
-				{
-					throw std::runtime_error(std::format("Error parsing epoch, row {}, value {}", row_id, row[7]));
-				}
-
-				std::vector<std::string> element_vector(row.begin() + 8, row.end());
+				std::vector<std::string> element_vector(row.begin() + 4, row.end());
 				elements.push_back(elements_vector_codec.decode(element_vector));
 
 				++record_id;
@@ -157,14 +141,14 @@ namespace files {
 			const std::vector<mass>& masses,
 			const std::vector<time>& epochs,
 			const std::vector<std::string>& label_for_id,
-			const std::unordered_map<std::string, id>& id_for_label,
-			const std::vector<vec4>& colors
+			const std::unordered_map<std::string, id>& id_for_label
 		) const {
 
-			if (elements.size() != parent_ids.size() || 
+			if (
+				elements.size() != parent_ids.size() || 
 				elements.size() != label_for_id.size() || 
-				elements.size() != masses.size() || 
-				elements.size() != colors.size()) {
+				elements.size() != masses.size()
+			) {
 				throw std::invalid_argument("Vectors must be of equal length");
 			}
 
@@ -190,10 +174,6 @@ namespace files {
 
 				row.push_back(label_for_id[record_id]);
 				row.push_back(label_for_id[std::size_t(parent_id)]);
-				row.push_back(std::to_string(colors[record_id].r));
-				row.push_back(std::to_string(colors[record_id].g));
-				row.push_back(std::to_string(colors[record_id].b));
-				row.push_back(std::to_string(colors[record_id].a));
 				row.push_back(std::to_string(masses[record_id]/mass_unit));
 				row.push_back(std::to_string(epochs[record_id]/time_unit));
 

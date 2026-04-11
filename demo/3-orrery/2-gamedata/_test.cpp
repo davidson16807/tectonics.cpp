@@ -33,7 +33,9 @@
 #include <view/IndicatorSphereSwarmShaderProgram.hpp>     // view::IndicatorSphereSwarmShaderProgram
 
 #include <files/BodyFiles.hpp>                   // view::BodyFiles
+#include <files/ComponentFiles.hpp>              // view::ComponentFiles
 #include <codecs/orbit/BodyVectorCodec.hpp>      // view::BodyVectorCodec
+#include <codecs/GlmVectorCodec.hpp>             // view::GlmVectorCodec
 #include <codecs/DelimitedTableLineCodec.hpp>    // view::DelimitedTableLineCodec
 
 int main() {
@@ -145,6 +147,10 @@ int main() {
     codecs::DelimitedTableLineCodec("\t"), 
     codecs::ElementsVectorCodec<double, double>(m/m), kg, si::day
   );
+  files::ComponentFiles<double, codecs::DelimitedTableLineCodec, codecs::GlmVectorCodec<4,double>> color_tsvs(
+    codecs::DelimitedTableLineCodec("\t"), 
+    codecs::GlmVectorCodec<4,double>()
+  );
 
   // within the confines of this ECS implementation, parent_ids are one-to-one with entities, so we store them using a std::vector
   std::vector<Elements> elliptics;
@@ -153,11 +159,13 @@ int main() {
   std::vector<time> epochs; 
   std::vector<std::string> label_for_id; 
   std::vector<std::vector<std::string>> scratch_table;
-  std::vector<vec4> instance_color;
+  orrery::CommonComponents<int,vec4> colors;
   std::unordered_map<std::string, int> id_for_label;
 
-  body_tsvs.read("elliptics-j2000.tsv", elliptics, parent_ids, masses, epochs, label_for_id, id_for_label, instance_color);
-  // body_rows.encode(scratch_table,  elliptics, parent_ids, masses, epochs, label_for_id, instance_color);
+  body_tsvs.read("elliptics-j2000.tsv", elliptics, parent_ids, masses, epochs, label_for_id, id_for_label);
+  color_tsvs.read("color.tsv", id_for_label, colors);
+  colors.complete(vec4(vec3(0.5),1));
+  // body_rows.encode(scratch_table,  elliptics, parent_ids, masses, epochs, label_for_id, colors);
   // tsvs.write("read-back-test.tsv", scratch_table);
 
   // entities that have perceptible orbits, we use 32-bit ints for entity ids and more than 1 out of 32 are represented, so a bool mask is more sparse, but checking the mask introduces branching logic
@@ -297,7 +305,7 @@ int main() {
 
       sphere_program.draw(
         instance_origins,
-        instance_color,
+        colors.vector(),
         5, //instance_pixel_radius
         vec3(0,0,1), // light direction
         // vec3(0.5,0.5,1), // light direction

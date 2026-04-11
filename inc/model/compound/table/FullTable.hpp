@@ -7,8 +7,8 @@ namespace compound {
 namespace table {
 
 	/*
-	A "full" table is x1 table that is guaranteed to have entries for all keys that can exist in x1 database.
-	In the context of the `compound` library, x1 FullTable is guaranteed to have estimates available for all compounds that are tracked in the database.
+	A "full" table is a table that is guaranteed to have entries for all keys that can exist in a database.
+	In the context of the `compound` library, a FullTable is guaranteed to have estimates available for all compounds that are tracked in the database.
 	*/
 
 	template<typename T>

@@ -8,7 +8,7 @@
 #include <iomanip>
 #include <limits>
 
-#include <glm/vec.hpp>
+#include "ScalarStringCodec.hpp"
 
 namespace codecs {
 
@@ -27,9 +27,9 @@ namespace codecs {
 
 		vec decode(const strings& fields) const
 		{
-			if (fields.size() < std::size_t(L)) {
+			if (fields.size() != std::size_t(L)) {
 				throw std::invalid_argument(std::format(
-					"A glm::vec codec requires at least {} fields", L
+					"A glm::vec codec requires exactly {} fields", L
 				));
 			}
 
@@ -43,7 +43,7 @@ namespace codecs {
 		void encode(const vec& value, strings& fields) const
 		{
 			fields.clear();
-			fields.reserve(L);
+			fields.reserve(std::size_t(L));
 			for (glm::length_t i = 0; i < L; ++i) {
 				fields.push_back(scalars.encode(value[i]));
 			}

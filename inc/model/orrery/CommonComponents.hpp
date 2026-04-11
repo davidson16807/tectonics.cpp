@@ -77,6 +77,18 @@ public:
 	{
 	}
 
+	void clear()
+	{
+		component_store.clear();
+		exists.clear();
+	}
+
+	void resize(std::size_t size)
+	{
+		component_store.resize(size);
+		exists.resize(size);
+	}
+
 	void add(const id entity, const Component& component)
 	{
 		const std::size_t index = std::size_t(entity);
@@ -119,6 +131,17 @@ public:
 		return index < exists.size() && exists[index];
 	}
 
+	void complete(const Component& fallback)
+	{
+		for (std::size_t entity = 0; entity < component_store.size(); ++entity)
+		{
+			if (!has(entity))
+			{
+				add(entity, fallback);
+			}
+		}
+	}
+
 	const id entity_for_index(std::size_t component) const
 	{
 		return id(component);
@@ -136,9 +159,9 @@ public:
 		return component_store[std::size_t(entity)];
 	}
 
-	const Component& vector() const
+	const std::vector<Component>& vector() const
 	{
-		return *component_store;
+		return component_store;
 	}
 
 };
