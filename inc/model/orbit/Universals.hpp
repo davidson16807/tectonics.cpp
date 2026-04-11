@@ -24,10 +24,10 @@ namespace orbit {
 	{
 		using vec3 = glm::vec<3,scalar,precision>;
 
-		scalar combined_mass;
-		vec3 initial_position;
-		vec3 initial_velocity;
-		scalar time_offset;
+		scalar combined_mass;  // total mass of the system
+		vec3 initial_position; // position at the epoch
+		vec3 initial_velocity; // velocity at the epoch
+		scalar time_offset;    // time that has elapsed SINCE THE EPOCH
 
 		constexpr Universals(
 			const scalar combined_mass,
