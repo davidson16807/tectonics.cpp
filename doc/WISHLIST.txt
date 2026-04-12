@@ -1,0 +1,39 @@
+
+geometry library for all mensuration and intersection tasks in the style of `geometric::`
+property based unit tests for all functions in the library above
+
+analytic:: classes for multivariate functions
+property based unit tests for all the above functions
+
+property based tests and working functionality for tiny::
+property based tests and working functionality for `VectorCalculusByCurvilinearMethod`
+property based tests and working functionality for `VectorCalculusByWeightedMultilinearMethod`
+
+
+
+tests:
+covariance? (i.e. scaling laws)
+idempotent composition and other properties on composition
+left/right_antitransitivity
+injectivity
+Lipschitz continuity for a derivative bounds
+equivariance ("commutative square")
+
+
+
+orrery:
+to frame a target as the origin:
+in the tree of offsets:
+
+idea A:
+	set offset for target to 0 and generate positions
+	set root offset to the negative offset of target and generate positions
+	splice two lists of positions together
+
+idea B:
+	generate positions
+	set offset for target to 0
+	ancestor_offset = 0
+	for ancestor in [target,*ancestors]:
+		set offset for ancestor to ancestor_offset
+		ancestor_offset += offset from ancestor to their parent

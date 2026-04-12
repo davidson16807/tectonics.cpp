@@ -50,8 +50,15 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // needed for MacOS
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // we don't want the old OpenGL
 
+  using vec2 = glm::vec2;
+  using vec3 = glm::vec3;
+  using vec4 = glm::vec4;
+  using dvec3 = glm::dvec3;
+
   // open a window
-  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Orrery", NULL, NULL);
+  // vec2 window_size(850,640);
+  vec2 window_size(1024,771);
+  GLFWwindow* window = glfwCreateWindow(window_size.x, window_size.y, "Hello Orrery", NULL, NULL);
   if (!window) {
     std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
@@ -81,10 +88,6 @@ int main() {
   /* OUR STUFF GOES HERE NEXT */
 
   using clock = std::chrono::high_resolution_clock;
-
-  using dvec3 = glm::dvec3;
-  using vec3 = glm::vec3;
-  using vec4 = glm::vec4;
 
   using mass = si::mass<double>;
   using time = si::time<double>;
@@ -139,6 +142,27 @@ int main() {
   * spins
   * sampling for imperceptibles
   * insolation
+  * binned draw distances
+  * comet dataset and highly eccentric orbits
+  * space probes and hyperbolic orbits
+  * unit tests to ensure periods of famous objects match expected values
+
+  calculations that need orrery positions:
+  * light     >km precision   10¹⁵km = 1kly max distance using doubles
+  * gravity   m precision     10¹⁵ m = 1ly max distance using doubles
+  * collision mm precision    10¹⁵mm = 10¹³m distance using doubles, past orbit of pluto
+
+  * complete(fallbacks)
+  * complete(fallback)
+  * imitate(imitated_ids)
+
+  * dedicated orbit shader
+  * finish rendering for stars 
+  * finish rendering for point sources
+  * pbr surfaces
+  * atmospheres
+
+  * "hello worlds" demo to show how multiple worlds with terrain can be simulated at once
   */
 
   orrery::OrbitSystem<int,double> orbit_system(propagator, properties);
@@ -156,16 +180,17 @@ int main() {
   std::vector<Elements> elliptics;
   std::vector<int> parent_ids; 
   std::vector<mass> masses; 
-  std::vector<time> epochs; 
+  std::vector<time> times; // offset from the common epoch where t=0
   std::vector<std::string> label_for_id; 
   std::vector<std::vector<std::string>> scratch_table;
-  orrery::CommonComponents<int,vec4> colors;
   std::unordered_map<std::string, int> id_for_label;
 
-  body_tsvs.read("elliptics-j2000.tsv", elliptics, parent_ids, masses, epochs, label_for_id, id_for_label);
+  body_tsvs.read("elliptics-j2000.tsv", elliptics, parent_ids, masses, times, label_for_id, id_for_label);
+
+  orrery::CommonComponents<int,vec4> colors(elliptics.size());
   color_tsvs.read("color.tsv", id_for_label, colors);
   colors.complete(vec4(vec3(0.5),1));
-  // body_rows.encode(scratch_table,  elliptics, parent_ids, masses, epochs, label_for_id, colors);
+  // body_rows.encode(scratch_table,  elliptics, parent_ids, masses, times, label_for_id, colors);
   // tsvs.write("read-back-test.tsv", scratch_table);
 
   // entities that have perceptible orbits, we use 32-bit ints for entity ids and more than 1 out of 32 are represented, so a bool mask is more sparse, but checking the mask introduces branching logic
@@ -181,7 +206,7 @@ int main() {
     const auto body_kg = masses[parent_ids[i]]/kg;
     const Elements& elements = elliptics[i];
     const auto state = converter.get_state_from_elements(elements, body_kg);
-    orbits.add(entity_id_counter++, Orbit(body_kg, state));
+    orbits.add(entity_id_counter++, Orbit(body_kg, state, -times[i]/si::second)); 
   }
 
   TrackPositions orbital_parent_offsets;
@@ -213,14 +238,14 @@ int main() {
   view::ViewState view_state;
   view_state.projection_matrix = glm::perspective(
     3.14159f*45.0f/180.0f, 
-    850.0f/640.0f, 
+    window_size.x/window_size.y, 
     // 1e3f,
     // 1e16f
     float(planet_billboard_near_distance/1e5/m), 
     float(point_source_near_distance/m)
   );
   view_state.view_matrix = control_state.get_view_matrix();
-  view_state.resolution = glm::vec2(850, 640);
+  view_state.resolution = glm::vec2(window_size.x, window_size.y);
   view_state.wavelength = glm::vec3(650e-9, 550e-9, 450e-9);
   view_state.exposure_intensity = 1e2*si::global_solar_constant/(si::watt/si::meter2);
   // view_state.projection_type = view::ProjectionType::heads_up_display;

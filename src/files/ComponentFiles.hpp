@@ -55,7 +55,7 @@ namespace files {
 			std::size_t row_id(0);
 			std::size_t record_id(0);
 			std::vector<std::string> row;
-			components.clear();
+			// components.clear();
 			while (std::getline(file, line)) {
 
 				row_id = record_id + header_count;

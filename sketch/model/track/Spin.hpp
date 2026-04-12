@@ -9,28 +9,31 @@ namespace track {
 	struct Spin
 	{
 		using vec3 = glm::vec<3,scalar,glm::defaultp>;
-		using mat4 = glm::mat<3,3,scalar,glm::defaultp>;
+		using mat3 = glm::mat<3,3,scalar,glm::defaultp>;
 
-		const vec3 axis;
-		const duration period;
+		const vec3 axis_radians;
+		const scalar nutation_axis_radians_amplitude;
+		const duration nutation_period;
+		const duration precession_period;
+		const duration spin_period;
 		const duration time_offset;
 
 		Spin(
-			const vec3 axis,
-			const duration period,
+			const vec3 axis_radians,
+			const duration spin_period,
 			const duration time_offset
 		) : 
-			axis(axis),
-			period(period),
+			axis_radians(axis_radians),
+			spin_period(spin_period),
 			time_offset(time_offset)
 		{}
 
 		Spin(
-			const vec3 axis,
-			const duration period
+			const vec3 axis_radians,
+			const duration spin_period
 		) : 
-			axis(axis),
-			period(period),
+			axis_radians(axis_radians),
+			spin_period(spin_period),
 			time_offset(0)
 		{}
 
@@ -41,12 +44,12 @@ namespace track {
 
 		Spin<scalar,duration> advance(const duration time_step) const
 		{
-			Spin<scalar,duration>(axis, period, time_offset+time_step);
+			Spin<scalar,duration>(axis_radians, spin_period, time_offset+time_step);
 		}
 
 		Spin<scalar,duration> tare() const
 		{
-			return Spin<scalar,duration>(axis, period, math::modulus(time_offset, period));
+			return Spin<scalar,duration>(axis_radians, spin_period, math::modulus(time_offset, spin_period));
 		}
 
 	};
