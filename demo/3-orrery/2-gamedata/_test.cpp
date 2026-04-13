@@ -27,6 +27,7 @@
 #include <update/OrbitalNavigationUpdater.hpp>  // update::OrbitalNavigationUpdater
 #include <update/TreeNavigationUpdater.hpp>     // update::TreeNavigationUpdater
 #include <update/ValueHotkeyPresetUpdater.hpp>  // update::ValueHotkeyPresetUpdater
+#include <update/ValueHotkeySliderUpdater.hpp>  // update::ValueHotkeySliderUpdater
 #include <update/BoundedOptionNavigationUpdater.hpp> // update::BoundedOptionNavigationUpdater
 #include <update/CyclingOptionNavigationUpdater.hpp> // update::CyclingOptionNavigationUpdater
 
@@ -225,6 +226,7 @@ int main() {
   update::CyclingOptionNavigationUpdater<std::size_t> scene_node_updater("m","n", true);
   update::BoundedOptionNavigationUpdater<std::size_t> timewarp_updater(",", ".", false);
   update::ValueHotkeyPresetUpdater<std::size_t> pause_updater("/",0);
+  update::ValueHotkeySliderUpdater<float> zoom_updater("=","-",1.0f);
   control_state.min_zoom_distance = 1.0f;
   control_state.log2_height = std::log2(60.0*Rs);
   // control_state.log2_height = 20.0f;
@@ -352,6 +354,7 @@ int main() {
         origin_id = scene_node_updater.update(origin_id, parent_ids, message);
         timestep_id = timewarp_updater.update(timestep_id, timesteps, message);
         timestep_id = pause_updater.update(timestep_id, message);
+        control_state.log2_height = zoom_updater.update(control_state.log2_height, message);
         message_poll.pop();
       }
 

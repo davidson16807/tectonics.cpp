@@ -78,6 +78,8 @@ public:
 				{GLFW_KEY_DOWN,   "↓"},
 				{GLFW_KEY_TAB,    "\t"},
 				{GLFW_KEY_ENTER,  "\n"},
+				{GLFW_KEY_MINUS,  "-"},
+				{GLFW_KEY_EQUAL,  "="},
 				{GLFW_KEY_BACKSPACE,  "backspace"},
 				{GLFW_KEY_DELETE,     "delete"},
 				{GLFW_KEY_HOME,       "home"},
