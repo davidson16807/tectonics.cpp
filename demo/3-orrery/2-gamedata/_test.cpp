@@ -28,8 +28,9 @@
 #include <update/TreeNavigationUpdater.hpp>     // update::TreeNavigationUpdater
 #include <update/ValueHotkeyPresetUpdater.hpp>  // update::ValueHotkeyPresetUpdater
 #include <update/ValueHotkeySliderUpdater.hpp>  // update::ValueHotkeySliderUpdater
-#include <update/BoundedOptionNavigationUpdater.hpp> // update::BoundedOptionNavigationUpdater
-#include <update/CyclingOptionNavigationUpdater.hpp> // update::CyclingOptionNavigationUpdater
+#include <update/ValueHotkeyRangeUpdater.hpp>  // update::ValueHotkeySliderUpdater
+#include <update/OptionHotkeyRangeUpdater.hpp> // update::OptionHotkeyRangeUpdater
+#include <update/OptionHotkeyCarouselUpdater.hpp> // update::OptionHotkeyCarouselUpdater
 
 #include <view/IndicatorSphereSwarmShaderProgram.hpp>     // view::IndicatorSphereSwarmShaderProgram
 
@@ -223,10 +224,12 @@ int main() {
   update::OrbitalNavigationState control_state;
   update::OrbitalNavigationUpdater orbit_updater;
   update::TreeNavigationUpdater<int> scene_tree_updater("9","0",false, "[","]",true);
-  update::CyclingOptionNavigationUpdater<std::size_t> scene_node_updater("m","n", true);
-  update::BoundedOptionNavigationUpdater<std::size_t> timewarp_updater(",", ".", false);
+  update::OptionHotkeyCarouselUpdater<std::size_t> scene_node_updater("m","n", true);
+  update::OptionHotkeyRangeUpdater<std::size_t> timewarp_updater(",", ".", false);
   update::ValueHotkeyPresetUpdater<std::size_t> pause_updater("/",0);
-  update::ValueHotkeySliderUpdater<float> zoom_updater("=","-",1.0f);
+  update::ValueHotkeySliderUpdater<float> zoom_updater("-","=",1.0f);
+  update::ValueHotkeySliderUpdater<float> azimuth_updater("j","l",pi*0.1);
+  update::ValueHotkeyRangeUpdater<float> elevation_updater("i","k",pi*0.1, -pi/2.0, pi/2.0);
   control_state.min_zoom_distance = 1.0f;
   control_state.log2_height = std::log2(60.0*Rs);
   // control_state.log2_height = 20.0f;
@@ -355,6 +358,8 @@ int main() {
         timestep_id = timewarp_updater.update(timestep_id, timesteps, message);
         timestep_id = pause_updater.update(timestep_id, message);
         control_state.log2_height = zoom_updater.update(control_state.log2_height, message);
+        control_state.angular_position.x = azimuth_updater.update(control_state.angular_position.x, message);
+        control_state.angular_position.y = elevation_updater.update(control_state.angular_position.y, message);
         message_poll.pop();
       }
 
