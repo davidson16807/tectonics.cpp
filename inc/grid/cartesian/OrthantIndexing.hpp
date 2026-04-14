@@ -19,9 +19,6 @@ namespace cartesian
 
         grid_id ↔ memory_id
 
-    `OrthantIndexing` builds on top of `Interleaving` 
-    to introduce the concepts of vectors and to make decisions on data locality.
-    As such, `OrthantIndexing` must be made specific to `cartesian::`.
     */
     template<int L, typename id=int, glm::qualifier precision=glm::defaultp>
     struct OrthantIndexing
