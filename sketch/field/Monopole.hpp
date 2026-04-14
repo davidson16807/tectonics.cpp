@@ -1,15 +1,16 @@
 
-namespace body
+
+namespace field
 {
 
 	template<typename id, typename scalar, typename position>
-	class Aggregate
+	class Monopole
 	{
 
 		const position position_sum;
 		const scalar weight_sum;
 
-		Aggregate(
+		Monopole(
 			const position position_sum,
 			const scalar weight_sum,
 		): 
@@ -18,19 +19,19 @@ namespace body
 		{}
 
 		// zero constuctor
-		Aggregate(): 
+		Monopole(): 
 			position_sum(0),
 			weight_sum(0)
 		{}
 
-	    inline Aggregate<id,scalar,precision>& operator+=(const Aggregate<id,scalar,position>& other) noexcept
+	    inline Monopole<id,scalar,precision>& operator+=(const Monopole<id,scalar,position>& other) noexcept
 	    {
 	    	position_sum += other.position_sum;
 	    	weight_sum += other.weight_sum;
 	        return *this;
 	    }
 
-	    inline Aggregate<id,scalar,precision>& operator-=(const Aggregate<id,scalar,position>& other) noexcept
+	    inline Monopole<id,scalar,precision>& operator-=(const Monopole<id,scalar,position>& other) noexcept
 	    {
 	    	position_sum -= other.position_sum;
 	    	weight_sum -= other.weight_sum;
@@ -45,4 +46,3 @@ namespace body
 	};
 
 }
-

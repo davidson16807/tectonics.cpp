@@ -1,21 +1,23 @@
 
 
-namespace body
+namespace field
 {
 
 	/*
-	`InverseSquareField` represents a mathematical field of arbitrary dimensionality
-	where the value at each point is the weighted sum of the inverse square of distances to particles.
-	It is an implementation of the Barnes-Hut algorithm.
-	`InverseSquareField` can be used to efficiently implement inverse distance weighting, 
+	`Multipole` represents a mathematical field of arbitrary dimensionality
+	where the value at each point is the sum of monopole fields.
+	This is to say that the value at each point is the weighted sum of the inverse square of distances to particles.
+	`Multipole` is an implementation of the Barnes-Hut algorithm.
+	`Multipole` can be used to efficiently implement inverse distance weighting, 
 	gravity simulations, charged particle simulations, light propagation, boids, etc.
 	In inverse distance weighting, the weight associated with a sample is the measurement taken for the sample.
-	In gravity simulation, the weight associated with a body is its standard gravitational parameter.
-	In charged particle simulation, the weight associated with a particle is its charge times the coulomb constant.
+	In gravity simulation, the weight associated with a body is its mass.
+	In charged particle simulation, the weight associated with a particle is its charge.
 	In light propagation, the weight associated with a light source is its luminosity.
+	In boid simulation, multiple `Multipole` are used, and weights associated with a boid are either uniform or represent heading.
 	*/
 	template<int dimension_count, typename id, typename scalar, glm::qualifier quality = glm::defaultp>
-	class InverseSquareField
+	class Multipole
 	{
 
 		using vector = glm::vec<dimension_count, scalar, quality>;
@@ -27,11 +29,11 @@ namespace body
 		const id level_count;
 		const id orthant_count;
 		const id cell_count;
-		std::vector<Aggregate<id,scalar,vector>> orthtree;
+		std::vector<Monopole<id,scalar,vector>> orthtree;
 
 	public:
 
-		InverseSquareField(
+		Multipole(
 			const vector grid_origin,
 			const scalar grid_width,
 			const scalar min_cell_width
@@ -42,12 +44,12 @@ namespace body
 			level_count(std::ceil(std::log2(grid_width/min_cell_width))), 
 			orthant_count(std::pow(id(2),dimension_count)), 
 			cell_count(std::pow(orthant_count,level_count+1)),
-			orthtree(cell_count, Aggregate<id,scalar,vector>())
+			orthtree(cell_count, Monopole<id,scalar,vector>())
 		{}
 
 		void clear()
 		{
-			std::fill(orthtree.begin(), orthtree.end(), Aggregate<id,scalar,vector>());
+			std::fill(orthtree.begin(), orthtree.end(), Monopole<id,scalar,vector>());
 		}
 
 		/*
@@ -69,7 +71,7 @@ namespace body
 				{
 					if (neighbor_id != orthant_id)
 					{
-						orthtree[orthant_count * memory_id + neighbor_id] += Aggregate<id,scalar,vector>(position, weight);
+						orthtree[orthant_count * memory_id + neighbor_id] += Monopole<id,scalar,vector>(position, weight);
 					}
 				}
 				memory_id = orthant_count * memory_id + orthant_id;
@@ -85,7 +87,7 @@ namespace body
 		{
 			id memory_id(0);
 			id orthant_id;
-			Aggregate<id,scalar,vector> aggregate;
+			Monopole<id,scalar,vector> Monopole;
 			vector cell_center(grid_origin);
 			scalar cell_width(grid_width);
 			scalar value(0);
@@ -94,8 +96,8 @@ namespace body
 			{
 				orthant = glm::greaterThan(position-cell_center,vector(0));
 				orthant_id = orthants.memory_id(orthant);
-				aggregate = orthtree[memory_id];
-				value += aggregate.factor_sum / glm::distance2(aggregate.center(), position);
+				Monopole = orthtree[memory_id];
+				value += Monopole.factor_sum / glm::distance2(Monopole.center(), position);
 				memory_id = orthant_count * memory_id + orthant_id;
 				cell_center += cell_width * (vector(orthant)-vector(0.5));
 				cell_width /= scalar(2);
