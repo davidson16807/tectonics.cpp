@@ -40,8 +40,7 @@ namespace field
 	        return *this;
 	    }
 
-	    [[nodiscard]]
-		constexpr inline value_type operator()(const vector& v ) const
+		[[nodiscard]] constexpr inline value_type operator()(const vector& v ) const
 		{
 		    return weight / glm::distance2(position/weight, v);
 		}

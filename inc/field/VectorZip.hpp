@@ -35,7 +35,7 @@ namespace field
 
 		constexpr inline size_type size() const { return 1; }
 
-		constexpr inline value_type operator()(const glm::vec<4,R,Q>& V ) const
+		[[nodiscard]] constexpr inline value_type operator()(const glm::vec<4,R,Q>& V ) const
 		{
 			return glm::vec<4,R,Q>(x(V), y(V), z(V), w(V));
 		}
@@ -64,7 +64,7 @@ namespace field
 
 		constexpr inline size_type size() const { return 1; }
 
-		constexpr inline value_type operator()(const glm::vec<3,R,Q>& V ) const
+		[[nodiscard]] constexpr inline value_type operator()(const glm::vec<3,R,Q>& V ) const
 		{
 			return glm::vec<3,R,Q>(x(V), y(V), z(V));
 		}
@@ -91,7 +91,7 @@ namespace field
 
 		constexpr inline size_type size() const { return 1; }
 
-		constexpr inline value_type operator()(const glm::vec<2,R,Q>& V ) const
+		[[nodiscard]] constexpr inline value_type operator()(const glm::vec<2,R,Q>& V ) const
 		{
 			return glm::vec<2,R,Q>(x(V), y(V));
 		}

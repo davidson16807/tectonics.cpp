@@ -103,8 +103,7 @@ namespace field
 		/*
 		`sample` returns the value acting at a given `position` in the field
 		*/
-	    [[nodiscard]]
-		constexpr inline scalar operator()(const vector& position ) const
+		[[nodiscard]] constexpr inline scalar operator()(const vector& position ) const
 		{
 			id nesting_id(0);
 			id orthant_id;

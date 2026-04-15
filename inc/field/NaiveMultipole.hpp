@@ -37,8 +37,7 @@ namespace field {
         /*
         `operator()` returns the value acting at a given `position` in the field
         */
-        [[nodiscard]]
-        constexpr inline scalar operator()(const vector& position ) const
+        [[nodiscard]] constexpr inline scalar operator()(const vector& position ) const
         {
             scalar result(0);
             for (const auto& monopole : monopoles) {

@@ -45,7 +45,7 @@ namespace field
 		{}
 
 		template<typename vector>
-		auto operator()(const vector& V) const {
+		[[nodiscard]] auto operator()(const vector& V) const {
 		    return noise(indexing.memory_id(V));
 		}
 

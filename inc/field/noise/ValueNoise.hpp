@@ -56,7 +56,7 @@ namespace field
 
 
 		template<typename vector>
-		scalar operator()(const vector& V) const {
+		[[nodiscard]] scalar operator()(const vector& V) const {
 		    auto I = ops.floor(V);
 		    // return noise.indexing.memory_id(ops.add(I,ivec2(1,1)));
 		    // return I.square_position.x;

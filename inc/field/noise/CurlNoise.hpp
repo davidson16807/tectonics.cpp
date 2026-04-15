@@ -34,7 +34,7 @@ namespace field
 		using value_type = typename SmoothVectorNoise::value_type;
 
 		template<typename T, glm::qualifier Q>
-		value_type operator()(const glm::vec<4,T,Q>& V) const {
+		[[nodiscard]] value_type operator()(const glm::vec<4,T,Q>& V) const {
 			using vec4 = glm::vec<4,T,Q>;
 			using vec3 = glm::vec<3,T,Q>;
 

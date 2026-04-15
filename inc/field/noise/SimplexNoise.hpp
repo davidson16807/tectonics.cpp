@@ -72,7 +72,7 @@ namespace field
 		}
 
 		template<typename T, glm::qualifier Q>
-		value_type operator()(const glm::vec<4,T,Q> V) const {
+		[[nodiscard]] value_type operator()(const glm::vec<4,T,Q> V) const {
 			using mat4 = glm::mat<4,4,T,Q>;
 			using vec4 = glm::vec<4,T,Q>;
 			using scalar = T;
@@ -185,7 +185,7 @@ namespace field
 		}
 
 		template<typename T, glm::qualifier Q>
-		value_type operator()(const glm::vec<3,T,Q> V) const {
+		[[nodiscard]] value_type operator()(const glm::vec<3,T,Q> V) const {
 			using mat3 = glm::mat<3,3,T,Q>;
 			using vec3 = glm::vec<3,T,Q>;
 			using scalar = T;

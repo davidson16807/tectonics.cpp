@@ -30,14 +30,14 @@
 
 TEST_CASE( "BarnesHutMultipole()", "[field]" ) {
     
-    test::GlmAdapter<int, double> adapter(1e-5);
+    test::GlmAdapter<int, double> adapter(1e-10);
 
     auto sample_positions = known::mult(
         procedural::get(
             procedural::vector_interleave<3>(
                 procedural::UnitIntervalNoise<double>()),
             procedural::Range(1000)),
-        procedural::uniform(100.0)
+        procedural::uniform(200.0)
     );
 
     auto particle_positions = known::mult(
@@ -76,9 +76,8 @@ TEST_CASE( "BarnesHutMultipole()", "[field]" ) {
     REQUIRE(test::equality(adapter,
         "BarnesHutMultipole.clear() produces zero field",
         "BarnesHutMultipole",
-        [&](const auto& x) { return barnes_hut(x); },
-        "zero",
-        [&](const auto& x) { return 0.0; },
+        TEST_UNARY(barnes_hut),
+        "zero", [&](const auto& x) { return 0.0; },
         sample_positions
     ));
 
@@ -129,19 +128,15 @@ TEST_CASE( "BarnesHutMultipole()", "[field]" ) {
 
     REQUIRE(test::equality(adapter,
         "Scaling weights scales BarnesHutMultipole output",
-        "scaled",
-        [&](const auto& x) { return scaled(x); },
-        "k*base",
-        [&](const auto& x) { return k * base(x); },
+        "scaled", [&](const auto& x) { return scaled(x); },
+        "k*base", [&](const auto& x) { return k * base(x); },
         sample_positions
     ));
 
     REQUIRE(test::equality(adapter,
         "BarnesHutMultipole(…) approximates NaiveMultipole(…) for the same monopoles",
-        "NaiveMultipole",
-        TEST_UNARY(naive),
-        "BarnesHutMultipole",
-        TEST_UNARY(barnes_hut),
+        "NaiveMultipole",      TEST_UNARY(naive),
+        "BarnesHutMultipole",  TEST_UNARY(barnes_hut),
         sample_positions
     ));
 

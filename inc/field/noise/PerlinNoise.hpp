@@ -54,7 +54,7 @@ namespace field
 		{}
 
 		template<typename vector2>
-		scalar operator()(const vector2& V) const {
+		[[nodiscard]] scalar operator()(const vector2& V) const {
 		    auto I = ops.floor(V);
 		    vector F = ops.fract(V);
 		    scalar f(0);

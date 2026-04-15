@@ -23,7 +23,7 @@ namespace field
 		{}
 		using value_type = K;
 		template<int L, typename T, glm::qualifier Q>
-		constexpr inline auto operator()(const glm::vec<L,T,Q>& V) const
+		[[nodiscard]] constexpr inline auto operator()(const glm::vec<L,T,Q>& V) const
 		{
 			return k;
 		}

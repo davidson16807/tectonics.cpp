@@ -46,7 +46,7 @@ namespace field
 		using value_type = typename vector_type::value_type;
 
 		template<typename vector>
-		value_type operator()(const vector& V) const {
+		[[nodiscard]] value_type operator()(const vector& V) const {
 		    scalar nearest_distance = std::numeric_limits<scalar>::max();
 		    auto I = ops.floor(V);
 		    for (int i = 0; i < indexing.size; ++i)
