@@ -1,47 +1,50 @@
+#pragma once
 
+#include <glm/gtx/norm.hpp>
 
 namespace field
 {
 
-	template<typename id, typename scalar, typename position>
-	class Monopole
+	template<typename value_type, typename vector>
+	struct Monopole
 	{
 
-		const position position_sum;
-		const scalar weight_sum;
+		vector position;
+		value_type weight;
 
 		Monopole(
-			const position position_sum,
-			const scalar weight_sum,
+			const vector position,
+			const value_type weight
 		): 
-			position_sum(position_sum),
-			weight_sum(weight_sum)
+			position(position),
+			weight(weight)
 		{}
 
 		// zero constuctor
 		Monopole(): 
-			position_sum(0),
-			weight_sum(0)
+			position(0),
+			weight(0)
 		{}
 
-	    inline Monopole<id,scalar,precision>& operator+=(const Monopole<id,scalar,position>& other) noexcept
+	    inline Monopole<value_type,vector>& operator+=(const Monopole<value_type,vector>& other) noexcept
 	    {
-	    	position_sum += other.position_sum;
-	    	weight_sum += other.weight_sum;
+	    	position += other.position;
+	    	weight += other.weight;
 	        return *this;
 	    }
 
-	    inline Monopole<id,scalar,precision>& operator-=(const Monopole<id,scalar,position>& other) noexcept
+	    inline Monopole<value_type,vector>& operator-=(const Monopole<value_type,vector>& other) noexcept
 	    {
-	    	position_sum -= other.position_sum;
-	    	weight_sum -= other.weight_sum;
+	    	position -= other.position;
+	    	weight -= other.weight;
 	        return *this;
 	    }
 
-	    inline position center() const
-	    {
-	    	return position_sum/weight_sum;
-	    }
+	    [[nodiscard]]
+		constexpr inline value_type operator()(const vector& v ) const
+		{
+		    return weight / glm::distance2(position/weight, v);
+		}
 
 	};
 
