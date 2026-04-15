@@ -103,9 +103,9 @@ TEST_CASE( "BarnesHutMultipole()", "[field]" ) {
     REQUIRE(test::equality(adapter,
         "BarnesHutMultipole insertion order approximately does not matter",
         "forward",
-        [&](const auto& x) { return forward(x); },
+        TEST_UNARY(forward),
         "reverse",
-        [&](const auto& x) { return reverse(x); },
+        TEST_UNARY(reverse),
         sample_positions
     ));
 
