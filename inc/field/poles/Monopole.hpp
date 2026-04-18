@@ -9,40 +9,43 @@ namespace field
 	struct Monopole
 	{
 
-		vector position;
+		vector weighted_position;
 		value_type weight;
 
 		Monopole(
 			const vector position,
 			const value_type weight
 		): 
-			position(position),
+			weighted_position(weight*position),
 			weight(weight)
 		{}
 
 		// zero constuctor
 		Monopole(): 
-			position(0),
+			weighted_position(0),
 			weight(0)
 		{}
 
 	    inline Monopole<value_type,vector>& operator+=(const Monopole<value_type,vector>& other) noexcept
 	    {
-	    	position += other.position;
+	    	weighted_position += other.weighted_position;
 	    	weight += other.weight;
 	        return *this;
 	    }
 
 	    inline Monopole<value_type,vector>& operator-=(const Monopole<value_type,vector>& other) noexcept
 	    {
-	    	position -= other.position;
+	    	weighted_position -= other.weighted_position;
 	    	weight -= other.weight;
 	        return *this;
 	    }
 
-		[[nodiscard]] constexpr inline value_type operator()(const vector& v ) const
+		[[nodiscard]] constexpr inline vector operator()(const vector& position) const
 		{
-		    return weight / glm::distance2(position/weight, v);
+			vector center_of_weight = weighted_position/weight;
+            vector offset = position - center_of_weight;
+            value_type distance2 = glm::length2(offset);
+		    return offset * weight / distance2;
 		}
 
 	};

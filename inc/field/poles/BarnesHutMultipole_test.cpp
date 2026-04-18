@@ -1,6 +1,8 @@
 // std libraries
 #include <limits>
 #include <string>
+#include <format>
+#include <iostream>
 
 // 3rd party libraries
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
@@ -33,36 +35,31 @@ TEST_CASE( "BarnesHutMultipole()", "[field]" ) {
     test::GlmAdapter<int, double> adapter(1e-10);
 
     auto sample_positions = known::mult(
-        procedural::get(
-            procedural::vector_interleave<3>(
-                procedural::UnitIntervalNoise<double>()),
-            procedural::Range(1000)),
+        procedural::vector_interleave<3>(
+            procedural::UnitIntervalNoise<double>(10.0, 1.0e3)),
         procedural::uniform(200.0)
     );
 
     auto particle_positions = known::mult(
-        procedural::get(
-            procedural::vector_interleave<3>(
-                procedural::UnitIntervalNoise<double>()),
-            procedural::Range(200)),
+        procedural::vector_interleave<3>(
+            procedural::UnitIntervalNoise<double>(20.0, 3.0e3)),
         procedural::uniform(100.0)
     );
 
     auto particle_weights = known::mult(
-        procedural::get(
-            procedural::unit_interval_noise<double>(17.0, 9.0e3),
-            procedural::Range(200)),
+        procedural::unit_interval_noise<double>(17.0, 9.0e3),
         procedural::uniform(10.0)
     );
 
-    field::NaiveMultipole<double, glm::dvec3> naive;
+    field::NaiveMultipole<double, glm::dvec3> naive(1.0);
     field::BarnesHutMultipole<3, int, double> barnes_hut(
         glm::dvec3(50.0, 50.0, 50.0),  // grid_center
         100.0,                         // grid_width
         1.0                            // min_cell_width
     );
 
-    for (int i = 0; i < 200; ++i) {
+    for (int i = 0; i < 10; ++i) {
+        std::cout << std::format("{}, {}\n", glm::to_string(particle_positions[i]), particle_weights[i]);
         naive.add(particle_positions[i], particle_weights[i]);
         barnes_hut.add(particle_positions[i], particle_weights[i]);
     }
@@ -77,7 +74,7 @@ TEST_CASE( "BarnesHutMultipole()", "[field]" ) {
         "BarnesHutMultipole.clear() produces zero field",
         "BarnesHutMultipole",
         TEST_UNARY(barnes_hut),
-        "zero", [&](const auto& x) { return 0.0; },
+        "zero", [&](const auto& x) { return glm::dvec3(0.0); },
         sample_positions
     ));
 

@@ -103,14 +103,14 @@ namespace field
 		/*
 		`sample` returns the value acting at a given `position` in the field
 		*/
-		[[nodiscard]] constexpr inline scalar operator()(const vector& position ) const
+		[[nodiscard]] inline vector operator()(const vector& position ) const
 		{
 			id nesting_id(0);
 			id orthant_id;
 			Monopole<scalar,vector> monopole;
 			vector cell_center(grid_center);
 			scalar cell_width(grid_width);
-			scalar value(0);
+			vector value(0);
 			ivector orthant;
 			for (id level = id(1); level < level_count; ++level)
 			{

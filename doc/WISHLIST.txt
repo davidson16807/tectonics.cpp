@@ -11,6 +11,12 @@ property based tests and working functionality for `VectorCalculusByWeightedMult
 
 
 
+pbr volumetric clouds
+pinn based climate
+boid demo
+
+
+
 tests:
 covariance? (i.e. scaling laws)
 idempotent composition and other properties on composition
@@ -21,19 +27,3 @@ equivariance ("commutative square")
 
 
 
-orrery:
-to frame a target as the origin:
-in the tree of offsets:
-
-idea A:
-	set offset for target to 0 and generate positions
-	set root offset to the negative offset of target and generate positions
-	splice two lists of positions together
-
-idea B:
-	generate positions
-	set offset for target to 0
-	ancestor_offset = 0
-	for ancestor in [target,*ancestors]:
-		set offset for ancestor to ancestor_offset
-		ancestor_offset += offset from ancestor to their parent

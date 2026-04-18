@@ -19,11 +19,17 @@ namespace field {
     template<typename scalar, typename vector>
     class NaiveMultipole {
 
+        scalar self_interaction_distance2_threshold;
         std::vector<Monopole<scalar,vector>> monopoles;
 
     public:
 
-        NaiveMultipole(): monopoles() {}
+        NaiveMultipole(scalar self_interaction_distance_threshold): 
+            self_interaction_distance2_threshold(
+                self_interaction_distance_threshold*
+                self_interaction_distance_threshold),
+            monopoles()
+        {}
 
         void clear() { monopoles.clear(); }
 
@@ -37,11 +43,16 @@ namespace field {
         /*
         `operator()` returns the value acting at a given `position` in the field
         */
-        [[nodiscard]] constexpr inline scalar operator()(const vector& position ) const
+        [[nodiscard]] inline vector operator()(const vector& position ) const
         {
-            scalar result(0);
+            vector result(0);
             for (const auto& monopole : monopoles) {
-                result += monopole.weight / glm::distance2(position, monopole.position);
+                vector offset = (monopole.weighted_position/monopole.weight) - position;
+                scalar distance2 = glm::dot(offset,offset);
+                if (distance2 > self_interaction_distance2_threshold)
+                {
+                    result += glm::normalize(offset) * monopole.weight / distance2;
+                }
             }
             return result;
         }
