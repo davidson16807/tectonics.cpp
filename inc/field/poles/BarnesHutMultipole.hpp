@@ -29,22 +29,75 @@ namespace field
 	template<int dimension_count, typename id, typename scalar, glm::qualifier quality = glm::defaultp>
 	class BarnesHutMultipole
 	{
-		
 
 		using vector = glm::vec<dimension_count, scalar, quality>;
 		using ivector = glm::vec<dimension_count, id, quality>;
 
+		struct CellKey {
+			ivector cell;
+		    std::uint32_t level;
+
+		    CellKey(
+		    	const std::uint32_t level,
+		    	const ivector cell
+		    ):
+		    	cell(cell),
+		    	level(level)
+		    {}
+
+		    bool operator==(const CellKey& other) const noexcept {
+		        return level == other.level && cell == other.cell;
+		    }
+
+		};
+
+		struct CellKeyHash {
+
+	    	const id level_count;
+	    	const id orthant_count;
+		    std::vector<std::size_t> first_id_for_level;
+
+		    CellKeyHash(
+		    	const id level_count,
+		    	const id orthant_count
+		    ): 
+				level_count(level_count), 
+				orthant_count(orthant_count), 
+		    	first_id_for_level(level_count)
+		    {
+				id cell_count(0);
+				for (id level = id(0); level < level_count; ++level)
+				{
+					first_id_for_level[level] = cell_count;
+					cell_count += std::pow(orthant_count, level);
+				}
+		    }
+
+		    std::size_t operator()(const CellKey& key) const noexcept {
+			    const std::size_t cells_per_axis = (std::size_t(1) << key.level);
+			    std::size_t nesting_id(0);
+			    for (std::uint32_t dimension = 0; dimension < dimension_count; ++dimension)
+			    {
+			    	nesting_id *= cells_per_axis;
+			    	nesting_id += key.cell[dimension];
+			    }
+			    return first_id_for_level[key.level] + nesting_id;
+		    }
+
+		};	
+
+		using Map = std::unordered_map<CellKey, Monopole<double, vector>, CellKeyHash>;
+
 		static constexpr scalar half = 0.5;
 
-		const cartesian::OrthantIndexing<dimension_count, id, quality> orthants;
 		const vector grid_center;
 		const scalar grid_width;
 		const id level_count;
 		const id orthant_count;
 		const scalar min_cell_width;
-		id cell_count;
+		const cartesian::OrthantIndexing<dimension_count, id, quality> orthants;
 		std::vector<id> first_id_for_level;
-		std::unordered_map<id, Monopole<scalar,vector>> orthtree;
+		Map orthtree;
 
 	public:
 
@@ -53,20 +106,15 @@ namespace field
 			const scalar grid_width,
 			const scalar min_cell_width
 		):
-			orthants(),
 			grid_center(grid_center),
 			grid_width(grid_width),
 			level_count(std::ceil(std::log2(grid_width/min_cell_width))), 
 			orthant_count(std::pow(id(2),dimension_count)), 
 			min_cell_width(min_cell_width),
-			first_id_for_level(level_count)
+			orthants(),
+			first_id_for_level(level_count),
+			orthtree(0, CellKeyHash(level_count, orthant_count))
 		{
-			cell_count = 0;
-			for (id level = id(0); level < level_count; ++level)
-			{
-				first_id_for_level[level] = cell_count;
-				cell_count += std::pow(orthant_count, level);
-			}
 			// orthtree.resize(cell_count, Monopole<scalar,vector>()); // if orthtree is std::vector
 		}
 
@@ -81,14 +129,15 @@ namespace field
 		*/
 		void add(const vector position, const scalar weight)
 		{
-			id nesting_id(0);
+			ivector orthant, neighbor;
 			id neighbor_id, orthant_id;
 			vector cell_center(grid_center);
 			scalar cell_width(grid_width);
-			ivector orthant;
+			ivector nesting(0);
 			for (id level = id(1); level < level_count; ++level)
 			{
-				if (!glm::any(glm::greaterThan(glm::abs(position-grid_center), vector(half*grid_width)))) {
+				if (!glm::any(glm::greaterThan(glm::abs(position-grid_center), vector(half*grid_width))))
+				{
 					orthant = ivector(glm::greaterThan(position-cell_center,vector(0)));
 					orthant_id = orthants.memory_id(orthant);
 					// add contributions to each orthant of the current level that do not contain the particle
@@ -96,13 +145,14 @@ namespace field
 					{
 						if (neighbor_id != orthant_id)
 						{
+							neighbor = orthants.grid_id(neighbor_id);
 							orthtree.emplace(
-									first_id_for_level[level] + orthant_count * nesting_id + neighbor_id, 
+									CellKey(level, id(2) * nesting + neighbor), 
 									Monopole<scalar,vector>{}
 								).first->second += Monopole<scalar,vector>(position, weight);
 						}
 					}
-					nesting_id = orthant_count * nesting_id + orthant_id;
+					nesting = id(2) * nesting + orthant;
 					cell_center += cell_width * (vector(orthant)-half) * half;
 					cell_width *= half;
 				}
@@ -114,18 +164,16 @@ namespace field
 		*/
 		[[nodiscard]] inline vector operator()(const vector& position ) const
 		{
-			id nesting_id(0);
-			id orthant_id;
 			vector cell_center(grid_center);
 			scalar cell_width(grid_width);
 			vector value(0);
+			ivector nesting(0);
 			ivector orthant;
 			for (id level = id(1); level < level_count; ++level)
 			{
 				orthant = ivector(glm::greaterThan(position-cell_center,vector(0)));
-				orthant_id = orthants.memory_id(orthant);
-				nesting_id = orthant_count * nesting_id + orthant_id;
-				auto it = orthtree.find(first_id_for_level[level] + nesting_id);
+				nesting = id(2) * nesting + orthant;
+				auto it = orthtree.find(CellKey(level, nesting));
 				if (it != orthtree.end()) {
 					const Monopole<scalar,vector>& monopole = it->second;
 					vector offset = monopole.offset_for_position(position);

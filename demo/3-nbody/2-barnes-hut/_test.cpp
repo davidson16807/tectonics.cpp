@@ -277,7 +277,7 @@ int main() {
     si::hour,
     si::day,
     si::week,
-    si::month,
+    // si::month,
     // si::year,
     // si::decayear
     // at 60fps, 1Dy/s roughly matches the original Nice model, which ran 1/4 year per timestep, 
@@ -287,7 +287,7 @@ int main() {
 
   // now introduce the Multipole field
   field::BarnesHutMultipole<3,std::size_t,double> gravitational_acceleration(
-    dvec3(0), 1e13, 1e7);
+    dvec3(0), 1e13, 1e5);
 
   int timestep_id(0);
   time t(0);
