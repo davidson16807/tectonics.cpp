@@ -47,11 +47,11 @@ namespace field {
         {
             vector result(0);
             for (const auto& monopole : monopoles) {
-                vector offset = (monopole.weighted_position/monopole.weight) - position;
-                scalar distance2 = glm::dot(offset,offset);
+                vector offset = monopole.offset_for_position(position);
+                scalar distance2 = glm::dot(offset, offset);
                 if (distance2 > self_interaction_distance2_threshold)
                 {
-                    result += glm::normalize(offset) * monopole.weight / distance2;
+                    result += monopole.value_for_offset(offset);
                 }
             }
             return result;

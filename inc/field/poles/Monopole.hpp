@@ -40,12 +40,21 @@ namespace field
 	        return *this;
 	    }
 
+	    inline vector offset_for_position(const vector& position) const
+	    {
+			vector center_of_weight = weighted_position/weight;
+            return center_of_weight - position;
+	    }
+
+	    inline vector value_for_offset(const vector& offset) const
+	    {
+            value_type distance = glm::length(offset);
+		    return offset * weight / (distance*distance*distance);
+	    }
+
 		[[nodiscard]] constexpr inline vector operator()(const vector& position) const
 		{
-			vector center_of_weight = weighted_position/weight;
-            vector offset = position - center_of_weight;
-            value_type distance2 = glm::length2(offset);
-		    return offset * weight / distance2;
+			return value_for_offset(offset_for_position(position));
 		}
 
 	};
