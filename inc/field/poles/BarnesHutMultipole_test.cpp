@@ -32,7 +32,8 @@
 
 TEST_CASE( "BarnesHutMultipole()", "[field]" ) {
     
-    test::GlmAdapter<int, double> adapter(1e-10);
+    test::GlmAdapter<int, double> fine(1e-10);
+    test::GlmAdapter<int, double> coarse(1e-5); // 1 mm accuracy
 
     auto sample_positions = known::mult(
         procedural::vector_interleave<3>(
@@ -59,22 +60,13 @@ TEST_CASE( "BarnesHutMultipole()", "[field]" ) {
     );
 
     for (int i = 0; i < 10; ++i) {
-        std::cout << std::format("{}, {}\n", glm::to_string(particle_positions[i]), particle_weights[i]);
         naive.add(particle_positions[i], particle_weights[i]);
         barnes_hut.add(particle_positions[i], particle_weights[i]);
     }
 
-    REQUIRE(test::determinism(adapter,
+    REQUIRE(test::determinism(fine,
         "BarnesHutMultipole(…)",
         TEST_UNARY(barnes_hut),
-        sample_positions
-    ));
-
-    REQUIRE(test::equality(adapter,
-        "BarnesHutMultipole.clear() produces zero field",
-        "BarnesHutMultipole",
-        TEST_UNARY(barnes_hut),
-        "zero", [&](const auto& x) { return glm::dvec3(0.0); },
         sample_positions
     ));
 
@@ -96,7 +88,7 @@ TEST_CASE( "BarnesHutMultipole()", "[field]" ) {
         reverse.add(particle_positions[i], particle_weights[i]);
     }
 
-    REQUIRE(test::equality(adapter,
+    REQUIRE(test::equality(fine,
         "BarnesHutMultipole insertion order approximately does not matter",
         "forward",
         TEST_UNARY(forward),
@@ -123,17 +115,26 @@ TEST_CASE( "BarnesHutMultipole()", "[field]" ) {
         scaled.add(particle_positions[i], k * particle_weights[i]);
     }
 
-    REQUIRE(test::equality(adapter,
+    REQUIRE(test::equality(fine,
         "Scaling weights scales BarnesHutMultipole output",
         "scaled", [&](const auto& x) { return scaled(x); },
         "k*base", [&](const auto& x) { return k * base(x); },
         sample_positions
     ));
 
-    REQUIRE(test::equality(adapter,
+    REQUIRE(test::equality(coarse,
         "BarnesHutMultipole(…) approximates NaiveMultipole(…) for the same monopoles",
         "NaiveMultipole",      TEST_UNARY(naive),
         "BarnesHutMultipole",  TEST_UNARY(barnes_hut),
+        sample_positions
+    ));
+
+    barnes_hut.clear();
+    REQUIRE(test::equality(fine,
+        "BarnesHutMultipole.clear() produces zero field",
+        "BarnesHutMultipole",
+        TEST_UNARY(barnes_hut),
+        "zero", [&](const auto& x) { return glm::dvec3(0.0); },
         sample_positions
     ));
 

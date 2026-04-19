@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <unordered_map>
 
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
@@ -28,6 +29,7 @@ namespace field
 	template<int dimension_count, typename id, typename scalar, glm::qualifier quality = glm::defaultp>
 	class BarnesHutMultipole
 	{
+		
 
 		using vector = glm::vec<dimension_count, scalar, quality>;
 		using ivector = glm::vec<dimension_count, id, quality>;
@@ -39,9 +41,10 @@ namespace field
 		const scalar grid_width;
 		const id level_count;
 		const id orthant_count;
+		const scalar min_cell_width;
 		id cell_count;
 		std::vector<id> first_id_for_level;
-		std::vector<Monopole<scalar,vector>> orthtree;
+		std::unordered_map<id, Monopole<scalar,vector>> orthtree;
 
 	public:
 
@@ -55,6 +58,7 @@ namespace field
 			grid_width(grid_width),
 			level_count(std::ceil(std::log2(grid_width/min_cell_width))), 
 			orthant_count(std::pow(id(2),dimension_count)), 
+			min_cell_width(min_cell_width),
 			first_id_for_level(level_count)
 		{
 			cell_count = 0;
@@ -63,12 +67,13 @@ namespace field
 				first_id_for_level[level] = cell_count;
 				cell_count += std::pow(orthant_count, level);
 			}
-			orthtree.resize(cell_count, Monopole<scalar,vector>());
+			// orthtree.resize(cell_count, Monopole<scalar,vector>()); // if orthtree is std::vector
 		}
 
 		void clear()
 		{
-			std::fill(orthtree.begin(), orthtree.end(), Monopole<scalar,vector>());
+			orthtree.clear();
+			// std::fill(orthtree.begin(), orthtree.end(), Monopole<scalar,vector>()); // if orthtree is std::vector
 		}
 
 		/*
@@ -83,20 +88,24 @@ namespace field
 			ivector orthant;
 			for (id level = id(1); level < level_count; ++level)
 			{
-				orthant = ivector(glm::greaterThan(position-cell_center,vector(0)));
-				orthant_id = orthants.memory_id(orthant);
-				// add contributions to each orthant of the current level that do not contain the particle
-				for (neighbor_id = 0; neighbor_id < orthant_count; ++neighbor_id)
-				{
-					if (neighbor_id != orthant_id)
+				if (!glm::any(glm::greaterThan(glm::abs(position-grid_center), vector(half*grid_width)))) {
+					orthant = ivector(glm::greaterThan(position-cell_center,vector(0)));
+					orthant_id = orthants.memory_id(orthant);
+					// add contributions to each orthant of the current level that do not contain the particle
+					for (neighbor_id = 0; neighbor_id < orthant_count; ++neighbor_id)
 					{
-						orthtree[first_id_for_level[level] + orthant_count * nesting_id + neighbor_id] 
-							+= Monopole<scalar,vector>(position, weight);
+						if (neighbor_id != orthant_id)
+						{
+							orthtree.emplace(
+									first_id_for_level[level] + orthant_count * nesting_id + neighbor_id, 
+									Monopole<scalar,vector>{}
+								).first->second += Monopole<scalar,vector>(position, weight);
+						}
 					}
+					nesting_id = orthant_count * nesting_id + orthant_id;
+					cell_center += cell_width * (vector(orthant)-half) * half;
+					cell_width *= half;
 				}
-				nesting_id = orthant_count * nesting_id + orthant_id;
-				cell_center += cell_width * (vector(orthant)-half);
-				cell_width *= half;
 			}
 		}
 
@@ -107,7 +116,6 @@ namespace field
 		{
 			id nesting_id(0);
 			id orthant_id;
-			Monopole<scalar,vector> monopole;
 			vector cell_center(grid_center);
 			scalar cell_width(grid_width);
 			vector value(0);
@@ -116,9 +124,17 @@ namespace field
 			{
 				orthant = ivector(glm::greaterThan(position-cell_center,vector(0)));
 				orthant_id = orthants.memory_id(orthant);
-				value += orthtree[first_id_for_level[level] + nesting_id](position);
 				nesting_id = orthant_count * nesting_id + orthant_id;
-				cell_center += cell_width * (vector(orthant)-half);
+				auto it = orthtree.find(first_id_for_level[level] + nesting_id);
+				if (it != orthtree.end()) {
+					const Monopole<scalar,vector>& monopole = it->second;
+					vector offset = monopole.offset_for_position(position);
+                	scalar distance2 = glm::dot(offset, offset);
+                	if (distance2 > min_cell_width*min_cell_width) {
+					    value += monopole.value_for_offset(offset);
+                	}
+				}
+				cell_center += cell_width * (vector(orthant)-half) * half;
 				cell_width *= half;
 			}
 			return value;
