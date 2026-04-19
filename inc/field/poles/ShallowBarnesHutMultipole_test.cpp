@@ -1,0 +1,142 @@
+// std libraries
+#include <limits>
+#include <string>
+#include <format>
+#include <iostream>
+
+// 3rd party libraries
+#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
+#include "catch/catch.hpp"
+
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+
+// in-house libraries
+#include <index/whole.hpp>
+#include <index/known.hpp>
+#include <index/procedural/Uniform.hpp>
+#include <index/procedural/Get.hpp>
+#include <index/procedural/Map.hpp>
+#include <index/procedural/Range.hpp>
+#include <index/procedural/glm/VectorInterleave.hpp>
+#include <index/procedural/noise/UnitIntervalNoise.hpp>
+
+#include "NaiveMultipole.hpp"
+#include "ShallowBarnesHutMultipole.hpp"
+
+#include <test/properties.hpp>
+#include <test/equality.hpp>
+#include <test/macros.hpp>
+#include <test/glm/adapter.hpp>
+
+
+TEST_CASE( "ShallowBarnesHutMultipole()", "[field]" ) {
+    
+    test::GlmAdapter<int, double> fine(1e-10);
+    test::GlmAdapter<int, double> coarse(1e-5); // 1 mm accuracy
+
+    auto sample_positions = known::mult(
+        procedural::vector_interleave<3>(
+            procedural::UnitIntervalNoise<double>(10.0, 1.0e3)),
+        procedural::uniform(200.0)
+    );
+
+    auto particle_positions = known::mult(
+        procedural::vector_interleave<3>(
+            procedural::UnitIntervalNoise<double>(20.0, 3.0e3)),
+        procedural::uniform(100.0)
+    );
+
+    auto particle_weights = known::mult(
+        procedural::unit_interval_noise<double>(17.0, 9.0e3),
+        procedural::uniform(10.0)
+    );
+
+    field::NaiveMultipole<double, glm::dvec3> naive(1.0);
+    field::ShallowBarnesHutMultipole<3, int, double> barnes_hut(
+        glm::dvec3(50.0, 50.0, 50.0),  // grid_center
+        100.0,                         // grid_width
+        1.0                            // min_cell_width
+    );
+
+    for (int i = 0; i < 10; ++i) {
+        naive.add(particle_positions[i], particle_weights[i]);
+        barnes_hut.add(particle_positions[i], particle_weights[i]);
+    }
+
+    REQUIRE(test::determinism(fine,
+        "ShallowBarnesHutMultipole(…)",
+        TEST_UNARY(barnes_hut),
+        sample_positions
+    ));
+
+    field::ShallowBarnesHutMultipole<3, int, double> forward(
+        glm::dvec3(50.0, 50.0, 50.0),  // grid_center
+        100.0,                         // grid_width
+        1.0                            // min_cell_width
+    );
+    field::ShallowBarnesHutMultipole<3, int, double> reverse(
+        glm::dvec3(50.0, 50.0, 50.0),  // grid_center
+        100.0,                         // grid_width
+        1.0                            // min_cell_width
+    );
+
+    for (int i = 0; i < 200; ++i) {
+        forward.add(particle_positions[i], particle_weights[i]);
+    }
+    for (int i = 199; i >= 0; --i) {
+        reverse.add(particle_positions[i], particle_weights[i]);
+    }
+
+    REQUIRE(test::equality(fine,
+        "ShallowBarnesHutMultipole insertion order approximately does not matter",
+        "forward",
+        TEST_UNARY(forward),
+        "reverse",
+        TEST_UNARY(reverse),
+        sample_positions
+    ));
+
+    field::ShallowBarnesHutMultipole<3, int, double> base(
+        glm::dvec3(50.0, 50.0, 50.0),  // grid_center
+        100.0,                         // grid_width
+        1.0                            // min_cell_width
+    );
+    field::ShallowBarnesHutMultipole<3, int, double> scaled(
+        glm::dvec3(50.0, 50.0, 50.0),  // grid_center
+        100.0,                         // grid_width
+        1.0                            // min_cell_width
+    );
+
+    const double k = 7.0;
+
+    for (int i = 0; i < 200; ++i) {
+        base.add(particle_positions[i], particle_weights[i]);
+        scaled.add(particle_positions[i], k * particle_weights[i]);
+    }
+
+    REQUIRE(test::equality(fine,
+        "Scaling weights scales ShallowBarnesHutMultipole output",
+        "scaled", [&](const auto& x) { return scaled(x); },
+        "k*base", [&](const auto& x) { return k * base(x); },
+        sample_positions
+    ));
+
+    REQUIRE(test::equality(coarse,
+        "ShallowBarnesHutMultipole(…) approximates NaiveMultipole(…) for the same monopoles",
+        "NaiveMultipole",      TEST_UNARY(naive),
+        "ShallowBarnesHutMultipole",  TEST_UNARY(barnes_hut),
+        sample_positions
+    ));
+
+    barnes_hut.clear();
+    REQUIRE(test::equality(fine,
+        "ShallowBarnesHutMultipole.clear() produces zero field",
+        "ShallowBarnesHutMultipole",
+        TEST_UNARY(barnes_hut),
+        "zero", [&](const auto& x) { return glm::dvec3(0.0); },
+        sample_positions
+    ));
+
+}
+

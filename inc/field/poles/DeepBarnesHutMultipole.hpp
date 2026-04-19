@@ -14,20 +14,25 @@ namespace field
 {
 
 	/*
-	`BarnesHutMultipole` represents a mathematical field of arbitrary dimensionality
+	`DeepBarnesHutMultipole` represents a mathematical field of arbitrary dimensionality
 	where the value at each point is the sum of monopole fields.
 	This is to say that the value at each point is the weighted sum of the inverse square of distances to particles.
-	`BarnesHutMultipole` is an implementation of the Barnes-Hut algorithm.
-	`BarnesHutMultipole` can be used to efficiently implement inverse distance weighting, 
+	`DeepBarnesHutMultipole` is an implementation of the Barnes-Hut algorithm.
+	`DeepBarnesHutMultipole` can be used to efficiently implement inverse distance weighting, 
 	gravity simulations, charged particle simulations, light propagation, boids, etc.
 	In inverse distance weighting, the weight associated with a sample is the measurement taken for the sample.
 	In gravity simulation, the weight associated with a body is its mass.
 	In charged particle simulation, the weight associated with a particle is its charge.
 	In light propagation, the weight associated with a light source is its luminosity.
-	In boid simulation, multiple `BarnesHutMultipole`s are used, and weights associated with a boid are either uniform or represent heading.
+	In boid simulation, multiple `DeepBarnesHutMultipole`s are used, and weights associated with a boid are either uniform or represent heading.
+
+	`DeepBarnesHutMultipole` represents a field using an orthtree that is stored as a std::unordered_map.
+	A `std::unordered_map` is able to represent orthtrees of arbitrary depth in a reasonable amount of memory,
+	however it is not stored in contiguous memory, and it requires running additional hasing logic,
+	which in some cases make `DeepBarnesHutMultipole` slower than `ShallowBarnesHutMultipole`.
 	*/
 	template<int dimension_count, typename id, typename scalar, glm::qualifier quality = glm::defaultp>
-	class BarnesHutMultipole
+	class DeepBarnesHutMultipole
 	{
 
 		using vector = glm::vec<dimension_count, scalar, quality>;
@@ -101,7 +106,7 @@ namespace field
 
 	public:
 
-		BarnesHutMultipole(
+		DeepBarnesHutMultipole(
 			const vector grid_center,
 			const scalar grid_width,
 			const scalar min_cell_width

@@ -22,7 +22,7 @@
 #include <index/procedural/noise/UnitIntervalNoise.hpp>
 
 #include "NaiveMultipole.hpp"
-#include "BarnesHutMultipole.hpp"
+#include "DeepBarnesHutMultipole.hpp"
 
 #include <test/properties.hpp>
 #include <test/equality.hpp>
@@ -30,7 +30,7 @@
 #include <test/glm/adapter.hpp>
 
 
-TEST_CASE( "BarnesHutMultipole()", "[field]" ) {
+TEST_CASE( "DeepBarnesHutMultipole()", "[field]" ) {
     
     test::GlmAdapter<int, double> fine(1e-10);
     test::GlmAdapter<int, double> coarse(1e-5); // 1 mm accuracy
@@ -53,7 +53,7 @@ TEST_CASE( "BarnesHutMultipole()", "[field]" ) {
     );
 
     field::NaiveMultipole<double, glm::dvec3> naive(1.0);
-    field::BarnesHutMultipole<3, int, double> barnes_hut(
+    field::DeepBarnesHutMultipole<3, int, double> barnes_hut(
         glm::dvec3(50.0, 50.0, 50.0),  // grid_center
         100.0,                         // grid_width
         1.0                            // min_cell_width
@@ -65,17 +65,17 @@ TEST_CASE( "BarnesHutMultipole()", "[field]" ) {
     }
 
     REQUIRE(test::determinism(fine,
-        "BarnesHutMultipole(…)",
+        "DeepBarnesHutMultipole(…)",
         TEST_UNARY(barnes_hut),
         sample_positions
     ));
 
-    field::BarnesHutMultipole<3, int, double> forward(
+    field::DeepBarnesHutMultipole<3, int, double> forward(
         glm::dvec3(50.0, 50.0, 50.0),  // grid_center
         100.0,                         // grid_width
         1.0                            // min_cell_width
     );
-    field::BarnesHutMultipole<3, int, double> reverse(
+    field::DeepBarnesHutMultipole<3, int, double> reverse(
         glm::dvec3(50.0, 50.0, 50.0),  // grid_center
         100.0,                         // grid_width
         1.0                            // min_cell_width
@@ -89,7 +89,7 @@ TEST_CASE( "BarnesHutMultipole()", "[field]" ) {
     }
 
     REQUIRE(test::equality(fine,
-        "BarnesHutMultipole insertion order approximately does not matter",
+        "DeepBarnesHutMultipole insertion order approximately does not matter",
         "forward",
         TEST_UNARY(forward),
         "reverse",
@@ -97,12 +97,12 @@ TEST_CASE( "BarnesHutMultipole()", "[field]" ) {
         sample_positions
     ));
 
-    field::BarnesHutMultipole<3, int, double> base(
+    field::DeepBarnesHutMultipole<3, int, double> base(
         glm::dvec3(50.0, 50.0, 50.0),  // grid_center
         100.0,                         // grid_width
         1.0                            // min_cell_width
     );
-    field::BarnesHutMultipole<3, int, double> scaled(
+    field::DeepBarnesHutMultipole<3, int, double> scaled(
         glm::dvec3(50.0, 50.0, 50.0),  // grid_center
         100.0,                         // grid_width
         1.0                            // min_cell_width
@@ -116,23 +116,23 @@ TEST_CASE( "BarnesHutMultipole()", "[field]" ) {
     }
 
     REQUIRE(test::equality(fine,
-        "Scaling weights scales BarnesHutMultipole output",
+        "Scaling weights scales DeepBarnesHutMultipole output",
         "scaled", [&](const auto& x) { return scaled(x); },
         "k*base", [&](const auto& x) { return k * base(x); },
         sample_positions
     ));
 
     REQUIRE(test::equality(coarse,
-        "BarnesHutMultipole(…) approximates NaiveMultipole(…) for the same monopoles",
+        "DeepBarnesHutMultipole(…) approximates NaiveMultipole(…) for the same monopoles",
         "NaiveMultipole",      TEST_UNARY(naive),
-        "BarnesHutMultipole",  TEST_UNARY(barnes_hut),
+        "DeepBarnesHutMultipole",  TEST_UNARY(barnes_hut),
         sample_positions
     ));
 
     barnes_hut.clear();
     REQUIRE(test::equality(fine,
-        "BarnesHutMultipole.clear() produces zero field",
-        "BarnesHutMultipole",
+        "DeepBarnesHutMultipole.clear() produces zero field",
+        "DeepBarnesHutMultipole",
         TEST_UNARY(barnes_hut),
         "zero", [&](const auto& x) { return glm::dvec3(0.0); },
         sample_positions

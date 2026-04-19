@@ -15,7 +15,7 @@
 
 #include <math/special.hpp>                  // math::floormod
 
-#include <field/poles/BarnesHutMultipole.hpp>// field::BarnesHutMultipole
+#include <field/poles/DeepBarnesHutMultipole.hpp>// field::DeepBarnesHutMultipole
 
 #include <unit/si.hpp>                       // si::unit
 
@@ -286,7 +286,7 @@ int main() {
   };
 
   // now introduce the Multipole field
-  field::BarnesHutMultipole<3,std::size_t,double> gravitational_acceleration(
+  field::DeepBarnesHutMultipole<3,std::size_t,double> gravitational_acceleration(
     dvec3(0), 1e13, 1e5);
 
   int timestep_id(0);
