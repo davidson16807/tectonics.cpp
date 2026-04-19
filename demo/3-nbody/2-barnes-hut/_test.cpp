@@ -15,7 +15,7 @@
 
 #include <math/special.hpp>                  // math::floormod
 
-#include <field/poles/NaiveMultipole.hpp>    // field::NaiveMultipole
+#include <field/poles/BarnesHutMultipole.hpp>// field::BarnesHutMultipole
 
 #include <unit/si.hpp>                       // si::unit
 
@@ -278,12 +278,16 @@ int main() {
     si::day,
     si::week,
     si::month,
-    si::year,
+    // si::year,
     // si::decayear
     // at 60fps, 1Dy/s roughly matches the original Nice model, which ran 1/4 year per timestep, 
     // however they were probably using a better integration scheme like RK4,
     // when we try that speed the planets are ejected after several years
   };
+
+  // now introduce the Multipole field
+  field::BarnesHutMultipole<3,std::size_t,double> gravitational_acceleration(
+    dvec3(0), 1e13, 1e7);
 
   int timestep_id(0);
   time t(0);
@@ -300,8 +304,7 @@ int main() {
 
       t+=dt;
 
-      // now introduce the Multipole field
-      field::NaiveMultipole<double, dvec3> gravitational_acceleration(1e3);
+      gravitational_acceleration.clear();
       for (std::size_t i = 0; i < positions.size(); ++i)
       {
         gravitational_acceleration.add(positions[i], masses[i] * (si::gravitational_constant / (m3/(kg*s*s))));
