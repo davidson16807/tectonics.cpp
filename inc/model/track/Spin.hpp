@@ -83,19 +83,20 @@ namespace track {
 					precessional_north_pole_in_global_space
 				));
 
-			// NOTE: we use mat4x4 since it is the only thing that rotate() works with
-	        mat4 matrix1(scalar(1));
-	        matrix1 = glm::rotate(matrix1, 
-	        	mean_axial_tilt_in_radians + nutation_amplitude_in_radians * std::sin(initial_nutation_phase_in_radians + turn*phase/nutation_period),
-	        	nutation_north_pole_in_global_space);
-	        matrix1 = glm::rotate(matrix1, (turn * phase/precession_period), precessional_north_pole_in_global_space);
-	        // TODO: use matrix1 to calculate north_pole_in_global_space
-
 	        mat4 matrix2(scalar(1));
-	        matrix2 = glm::rotate(matrix2, (turn * phase/spin_period), north_pole_in_local_space);
 	        // TODO: multiply by a rotation matrix that moves north_pole_in_local_space to point at north_pole_in_global_space
 
+			// NOTE: we use mat4x4 since it is the only thing that rotate() works with
+	        matrix2 = glm::rotate(matrix2, (turn * phase/precession_period), precessional_north_pole_in_global_space);
+	        matrix2 = glm::rotate(matrix2, 
+	        	mean_axial_tilt_in_radians + nutation_amplitude_in_radians * std::sin(initial_nutation_phase_in_radians + turn*phase/nutation_period),
+	        	nutation_north_pole_in_global_space);
+	        // TODO: use matrix1 to calculate north_pole_in_global_space
+
+	        matrix2 = glm::rotate(matrix2, (turn * phase/spin_period), north_pole_in_local_space);
+
 	        return matrix2;
+
 		}
 
 		// Spin<scalar,duration> advance(const duration time_step) const

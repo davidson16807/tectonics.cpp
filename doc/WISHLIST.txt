@@ -10,6 +10,16 @@ property based tests and working functionality for `VectorCalculusByCurvilinearM
 property based tests and working functionality for `VectorCalculusByWeightedMultilinearMethod`
 
 
+spins
+insolation
+climate
+precipitation
+erosion
+lithification
+metamorphosis
+pbr surfaces
+pbr atmospheres
+continent congestion
 
 pbr volumetric clouds
 pinn based climate

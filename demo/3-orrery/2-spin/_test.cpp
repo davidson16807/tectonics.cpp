@@ -20,6 +20,7 @@
 
 #include <update/OrbitalNavigationState.hpp>         // update::OrbitalNavigationState
 #include <update/OrbitalNavigationUpdater.hpp>       // update::OrbitalNavigationUpdater
+#include <update/ValueHotkeyPresetUpdater.hpp>       // update::ValueHotkeyPresetUpdater
 #include <update/OptionHotkeyRangeUpdater.hpp>       // update::OptionHotkeyRangeUpdater
 
 #include <view/IndicatorMeshSwarmShaderProgram.hpp>  // view::IndicatorMeshSwarmShaderProgram
@@ -86,9 +87,9 @@ int main() {
   time s = si::second;
   vec3 K(0,0,1);
 
-  //                                                      precession               nutation nutation nut prec     spin period    time offset
-  //                    local north pole      ra       dec    pole      axial tilt amplitude phase period period  spin period    time offset
-  track::Spin<float,float> spin(K, direction(0.00,    90.00 ), K, 23.44  * si::degree, 0.0, 0.0,    T/s, T/s, 23.93    * si::hour/s, 0.0 * s/s );  // 3 Earth
+  //                                                      precession                nutation       nutation    nut  precession  spin                 time
+  //                    local north pole      lon       lat    pole      axial tilt amplitude       phase    period period      period               offset
+  track::Spin<float,float> spin(K, direction(90.0,    66.56 ), K, 23.44*si::degree, 10.0*si::degree, 0.0, 0.1*T/s,  T/s,        23.93 * si::hour/s, 0.0 * s/s );  // 3 Earth
 
   // flatten vector raster for OpenGL
   buffer::PyramidBuffers<int, float> pyramids;
@@ -145,6 +146,7 @@ int main() {
   // initialize control state
   update::OrbitalNavigationState control_state;
   update::OrbitalNavigationUpdater orbit_updater;
+  update::ValueHotkeyPresetUpdater<std::size_t> pause_updater("/",0);
   update::OptionHotkeyRangeUpdater<std::size_t> timewarp_updater(",", ".", false);
   control_state.min_zoom_distance = 1.0f;
   control_state.log2_height = 2.5f;
@@ -231,6 +233,7 @@ int main() {
         auto message = message_poll.front();
         orbit_updater.update(control_state, message, control_state);
         timestep_id = timewarp_updater.update(timestep_id, timesteps, message);
+        timestep_id = pause_updater.update(timestep_id, message);
         std::cout << std::to_string(timestep_id) << std::endl;
         message_poll.pop();
       }
