@@ -87,9 +87,10 @@ int main() {
   time s = si::second;
   vec3 K(0,0,1);
 
-  //                                                      precession                nutation       nutation    nut  precession  spin                 time
-  //                    local north pole      lon       lat    pole      axial tilt amplitude       phase    period period      period               offset
-  track::Spin<float,float> spin(K, direction(90.0,    66.56 ), K, 23.44*si::degree, 10.0*si::degree, 0.0, 0.1*T/s,  T/s,        23.93 * si::hour/s, 0.0 * s/s );  // 3 Earth
+  //                                                         precession              nutation          nutation       nutation precession   spin                 time
+  //                    local north pole      lon       lat    pole      axial tilt amplitude          phase          period    period    period               offset
+  track::Spin<double,double> spin(K, direction(90.0,    66.56 ), K, 23.44*si::degree, 10.0*si::degree,    0.0, 18.6*si::year/s, T/s,      23.93 * si::hour/s, 0.0 * s/s );  // 3 Earth, exaggerated nutation for demonstration
+//track::Spin<double,double> spin(K, direction(90.0,    66.56 ), K, 23.44*si::degree, 9.2 *si::arcsecond, 0.0, 18.6*si::year/s, T/s,      23.93 * si::hour/s, 0.0 * s/s );  // 3 Earth, real nutation
 
   // flatten vector raster for OpenGL
   buffer::PyramidBuffers<int, float> pyramids;
