@@ -87,23 +87,23 @@ namespace orrery
             Cycles& imperceptible, 
             bools& perceptible
         ) const {
-            perceptible.resize(orbits.size());
+            perceptible.resize(orbits.entity_count());
             imperceptible.clear();
-            imperceptible.reserve(orbits.size());
+            imperceptible.reserve(orbits.entity_count());
             orbit::Universals<scalar> orbit;
             scalar inverse_semi_major_axis;
-            for (std::size_t entity = 0; entity < orbits.size(); ++entity) {
+            for (std::size_t entity = 0; entity < orbits.entity_count(); ++entity) {
                 if (orbits.has(entity)) {
                     orbit = orbits.component_for_entity(entity);
                     inverse_semi_major_axis = propagator.inverse_semi_major_axis(orbit);
                     if (!propagator.is_elliptic(inverse_semi_major_axis)) {
-                        perceptible.emplace_back(true);
+                        perceptible[entity] = true;
                     } else {
                         scalar period = elliptics.period_from_semi_major_axis(s1/inverse_semi_major_axis, orbit.combined_mass);
                         if (min_perceivable_period <= period && period <= max_perceivable_period) {
-                            perceptible.emplace_back(true);
+                            perceptible[entity] = true;
                         } else {
-                            perceptible.emplace_back(false);
+                            perceptible[entity] = false;
                             imperceptible.emplace_back(id(entity), period);
                         }
                     }
@@ -123,7 +123,7 @@ namespace orrery
             for (std::size_t j = 0; j < cycles.size(); ++j) {
                 for (std::size_t i = 0; i < j; ++i) {
                     const scalar fraction = cycles[i].period / cycles[j].period;
-                    const id p = closest_resonance_index(fraction);
+                    const id p = closest_resonance_index(fraction, id(cycles.size()));
                     if (std::abs(math::roundfract(scalar(p) * fraction)) < scalar(1e-3)) {
                         id resonance_id;
                         if (resonances[i] >= i0) {
@@ -165,7 +165,7 @@ namespace orrery
             std::vector<scalar> resonance_periods;
             resonance_periods.reserve(resonance_count);
             for (const auto& [lo, hi] : resonance_period_range) {
-                resonance_periods.push_back(closest_resonance_index(lo/hi) * lo);
+                resonance_periods.push_back(closest_resonance_index(lo/hi, resonance_count) * lo);
             }
 
             return resonance_periods;

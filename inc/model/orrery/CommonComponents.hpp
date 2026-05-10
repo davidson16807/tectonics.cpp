@@ -42,7 +42,7 @@ public:
 	*/
 	CommonComponents(const std::vector<Component>& components_):
 		component_store(components_),
-		exists(components_.size())
+		exists(components_.size(), true)
 	{
 	}
 
@@ -62,7 +62,7 @@ public:
 	and default components dependant on a the value of `existss`
 	*/
 	CommonComponents(const id& entity_count, const bool exists):
-		component_store(std::size_t(entity_count)),
+		component_store(std::size_t(entity_count), ),
 		exists(std::size_t(entity_count), exists)
 	{
 	}
@@ -72,7 +72,7 @@ public:
 	that has memory preallocated to serve a given number of entities with a single given component.
 	*/
 	CommonComponents(const id& entity_count, const Component component):
-		component_store(std::size_t(entity_count)),
+		component_store(std::size_t(entity_count), component),
 		exists(std::size_t(entity_count), true)
 	{
 	}

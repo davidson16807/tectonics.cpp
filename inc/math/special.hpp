@@ -59,7 +59,13 @@ namespace math{
 	template<typename I, std::uint8_t E>
 	inline constexpr I ipow(const I b) noexcept
 	{
-	    return (E == I(0)) ? I(1) : b * ipow<E-I(1)>(b);
+		if constexpr (E == I(0))
+		{
+			return I(1);
+		} 
+		else {
+			return b * ipow<E-I(1)>(b);
+		}
 	}
 
 	#define MATH_TRINARY_STD_WRAPPER(NAME) \
@@ -117,7 +123,7 @@ namespace math{
 	template<typename In1>
 	inline auto floorfract(const In1& a) noexcept
 	{
-	    return a - std::round(a);
+	    return a - std::floor(a);
 	}
 
 	/*
@@ -130,6 +136,9 @@ namespace math{
 	    return floormod(floormod(a,b) + b, b);
 	}
 
+	/*
+	`maxabs` returns the larger absolute value between two arguments
+	*/
 	template<typename T>
 	inline T maxabs(const T& a, const T& b) noexcept
 	{
