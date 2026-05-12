@@ -232,6 +232,7 @@ int main() {
   length planet_billboard_near_distance(1e7*si::kilometer); // ~10 * solar radius 
 
   // initialize control state
+  update::OrbitalNavigationUpdater orbit_updater;
   update::OrbitalNavigationState control_state(
       glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f, // angular_position
       glm::vec2(0), // angular_direction
