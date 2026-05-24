@@ -1,0 +1,38 @@
+Compunds
+Mixes
+Chemistry
+Space
+	2 body
+	Orrery
+	N body
+	Stellar neighborhood
+	Body collision  / astroblemes
+Fusion
+Light
+Rock
+	Tectonics
+	Particulates
+	Hotspots
+	Grains
+	Ores
+Air
+	Clouds
+	Rain
+	Snow
+	Winds
+	Temperature 
+Sea
+	Evaporation
+	Tides
+	Currents
+	Temperature
+Flora
+	Photosynthesis
+	Transpiration
+	Body design
+Fauna
+	Respiration
+	Body design
+Aurora / Magentospherics
+
+We need a way to compose many ecs component lists and other data structures from demos with dispatch
