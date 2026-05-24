@@ -52,8 +52,8 @@ TEST_CASE( "DeepBarnesHutMultipole()", "[field]" ) {
         procedural::uniform(10.0)
     );
 
-    field::NaiveMultipole<double, glm::dvec3> naive(1.0);
-    field::DeepBarnesHutMultipole<3, int, double> barnes_hut(
+    field::NaiveMultipole<2, double, glm::dvec3> naive(1.0);
+    field::DeepBarnesHutMultipole<3, 2, int, double> barnes_hut(
         glm::dvec3(50.0, 50.0, 50.0),  // grid_center
         100.0,                         // grid_width
         1.0                            // min_cell_width
@@ -70,12 +70,12 @@ TEST_CASE( "DeepBarnesHutMultipole()", "[field]" ) {
         sample_positions
     ));
 
-    field::DeepBarnesHutMultipole<3, int, double> forward(
+    field::DeepBarnesHutMultipole<3, 2, int, double> forward(
         glm::dvec3(50.0, 50.0, 50.0),  // grid_center
         100.0,                         // grid_width
         1.0                            // min_cell_width
     );
-    field::DeepBarnesHutMultipole<3, int, double> reverse(
+    field::DeepBarnesHutMultipole<3, 2, int, double> reverse(
         glm::dvec3(50.0, 50.0, 50.0),  // grid_center
         100.0,                         // grid_width
         1.0                            // min_cell_width
@@ -97,12 +97,12 @@ TEST_CASE( "DeepBarnesHutMultipole()", "[field]" ) {
         sample_positions
     ));
 
-    field::DeepBarnesHutMultipole<3, int, double> base(
+    field::DeepBarnesHutMultipole<3, 2, int, double> base(
         glm::dvec3(50.0, 50.0, 50.0),  // grid_center
         100.0,                         // grid_width
         1.0                            // min_cell_width
     );
-    field::DeepBarnesHutMultipole<3, int, double> scaled(
+    field::DeepBarnesHutMultipole<3, 2, int, double> scaled(
         glm::dvec3(50.0, 50.0, 50.0),  // grid_center
         100.0,                         // grid_width
         1.0                            // min_cell_width

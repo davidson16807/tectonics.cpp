@@ -228,5 +228,11 @@ namespace analytic {
         return derivative(fclamp.f, fclamp.lo, fclamp.hi);
     }
 
+    template<typename T, typename F>
+    constexpr auto clamped(const T lo, const T hi, const F f)
+    {
+        return Clamped<T,F>(lo, hi, f);
+    }
 
 }
+

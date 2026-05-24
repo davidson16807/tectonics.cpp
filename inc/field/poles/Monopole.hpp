@@ -1,12 +1,14 @@
 #pragma once
 
+#include <cmath>
+
 #include <glm/gtx/norm.hpp>
 
 namespace field
 {
 
-	template<typename value_type, typename vector>
-	struct Monopole
+	template<int exponent, typename value_type, typename vector>
+	struct MonopoleGradient
 	{
 
 		vector weighted_position;
@@ -49,7 +51,7 @@ namespace field
 	    inline vector value_for_offset(const vector& offset) const
 	    {
             value_type distance = glm::length(offset);
-		    return offset * weight / (distance*distance*distance);
+		    return offset * weight * std::pow(distance, -exponent-1); // incremented exponent is needed to quickly normalize the offset
 	    }
 
 		[[nodiscard]] constexpr inline vector operator()(const vector& position) const

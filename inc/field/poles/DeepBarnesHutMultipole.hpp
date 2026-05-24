@@ -31,7 +31,7 @@ namespace field
 	however it is not stored in contiguous memory, and it requires running additional hasing logic,
 	which in some cases make `DeepBarnesHutMultipole` slower than `ShallowBarnesHutMultipole`.
 	*/
-	template<int dimension_count, typename id, typename scalar, glm::qualifier quality = glm::defaultp>
+	template<int dimension_count, int exponent, typename id, typename scalar, glm::qualifier quality = glm::defaultp>
 	class DeepBarnesHutMultipole
 	{
 
@@ -91,7 +91,7 @@ namespace field
 
 		};	
 
-		using Map = std::unordered_map<CellKey, Monopole<double, vector>, CellKeyHash>;
+		using Map = std::unordered_map<CellKey, Monopole<exponent,double,vector>, CellKeyHash>;
 
 		static constexpr scalar half = 0.5;
 
@@ -120,13 +120,13 @@ namespace field
 			first_id_for_level(level_count),
 			orthtree(0, CellKeyHash(level_count, orthant_count))
 		{
-			// orthtree.resize(cell_count, Monopole<scalar,vector>()); // if orthtree is std::vector
+			// orthtree.resize(cell_count, Monopole<exponent,scalar,vector>()); // if orthtree is std::vector
 		}
 
 		void clear()
 		{
 			orthtree.clear();
-			// std::fill(orthtree.begin(), orthtree.end(), Monopole<scalar,vector>()); // if orthtree is std::vector
+			// std::fill(orthtree.begin(), orthtree.end(), Monopole<exponent,scalar,vector>()); // if orthtree is std::vector
 		}
 
 		/*
@@ -153,8 +153,8 @@ namespace field
 							neighbor = orthants.grid_id(neighbor_id);
 							orthtree.emplace(
 									CellKey(level, id(2) * nesting + neighbor), 
-									Monopole<scalar,vector>{}
-								).first->second += Monopole<scalar,vector>(position, weight);
+									Monopole<exponent,scalar,vector>{}
+								).first->second += Monopole<exponent,scalar,vector>(position, weight);
 						}
 					}
 					nesting = id(2) * nesting + orthant;
@@ -180,7 +180,7 @@ namespace field
 				nesting = id(2) * nesting + orthant;
 				auto it = orthtree.find(CellKey(level, nesting));
 				if (it != orthtree.end()) {
-					const Monopole<scalar,vector>& monopole = it->second;
+					const Monopole<exponent,scalar,vector>& monopole = it->second;
 					vector offset = monopole.offset_for_position(position);
                 	scalar distance2 = glm::dot(offset, offset);
                 	if (distance2 > min_cell_width*min_cell_width) {

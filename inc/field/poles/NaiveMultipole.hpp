@@ -16,11 +16,11 @@ namespace field {
     `NaiveMultipole` implements a naive O(N²) algorithm and exists primarily to verify correctness of `BarnesHutMultipole`
     You almost certainly want to use `BarnesHutMultipole` unless particle count is very low and accuracy is extremely important.
     */
-    template<typename scalar, typename vector>
+    template<int exponent, typename scalar, typename vector>
     class NaiveMultipole {
 
         scalar self_interaction_distance2_threshold;
-        std::vector<Monopole<scalar,vector>> monopoles;
+        std::vector<Monopole<exponent,scalar,vector>> monopoles;
 
     public:
 

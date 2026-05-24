@@ -301,7 +301,7 @@ int main() {
       t+=dt;
 
       // now introduce the Multipole field
-      field::NaiveMultipole<double, dvec3> gravitational_acceleration(1e3);
+      field::NaiveMultipole<2, double, dvec3> gravitational_acceleration(1e3);
       for (std::size_t i = 0; i < positions.size(); ++i)
       {
         gravitational_acceleration.add(positions[i], masses[i] * (si::gravitational_constant / (m3/(kg*s*s))));
