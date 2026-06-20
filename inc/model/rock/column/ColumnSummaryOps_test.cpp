@@ -78,9 +78,9 @@ TEST_CASE( "ColumnSummary absorb() mass conservation", "[rock]" ) {
     float oo = std::numeric_limits<float>::max();
 
     rock::StratumSummary empty1(std::bitset<8>(0), density(oo*si::kilogram/si::meter3),     length(0.0*si::kilometer));
-    rock::StratumSummary empty2(std::bitset<8>(0), density(0.0*si::kilogram/si::meter3),    length(0.0*si::kilometer));
-    rock::StratumSummary empty3(std::bitset<8>(0), density(3000.0*si::kilogram/si::meter3), length(0.0*si::kilometer));
-    rock::StratumSummary subducting(std::bitset<8>(1), density(3300.0*si::kilogram/si::meter3), length( 5.0*si::kilometer));
+    // rock::StratumSummary empty2(std::bitset<8>(0), density(0.0*si::kilogram/si::meter3),    length(0.0*si::kilometer));
+    // rock::StratumSummary empty3(std::bitset<8>(0), density(3000.0*si::kilogram/si::meter3), length(0.0*si::kilometer));
+    // rock::StratumSummary subducting(std::bitset<8>(1), density(3300.0*si::kilogram/si::meter3), length( 5.0*si::kilometer));
     rock::StratumSummary continental(std::bitset<8>(2), density(2700.0*si::kilogram/si::meter3), length(70.0*si::kilometer));
     rock::StratumSummary oceanic(std::bitset<8>(4), density(3000.0*si::kilogram/si::meter3), length( 4.0*si::kilometer));
 

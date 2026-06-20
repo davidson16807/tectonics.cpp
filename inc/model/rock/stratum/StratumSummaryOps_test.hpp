@@ -26,7 +26,7 @@ TEST_CASE( "StratumSummary combine() commutative monoid", "[rock]" ) {
     // regardless of grain type distribution within mass pools 
     rock::StratumSummary e1(std::bitset<8>(0), density(oo*si::kilogram/si::meter3),     length(0.0*si::kilometer));
     rock::StratumSummary e2(std::bitset<8>(0), density(0.0*si::kilogram/si::meter3),    length(0.0*si::kilometer));
-    rock::StratumSummary e3(std::bitset<8>(0), density(3000.0*si::kilogram/si::meter3), length(0.0*si::kilometer));
+    // rock::StratumSummary e3(std::bitset<8>(0), density(3000.0*si::kilogram/si::meter3), length(0.0*si::kilometer));
     std::vector<rock::StratumSummary> strata ({
         rock::StratumSummary(std::bitset<8>(3), density(3000.0*si::kilogram/si::meter3), length( 4.0*si::kilometer)),
         rock::StratumSummary(std::bitset<8>(1), density(3300.0*si::kilogram/si::meter3), length( 5.0*si::kilometer)),
