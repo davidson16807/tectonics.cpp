@@ -14,7 +14,7 @@ namespace math {
 
 	#define MATH_UNARY_GLM_WRAPPER(NAME) \
 	template <glm::length_t L, typename T1, glm::qualifier Q> \
-		inline auto NAME(const glm::vec<L,T1,Q> a){ return glm::NAME(a); }
+		inline auto NAME(const glm::vec<L,T1,Q>& a){ return glm::NAME(a); }
 
 	MATH_UNARY_GLM_WRAPPER(abs)
 	MATH_UNARY_GLM_WRAPPER(floor)
@@ -64,7 +64,7 @@ namespace math {
 
 	#define MATH_BINARY_GLM_WRAPPER(NAME) \
 	template <glm::length_t L, typename T1, typename T2, glm::qualifier Q> \
-		inline auto NAME(const glm::vec<L,T1,Q> a, const glm::vec<L,T2,Q> b){ return glm::NAME(a,b); }
+		inline auto NAME(const glm::vec<L,T1,Q>& a, const glm::vec<L,T2,Q>& b){ return glm::NAME(a,b); }
 
 	MATH_BINARY_GLM_WRAPPER(min)
 	MATH_BINARY_GLM_WRAPPER(max)
@@ -84,19 +84,19 @@ namespace math {
 	#undef MATH_BINARY_GLM_WRAPPER
 
 	template<typename glm::length_t L, typename T1, typename T2, typename T3, glm::qualifier Q>
-	inline auto smoothstep(const glm::vec<L,T1,Q> a, const glm::vec<L,T2,Q> b, const glm::vec<L,T3,Q> c){ return glm::smoothstep(a,b,c); }
+	inline auto smoothstep(const glm::vec<L,T1,Q>& a, const glm::vec<L,T2,Q>& b, const glm::vec<L,T3,Q>& c){ return glm::smoothstep(a,b,c); }
 	template<typename glm::length_t L, typename T1, glm::qualifier Q>
-	inline auto smoothstep(const glm::vec<L,T1,Q> a, const glm::vec<L,T1,Q> b, const T1 c){ return glm::smoothstep(a,b,c); }
+	inline auto smoothstep(const glm::vec<L,T1,Q>& a, const glm::vec<L,T1,Q>& b, const T1 c){ return glm::smoothstep(a,b,c); }
 	template<typename glm::length_t L, typename T1, typename T2, typename T3, glm::qualifier Q>
-	inline auto fma(const glm::vec<L,T1,Q> a, const glm::vec<L,T2,Q> b, const glm::vec<L,T3,Q> c){ return glm::fma(a,b,c); }
+	inline auto fma(const glm::vec<L,T1,Q>& a, const glm::vec<L,T2,Q>& b, const glm::vec<L,T3,Q>& c){ return glm::fma(a,b,c); }
 
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	inline constexpr bool isinf(const glm::vec<L,T,Q> V){
+	inline constexpr bool isinf(const glm::vec<L,T,Q>& V){
 		return glm::any(glm::isinf(V));
 	}
 
 	template<glm::length_t L, typename T, glm::qualifier Q>
-	inline constexpr bool isnan(const glm::vec<L,T,Q> V){
+	inline constexpr bool isnan(const glm::vec<L,T,Q>& V){
 		return glm::any(glm::isnan(V));
 	}
 

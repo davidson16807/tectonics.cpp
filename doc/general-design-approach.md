@@ -74,3 +74,19 @@ At no point is state modification to be introduced into the code base. State mod
 State modification is often used in an attempt to reduce memory consumption and improve performance. I don't think this is a legitimate concern. Most performance concerns are neutralized by allowing the use of output reference parameters. To summarize: objects may serve as "memory footprints" that store values from the results of functions and methods, but if this is done then the entire state of the object afterwards must be completely determined from the input provided. At no point should an object serve as both input and output. 
 
 Sometimes in order to reduce memory consumption and simplify function signatures it is necessary to reference objects in shared pointers. I often find this is useful when an otherwise simple data structure needs some sort of "metadata" attached to it to make sense of its values. Without shared pointers, the metadata would typically accompany the data structure in a function signature. The metadata however is typically large, so copying it across all instances of the data structure is infeasible. Shared pointers are a necessary way to work around this situation. For instance, `rasters::Raster` behavior relies on shared pointers within a `rasters::Grid` instance, and `matter::Liquid` requires a shared pointer to a `matter:PropertyTable` instance. Shared pointers are acceptable, but require special attention to the above rule concerning state modification. This is important: **the value of a shared pointer must never be modified.** Even the use of shared pointers as "memory footprints" is strictly forbidden, since doing so would modify the behavior of other morphisms in such a way that we could not predict the change in behavior from their invocation. If the shared pointer represents something that changes over the course of simulation, the pointer must be swapped with a new pointer that points to the updated value. For this reason, shared pointers should only ever be used to represent things that update rarely, ideally never. 
+
+# AI policy
+As of April 2026, use of large language models ("LLMs") is strictly limited to the following. The code files listed for each technique is a comprehensive list of where the technique is used
+
+* reviewing code
+**`*Components.hpp`
+* porting code that was written by a human from a scripting language to C++
+**`*UniversalPropagator.hpp`
+* writing unit tests in addition to unit tests that are written by humans
+**`*UniversalPropagator.hpp`
+* writing classes that follow the same structure as an existing class designed by a human
+**`*Components.hpp`
+**`*Codec.hpp`
+
+All LLM code is thoroughly reviewed by a human
+

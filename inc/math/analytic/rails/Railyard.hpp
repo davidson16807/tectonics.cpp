@@ -129,7 +129,7 @@ namespace analytic {
         {
             const T oo = std::numeric_limits<double>::max();
             return i>=cars.size()? 
-                    Railcar<T,F>(oo,oo,F(0)) 
+                    Railcar<T,F>(oo,oo,F()) 
               : 
                     cars[i];
         }

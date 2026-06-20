@@ -61,8 +61,8 @@ namespace adapted
 
 		ADAPTED_BINARY_METHOD(math::distance, distance)
 		ADAPTED_BINARY_METHOD(math::modulus, modulus)
-		ADAPTED_BINARY_METHOD(math::residue, residue)
-		ADAPTED_BINARY_METHOD(math::remainder, remainder)
+		ADAPTED_BINARY_METHOD(math::floormod, floormod)
+		ADAPTED_BINARY_METHOD(math::roundmod, roundmod)
 		ADAPTED_BINARY_METHOD(math::step, step) 
 
 		ADAPTED_TRINARY_METHOD(math::mix, mix)  

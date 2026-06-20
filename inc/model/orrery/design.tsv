@@ -1,0 +1,19 @@
+group	Oⁿ → Nᵐ     	filter noncyclic
+group	Oⁿ → Nᵐ     	filter perceptible cycles and their periods
+group	Oⁿ → Nᵐ     	filter imperceptible cycles and their periods
+update	Oⁿ(NPCT)ᵐ→(Nℝ³)ᵐ	update positions in scene tree for trajectories at phases
+update	(NPCT)ⁿ(RPCT)ᵐ → (NPCT)ⁿ 	update sample phases to represent resonances
+rotations	Sⁿ(NPCT)ᵐ→ℝ⁴⁴  	return rotation of a spin for trajectories at phases
+positions	OⁿNᵐt→(Nℝ³)ᵐ 	update positions in scene tree for trajectories at time
+positions	BⁿNᵐt→(Nℝ³)ᵐ 	update positions in scene tree for trajectories at time
+sample	(IT)ⁿII → (NPCT)ⁿ	iterate through combinations of sample phases
+resonancesᶜ	TⁿI→Rⁿ	identify resonances
+periodsᶜ	TⁿRⁿI→Tʳ	identify periods of resonances
+sample*	(IT)ⁿII(NPCT)ⁿ → (NPCT)ⁿ	iterate through combinations of sample phases for resonances
+*	(NPCT)ⁿ → (NRCT)ᵐ     	identify resonances by indices with sample counts
+*	NᵐNⁿ → Nⁿ⁺ᵐ    	combine sample phases
+*	(NPCT)ⁿ(NPCT)ⁿ → (NPCT)ⁿ 	overwrite sample phases with another where available
+*	(NRCT)ⁿ → (RPCT)ᵐ     	initialize sample phases for resonances
+		
+*	unimplemented	
+ᶜ	unported to C++	

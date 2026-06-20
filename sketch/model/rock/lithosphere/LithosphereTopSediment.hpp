@@ -1,6 +1,7 @@
 #pragma once
 
-#include <.hpp>
+// C libraries
+#include <cstddef> // std::size_t
 
 #include <index/procedural/Map.hpp>     // procedural::map
 
@@ -34,7 +35,7 @@ namespace rock{
     */
 
     // NOTE: `M` is mineral count, `F` is formation count
-    template <int M, int F>
+    template <std::size_t M, std::size_t F>
     class LithosphereTopSediment
     {
 

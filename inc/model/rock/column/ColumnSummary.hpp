@@ -16,24 +16,24 @@ namespace rock{
             rest()
         {}
 
-        constexpr ColumnSummary(
+        constexpr ColumnSummary(const ColumnSummary& summary):
+            top(summary.top),
+            rest(summary.rest)
+        {}
+
+        explicit constexpr ColumnSummary(
             const StratumSummary top
         ):
             top(top),
             rest()
         {}
 
-        constexpr ColumnSummary(
+        explicit constexpr ColumnSummary(
             const StratumSummary top, 
             const StratumSummary rest
         ):
             top(top),
             rest(rest)
-        {}
-
-        constexpr ColumnSummary(const ColumnSummary& summary):
-            top(summary.top),
-            rest(summary.rest)
         {}
 
         inline si::length<float> thickness() const

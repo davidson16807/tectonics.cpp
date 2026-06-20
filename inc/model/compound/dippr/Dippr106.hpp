@@ -1,6 +1,10 @@
 #pragma once
 
-#include <iostream>
+// C libraries
+#include <cmath>
+
+// in-house libraries
+#include <math/analytic/Scaling.hpp>
 
 namespace compound {
 namespace dippr {

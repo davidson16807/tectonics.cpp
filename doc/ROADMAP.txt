@@ -59,7 +59,7 @@ x			plane, constant density
 x			sphere, exponential dropoff
 x			ring, gaussian dropoff
 x			centrifuge, exponential dropoff
-		orbital mechanics
+x		orbital mechanics
 
 	mass pool models
 		star
@@ -67,20 +67,20 @@ x			centrifuge, exponential dropoff
 		ocean
 		atmosphere
 	stratigraphy
-		stratum_mass_pool
-		stratum
-		strata
-		crust
+x		mineral
+x		stratum
+x		strata
+x		crust
 	light propagation
 		spectrum
 	phase diagrams
 
-	orrery
-		CelestialSystem
+x	orrery
+x		CelestialSystem
 
 shader programs
-	star fields
-	suns
+x	star fields
+x	suns
 	worlds
 	atmospheres
 	clouds
@@ -94,10 +94,11 @@ view resources
 		globe projection
 		map projection
 x	colorscale world
-	vector world
+x	vector world
 	gl manager?
 
 controls
 x	controller state
 x	controller state transformations
 x	event manager
+

@@ -68,7 +68,7 @@ namespace rock
 
         inline si::mass<double> mass () const 
         {
-            si::mass<double> result;
+            si::mass<double> result(0);
             for (std::size_t i = 0; i < M; ++i)
             {
                 result += minerals[i].mass;

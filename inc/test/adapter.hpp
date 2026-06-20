@@ -1,5 +1,8 @@
 #pragma once
 
+// C libraries
+#include <cmath>
+
 // std libraries
 #include <sstream>
 #include <string>
@@ -20,6 +23,32 @@ The `*Adapter` classes here are provided only as a convenience to suite the most
 */
 
 namespace test {
+
+    /*
+    `MetricAdapter` uses an object resembling an `adapted::Metric`
+    in order to compare variables, and an operator<< to display them.
+    */
+    template<typename Metric, typename scalar>
+    struct MetricAdapter{
+        const Metric metric;
+        const scalar threshold;
+
+        MetricAdapter(const Metric& metric, const scalar threshold):
+            metric(metric),
+            threshold(threshold)
+        {}
+
+        inline bool equal(const scalar& a, const scalar& b) const {
+            return metric.distance(a, b) <= threshold;
+        }
+
+        std::string print(const scalar& a) const {
+            std::ostringstream os;
+            os << a;
+            return os.str();
+        }
+
+    };
 
     /*
     `CustomAdapter` uses custom lambdas 
@@ -43,10 +72,8 @@ namespace test {
     */
     struct OperatorAdapter{
 
-        OperatorAdapter() {}
-
         template<typename T>
-        bool equal(const T& a, const T& b) const {
+        inline bool equal(const T& a, const T& b) const {
             return a == b;
         }
 
@@ -71,7 +98,7 @@ namespace test {
             threshold(threshold)
         {}
 
-        bool equal(const T& a, const T& b) const {
+        inline bool equal(const T& a, const T& b) const {
             return distance(a, b) <= threshold;
         }
 
@@ -96,8 +123,8 @@ namespace test {
             threshold(threshold)
         {}
 
-        bool equal(const T& a, const T& b) const {
-            return abs(a - b) <= threshold;
+        inline bool equal(const T& a, const T& b) const {
+            return std::abs(double(a) - double(b)) <= threshold;
         }
 
         template<typename T2>

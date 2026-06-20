@@ -8,10 +8,11 @@ TEST = $(shell find ./ -type f -name '*_test.*pp')
 
 FLAGS= -Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE
 
+# rm -f test.cpp && \
+# find ./ -type f -name '*_specialization.*pp' -exec echo "#include \"{}\"" >> test.cpp \; && \
+# find ./ -type f -name '*_test.*pp' -exec echo "#include \"{}\"" >> test.cpp \; && \
+
 all: $(TEST) ./Makefile
-	rm -f test.cpp && \
-	find ./ -type f -name '*_specialization.*pp' -exec echo "#include \"{}\"" >> test.cpp \; && \
-	find ./ -type f -name '*_test.*pp' -exec echo "#include \"{}\"" >> test.cpp \; && \
 	$(CPP) -std=c++17 -o test.out test.cpp  $(FLAGS) \
 	-I $(ROOT)/lib/ -I $(ROOT)/inc/ && \
 	chmod a+x test.out && \

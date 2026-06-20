@@ -44,11 +44,11 @@ but frankly it's just an all-around useful tool for debugging raster functionali
 #include <raster/unlayered/VectorCalculusByFundamentalTheorem.hpp> // unlayered::VectorCalculusByFundamentalTheorem
 #include <raster/spheroidal/Strings.hpp>            // spheroidal::Strings
 
-#include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
-#include <update/OrbitalControlUpdater.hpp>         // update::OrbitalControlUpdater
+#include <update/OrbitalNavigationState.hpp>           // update::OrbitalNavigationState
+#include <update/OrbitalNavigationUpdater.hpp>         // update::OrbitalNavigationUpdater
 
 #include <view/ColorscaleSurfaceShaderProgram.hpp>  // view::ColorscaleSurfaceShaderProgram
-#include <view/IndicatorSwarmShaderProgram.hpp>     // view::IndicatorSwarmShaderProgram
+#include <view/IndicatorMeshSwarmShaderProgram.hpp>     // view::IndicatorMeshSwarmShaderProgram
 #include <view/MultichannelSurfaceShaderProgram.hpp>// view::MultichannelSurfaceShaderProgram
 
 int main() {
@@ -64,7 +64,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // we don't want the old OpenGL
 
   // open a window
-  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Grid", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(850, 640, "Hello Raster", NULL, NULL);
   if (!window) {
     std::cout << stderr << " ERROR: could not open window with GLFW3" << std::endl;
     glfwTerminate();
@@ -121,7 +121,8 @@ int main() {
   grids.storeTriangleStrips(procedural::range<unsigned int>(grid.vertex_count()), buffer_element_vertex_ids);
 
   // initialize control state
-  update::OrbitalControlState control_state;
+  update::OrbitalNavigationState control_state;
+  update::OrbitalNavigationUpdater orbit_updater;
   control_state.min_zoom_distance = 1.0f;
   control_state.log2_height = 2.5f;
   control_state.angular_position = glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f;
@@ -174,7 +175,7 @@ int main() {
       std::queue<messages::Message> message_poll = message_queue.poll();
       while (!message_poll.empty())
       {
-        update::OrbitalControlUpdater::update(control_state, message_poll.front(), control_state);
+        orbit_updater.update(control_state, message_poll.front(), control_state);
         message_poll.pop();
       }
       // control_state.angular_position.x += 1.0f * 3.1415926f/180.0f;

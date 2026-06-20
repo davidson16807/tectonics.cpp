@@ -1,8 +1,10 @@
 #pragma once
 
 // C libraries
+#include <cmath> // sqrt
 
 // std libraries
+#include <algorithm> // max
 
 // 3rd-party libraries
 #include <glm/common.hpp>
@@ -70,7 +72,7 @@ namespace field
 		}
 
 		template<typename T, glm::qualifier Q>
-		value_type operator()(const glm::vec<4,T,Q> V) const {
+		[[nodiscard]] value_type operator()(const glm::vec<4,T,Q> V) const {
 			using mat4 = glm::mat<4,4,T,Q>;
 			using vec4 = glm::vec<4,T,Q>;
 			using scalar = T;
@@ -119,7 +121,7 @@ namespace field
 	};
 
 	template<typename MosaicVectorNoise>
-	constexpr inline auto simplex_noise4(const MosaicVectorNoise noise)
+	constexpr inline auto simplex_noise4(const MosaicVectorNoise& noise)
 	{
 		return SimplexNoise4<MosaicVectorNoise>(noise);
 	}
@@ -183,7 +185,7 @@ namespace field
 		}
 
 		template<typename T, glm::qualifier Q>
-		value_type operator()(const glm::vec<3,T,Q> V) const {
+		[[nodiscard]] value_type operator()(const glm::vec<3,T,Q> V) const {
 			using mat3 = glm::mat<3,3,T,Q>;
 			using vec3 = glm::vec<3,T,Q>;
 			using scalar = T;
@@ -226,7 +228,7 @@ namespace field
 	};
 
 	template<typename MosaicVectorNoise>
-	constexpr inline auto simplex_noise3(const MosaicVectorNoise noise)
+	constexpr inline auto simplex_noise3(const MosaicVectorNoise& noise)
 	{
 		return SimplexNoise3<MosaicVectorNoise>(noise);
 	}
@@ -287,7 +289,7 @@ namespace field
 	};
 
 	template<typename MosaicVectorNoise>
-	constexpr inline auto simplex_noise2(const MosaicVectorNoise noise)
+	constexpr inline auto simplex_noise2(const MosaicVectorNoise& noise)
 	{
 		return SimplexNoise2<MosaicVectorNoise>(noise);
 	}

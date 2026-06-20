@@ -160,11 +160,6 @@ namespace rock
         {}
 
         bool equal(const StratumSummary& a, const StratumSummary& b) const {
-            if(si::distance(a.density(), b.density()) 
-                > si::max(si::density<float>(si::kilogram/si::meter3), float_threshold * si::max(a.density(),b.density())) )
-            {
-                return false;
-            } 
             if(si::distance(a.thickness(), b.thickness()) 
                 > si::max(si::length<float>(si::meter), float_threshold * si::max(a.thickness(),b.thickness())) )
             {
@@ -174,6 +169,15 @@ namespace rock
             {
                 return false;
             }
+            if (a.thickness() < si::meter) // density comparison is irrelevant if both are empty
+            {
+                return true;
+            }
+            if(si::distance(a.density(), b.density())
+                > si::max(si::density<float>(si::kilogram/si::meter3), float_threshold * si::max(a.density(),b.density())) )
+            {
+                return false;
+            } 
             return true;
         }
 

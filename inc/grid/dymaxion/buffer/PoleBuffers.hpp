@@ -26,14 +26,14 @@ namespace dymaxion {
 	{
 
         using ivec2 = glm::vec<2,id,Q>;
-        using ipoint = Point<id2,id>;
+        using ipoint = Point<id,id>;
 
 		static constexpr id2 vertices_per_triangle = 3;
 		static constexpr id2 triangle_count = 3;
 
 	public:
         const Indexing<id,id2,scalar> vertices;
-        const int vertices_per_side;
+        const id vertices_per_side;
         const buffer::PrimitiveBuffers<id2,Q> primitives;
 
 		constexpr inline explicit PoleBuffers(const id2 vertices_per_side): 

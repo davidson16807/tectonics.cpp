@@ -2,6 +2,7 @@
 
 #include <model/rock/stratum/Stratum.hpp>
 #include <model/rock/mineral/Mineral.hpp>
+#include <model/rock/mineral/GrainType.hpp>
 
 namespace rock {
 
@@ -22,7 +23,7 @@ namespace rock {
         typename ExtrusiveFractionForElevation>
     class StratumForElevation {
 
-        static const int M = 2; // number of stored minerals
+        static const std::size_t M = 2; // number of stored minerals
 
         const AgeForElevation               age_for_elevation;
         const AreaDensityForElevation       mafic_mass_for_elevation;

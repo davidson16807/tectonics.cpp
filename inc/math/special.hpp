@@ -1,7 +1,11 @@
 #pragma once
 
-#include <cmath>
-#include <algorithm>
+// C libraries
+#include <cmath>     // pow, etc.
+#include <cstdint>   // std::uint8_t
+
+// std libraries
+#include <algorithm> // max, clamp, etc.
 
 namespace math{
 
@@ -42,6 +46,28 @@ namespace math{
 	MATH_BINARY_STD_WRAPPER(atan2)
 	#undef MATH_BINARY_STD_WRAPPER
 
+	template<typename I>
+	constexpr I ipow(const I b, const I e) noexcept
+	{
+	    I y(1);
+	    I c(b);
+	    for (I i = I(0); i < e; i++)
+	        y *= c; 
+	    return y;
+	}
+
+	template<typename I, std::uint8_t E>
+	inline constexpr I ipow(const I b) noexcept
+	{
+		if constexpr (E == I(0))
+		{
+			return I(1);
+		} 
+		else {
+			return b * ipow<E-I(1)>(b);
+		}
+	}
+
 	#define MATH_TRINARY_STD_WRAPPER(NAME) \
 	template <typename In1, typename In2, typename In3> inline auto NAME(const In1 a, const In2 b, const In3 c){return std::NAME(a,b,c);}
 	MATH_TRINARY_STD_WRAPPER(fma)
@@ -59,59 +85,86 @@ namespace math{
 	template <typename In1, typename In2> inline auto differ(const In1 a, const In2 b){return a && !b;}
 
 	/*
-	`remainder` implements a common definition for the "remainder"
-	it is the amount that is left unaccounted for after dividing by the nearest whole number, 
-	regardless of whether that whole number is bigger or smaller.
+	`roundmod` implements one of the common definitions for the "remainder" or "residue".
+	It is the amount that is left unaccounted for after dividing by the nearest whole number.
+	Its name is short for "round modulus", which extends the convention established by Java's `floorMod`.
+	It is equivalent to `math.remainder` in Python.
 	*/
 	template<typename In1, typename In2>
-	inline auto remainder(const In1& a, const In2& b)
+	inline auto roundmod(const In1& a, const In2& b) noexcept
 	{
 	    return a - b * std::round(a / b);
 	}
 
 	/*
-	`residue` implements what is known as the "residue" or "remainder" as understood by school children,
-	i.e. the amount that is left unaccounted for after dividing by the next smallest whole number
+	`floormod` implements one of the common definitions for the "remainder" or "residue".
+	It is the amount that is left unaccounted for after dividing by the next smallest whole number.
+	Its name is short for "floor modulus", which extends the convention established by Java's `floorMod`.
+	It is equivalent to `math.fmod` in Python, and `std::fmod` or `%` in C++.
 	*/
 	template<typename In1, typename In2>
-	inline auto residue(const In1& a, const In2& b)
+	inline auto floormod(const In1& a, const In2& b) noexcept
 	{
 	    return a - b * std::floor(a / b);
 	}
 
 	/*
-	`modulus` implements proper modulus as understood in modular arithmetic,
-	this is equivalent to the % operator in python
+	`roundfract` implements a variant of `fract` that is the offset of `a` from the nearest whole number
 	*/
-	template<typename In1, typename In2>
-	inline auto modulus(const In1& a, const In2& b)
+	template<typename In1>
+	inline auto roundfract(const In1& a) noexcept
 	{
-	    return residue(residue(a,b) + b, b);
+	    return a - std::round(a);
 	}
 
+	/*
+	`floorfract` implements the standard definition of `fract`
+	*/
+	template<typename In1>
+	inline auto floorfract(const In1& a) noexcept
+	{
+	    return a - std::floor(a);
+	}
+
+	/*
+	`modulus` implements proper modulus as understood in modular arithmetic,
+	this is equivalent to the `%` operator in python
+	*/
+	template<typename In1, typename In2>
+	inline auto modulus(const In1& a, const In2& b) noexcept
+	{
+	    return floormod(floormod(a,b) + b, b);
+	}
+
+	/*
+	`maxabs` returns the larger absolute value between two arguments
+	*/
 	template<typename T>
-	inline T maxabs(const T& a, const T& b)
+	inline T maxabs(const T& a, const T& b) noexcept
 	{
 	    return std::max(-std::min(a,b), std::max(a,b));
 	}
 
 	template <typename T>
-	inline constexpr T sign(const T x) {
+	inline constexpr T sign(const T x) noexcept
+	{
 		return x==T(0)? T(0) : x>T(0)? T(1) : T(-1);
 	}
 
 	template <typename T>
-	inline T bitsign(const T x) {
+	inline T bitsign(const T x) noexcept
+	{
 		return std::signbit(x)? T(-1):T(1);
 	}
 
 	template <typename In1, typename In2> 
-	inline auto distance(const In1 a, const In2 b){
+	inline auto distance(const In1 a, const In2 b)noexcept
+	{
 		return std::abs(a-b);
 	}
 
-	template <typename In1, int N> inline auto pow(const In1 a) { return std::pow(a,N); }
-	template <typename In1> inline auto fract(const In1 a) { return a-floor(a); }
+	template <typename In1, int E> inline auto pow(const In1 a) { return std::pow(a,E); }
+	// template <typename In1> inline auto fract(const In1 a) { return a-floor(a); }
 	template <typename In1> inline auto inversesqrt(const In1 a) { return In1(1)/std::sqrt(a); }
 	template <typename In1> inline auto negate(const In1 a) { return -a; }
 	template <typename In1> inline auto exp10(const In1 a) { return std::pow(In1(10),a); }

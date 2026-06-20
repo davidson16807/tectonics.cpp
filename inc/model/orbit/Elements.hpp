@@ -13,14 +13,14 @@ namespace orbit {
 		scalar argument_of_periapsis;
 		scalar mean_anomaly;
 
-		Elements(
+		constexpr Elements(
 			const scalar semi_major_axis,
 			const scalar eccentricity,
 			const scalar inclination,
 			const scalar longitude_of_ascending_node,
 			const scalar argument_of_periapsis,
 			const scalar mean_anomaly
-		):
+		) noexcept:
 			semi_major_axis(semi_major_axis),
 			eccentricity(eccentricity),
 			inclination(inclination),
@@ -29,7 +29,7 @@ namespace orbit {
 			mean_anomaly(mean_anomaly)
 		{}
 
-        Elements<scalar> advance(const scalar anomaly_offset) const {
+        constexpr Elements<scalar> advance(const scalar anomaly_offset) const noexcept {
 	        return Elements(
 	            semi_major_axis, 
 	            eccentricity, 

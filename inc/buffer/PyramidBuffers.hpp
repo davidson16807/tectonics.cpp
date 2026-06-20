@@ -18,22 +18,22 @@ namespace buffer {
 
         using vec3 = glm::vec<3,scalar,Q>;
 
-        const scalar pi = 3.141592653589793238462;
-        const id vertices_per_triangle = 3;
+		static constexpr scalar pi = scalar(3.141592653589793238462643383279502884L);
+        static constexpr id vertices_per_triangle = 3;
+
         const buffer::PrimitiveBuffers<id,Q> primitives;
 
         PyramidBuffers():
         	primitives()
         {}
 
-		template<int L=1>
 		constexpr inline id triangles_size(const id side_count) const
 		{
-			return L * vertices_per_triangle * (2*side_count-1);
+			return vertices_per_triangle * 2 * side_count;
 		}
 
 		template<typename Buffer>
-		constexpr id storeTriangles(
+		id storeTriangles(
 			const vec3 base, const vec3 tip, const vec3 prime_meridian, const scalar radius, const id side_count,
 			Buffer& output, const id buffer_start_id=0) const 
 		{
@@ -46,7 +46,7 @@ namespace buffer {
 			id buffer_id(buffer_start_id);
 			scalar radians_per_side(2*pi/side_count);
 			scalar radians0, radians1, x0, y0, x1, y1;
-			for (int i = 0; i < side_count; ++i)
+			for (id i = 0; i < side_count; ++i)
 			{
 				radians0 =  i   *radians_per_side;
 				radians1 = (i+1)*radians_per_side;

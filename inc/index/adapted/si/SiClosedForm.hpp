@@ -47,8 +47,8 @@ namespace adapted
 		// ADAPTED_UNARY_METHOD(si::round, round)
 		// ADAPTED_UNARY_METHOD(si::ceil, ceil)
 		// ADAPTED_BINARY_METHOD(si::modulus, modulus)  
-		// ADAPTED_BINARY_METHOD(si::residue, residue)  
-		// ADAPTED_BINARY_METHOD(si::remainder, remainder)
+		// ADAPTED_BINARY_METHOD(si::floormod, floormod)  
+		// ADAPTED_BINARY_METHOD(si::roundmod, roundmod)
 
 		ADAPTED_UNARY_METHOD(si::sqrt, sqrt)
 		ADAPTED_UNARY_METHOD(si::cbrt, cbrt)

@@ -13,7 +13,7 @@ namespace test {
     to save us trouble, we implement classes that store parameters that are likely not to change.
     */
 
-    template<typename F>
+    template<typename F, typename scalar=double>
     struct PreMetric{
         const std::string f_name;    const F f; 
         PreMetric(
@@ -24,21 +24,21 @@ namespace test {
         template<typename Adapter, typename As>
         bool valid(const Adapter& adapter, const As& as) const {
 
-            auto ge0 = [](double x)           {return x>=0.0;};
+            auto ge0 = [](scalar x)           {return x>=scalar(0);};
 
             return 
 
             discernability(adapter,           as)         &&
             determinism  (adapter,                  f_name, f, as, as) &&
             codomain     (adapter, "positive", ge0, f_name, f, as, as) &&
-            nilpotence   (adapter, "0", 0.0,        f_name, f, as)     &&
+            nilpotence   (adapter, "0", scalar(0),        f_name, f, as)     &&
 
             true; // added so lines above can be easily swapped
         }
         template<typename Adapter, typename As, typename Bs>
         bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
 
-            auto ge0 = [](double x)           {return x>=0.0;};
+            auto ge0 = [](scalar x)           {return x>=scalar(0);};
 
             return 
 
@@ -51,7 +51,7 @@ namespace test {
 
     };
 
-    template<typename F>
+    template<typename F, typename scalar=double>
     struct SemiMetric{
         const std::string f_name;    const F f; 
         SemiMetric(
@@ -62,14 +62,14 @@ namespace test {
         template<typename Adapter, typename As>
         bool valid(const Adapter& adapter, const As& as) const {
 
-            auto ge0 = [](double x)           {return x>=0.0;};
+            auto ge0 = [](scalar x)           {return x>=scalar(0);};
 
             return 
 
             discernability(adapter,           as)         &&
             determinism  (adapter,                  f_name, f, as, as) &&
             codomain     (adapter, "positive", ge0, f_name, f, as, as) &&
-            nilpotence   (adapter, "0", 0.0,        f_name, f, as)     &&
+            nilpotence   (adapter, "0", scalar(0),        f_name, f, as)     &&
             commutativity(adapter,                  f_name, f, as, as) &&
 
             true; // added so lines above can be easily swapped
@@ -77,7 +77,7 @@ namespace test {
         template<typename Adapter, typename As, typename Bs>
         bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
 
-            auto ge0 = [](double x)           {return x>=0.0;};
+            auto ge0 = [](scalar x)           {return x>=scalar(0);};
 
             return 
 
@@ -92,7 +92,7 @@ namespace test {
 
     };
 
-    template<typename F>
+    template<typename F, typename scalar=double>
     struct MetaMetric{
         const std::string f_name;    const F f; 
         /* 
@@ -108,9 +108,9 @@ namespace test {
         template<typename Adapter, typename As>
         bool valid(const Adapter& adapter, const As& as) const {
 
-            auto add = [](double x, double y) {return x+y; };
-            auto leq = [](double x, double y) {return x<=y; };
-            auto ge0 = [](double x)           {return x>=0.0;};
+            auto add = [](scalar x, scalar y) {return x+y; };
+            auto leq = [](scalar x, scalar y) {return x<=y; };
+            auto ge0 = [](scalar x)           {return x>=scalar(0);};
 
             return 
 
@@ -125,9 +125,9 @@ namespace test {
         template<typename Adapter, typename As, typename Bs>
         bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
 
-            auto add = [](double x, double y) {return x+y; };
-            auto leq = [](double x, double y) {return x<=y; };
-            auto ge0 = [](double x)           {return x>=0.0;};
+            auto add = [](scalar x, scalar y) {return x+y; };
+            auto leq = [](scalar x, scalar y) {return x<=y; };
+            auto ge0 = [](scalar x)           {return x>=scalar(0);};
 
             return 
 
@@ -150,8 +150,8 @@ namespace test {
         template<typename Adapter, typename As, typename Bs, typename Cs>
         bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
 
-            auto add = [](double x, double y) {return x+y; };
-            auto leq = [](double x, double y) {return x+y; };
+            auto add = [](scalar x, scalar y) {return x+y; };
+            auto leq = [](scalar x, scalar y) {return x<=y; };
 
             return 
 
@@ -190,7 +190,7 @@ namespace test {
 
     };
 
-    template<typename F>
+    template<typename F, typename scalar=double>
     struct Metric{
         const std::string f_name;    const F f; 
         /* 
@@ -206,16 +206,16 @@ namespace test {
         template<typename Adapter, typename As>
         bool valid(const Adapter& adapter, const As& as) const {
 
-            auto add = [](double x, double y) {return x+y; };
-            auto leq = [](double x, double y) {return x<=y; };
-            auto ge0 = [](double x)           {return x>=0.0;};
+            auto add = [](scalar x, scalar y) {return x+y; };
+            auto leq = [](scalar x, scalar y) {return x<=y; };
+            auto ge0 = [](scalar x)           {return x>=scalar(0);};
 
             return 
 
             discernability(adapter,           as)         &&
             determinism  (adapter,                  f_name, f, as, as) &&
             codomain     (adapter, "positive", ge0, f_name, f, as, as) &&
-            nilpotence   (adapter, "0", 0.0,        f_name, f, as)     &&
+            nilpotence   (adapter, "0", scalar(0),        f_name, f, as)     &&
             commutativity(adapter,                  f_name, f, as, as) &&
             triangle_inequality(adapter, leq, add,  f_name, f, as, as, as) &&
 
@@ -224,9 +224,9 @@ namespace test {
         template<typename Adapter, typename As, typename Bs>
         bool valid(const Adapter& adapter, const As& as, const Bs& bs) const {
 
-            auto add = [](double x, double y) {return x+y; };
-            auto leq = [](double x, double y) {return x<=y; };
-            auto ge0 = [](double x)           {return x>=0.0;};
+            auto add = [](scalar x, scalar y) {return x+y; };
+            auto leq = [](scalar x, scalar y) {return x<=y; };
+            auto ge0 = [](scalar x)           {return x>=scalar(0);};
 
             return 
 
@@ -249,8 +249,8 @@ namespace test {
         template<typename Adapter, typename As, typename Bs, typename Cs>
         bool valid(const Adapter& adapter, const As& as, const Bs& bs, const Cs& cs) const {
 
-            auto add = [](double x, double y) {return x+y; };
-            auto leq = [](double x, double y) {return x+y; };
+            auto add = [](scalar x, scalar y) {return x+y; };
+            auto leq = [](scalar x, scalar y) {return x<=y; };
 
             return 
 

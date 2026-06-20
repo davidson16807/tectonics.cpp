@@ -6,16 +6,10 @@
 #include <regex>
 
 // in-house libraries
-#include "predicate.hpp"
 
 namespace test {
 
-    std::string trim(const std::string text)
-    {
-        return std::regex_replace(text, std::regex("  +"), "");
-    }
-
-    std::string indent(const std::string text, const std::string tab)
+    std::string indent(const std::string& text, const std::string& tab)
     {
         return std::regex_replace(
             (std::regex_search(text, std::regex("\n"))? "\n":"") + text, 

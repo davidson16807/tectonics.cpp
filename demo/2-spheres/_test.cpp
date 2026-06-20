@@ -18,8 +18,8 @@
 #include <unit/si.hpp>                              // si::units
 #include <buffer/PyramidBuffers.hpp>                // buffer::PyramidBuffers
 
-#include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
-#include <update/OrbitalControlUpdater.hpp>         // update::OrbitalControlUpdater
+#include <update/OrbitalNavigationState.hpp>           // update::OrbitalNavigationState
+#include <update/OrbitalNavigationUpdater.hpp>         // update::OrbitalNavigationUpdater
 
 #include <view/RealisticSphereSwarmShaderProgram.hpp>     // view::RealisticSphereSwarmShaderProgram
 
@@ -68,6 +68,7 @@ int main() {
   /* OUR STUFF GOES HERE NEXT */
 
   using vec3 = glm::vec3;
+  using dvec3 = glm::dvec3;
   // using vec4 = glm::vec4;
 
 
@@ -172,10 +173,17 @@ int main() {
   /*
   scale heights calculated from the standard equation, h=kᵦT/(mg)
   */
+  auto m = si::meter;
+  auto m3 = si::meter3;
+  auto kg = si::kilogram;
+  auto s = si::second;
+  auto s2 = s*s;
   auto atmosphere = air::properties(si::boltzmann_constant);
-  auto point = orbit::properties(si::gravitational_constant);
+  auto G = si::gravitational_constant / (m3/(kg*s*s));
+  auto pi = 3.141592653589793238462;
+  auto point = orbit::properties(dvec3(1,0,0), dvec3(0,0,1), G, pi);
   auto star = star::properties_on_main_sequence(
-    geometric::spherelike<3,double>(3.14159265358979),
+    geometric::spherelike<3,double>(pi),
     si::stephan_boltzmann_constant,
     0.6*si::dalton,
     si::solar_mass,
@@ -199,13 +207,13 @@ int main() {
         atmosphere.scale_height(
           instance_surface_temperature[i] * si::kelvin, 
           instance_atmosphere_molecular_mass[i] * si::dalton, 
-          point.gravity(mass, instance_radii[i] * si::meter)
+          point.gravity(mass/kg, instance_radii[i]) * m/s2
         ) / si::meter
       )
     );
     std::cout << mass / si::solar_mass << "\t";
     std::cout << instance_radii[i] * si::meter / si::solar_radius << "\t";
-    std::cout << point.gravity(mass, instance_radii[i] * si::meter) << "\t";
+    std::cout << point.gravity(mass/kg, instance_radii[i]) << "\t";
     std::cout << instance_atmosphere_scale_height[i] * si::meter << "\t";
     std::cout << instance_surface_temperature[i] * si::kelvin << "\t";
     std::cout << instance_core_temperature[i] * si::kelvin << "\t";
@@ -225,7 +233,8 @@ int main() {
   glm::mat4 model_matrix(1);
 
   // initialize control state
-  update::OrbitalControlState control_state;
+  update::OrbitalNavigationState control_state;
+  update::OrbitalNavigationUpdater orbit_updater;
   control_state.min_zoom_distance = 1.0f;
   control_state.log2_height = std::log2(40.0*Rs);
   // control_state.log2_height = 20.0f;
@@ -288,7 +297,7 @@ int main() {
       std::queue<messages::Message> message_poll = message_queue.poll();
       while (!message_poll.empty())
       {
-        update::OrbitalControlUpdater::update(control_state, message_poll.front(), control_state);
+        orbit_updater.update(control_state, message_poll.front(), control_state);
         message_poll.pop();
       }
       // control_state.angular_position.x += 1.0f * 3.1415926f/180.0f;

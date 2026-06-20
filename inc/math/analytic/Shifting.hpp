@@ -28,13 +28,13 @@ namespace analytic {
             return x+offset;
         }
 
-        Shifting& operator+=(const T k)
+        constexpr Shifting& operator+=(const T k)
         {
             offset += k;
             return *this;
         }
 
-        Shifting& operator-=(const T k)
+        constexpr Shifting& operator-=(const T k)
         {
             offset -= k;
             return *this;
@@ -88,14 +88,22 @@ namespace analytic {
         return Shifting<T>(-k);
     }
 
-    // operators that cause cancelation
+    // operators that produce cancellation with Shifting relations
+    template<typename T>
+    constexpr auto operator-(const Identity<T> e, const Shifting<T> f)
+    {
+        return -f.offset;
+    }
+    template<typename T>
+    constexpr auto operator-(const Shifting<T> f, const Identity<T> e)
+    {
+        return f.offset;
+    }
     template<typename T>
     constexpr T operator-(const Shifting<T> f, const Shifting<T> g)
     {
         return f.offset-g.offset;
     }
-    
-
 
     template<typename T, typename Expression>
     constexpr auto compose(const Shifting<T> f, const Expression& g)
@@ -108,9 +116,9 @@ namespace analytic {
         return g+f.offset;
     }
 
-    template<typename T> constexpr T compose(const Shifting<T>& f, const int k)    { return f(k); }
-    template<typename T> constexpr T compose(const Shifting<T>& f, const float k)  { return f(k); }
-    template<typename T> constexpr T compose(const Shifting<T>& f, const double k) { return f(k); }
+    // template<typename T> constexpr T compose(const Shifting<T>& f, const int k)    { return f(k); }
+    // template<typename T> constexpr T compose(const Shifting<T>& f, const float k)  { return f(k); }
+    // template<typename T> constexpr T compose(const Shifting<T>& f, const double k) { return f(k); }
 
     template<typename T>
     constexpr Shifting<T> inverse(const Shifting<T> f) 
@@ -125,3 +133,4 @@ namespace analytic {
     }
 
 }
+

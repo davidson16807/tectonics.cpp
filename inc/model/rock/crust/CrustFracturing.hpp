@@ -1,11 +1,12 @@
 #pragma once
 
 // c libraries
-#include <cmath>
+#include <cmath>   // std::abs
+#include <cstddef> // std::size_t
 
 // standard libraries
-#include <queue> // std::priority_queue
-
+#include <queue>   // std::priority_queue
+#include <vector>  // std::vector
 
 // 3rd party libraries
 #include <glm/vec3.hpp>
@@ -84,7 +85,7 @@ namespace rock
     {
         using vec3 = glm::vec<3,scalar,quality>;
         CrustDistancePriority(){}
-        bool operator() (
+        scalar operator() (
             const vec3 A, const vec3 U, const vec3 B, const vec3 V, const vec3 O
         ) const { 
             return glm::distance(A,O);

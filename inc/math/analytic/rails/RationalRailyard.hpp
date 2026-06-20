@@ -8,6 +8,7 @@
 
 #include "Railcar.hpp"
 #include "Railyard.hpp"
+#include "PolynomialRailyard.hpp"
 #include "RationalRailcar.hpp"
 
 namespace analytic {

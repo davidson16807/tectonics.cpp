@@ -35,16 +35,13 @@ namespace rock
 	resistant, chemically weathered extrusive rock    silt size      small grains
 	resistant, chemically weathered intrusive rock    sand size      large grains
 	susceptible, chemically weathered rock            clay size      small grains
-
-	We allow for up to 8 grain types but only allocate to 6.
-	This is mostly to simplify cache alignment, though it also allows for future expansion.
     */
 
 	struct Mineral
 	{
 		si::mass<double> mass; 
 		int phase_id;
-		std::array<float, int(GrainType::count)> grain_type_relative_volume;
+		std::array<float, std::size_t(GrainType::count)> grain_type_relative_volume;
 
 		/*
 		Constructs an empty mass pool with minimum possible pressure and temperature,
@@ -87,7 +84,7 @@ namespace rock
 		float grain_type_total_relative_volume() const 
 		{
 		    float total_relative_volume(0);
-            for (std::size_t i=0; i<int(GrainType::count); i++)
+            for (std::size_t i=0; i<std::size_t(GrainType::count); i++)
             {
                 total_relative_volume += grain_type_relative_volume[i];
             }

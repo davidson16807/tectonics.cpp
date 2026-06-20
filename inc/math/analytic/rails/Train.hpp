@@ -43,7 +43,7 @@ namespace analytic {
 
         // zero constructor
         Train() : 
-            contents(1, F(0)),
+            contents(1, F()),
             couplers()
         {
             const T oo = std::numeric_limits<T>::max();
@@ -125,7 +125,7 @@ namespace analytic {
         {
             const T oo = std::numeric_limits<T>::max();
             return i>=contents.size()? 
-                    Railcar<T,F>(oo,oo,F(0)) 
+                    Railcar<T,F>(oo,oo,F()) 
               : 
                     Railcar<T,F>(couplers[i], couplers[i+1], contents[i]);
         }

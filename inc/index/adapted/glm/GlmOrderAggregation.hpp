@@ -14,21 +14,21 @@ namespace adapted
 
 	#define ADAPTER_UNARY_METHOD(METHOD, NAME) \
 	template <typename In1>\
-	inline auto NAME (const In1 a) const\
+	inline auto NAME (const In1& a) const\
 	{\
 		return METHOD(a);\
 	}
 
 	#define ADAPTER_BINARY_METHOD(METHOD, NAME) \
 	template <typename In1, typename In2>\
-	inline auto NAME (const In1 a, const In2 b) const\
+	inline auto NAME (const In1& a, const In2& b) const\
 	{\
 		return METHOD(a, b);\
 	}
 
 	#define ADAPTER_TRINARY_METHOD(METHOD, NAME) \
 	template <typename In1, typename In2, typename In3>\
-	inline auto NAME (const In1 a, const In2 b, const In3 c) const\
+	inline auto NAME (const In1& a, const In2& b, const In3& c) const\
 	{\
 		return METHOD(a, b, c);\
 	}

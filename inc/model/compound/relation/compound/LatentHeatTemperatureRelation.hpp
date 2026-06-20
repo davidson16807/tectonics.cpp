@@ -132,7 +132,7 @@ namespace relation {
             return *this;
         }
 
-        LatentHeatTemperatureRelation operator/=(const float scalar)
+        LatentHeatTemperatureRelation& operator/=(const float scalar)
         {
             dippr106s /= scalar;
             intercept /= scalar;

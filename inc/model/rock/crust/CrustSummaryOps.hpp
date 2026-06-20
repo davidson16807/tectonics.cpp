@@ -1,9 +1,16 @@
 #pragma once
 
-#include <model/rock/formation/FormationSummary.hpp>
+// C libraries
+#include <cstddef> // std::size_t
 
+// std libraries
+#include <vector>  // std::vector
+
+// in-house libraries
 #include <model/rock/column/ColumnSummary.hpp>
 #include <model/rock/column/ColumnSummaryOps.hpp>
+#include <model/rock/formation/FormationSummary.hpp>
+#include <model/rock/crust/CrustSummary.hpp>
 
 namespace rock{
 
@@ -20,6 +27,14 @@ namespace rock{
         {}
 
         void absorb (const CrustSummary& crust, const FormationSummary& formation, CrustSummary& out) const
+        {
+            for (auto i = 0*out.size(); i < out.size(); ++i)
+            {
+                out[i] = ops.absorb(crust[i], formation[i]);
+            }
+        }
+
+        void absorb (const FormationSummary& formation, const CrustSummary& crust, CrustSummary& out) const
         {
             for (auto i = 0*out.size(); i < out.size(); ++i)
             {

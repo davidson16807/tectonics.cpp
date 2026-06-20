@@ -19,7 +19,7 @@ namespace rock
 
 	struct MineralOps
 	{
-		MineralOps(){}
+		constexpr MineralOps(){}
 		void combine(const Mineral& a, const Mineral& b, Mineral& output) const
 		{
 			output.mass = a.mass + b.mass;

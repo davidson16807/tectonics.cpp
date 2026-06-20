@@ -132,10 +132,10 @@ namespace table {
 	    return y;
 	}
 
-	template<typename F, typename Tx, typename Ty>
-	PartialTable<Ty> apply(const PartialTable<F>& f, Tx x)
+	template<typename F, typename X, typename Y>
+	PartialTable<Y> apply(const PartialTable<F>& f, X x)
 	{
-	    PartialTable<Ty> y;
+	    PartialTable<Y> y;
 	    for (const auto& [i, fi] : f.rows) 
 	    {
 	        y.rows.emplace(int(i), f[i](x));
@@ -143,10 +143,10 @@ namespace table {
 	    return y;
 	}
 
-	template<typename Ty, typename Tx1, typename F>
-	PartialTable<Ty> gather(const F f, const PartialTable<Tx1>& x1)
+	template<typename Y, typename X1, typename F>
+	PartialTable<Y> gather(const F f, const PartialTable<X1>& x1)
 	{
-	    PartialTable<Ty> y;
+	    PartialTable<Y> y;
 	    for (const auto& [i, x1i] : x1.rows) 
 	    {
 	        y.rows.emplace(int(i), f(x1[i]));
@@ -154,12 +154,12 @@ namespace table {
 	    return y;
 	}
 
-	template<typename Ty, typename Tx1, typename Tx2, typename F>
-	PartialTable<Ty> gather(const F f, 
-		const PartialTable<Tx1>& x1, 
-		const PartialTable<Tx2>& x2
+	template<typename Y, typename X1, typename X2, typename F>
+	PartialTable<Y> gather(const F f, 
+		const PartialTable<X1>& x1, 
+		const PartialTable<X2>& x2
 	){
-	    PartialTable<Ty> y;
+	    PartialTable<Y> y;
 	    for (const auto& [i, x1i] : x1.rows) 
 	    {
 	        if (x1.has(i) && x2.has(i))
@@ -170,13 +170,13 @@ namespace table {
 	    return y;
 	}
 
-	template<typename Ty, typename F, typename Tx1, typename Tx2, typename Tx3>
-	PartialTable<Ty> gather(const F f, 
-		const PartialTable<Tx1>& x1, 
-		const PartialTable<Tx2>& x2, 
-		const PartialTable<Tx3>& x3
+	template<typename Y, typename F, typename X1, typename X2, typename X3>
+	PartialTable<Y> gather(const F f, 
+		const PartialTable<X1>& x1, 
+		const PartialTable<X2>& x2, 
+		const PartialTable<X3>& x3
 	){
-	    PartialTable<Ty> y;
+	    PartialTable<Y> y;
 	    for (const auto& [i, x1i] : x1.rows)
 	    {
 	        if (x1.has(i) && x2.has(i) && x3.has(i))
@@ -187,14 +187,14 @@ namespace table {
 	    return y;
 	}
 
-	template<typename Ty, typename F, typename Tx1, typename Tx2, typename Tx3, typename Tx4>
-	PartialTable<Ty> gather(const F f, 
-		const PartialTable<Tx1>& x1, 
-		const PartialTable<Tx2>& x2, 
-		const PartialTable<Tx3>& x3, 
-		const PartialTable<Tx4>& x4
+	template<typename Y, typename F, typename X1, typename X2, typename X3, typename X4>
+	PartialTable<Y> gather(const F f, 
+		const PartialTable<X1>& x1, 
+		const PartialTable<X2>& x2, 
+		const PartialTable<X3>& x3, 
+		const PartialTable<X4>& x4
 	){
-	    PartialTable<Ty> y;
+	    PartialTable<Y> y;
 	    for (const auto& [i, x1i] : x1.rows)
 	    {
 	        if (x1.has(i) && x2.has(i) && x3.has(i) && x4.has(i))
@@ -205,15 +205,15 @@ namespace table {
 	    return y;
 	}
 
-	template<typename Ty, typename F, typename Tx1, typename Tx2, typename Tx3, typename Tx4, typename Tx5>
-	PartialTable<Ty> gather(const F f, 
-		const PartialTable<Tx1>& x1, 
-		const PartialTable<Tx2>& x2, 
-		const PartialTable<Tx3>& x3, 
-		const PartialTable<Tx4>& x4, 
-		const PartialTable<Tx5>& x5
+	template<typename Y, typename F, typename X1, typename X2, typename X3, typename X4, typename X5>
+	PartialTable<Y> gather(const F f, 
+		const PartialTable<X1>& x1, 
+		const PartialTable<X2>& x2, 
+		const PartialTable<X3>& x3, 
+		const PartialTable<X4>& x4, 
+		const PartialTable<X5>& x5
 	){
-	    PartialTable<Ty> y;
+	    PartialTable<Y> y;
 	    for (const auto& [i, x1i] : x1.rows)
 	    {
 	        if (x1.has(i) && x2.has(i) && x3.has(i) && x4.has(i) && x5.has(i))
@@ -224,16 +224,16 @@ namespace table {
 	    return y;
 	}
 
-	template<typename Ty, typename F, typename Tx1, typename Tx2, typename Tx3, typename Tx4, typename Tx5, typename Tx6>
-	PartialTable<Ty> gather(const F f, 
-		const PartialTable<Tx1>& x1, 
-		const PartialTable<Tx2>& x2, 
-		const PartialTable<Tx3>& x3, 
-		const PartialTable<Tx4>& x4, 
-		const PartialTable<Tx5>& x5, 
-		const PartialTable<Tx6>& x6
+	template<typename Y, typename F, typename X1, typename X2, typename X3, typename X4, typename X5, typename X6>
+	PartialTable<Y> gather(const F f, 
+		const PartialTable<X1>& x1, 
+		const PartialTable<X2>& x2, 
+		const PartialTable<X3>& x3, 
+		const PartialTable<X4>& x4, 
+		const PartialTable<X5>& x5, 
+		const PartialTable<X6>& x6
 	){
-	    PartialTable<Ty> y;
+	    PartialTable<Y> y;
 	    for (const auto& [i, x1i] : x1.rows)
 	    {
 	        if (x1.has(i) && x2.has(i) && x3.has(i) && x4.has(i) && x5.has(i) && x6.has(i))
@@ -246,116 +246,116 @@ namespace table {
 
 
     // operators that are closed between PartialTable<T> 
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator+(const PartialTable<Tx>& x1, const PartialTable<Tx>& x2)
+    template<typename X>
+    constexpr PartialTable<X> operator+(const PartialTable<X>& x1, const PartialTable<X>& x2)
     {
-        return gather<Tx>([](Tx x1i, Tx x2i){return x1i+x2i;}, x1, x2);
+        return gather<X>([](X x1i, X x2i){return x1i+x2i;}, x1, x2);
     }
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator-(const PartialTable<Tx>& x1, const PartialTable<Tx>& x2)
+    template<typename X>
+    constexpr PartialTable<X> operator-(const PartialTable<X>& x1, const PartialTable<X>& x2)
     {
-        return gather<Tx>([](Tx x1i, Tx x2i){return x1i-x2i;}, x1, x2);
+        return gather<X>([](X x1i, X x2i){return x1i-x2i;}, x1, x2);
     }
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator*(const PartialTable<Tx>& x1, const PartialTable<Tx>& x2)
+    template<typename X>
+    constexpr PartialTable<X> operator*(const PartialTable<X>& x1, const PartialTable<X>& x2)
     {
-        return gather<Tx>([](Tx x1i, Tx x2i){return x1i*x2i;}, x1, x2);
+        return gather<X>([](X x1i, X x2i){return x1i*x2i;}, x1, x2);
     }
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator/(const PartialTable<Tx>& x1, const PartialTable<Tx>& x2)
+    template<typename X>
+    constexpr PartialTable<X> operator/(const PartialTable<X>& x1, const PartialTable<X>& x2)
     {
-        return gather<Tx>([](Tx x1i, Tx x2i){return x1i/x2i;}, x1, x2);
+        return gather<X>([](X x1i, X x2i){return x1i/x2i;}, x1, x2);
     }
 
 
     // operators with FullTable<T> that are closed under PartialTable<T> 
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator+(const FullTable<Tx>& x1, const PartialTable<Tx>& x2)
+    template<typename X>
+    constexpr PartialTable<X> operator+(const FullTable<X>& x1, const PartialTable<X>& x2)
     {
-        return gather<Tx>([](Tx x1i, Tx x2i){return x1i+x2i;}, x1, x2);
+        return gather<X>([](X x1i, X x2i){return x1i+x2i;}, x1, x2);
     }
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator+(const PartialTable<Tx>& x1, const FullTable<Tx>& x2)
+    template<typename X>
+    constexpr PartialTable<X> operator+(const PartialTable<X>& x1, const FullTable<X>& x2)
     {
-        return gather<Tx>([](Tx x1i, Tx x2i){return x1i+x2i;}, x1, x2);
+        return gather<X>([](X x1i, X x2i){return x1i+x2i;}, x1, x2);
     }
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator-(const FullTable<Tx>& x1, const PartialTable<Tx>& x2)
+    template<typename X>
+    constexpr PartialTable<X> operator-(const FullTable<X>& x1, const PartialTable<X>& x2)
     {
-        return gather<Tx>([](Tx x1i, Tx x2i){return x1i-x2i;}, x1, x2);
+        return gather<X>([](X x1i, X x2i){return x1i-x2i;}, x1, x2);
     }
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator-(const PartialTable<Tx>& x1, const FullTable<Tx>& x2)
+    template<typename X>
+    constexpr PartialTable<X> operator-(const PartialTable<X>& x1, const FullTable<X>& x2)
     {
-        return gather<Tx>([](Tx x1i, Tx x2i){return x1i-x2i;}, x1, x2);
+        return gather<X>([](X x1i, X x2i){return x1i-x2i;}, x1, x2);
     }
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator*(const FullTable<Tx>& x1, const PartialTable<Tx>& x2)
+    template<typename X>
+    constexpr PartialTable<X> operator*(const FullTable<X>& x1, const PartialTable<X>& x2)
     {
-        return gather<Tx>([](Tx x1i, Tx x2i){return x1i*x2i;}, x1, x2);
+        return gather<X>([](X x1i, X x2i){return x1i*x2i;}, x1, x2);
     }
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator*(const PartialTable<Tx>& x1, const FullTable<Tx>& x2)
+    template<typename X>
+    constexpr PartialTable<X> operator*(const PartialTable<X>& x1, const FullTable<X>& x2)
     {
-        return gather<Tx>([](Tx x1i, Tx x2i){return x1i*x2i;}, x1, x2);
+        return gather<X>([](X x1i, X x2i){return x1i*x2i;}, x1, x2);
     }
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator/(const FullTable<Tx>& x1, const PartialTable<Tx>& x2)
+    template<typename X>
+    constexpr PartialTable<X> operator/(const FullTable<X>& x1, const PartialTable<X>& x2)
     {
-        return gather<Tx>([](Tx x1i, Tx x2i){return x1i/x2i;}, x1, x2);
+        return gather<X>([](X x1i, X x2i){return x1i/x2i;}, x1, x2);
     }
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator/(const PartialTable<Tx>& x1, const FullTable<Tx>& x2)
+    template<typename X>
+    constexpr PartialTable<X> operator/(const PartialTable<X>& x1, const FullTable<X>& x2)
     {
-        return gather<Tx>([](Tx x1i, Tx x2i){return x1i/x2i;}, x1, x2);
+        return gather<X>([](X x1i, X x2i){return x1i/x2i;}, x1, x2);
     }
 
 
     // operators with reals that are closed under PartialTable<T> 
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator+(const PartialTable<Tx>& x1, const Tx x2)
+    template<typename X>
+    constexpr PartialTable<X> operator+(const PartialTable<X>& x1, const X x2)
     {
-        return gather<Tx>([x2](Tx x1i){return x1i+x2;}, x1);
+        return gather<X>([x2](X x1i){return x1i+x2;}, x1);
     }
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator+(const Tx x2, const PartialTable<Tx>& x1)
+    template<typename X>
+    constexpr PartialTable<X> operator+(const X x2, const PartialTable<X>& x1)
     {
-        return gather<Tx>([x2](Tx x1i){return x2+x1i;}, x1);
+        return gather<X>([x2](X x1i){return x2+x1i;}, x1);
     }
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator-(const PartialTable<Tx>& x1, const Tx x2)
+    template<typename X>
+    constexpr PartialTable<X> operator-(const PartialTable<X>& x1, const X x2)
     {
-        return gather<Tx>([x2](Tx x1i){return x1i-x2;}, x1);
+        return gather<X>([x2](X x1i){return x1i-x2;}, x1);
     }
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator-(const Tx x2, const PartialTable<Tx>& x1)
+    template<typename X>
+    constexpr PartialTable<X> operator-(const X x2, const PartialTable<X>& x1)
     {
-        return gather<Tx>([x2](Tx x1i){return x2-x1i;}, x1);
+        return gather<X>([x2](X x1i){return x2-x1i;}, x1);
     }
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator*(const PartialTable<Tx>& x1, const Tx x2)
+    template<typename X>
+    constexpr PartialTable<X> operator*(const PartialTable<X>& x1, const X x2)
     {
-        return gather<Tx>([x2](Tx x1i){return x1i*x2;}, x1);
+        return gather<X>([x2](X x1i){return x1i*x2;}, x1);
     }
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator*(const Tx x2, const PartialTable<Tx>& x1)
+    template<typename X>
+    constexpr PartialTable<X> operator*(const X x2, const PartialTable<X>& x1)
     {
-        return gather<Tx>([x2](Tx x1i){return x2+*x1i;}, x1);
+        return gather<X>([x2](X x1i){return x2+*x1i;}, x1);
     }
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator/(const PartialTable<Tx>& x1, const Tx x2)
+    template<typename X>
+    constexpr PartialTable<X> operator/(const PartialTable<X>& x1, const X x2)
     {
-        return gather<Tx>([x2](Tx x1i){return x1i/x2;}, x1);
+        return gather<X>([x2](X x1i){return x1i/x2;}, x1);
     }
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator/(const Tx x2, const PartialTable<Tx>& x1)
+    template<typename X>
+    constexpr PartialTable<X> operator/(const X x2, const PartialTable<X>& x1)
     {
-        return gather<Tx>([x2](Tx x1i){return x2/x1i;}, x1);
+        return gather<X>([x2](X x1i){return x2/x1i;}, x1);
     }
-    template<typename Tx>
-    constexpr PartialTable<Tx> operator-(const PartialTable<Tx>& x1)
+    template<typename X>
+    constexpr PartialTable<X> operator-(const PartialTable<X>& x1)
     {
-        return gather<Tx>([](Tx x1i){return -x1i;}, x1);
+        return gather<X>([](X x1i){return -x1i;}, x1);
     }
 
 }}

@@ -12,10 +12,10 @@
 // in house libraries
 #include <buffer/PyramidBuffers.hpp>                // buffer::PyramidBuffers
 
-#include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
-#include <update/OrbitalControlUpdater.hpp>         // update::OrbitalControlUpdater
+#include <update/OrbitalNavigationState.hpp>           // update::OrbitalNavigationState
+#include <update/OrbitalNavigationUpdater.hpp>         // update::OrbitalNavigationUpdater
 
-#include <view/IndicatorSwarmShaderProgram.hpp>     // view::IndicatorSwarmShaderProgram
+#include <view/IndicatorMeshSwarmShaderProgram.hpp>     // view::IndicatorMeshSwarmShaderProgram
 
 int main() {
   // initialize GLFW
@@ -64,7 +64,7 @@ int main() {
 
   // flatten vector raster for OpenGL
   buffer::PyramidBuffers<int, float> pyramids;
-  std::vector<vec3> vectors_element_position(pyramids.triangles_size<3>(3));
+  std::vector<vec3> vectors_element_position(pyramids.triangles_size(3));
 
   std::vector<vec3> vectors_instance_position{ 
     vec3( 0, 0, 1),
@@ -115,7 +115,8 @@ int main() {
       vectors_element_position);
 
   // initialize control state
-  update::OrbitalControlState control_state;
+  update::OrbitalNavigationState control_state;
+  update::OrbitalNavigationUpdater orbit_updater;
   control_state.min_zoom_distance = 1.0f;
   control_state.log2_height = 2.5f;
   control_state.angular_position = glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f;
@@ -131,9 +132,10 @@ int main() {
   // view_state.projection_type = view::ProjectionType::heads_up_display;
   // view_state.projection_matrix = glm::mat4(1);
   // view_state.view_matrix = glm::mat4(1);
+  view_state.render_pass = view::RenderPassType::overlays;
 
   // initialize shader program
-  view::IndicatorSwarmShaderProgram indicator_program;  
+  view::IndicatorMeshSwarmShaderProgram indicator_program;  
 
   // initialize MessageQueue for MVU architecture
   messages::MessageQueue message_queue;
@@ -161,7 +163,7 @@ int main() {
       std::queue<messages::Message> message_poll = message_queue.poll();
       while (!message_poll.empty())
       {
-        update::OrbitalControlUpdater::update(control_state, message_poll.front(), control_state);
+        orbit_updater.update(control_state, message_poll.front(), control_state);
         message_poll.pop();
       }
       // control_state.angular_position.x += 1.0f * 3.1415926f/180.0f;

@@ -71,8 +71,8 @@ namespace iterated
 		ITERATED_UNARY_METHOD (elements.ceil,      ceil)
 		ITERATED_UNARY_METHOD (elements.fract,     fract)
 		ITERATED_BINARY_METHOD(elements.modulus,   modulus)  
-		ITERATED_BINARY_METHOD(elements.residue,   residue)  
-		ITERATED_BINARY_METHOD(elements.remainder, remainder)
+		ITERATED_BINARY_METHOD(elements.floormod,  floormod)  
+		ITERATED_BINARY_METHOD(elements.roundmod, roundmod)
 
 		ITERATED_UNARY_METHOD(elements.sqrt, sqrt)
 		ITERATED_UNARY_METHOD(elements.cbrt, cbrt)

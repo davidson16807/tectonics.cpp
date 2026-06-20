@@ -11,28 +11,23 @@ namespace body {
 		using vec3 = glm::vec<3,scalar,glm::defaultp>;
 
 		const vec3 axis; // zero vector indicates omnidirectional Illuminator
-		const id target;
+		const id node;
 
 		Illuminator(
 			const vec3 axis,
-			const id target,
+			const id node,
 		) : 
 			axis(axis),
-			target(target)
+			node(node)
 		{}
 
 		Illuminator(
 			const vec3 axis,
-			const id target
+			const id node
 		) : 
 			axis(axis),
-			target(target)
+			node(node)
 		{}
-
-		mat3 orientation(const id time_step) const
-		{
-			return glm::rotate(...);
-		}
 
 	};
 

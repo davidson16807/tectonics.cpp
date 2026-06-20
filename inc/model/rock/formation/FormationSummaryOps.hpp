@@ -1,8 +1,10 @@
 #pragma once
 
 // C libraries
+#include <cstddef> // std::size_t
 
 // std libraries
+#include <vector>  // std::vector
 
 // 3rd party libraries
 

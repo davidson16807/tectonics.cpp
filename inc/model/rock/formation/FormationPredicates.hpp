@@ -1,8 +1,16 @@
 #pragma once
 
+// C libraries
 #include <cmath>
 
-#include <glm/vec3.hpp>               // *vec3
+// std libraries
+#include <vector>
+
+// 3rd-party libraries
+
+// in-house libraries
+#include <unit/si.hpp>
+#include <model/rock/formation/Formation.hpp>
 
 namespace rock {
 
@@ -13,7 +21,7 @@ namespace rock {
 	They contains everything that's needed to simulate the geology of a planet.
 	*/
 
-	template<int M>
+	template<std::size_t M>
     class FormationPredicates
     {
 

@@ -24,7 +24,7 @@ namespace field
 
         constexpr FractalBrownianNoise(
     		const Noise noise, 
-			const scalar octave_count, 
+			const id octave_count, 
 			const scalar amplitude_scale_per_frequency_doubling,
 			const scalar coarsest_frequency
         ) :
@@ -46,12 +46,12 @@ namespace field
 
 		using value_type = scalar;
 
-		template<typename tpoint>
-		auto operator()(const tpoint V) const {
-		    tpoint position(coarsest_frequency*V);
+		template<typename vector>
+		auto operator()(const vector& V) const {
+		    vector position(coarsest_frequency*V);
 		    scalar amplitude(1);
 			auto output = noise(position);
-			for (int i = 0; i < octave_count; ++i)
+			for (id i = 0; i < octave_count; ++i)
 			{
 		        position  *= scalar(2);
 		        amplitude *= amplitude_scale_per_frequency_doubling;

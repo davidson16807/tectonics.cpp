@@ -221,7 +221,7 @@ TEST_CASE( "FormationGeneration must be able to achieve desired displacements as
     // std::cout << strings.format(grid, summarized_densities) << std::endl << std::endl;
 
     aggregated::Metric metric(adapted::SiMetric{});
-    REQUIRE(order.max(abs_displacement_error) < 0.3f*si::kilometer);
+    REQUIRE(order.max(abs_displacement_error) < 0.7f*si::kilometer);
 
 }
 

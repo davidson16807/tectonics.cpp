@@ -1,6 +1,7 @@
 #pragma once
 
 // C libraries
+#include <cmath>
 
 // std libraries
 
@@ -53,8 +54,9 @@ namespace field
 		const scalar seed1,
 		const scalar seed2
 	) {
-		const double pi(3.141592653589793238462643383279);
-	    auto fbm_cdf = analytic::Error(scalar(0), scalar(1), (scalar(1)/(std::sqrt(scalar(2.0*pi)))));
+		const scalar pi(3.141592653589793238462643383279L);
+		const scalar turn(2.0*pi);
+	    auto fbm_cdf = analytic::Error(scalar(0), scalar(1), (scalar(1)/(std::sqrt(turn))));
 	    auto fbm = field::fractal_brownian_noise<id,scalar>(
 	      field::value_noise<L,scalar>(
 	          field::mosaic_noise(

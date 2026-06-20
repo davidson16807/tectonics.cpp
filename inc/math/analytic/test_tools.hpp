@@ -19,10 +19,10 @@ struct ExpressionAdapter{
 
     template<typename T2, typename T3>
     bool equal(const T2& a, const T3& b) const {
-        return analytic::distance(a, b, lo, hi) < threshold;
+        return analytic::distance(a, b, lo, hi) <= threshold;
     }
     bool equal(const T a, const T b) const {
-        return std::abs(a-b) < threshold;
+        return std::abs(a-b) <= threshold;
     }
 
     template<typename T2>

@@ -1,12 +1,15 @@
 #pragma once
 
 // C libraries
+#include <cstddef> // std::size_t
 
 // std libraries
+#include <array>   // std::array
 
 // 3rd party libraries
 
 // in-house libraries
+#include <model/rock/formation/Formation.hpp>
 
 namespace rock
 {

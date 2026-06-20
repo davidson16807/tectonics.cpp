@@ -27,8 +27,8 @@ namespace relation {
             const ScalarRelation<X,Y,F>& other
         ):
             f(other.f),
-            x0(1),
-            y0(1)
+            x0(other.x0),
+            y0(other.y0)
         {
         }
 
@@ -56,25 +56,27 @@ namespace relation {
             return f(x/x0)*y0;
         }
 
-        ScalarRelation<X,Y,F> operator+=(const Y k)
+        ScalarRelation<X,Y,F>& operator+=(const Y k)
         {
             f += k;
             return *this;
         }
 
-        ScalarRelation<X,Y,F> operator-=(const Y k)
+        ScalarRelation<X,Y,F>& operator-=(const Y k)
         {
             f -= k;
             return *this;
         }
 
-        ScalarRelation<X,Y,F> operator*=(const Y k)
+        template<typename scalar>
+        ScalarRelation<X,Y,F>& operator*=(const scalar k)
         {
             y0 *= k;
             return *this;
         }
 
-        ScalarRelation<X,Y,F> operator/=(const Y k)
+        template<typename scalar>
+        ScalarRelation<X,Y,F>& operator/=(const scalar k)
         {
             y0 /= k;
             return *this;

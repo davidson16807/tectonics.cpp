@@ -35,7 +35,7 @@ namespace cartesian
     public:
 
         constexpr id memory_id(const ivec4 grid_id) const {
-            return memory_id(ivec3(memory_id(grid_id.xyz()), grid_id.w));
+            return memory_id(ivec2(memory_id(grid_id.xyz()), grid_id.w));
         }
 
         constexpr id memory_id(const ivec3 grid_id) const {

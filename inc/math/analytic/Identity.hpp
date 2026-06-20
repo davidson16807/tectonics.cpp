@@ -45,6 +45,7 @@ namespace analytic {
     {
         return T(0);
     }
+
     template<typename T>
     constexpr T operator/(const Identity<T>, const Identity<T>)
     {
@@ -66,7 +67,9 @@ namespace analytic {
     template<typename T>
     constexpr T distance(const T a, const T b, const T lo, const T hi){ return std::abs(a-b); }
 
-    template<typename T> constexpr T derivative(const T k) { return T(0); }
+    constexpr double derivative(const double k) { return double(0); }
+    constexpr float derivative(const float k) { return float(0); }
+    constexpr int derivative(const int k) { return int(0); }
     template<typename T> constexpr T derivative(const Identity<T> e) { return T(1); }
 
     template<int N, typename F, typename = std::enable_if_t<(N==0)>>

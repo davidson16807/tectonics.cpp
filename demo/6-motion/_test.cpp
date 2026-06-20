@@ -74,11 +74,11 @@
 #include <model/rock/crust/CrustMotion.hpp>         // CrustMotion
 #include <model/rock/crust/CrustFracturing.hpp>     // CrustFracturing
 
-#include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
-#include <update/OrbitalControlUpdater.hpp>         // update::OrbitalControlUpdater
+#include <update/OrbitalNavigationState.hpp>           // update::OrbitalNavigationState
+#include <update/OrbitalNavigationUpdater.hpp>         // update::OrbitalNavigationUpdater
 
 #include <view/ColorscaleSurfaceShaderProgram.hpp>  // view::ColorscaleSurfaceShaderProgram
-#include <view/IndicatorSwarmShaderProgram.hpp>     // view::IndicatorSwarmShaderProgram
+#include <view/IndicatorMeshSwarmShaderProgram.hpp>     // view::IndicatorMeshSwarmShaderProgram
 #include <view/MultichannelSurfaceShaderProgram.hpp>// view::MultichannelSurfaceShaderProgram
 
 int main() {
@@ -304,7 +304,8 @@ int main() {
   length planet_billboard_near_distance(1e7*si::kilometer); // ~10 * solar radius 
 
   // initialize control state
-  update::OrbitalControlState control_state(
+  update::OrbitalNavigationUpdater orbit_updater;
+  update::OrbitalNavigationState control_state(
       glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f, // angular_position
       glm::vec2(0), // angular_direction
       (world_radius+procedural_terrain_far_distance)/meter, // min_zoom_distance
@@ -331,7 +332,7 @@ int main() {
   // initialize shader program
   view::ColorscaleSurfaceShaderProgram colorscale_program;  
   view::MultichannelSurfaceShaderProgram debug_program;
-  view::IndicatorSwarmShaderProgram indicator_program;  
+  view::IndicatorMeshSwarmShaderProgram indicator_program;  
 
   // initialize MessageQueue for MVU architecture
   messages::MessageQueue message_queue;
@@ -403,7 +404,7 @@ int main() {
       std::queue<messages::Message> message_poll = message_queue.poll();
       while (!message_poll.empty())
       {
-        update::OrbitalControlUpdater::update(control_state, message_poll.front(), control_state);
+        orbit_updater.update(control_state, message_poll.front(), control_state);
         message_poll.pop();
       }
       // control_state.angular_position.x += 1.0f * 3.1415926f/180.0f;

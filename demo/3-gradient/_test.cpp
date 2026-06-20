@@ -52,11 +52,11 @@
 
 // #include <model/rock/stratum/StratumGenerator.hpp>  // StratumGenerator
 
-#include <update/OrbitalControlState.hpp>           // update::OrbitalControlState
-#include <update/OrbitalControlUpdater.hpp>         // update::OrbitalControlUpdater
+#include <update/OrbitalNavigationState.hpp>           // update::OrbitalNavigationState
+#include <update/OrbitalNavigationUpdater.hpp>         // update::OrbitalNavigationUpdater
 
 #include <view/ColorscaleSurfaceShaderProgram.hpp>  // view::ColorscaleSurfaceShaderProgram
-#include <view/IndicatorSwarmShaderProgram.hpp>     // view::IndicatorSwarmShaderProgram
+#include <view/IndicatorMeshSwarmShaderProgram.hpp>     // view::IndicatorMeshSwarmShaderProgram
 #include <view/MultichannelSurfaceShaderProgram.hpp>// view::MultichannelSurfaceShaderProgram
 
 int main() {
@@ -196,7 +196,7 @@ int main() {
   // flatten vector raster for OpenGL
   iterated::Arithmetic scalars(adapted::TypedSymbolicArithmetic(0.0f, 1.0f));
   buffer::PyramidBuffers<int, float> pyramids;
-  std::vector<glm::vec3> vectors_element_position(pyramids.triangles_size<3>(3));
+  std::vector<glm::vec3> vectors_element_position(pyramids.triangles_size(3));
   std::vector<glm::vec3> vectors_instance_position(grid.vertex_count());
   std::vector<glm::vec3> vectors_instance_heading(grid.vertex_count());
   std::vector<glm::vec3> vectors_instance_up(grid.vertex_count());
@@ -217,7 +217,8 @@ int main() {
   scalars.divide(vectors_instance_scale, procedural::uniform(whole::max(vectors_instance_scale)), vectors_instance_scale);
 
   // initialize control state
-  update::OrbitalControlState control_state;
+  update::OrbitalNavigationState control_state;
+  update::OrbitalNavigationUpdater orbit_updater;
   control_state.min_zoom_distance = 1.0f;
   control_state.log2_height = 2.5f;
   control_state.angular_position = glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f;
@@ -249,7 +250,7 @@ int main() {
 
   // initialize shader program
   view::ColorscaleSurfaceShaderProgram colorscale_program;  
-  view::IndicatorSwarmShaderProgram indicator_program;  
+  view::IndicatorMeshSwarmShaderProgram indicator_program;  
   view::MultichannelSurfaceShaderProgram debug_program;
 
   // initialize MessageQueue for MVU architecture
@@ -263,6 +264,7 @@ int main() {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+      view_state.render_pass = view::RenderPassType::solids;
       debug_program.draw(
         buffer_positions,
         // buffer_color_values, // red
@@ -291,6 +293,7 @@ int main() {
       //   GL_TRIANGLE_STRIP
       // );
 
+      view_state.render_pass = view::RenderPassType::overlays;
       indicator_program.draw(
         vectors_element_position,
         vectors_instance_position,
@@ -309,7 +312,7 @@ int main() {
       std::queue<messages::Message> message_poll = message_queue.poll();
       while (!message_poll.empty())
       {
-        update::OrbitalControlUpdater::update(control_state, message_poll.front(), control_state);
+        orbit_updater.update(control_state, message_poll.front(), control_state);
         message_poll.pop();
       }
       // control_state.angular_position.x += 1.0f * 3.1415926f/180.0f;

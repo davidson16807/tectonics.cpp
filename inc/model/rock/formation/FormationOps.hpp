@@ -2,9 +2,10 @@
 
 // C libraries
 #include <cmath>
+#include <cstddef>   // size_t
 
 // std libraries
-#include <array>
+#include <vector>
 
 // in-house libraries
 #include <model/rock/stratum/StratumOps.hpp>
@@ -15,7 +16,7 @@ namespace rock
     using bools = std::vector<bool>;
 
     // NOTE: `M` is mineral count
-    template<int M>
+    template<std::size_t M>
     class FormationOps
     {
         const StratumOps<M> ops;

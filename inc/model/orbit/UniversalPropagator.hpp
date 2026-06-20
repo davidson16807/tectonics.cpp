@@ -1,7 +1,11 @@
 #pragma once
 
+// C libraries
+#include <cmath>
+
 // 3rd party libraries
-#include <glm/vec3.hpp>     // *vec3
+#include <glm/vec3.hpp>      // *vec3
+#include <glm/geometric.hpp> // length, dot, etc.
 
 #include <math/special.hpp>
 
@@ -21,9 +25,9 @@ namespace orbit {
 		static constexpr scalar s1 = scalar(1);
 		static constexpr scalar s2 = scalar(2);
 		static constexpr scalar s3 = scalar(3);
-		static constexpr scalar pi = scalar(3.141592653589793238462);
+		static constexpr scalar pi = scalar(3.141592653589793238462643383279502884L);
 
-		scalar C(const scalar y) const
+		scalar C(const scalar y) const noexcept
 		{
 			scalar Ay = std::abs(y);
 			scalar SAy = std::sqrt(Ay);
@@ -31,7 +35,7 @@ namespace orbit {
 			              : (cosh(SAy) - s1)) / Ay;
 		}
 
-		scalar S(const scalar y) const
+		scalar S(const scalar y) const noexcept
 		{
 			scalar SAy = std::sqrt(std::abs(y));
 			scalar SAy3 = SAy*SAy*SAy;
@@ -39,7 +43,7 @@ namespace orbit {
 	                      : (sinh(SAy) - SAy)) / SAy3;
 		}
 
-		scalar dCax2dx(const scalar a, const scalar x) const
+		scalar dCax2dx(const scalar a, const scalar x) const noexcept
 		{
 			const scalar Ax = std::abs(x);
 			const scalar Aa = std::abs(a);
@@ -54,7 +58,7 @@ namespace orbit {
 			);
 		}
 
-		scalar dSax2dx(const scalar a, const scalar x) const
+		scalar dSax2dx(const scalar a, const scalar x) const noexcept
 		{
 			const scalar Ax = std::abs(x);
 			const scalar Aa = std::abs(a);
@@ -72,7 +76,7 @@ namespace orbit {
 			);
 		}
 
-		scalar d2Cax2dx2(const scalar a, const scalar x) const
+		scalar d2Cax2dx2(const scalar a, const scalar x) const noexcept
 		{
 			const scalar Ax = std::abs(x);
 			const scalar Aa = std::abs(a);
@@ -86,7 +90,7 @@ namespace orbit {
 			);
 		}
 
-		scalar d2Sax2dx2(const scalar a, const scalar x) const
+		scalar d2Sax2dx2(const scalar a, const scalar x) const noexcept
 		{
 			const scalar Ax = std::abs(x);
 			const scalar Aa = std::abs(a);
@@ -115,7 +119,7 @@ namespace orbit {
 	        int   max_refinement_count = 35,
 	        scalar max_precision       = 1e-15,
 	        int   laguerre_method_n    = 5,
-	        bool  force_congruence   = false
+	        bool  force_congruence     = false
 	    ) : 
 	    	gravitational_constant(gravitational_constant),
 	    	max_refinement_count(max_refinement_count),
@@ -131,7 +135,7 @@ namespace orbit {
 			const scalar r0, 
 			const scalar sigma0, 
 			const scalar dtsqrtmu
-		) const {
+		) const noexcept {
 	        const scalar x2   = x * x;
 	        const scalar x3   = x * x2;
 	        const scalar ax2  = a * x2;
@@ -176,7 +180,7 @@ namespace orbit {
 			const scalar r0, 
 			const scalar sigma0, 
 			const scalar dtsqrtmu
-		) const {
+		) const noexcept {
 	        scalar x = x0;
 	        for (int i = 0; i < max_refinement_count; ++i) {
 	            const scalar dxdi = refine(x, a, r0, sigma0, dtsqrtmu);
@@ -190,15 +194,19 @@ namespace orbit {
 	        return x;
 	    }
 
-	    bool is_elliptic(const Universals& orbit) const {
+	    bool inverse_semi_major_axis(const Universals& orbit) const noexcept {
 	        const scalar mu = gravitational_constant * orbit.combined_mass;
 	        const scalar r0 = glm::length(orbit.initial_position);
 	        const scalar v0 = glm::length(orbit.initial_velocity);
 	        const scalar a  = s2 / r0 - (v0 * v0) / mu;
-	        return a > s0;
+	        return s1/a;
 	    }
 
-	    State state(const Universals& orbit, const scalar t) const {
+	    bool is_elliptic(const scalar inverse_semi_major_axis) const noexcept {
+	        return inverse_semi_major_axis > s0;
+	    }
+
+	    State state(const Universals& orbit, const scalar t) const noexcept {
 	        if (t == s0) {
 	            return State(orbit.initial_position, orbit.initial_velocity);
 	        }
@@ -209,10 +217,10 @@ namespace orbit {
 	        const scalar sqrt_mu = std::sqrt(mu);
 	        const scalar r0 = glm::length(R0);
 	        const scalar v0 = glm::length(V0);
-	        const scalar a  = s2 / r0 - (v0 * v0) / mu;
+	        const scalar a  = s2 / r0 - (v0 * v0) / mu; // alpha, the inverse semi-major axis
 	        const scalar sma  = s1/a; // semi-major axis
-	        const scalar p = s2*pi*std::sqrt(a*a*a/mu); // period
-	        const scalar dt = (a >=s0 && force_congruence? math::residue(t,p):t) - t0;
+	        const scalar p = s2*pi*std::sqrt(sma*sma*sma/mu); // period
+	        const scalar dt = (a > s0 && force_congruence? math::floormod(t,p):t) - t0;
 	        const scalar x = solve(
 	        	/* x0 */ a >= s0? 
 	        		  dt*sqrt_mu*a // elliptic or parabolic
@@ -241,12 +249,12 @@ namespace orbit {
 	        return State(R, V);
 	    }
 
-	    Universals advance(const Universals& orbit, const scalar t) const {
+	    Universals advance(const Universals& orbit, const scalar t) const noexcept {
 	        State state_ = state(orbit, t);
 	        return Universals(orbit.combined_mass, s0, state_.position, state_.velocity);
 	    }
 
-	    Universals tare(const Universals& orbit) const {
+	    Universals tare(const Universals& orbit) const noexcept {
 	        return advance(orbit, orbit.time_offset);
 	    }
 

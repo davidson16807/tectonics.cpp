@@ -1,9 +1,12 @@
 #pragma once
 
 #include <algorithm> // std::max
+#include <vector>    // std::vector
 
 // in house libraries
-#include <model/rock/formation/Formation.hpp>
+#include <unit/si.hpp>
+
+#include <model/rock/formation/FormationSummary.hpp>
 
 namespace rock{
 

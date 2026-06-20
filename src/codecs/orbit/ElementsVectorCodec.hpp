@@ -1,0 +1,81 @@
+#pragma once
+
+#include <string>
+#include <vector>
+#include <stdexcept>
+#include <sstream>
+#include <iomanip>
+#include <limits>
+
+#include <unit/si.hpp>
+
+#include <model/orbit/Elements.hpp>
+
+#include <codecs/ScalarStringCodec.hpp>
+
+namespace codecs {
+
+	template <typename scalar, typename length>
+	class ElementsVectorCodec
+	{
+
+		static constexpr scalar pi = 3.141592653589793238462643383279502884197;
+		static constexpr scalar radians_per_degree = pi/180.0;
+		static constexpr scalar s0   =   0.0;
+
+		static constexpr ScalarStringCodec<scalar> scalars = {};
+
+		length length_unit;
+
+		using strings = std::vector<std::string>;
+
+	    static scalar decode(const std::string& s) {
+	        std::istringstream iss(s);
+	        scalar value;
+	        iss >> value;
+	        return value;
+	    }
+
+	    static std::string encode(const scalar& value) {
+	        std::ostringstream oss;
+	        oss << std::setprecision(std::numeric_limits<scalar>::max_digits10) << value;
+	        return oss.str();
+	    }
+
+	public:
+		ElementsVectorCodec(const length length_unit):
+			length_unit(length_unit)
+		{};
+
+		orbit::Elements<scalar> decode(const std::vector<std::string>& fields) const
+		{
+			if (fields.size() < 1) {
+				throw std::invalid_argument("An orbit must have at least a semi-major axis");
+			}
+
+			return orbit::Elements<scalar>(
+				scalars.decode(fields[0]) * length_unit, // semi major axis
+				fields.size() > 1? scalars.decode(fields[1])            : s0, // eccentricity
+				fields.size() > 2? scalars.decode(fields[2])*si::degree : s0, // inclination
+				fields.size() > 3? scalars.decode(fields[3])*si::degree : s0, // argument of periapsis
+				fields.size() > 4? scalars.decode(fields[4])*si::degree : s0, // longitude of ascending node
+				fields.size() > 5? scalars.decode(fields[5])*si::degree : s0  // mean anomaly
+			);
+
+		}
+
+		void encode(const orbit::Elements<scalar>& elements, strings& fields) const
+		{
+			fields.clear();
+			fields.push_back(scalars.encode(elements.semi_major_axis));
+			fields.push_back(scalars.encode(elements.eccentricity));
+			fields.push_back(scalars.encode(elements.inclination                 / si::degree));
+			fields.push_back(scalars.encode(elements.argument_of_periapsis       / si::degree));
+			fields.push_back(scalars.encode(elements.longitude_of_ascending_node / si::degree));
+			fields.push_back(scalars.encode(elements.mean_anomaly                / si::degree));
+		}
+
+	};
+
+}
+

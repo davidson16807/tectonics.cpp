@@ -1,5 +1,8 @@
 #pragma once
 
+// C libraries
+#include <cstddef>
+
 // std libraries
 #include <random>
 
@@ -66,7 +69,7 @@ namespace rock
 
     };
 
-    template<int M, int F>
+    template<std::size_t M, std::size_t F>
     struct CrustAdapter{
         const FormationAdapter<M> subadapter;
         const float threshold;

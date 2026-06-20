@@ -19,17 +19,17 @@ namespace dymaxion
     Care should be taken if using `GridCache` as a class attribute
     since its memory footprint is not trivial as with `Grid`.
     */
-    template<typename id, typename id2, typename scalar, glm::qualifier Q=glm::defaultp>
+    template<typename id, typename id2, typename scalar, glm::qualifier precision=glm::defaultp>
 	class GridCache{
 
-        using ivec2 = glm::vec<2,id2,Q>;
-        using vec3 = glm::vec<3,scalar,Q>;
+        using ivec2 = glm::vec<2,id2,precision>;
+        using vec3 = glm::vec<3,scalar,precision>;
 
-        using mat3 = glm::mat<3,3,scalar,Q>;
+        using mat3 = glm::mat<3,3,scalar,precision>;
 
 	public:
 
-		const Grid<id,id2,scalar,Q> grid;
+		const Grid<id,id2,scalar,precision> grid;
 		std::vector<scalar> vertex_dual_areas;
 		std::vector<vec3> vertex_positions;
 		std::vector<vec3> vertex_normals;
@@ -40,7 +40,7 @@ namespace dymaxion
 
 		static constexpr id2 arrows_per_vertex = 4;
 
-        inline constexpr explicit GridCache(const Grid<id,id2,scalar,Q> grid):
+        inline constexpr explicit GridCache(const Grid<id,id2,scalar,precision> grid):
         	grid(grid),
         	vertex_dual_areas(grid.vertex_count()),
         	vertex_positions(grid.vertex_count()),
@@ -60,116 +60,116 @@ namespace dymaxion
     		}
     	}
 
-		inline constexpr auto radius() const
+		inline constexpr auto radius() const noexcept
 		{
 			return grid.radius();
 		}
 
-		inline constexpr auto square_id(const id2 vertex_id) const
+		inline constexpr auto square_id(const id2 vertex_id) const noexcept
 		{
 			return grid.square_id(vertex_id);
 		}
 
-		inline constexpr auto arrow_offset_id(const id2 arrow_id) const
+		inline constexpr auto arrow_offset_id(const id2 arrow_id) const noexcept
 		{
 			return grid.arrow_offset_id(arrow_id);
 		}
 
-		inline constexpr auto arrow_offset_id(const ivec2 arrow_offset_grid_position) const
+		inline constexpr auto arrow_offset_id(const ivec2 arrow_offset_grid_position) const noexcept
 		{
 			return grid.arrow_offset_id(arrow_offset_grid_position);
 		}
 
-		inline constexpr auto arrow_source_id(const id2 arrow_id) const
+		inline constexpr auto arrow_source_id(const id2 arrow_id) const noexcept
 		{
 			return grid.arrow_source_id(arrow_id);
 		}
 
-		inline constexpr auto arrow_target_id(const id2 source_id, const id2 offset_id) const
+		inline constexpr auto arrow_target_id(const id2 source_id, const id2 offset_id) const noexcept
 		{
 			return grid.arrow_target_id(source_id, offset_id);
 		}
 
-		inline constexpr auto arrow_target_id(const id2 arrow_id) const
+		inline constexpr auto arrow_target_id(const id2 arrow_id) const noexcept
 		{
 			return grid.arrow_target_id(arrow_id);
 		}
 
-		inline constexpr auto arrow_id(const id2 source_id, const id2 arrow_offset_id) const
+		inline constexpr auto arrow_id(const id2 source_id, const id2 arrow_offset_id) const noexcept
 		{
 			return grid.arrow_id(source_id, arrow_offset_id);
 		}
 
-		inline constexpr auto arrow_offset_grid_position(const id2 arrow_offset_id) const
+		inline constexpr auto arrow_offset_grid_position(const id2 arrow_offset_id) const noexcept
 		{
 			return grid.arrow_offset_grid_position(arrow_offset_id);
 		}
 
-		inline constexpr auto total_radius() const 
+		inline constexpr auto total_radius() const  noexcept
 		{
 			return grid.total_radius();
 		}
 
-		inline constexpr auto total_diameter() const 
+		inline constexpr auto total_diameter() const  noexcept
 		{
 			return grid.total_diameter();
 		}
 
-		inline constexpr auto total_area() const 
+		inline constexpr auto total_area() const  noexcept
 		{
 			return grid.total_area();
 		}
 
-		inline constexpr auto total_volume() const 
+		inline constexpr auto total_volume() const  noexcept
 		{
 			return grid.total_volume();
 		}
 
-		inline constexpr auto total_circumference() const 
+		inline constexpr auto total_circumference() const  noexcept
 		{
 			return grid.total_circumference();
 		}
 
-		inline constexpr auto vertices_per_square_side() const
+		inline constexpr auto vertices_per_square_side() const noexcept
 		{
 			return grid.vertices_per_square_side();
 		}
 
-		inline constexpr auto vertices_per_meridian() const
+		inline constexpr auto vertices_per_meridian() const noexcept
 		{
 			return grid.vertices_per_meridian();
 		}
 
-		inline constexpr auto vertex_count() const 
+		inline constexpr auto vertex_count() const  noexcept
 		{
 			return grid.vertex_count();
 		}
 
-		inline constexpr auto arrow_count() const 
+		inline constexpr auto arrow_count() const  noexcept
 		{
 			return grid.arrow_count();
 		}
 
 		// offset of the arrow
-		inline constexpr auto arrow_offset(const id2 source_id, const id2 offset_id) const
+		inline constexpr auto arrow_offset(const id2 source_id, const id2 offset_id) const noexcept
 		{
 			return grid.arrow_offset(source_id, offset_id);
 		}
 
 		// normal of the arrow
-		inline constexpr auto arrow_normal(const id2 source_id, const id2 offset_id) const
+		inline constexpr auto arrow_normal(const id2 source_id, const id2 offset_id) const noexcept
 		{
 			return grid.arrow_normal(source_id, offset_id);
 		}
 
 		// length of the arrow
-		inline constexpr auto arrow_length(const id2 source_id, const id2 offset_id) const
+		inline constexpr auto arrow_length(const id2 source_id, const id2 offset_id) const noexcept
 		{
 			return grid.arrow_length(source_id, offset_id);
 		}
 
 		// length of the arrow's dual
-		inline constexpr auto arrow_dual_length(const id2 source_id, const id2 offset_id) const
+		inline constexpr auto arrow_dual_length(const id2 source_id, const id2 offset_id) const noexcept
 		{
 			return grid.arrow_dual_length(source_id, offset_id);
 		}
@@ -178,45 +178,45 @@ namespace dymaxion
 		// whose associated arrows should not cause artifacts during certain sensitive operations
 		// (like gradient, divergence, laplacian) while also being physically near the vertex of the specified `vertex_id`,
 		// thereby providing an adequate representation for the vertex with irregular edges.
-		inline constexpr auto vertex_representative(const id2 vertex_id) const 
+		inline constexpr auto vertex_representative(const id2 vertex_id) const  noexcept
 		{
 			return grid.vertex_representative(vertex_id);
 		}
 
-		inline constexpr auto vertex_position(const id2 vertex_id) const 
+		inline constexpr auto vertex_position(const id2 vertex_id) const  noexcept
 		{
 			return grid.vertex_position(vertex_id);
 			// return vertex_positions[vertex_id];
 		}
 
-		inline constexpr auto vertex_normal(const id2 vertex_id) const 
+		inline constexpr auto vertex_normal(const id2 vertex_id) const  noexcept
 		{
 			return grid.vertex_normal(vertex_id);
 			// return vertex_normals[vertex_id];
 		}
 
-		inline constexpr auto vertex_east(const vec3 vertex_normal, const vec3 north_pole) const 
+		inline constexpr auto vertex_east(const vec3& vertex_normal, const vec3& north_pole) const  noexcept
 		{
 			return grid.vertex_east(vertex_normal, north_pole);
 		}
 
-		inline constexpr auto vertex_north(const vec3 vertex_east, const vec3 vertex_normal) const 
+		inline constexpr auto vertex_north(const vec3& vertex_east, const vec3& vertex_normal) const  noexcept
 		{
 			return grid.vertex_north(vertex_east, vertex_normal);
 		}
 
-		inline constexpr auto vertex_frame(const id2 vertex_id, const vec3 north_pole) const 
+		inline constexpr auto vertex_frame(const id2 vertex_id, const vec3& north_pole) const  noexcept
 		{
 			return grid.vertex_frame(vertex_id, north_pole);
 		}
 
-		inline constexpr auto vertex_dual_area(const id2 vertex_id) const 
+		inline constexpr auto vertex_dual_area(const id2 vertex_id) const  noexcept
 		{
 			// return grid.vertex_dual_area(vertex_id);
 			return vertex_dual_areas[vertex_id];
 		}
 
-		inline constexpr auto nearest_vertex_id(const vec3 vertex_position) const
+		inline constexpr auto nearest_vertex_id(const vec3& vertex_position) const noexcept
 		{
 			return grid.nearest_vertex_id(vertex_position);
 		}

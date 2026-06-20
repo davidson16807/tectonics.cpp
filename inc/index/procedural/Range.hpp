@@ -21,7 +21,7 @@ namespace procedural
 		T start_value;
 		T step_size;
 		T reported_size;
-		constexpr explicit Range(): 
+		constexpr explicit Range():
 			start_value(0),
 			step_size(1),
 			reported_size(1)

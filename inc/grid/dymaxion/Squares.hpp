@@ -1,7 +1,7 @@
 #pragma once
 
 // C libraries
-#include <math.h>       // ceil, round 
+#include <cmath>        // ceil, round 
 
 // std libraries
 #include <algorithm> 	// max, min, clamp
@@ -31,13 +31,13 @@ namespace dymaxion
 	* `i`: subgrid id
 	*/
 
-    template<typename id, typename scalar, glm::qualifier Q=glm::defaultp>
+    template<typename id, typename scalar, glm::qualifier precision=glm::defaultp>
 	class Squares
 	{
-        using vec3 = glm::vec<3,scalar,Q>;
+        using vec3 = glm::vec<3,scalar,precision>;
 
-		static constexpr scalar pi = 3.141592652653589793f;
-		static constexpr scalar half = 0.5f;
+		static constexpr scalar pi = scalar(3.141592653589793238462643383279502884L);
+		static constexpr scalar half = scalar(0.5);
 		static constexpr id i1 = 1;
 		static constexpr id i2 = 2;
 		static constexpr id square_count = 10;
@@ -49,17 +49,17 @@ namespace dymaxion
 		{
 		}
 
-		inline constexpr vec3 westmost(const id i) const {
+		inline constexpr vec3 westmost(const id i) const noexcept {
 			scalar z         (half*std::pow(-i1,i));
 			scalar longitude (i*half_subgrid_longitude_arc_length);
 			return cartesian_from_zlon(z, longitude);
 		}
 
-		inline constexpr vec3 eastmost(const id i) const {
+		inline constexpr vec3 eastmost(const id i) const noexcept {
 			return westmost(i+i2);
 		}
 
-		inline constexpr scalar polarity(const id i) const {
+		inline constexpr scalar polarity(const id i) const noexcept {
 			return std::pow(-i1, i);
 		}
 

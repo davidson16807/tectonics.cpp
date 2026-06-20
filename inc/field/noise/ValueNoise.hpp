@@ -19,13 +19,12 @@ namespace field
 
 	/*
 	Given a `MosaicNoise`: 𝕋→ℝ, and `MosaicOps` that operate on 𝕋, `ValueNoise` maps 𝕋→ℝ. 
-	For each point, `WorleyNoise` returns the distance to the closest point 
+	For each point, `ValueNoise` returns the distance to the closest point 
 	of a set of procedurally generated points, given by `MosaicNoise`.
 	*/
 	template<int L, typename scalar, typename MosaicNoise, typename MosaicOps, glm::qualifier precision=glm::defaultp>
 	class ValueNoise
 	{
-        using ivec2 = glm::vec<2,int,precision>;
 
 		MosaicNoise noise;
 		MosaicOps ops;
@@ -56,8 +55,8 @@ namespace field
 		{}
 
 
-		template<typename tpoint>
-		scalar operator()(const tpoint V) const {
+		template<typename vector>
+		[[nodiscard]] scalar operator()(const vector& V) const {
 		    auto I = ops.floor(V);
 		    // return noise.indexing.memory_id(ops.add(I,ivec2(1,1)));
 		    // return I.square_position.x;

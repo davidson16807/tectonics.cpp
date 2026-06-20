@@ -413,8 +413,8 @@ namespace mix{
     //     template<typename Constituents>
     //     auto operator() (const Constituents& constituents) const 
     //     {
-    //         return compound::relation::GenericRelation<Tx, Ty>(
-    //             [=](Tx x){
+    //         return compound::relation::GenericRelation<X, Y>(
+    //             [=](X x){
     //                 auto result = (get(check(i,constituents[0]))/sum)*table[0];
     //                 for (std::size_t i=1; i<constituents.size(); i++) {
     //                     result += (get(check(i,constituents[i]))/sum)*table[i];

@@ -23,8 +23,8 @@ namespace dymaxion {
 	class WholeGridBuffers
 	{
 
-		static constexpr id2 square_count = 10;
-		static constexpr id2 pole_count = 2;
+		static constexpr id square_count = 10;
+		static constexpr id pole_count = 2;
 
         const SquareBuffers<id,id2,scalar,Q> squares;
         const PoleBuffers<id,id2,scalar,Q> poles;
@@ -50,7 +50,7 @@ namespace dymaxion {
 			id2 buffer_id = buffer_start_id;
 			buffer_id = poles.storeTriangles(0, input, output, buffer_id);
 			buffer_id = poles.storeTriangles(1, input, output, buffer_id);
-			for (int i=0; i<square_count; i++) { 
+			for (id i=0; i<square_count; i++) { 
 				buffer_id = squares.storeTriangles(i, input, output, buffer_id); 
 			}
 			return buffer_id;
@@ -71,7 +71,7 @@ namespace dymaxion {
 			id2 buffer_id = buffer_start_id;
 			buffer_id = poles.storeTriangleStrips(0, input, output, buffer_id);
 			buffer_id = poles.storeTriangleStrips(1, input, output, buffer_id);
-			for (int i=0; i<square_count; i++) { 
+			for (id i=0; i<square_count; i++) { 
 				buffer_id = squares.storeTriangleStrips(i, input, output, buffer_id); 
 			}
 			return buffer_id;

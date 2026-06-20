@@ -59,7 +59,7 @@ std::_Function_handler<si::units<-1, 1, -1, 0, 0, 0, 0, double> (si::units<0, 0,
 compound::relation::operator+(compound::relation::LiquidDensityTemperatureRelation, compound::relation::LiquidDensityTemperatureRelation)	LiquidDensityTemperatureRelation addition	
 relation::PolynomialRailyardRelation<si::units<0, 0, 1, 0, 0, 0, 0, double>, si::units<-3, 1, 0, 0, 0, 0, 0, double>, 0, 1> relation::get_linear_interpolation_function<si::units<0, 0, 1, 0, 0, 0, 0, double>, si::units<-3, 1, 0, 0, 0, 0, 0, double> >(si::units<0, 0, 1, 0, 0, 0, 0, double>, si::units<-3, 1, 0, 0, 0, 0, 0, double>, std::vector<double, std::allocator<double> >, std::vector<double, std::allocator<double> >)	PolynomialRailyard relation	
 analytic::Railyard<float, analytic::Polynomial<float, 0, 1> >::operator()(float) const	Railyard invocation	
-update::OrbitalControlState::get_view_matrix()	OrbitalControlState::get_view_matrix	
+update::OrbitalNavigationState::get_view_matrix()	OrbitalNavigationState::get_view_matrix	
 dymaxion::Point<int, int, (glm::qualifier)0>::Point(int, glm::vec<2, int, (glm::qualifier)0>)	Point constructor	
 dymaxion::Point<int, int, (glm::qualifier)0> dymaxion::clamp<int, int, (glm::qualifier)0>(dymaxion::Point<int, int, (glm::qualifier)0> const&, int, int)	Point::clamp	
 auto si::operator*<-3, 1, 0, 0, 0, 0, 0, float, unsigned int>(unsigned int, si::units<-3, 1, 0, 0, 0, 0, 0, float>)	si multiplication	
