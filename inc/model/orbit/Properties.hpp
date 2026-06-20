@@ -2,8 +2,6 @@
 
 #include <cmath>
 
-#define GLM_FORCE_PURE      // disable anonymous structs so we can build with ISO C++
-#define GLM_ENABLE_EXPERIMENTAL // length2
 #include <glm/vec3.hpp>     // *vec3
 #include <glm/geometric.hpp>// cross, normalize, dot, length
 #include <glm/gtx/norm.hpp> // length2
@@ -73,19 +71,20 @@ namespace orbit {
 	{
 		using vec3 = glm::vec<3,scalar,precision>;
 
-		static constexpr scalar pi = 3.141592653589793238462;
-
 		const vec3 vernal_equinox_direction;
 		const vec3 north_pole_direction;
 		const scalar standard_gravitational_parameter;
+		const scalar pi;
 		Properties(
 			const vec3& vernal_equinox_direction, 
 			const vec3& north_pole_direction, 
-			const scalar standard_gravitational_parameter
+			const scalar standard_gravitational_parameter,
+			const scalar pi
 		) noexcept : 
 			vernal_equinox_direction(glm::normalize(vernal_equinox_direction)),
 			north_pole_direction(glm::normalize(north_pole_direction)),
-			standard_gravitational_parameter(standard_gravitational_parameter)
+			standard_gravitational_parameter(standard_gravitational_parameter),
+			pi(pi)
 		{}
 	    scalar gravity(const scalar point_mass, const scalar radius) const
 	    {
