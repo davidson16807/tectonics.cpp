@@ -32,7 +32,7 @@
 #include <index/iterated/Arithmetic.hpp>
 
 #include <field/Compose.hpp>                        // Compose
-#include <field/SphericalHarmonics.hpp>             // field::SphericalHarmonics
+#include <field/harmonics/SphericalHarmonic.hpp>    // field::SphericalHarmonic
 
 #include <relation/ScalarRelation.hpp>
 
