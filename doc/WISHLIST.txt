@@ -18,7 +18,7 @@ pinn based climate
 boid demo
 remove remaining instances of index/whole.hpp
 remove remaining instances of index/known.hpp
-
+see if Makefiles can be simplified using `uname -o`
 drop suppressed warnings (-Wno-deprecated-declarations -Wno-braced-scalar-init -Wno-unused-variable -Wno-vexing-parse -Wno-macro-redefined) when building on mac and fix code that is generating them
 
 check that macro switches (e.g. index/adapted/glm/GlmStrings.hpp) work outside of mac

@@ -75,7 +75,7 @@ namespace unlayered
             typename In::value_type source_value;
             for (i = 0; i < grid.vertex_count(); ++i)
             {
-                i2 = grid.vertex_representative(i2);
+                i2 = grid.vertex_representative(i);
                 out[i] = typename Out::value_type(0);
                 source_value = field[i2];
                 for (j = 0; j < N; ++j)
