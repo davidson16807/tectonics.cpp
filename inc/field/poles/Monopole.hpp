@@ -8,7 +8,7 @@ namespace field
 {
 
 	template<int exponent, typename value_type, typename vector>
-	struct MonopoleGradient
+	struct Monopole
 	{
 
 		vector weighted_position;
@@ -28,14 +28,14 @@ namespace field
 			weight(0)
 		{}
 
-	    inline Monopole<value_type,vector>& operator+=(const Monopole<value_type,vector>& other) noexcept
+	    inline Monopole<exponent,value_type,vector>& operator+=(const Monopole<exponent,value_type,vector>& other) noexcept
 	    {
 	    	weighted_position += other.weighted_position;
 	    	weight += other.weight;
 	        return *this;
 	    }
 
-	    inline Monopole<value_type,vector>& operator-=(const Monopole<value_type,vector>& other) noexcept
+	    inline Monopole<exponent,value_type,vector>& operator-=(const Monopole<exponent,value_type,vector>& other) noexcept
 	    {
 	    	weighted_position -= other.weighted_position;
 	    	weight -= other.weight;

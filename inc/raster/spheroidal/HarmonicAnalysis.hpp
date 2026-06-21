@@ -2,7 +2,7 @@
 
 #include <index/procedural/Map.hpp>
 
-#include <field/SphericalHarmonics.hpp>
+#include <field/harmonics/SphericalHarmonics.hpp>
 
 namespace spheroidal 
 {

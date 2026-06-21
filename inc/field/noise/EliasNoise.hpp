@@ -57,15 +57,15 @@ namespace field
 			glm::vec<L,T,Q> normalized(glm::normalize(position));
 			T region_mod(0);
 			T out(0);
-			T region_threshold_i;
+			// T region_threshold_i;
 			for (unsigned int i = 0; i < region_count; ++i)
 			{
 				region_mod = glm::dot(normalized, region_center[i]);
-				region_threshold_i = region_threshold[i];
-				glm::smoothstep(
-					region_threshold_i - region_transition_width/T(2), 
-					region_threshold_i + region_transition_width/T(2),  
-					region_mod);
+				// region_threshold_i = region_threshold[i];
+				// region_mod = glm::smoothstep(
+				// 	region_threshold_i - region_transition_width/T(2), 
+				// 	region_threshold_i + region_transition_width/T(2),  
+				// 	region_mod);
 				out += region_mod;
 			}
 			return out;
