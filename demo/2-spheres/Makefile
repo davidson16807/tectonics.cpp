@@ -13,7 +13,7 @@ LIBS-Msys     =-lglfw3 -lopengl32 -lgdi32 -lglew32
 LIBS-Cygwin   =-lglfw3 -lopengl32 -lgdi32 -lglew32
 LIBS-Darwin   =-L$(BREW)/lib -lglfw -lGLEW -framework OpenGL
 
-FLAGS-Linux   =-Wall -Werror -pedantic-errors -rdynamic -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL
+FLAGS-Linux   =-Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL
 FLAGS-Msys    =-Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL
 FLAGS-Cygwin  =-Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL
 FLAGS-Darwin  =-Wno-macro-redefined -Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL -I$(BREW)/include

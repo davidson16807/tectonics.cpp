@@ -22,7 +22,7 @@ LIBS-Msys     =-lglfw3 -lopengl32 -lgdi32 -lglew32
 LIBS-Cygwin   =-lglfw3 -lopengl32 -lgdi32 -lglew32
 LIBS-Darwin   =-L$(BREW)/lib -L$(BREW)/opt/libomp/lib -lglfw -lGLEW -framework OpenGL -lomp
 
-FLAGS-Linux   =-fopenmp -march=native -Wall -Werror -pedantic-errors -rdynamic -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL
+FLAGS-Linux   =-fopenmp -march=native -Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL
 FLAGS-Msys    =-fopenmp -march=native -Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL
 FLAGS-Cygwin  =-fopenmp -march=native -Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL
 FLAGS-Darwin  =-Xpreprocessor -fopenmp -Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL -I$(BREW)/include -I$(BREW)/opt/libomp/include
