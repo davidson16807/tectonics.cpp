@@ -55,6 +55,37 @@ python -m pip install scons
 
 Once scons is installed, run `scons -u` from any project folder and scons will build the functionality that's defined within the folder. This will create a `test.out` file that you can execute. Remember that whenever you start a new terminal session, you'll need to restart your virtual environment before you use scons. This is done by calling `source venv-path/bin/activate` again.
 
+## Mac
+
+### make with g++
+
+Run `make` under any folder with a `Makefile`. If you haven't set up developer tools yet, your mac will prompt you to install them at this point. If this happens, just let it install and try running `make` again. 
+
+To run graphical demos, you will need to install brew, glew, and glfw. If you haven't done so already, install [brew](https://brew.sh/). Then, install glew and glfw with the following commands:
+
+```zsh
+brew install glew
+brew install glfw
+```
+
+### Scons with g++
+
+Install python if you have not done so already:
+
+```zsh
+brew install python
+```
+
+Brew automatically updates python, so for stability you may want to setup a virtual environment. Navigate to a folder that's easy for you to access and run:
+
+```zsh
+python3 -m venv venv-path
+source venv-path/bin/activate
+python -m pip install scons
+```
+
+Once scons is installed, run `scons -u` from any project folder and scons will build the functionality that's defined within the folder. This will create a `test.out` file that you can execute. Remember that whenever you start a new terminal session, you'll need to restart your virtual environment before you use scons. This is done by calling `source venv-path/bin/activate` again.
+
 ## Windows
 
 ### g++ in Cygwin

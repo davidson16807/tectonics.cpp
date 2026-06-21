@@ -11,7 +11,7 @@ sudo apt-get install libglew-dev
 sudo apt-get install libglfw3-dev
 ```
 
-On Mac, you should only need to run these two commands (unverified):
+On Mac, you should only need to run these two commands:
 ```sh
 brew install glew
 brew install glfw
