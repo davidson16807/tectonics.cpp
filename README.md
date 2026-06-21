@@ -68,6 +68,12 @@ brew install glew
 brew install glfw
 ```
 
+Certain demos require support for building with OpenMP. On Mac, this can be enabled by installing `libomp`:
+
+```zsh
+brew install libomp
+```
+
 ## Windows
 
 ### g++ in Cygwin
