@@ -30,7 +30,7 @@ test = Environment()
 environment = Environment(
     CCFLAGS=(
         "/std:c++20 /D GLM_FORCE_SWIZZLE /D GLM_FORCE_PURE /D GLM_ENABLE_EXPERIMENTAL" if test['CC']=='cl' else 
-        "-std=c++20 -Wall -Werror -pedantic-errors -rdynamic -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL"),
+        "-std=c++20 -Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE -D GLM_FORCE_PURE -D GLM_ENABLE_EXPERIMENTAL"),
     CPPPATH=[os.path.join(root,path) for path in 'inc lib src sketch'.split()],
     # LIBS='glfw GL GLEW'.split(),
 )

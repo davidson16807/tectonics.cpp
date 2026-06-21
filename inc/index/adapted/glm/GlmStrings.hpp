@@ -12,20 +12,12 @@ namespace adapted
 
 	class GlmStrings
 	{
-		#if defined(__clang__)
-			const std::vector<const std::string> 
-		#else
-			const std::array<const std::string, 16> 
-		#endif
+		const std::array<std::string, 16> 
 		weak 
 		{
 			"→","↗","↗","↑","↑","↖","↖","←","←","↙","↙","↓","↓","↘","↘","→"
 		};
-		#if defined(__clang__)
-			const std::vector<const std::string> 
-		#else
-			const std::array<const std::string, 16> 
-		#endif
+		const std::array<std::string, 16> 
 		strong 
 		{
 			"➡","⬈","⬈","⬆","⬆","⬉","⬉","⬅","⬅","⬋","⬋","⬇","⬇","⬊","⬊","➡"

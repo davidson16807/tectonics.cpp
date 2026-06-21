@@ -242,7 +242,7 @@ namespace view
 						fragment_temperature_change_per_radius2 = instance_temperature_change_per_radius2;
 						fragment_atmosphere_scale_height = instance_atmosphere_scale_height;
 			            gl_Position = clip_position;
-			        };
+			        }
 				)"
 			),
 			fragmentShaderGlsl(

@@ -387,11 +387,7 @@ namespace whole
 
 
 
-	#if defined(__clang__)
-		const std::vector<const std::string> 
-	#else
-		const std::array<const std::string, 5>
-	#endif
+	const std::array<std::string, 5>
 	shades {" ", "░", "▒", "▓", "█" };
 
 	inline bool magnitude(const bool a){

@@ -235,7 +235,7 @@ int main() {
   // control_state.log2_height = 20.0f;
   control_state.angular_position = glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f;
 
-  length procedural_terrain_far_distance(3e3*si::kilometer);
+  // length procedural_terrain_far_distance(3e3*si::kilometer);
   length planet_billboard_near_distance(1e8*si::kilometer); // ~10 * solar radius 
   length point_source_near_distance(1e3*si::astronomical_unit);
 

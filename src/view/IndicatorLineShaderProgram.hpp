@@ -120,7 +120,7 @@ namespace view
 
 			        	vec4 clip_offset = vec4(ndc_offset * clip_center.w, 0.0, 0.0);
 			        	gl_Position = clip_center + clip_offset;
-			        };
+			        }
 				)"
 			),
 			fragmentShaderGlsl(

@@ -138,7 +138,7 @@ int main() {
       { 5.97217e24,   Elements(1.49598023e11,0.0167, 0.0     * si::degree, 0.0,   0.0,  0.0) },  // 3   Earth
       { 0.641691e24,  Elements(2.279392e11,  0.0934, 1.851   * si::degree, 0.0,   0.0,  0.0) },  // 4   Mars
       { 1898.125e24,  Elements(7.78570e11,   0.0489, 1.305   * si::degree, 0.0,   0.0,  0.0) },  // 5   Jupiter
-      { 568.317e24,   Elements(1.4ro3353e12,   0.0565, 2.484   * si::degree, 0.0,   0.0,  0.0) },  // 6   Saturn
+      { 568.317e24,   Elements(1.43353e12,   0.0565, 2.484   * si::degree, 0.0,   0.0,  0.0) },  // 6   Saturn
       { 86.8099e24,   Elements(2.87246e12,   0.046,  0.770   * si::degree, 0.0,   0.0,  0.0) },  // 7   Uranus
       { 102.4092e24,  Elements(4.49506e12,   0.009,  1.769   * si::degree, 0.0,   0.0,  0.0) },  // 8   Neptune
       { 1.4615761e22, Elements(39.482*au,    0.2488, 17.14   * si::degree, 0.0,   0.0,  0.0) },  // 9   Pluto-Charon
@@ -241,7 +241,7 @@ int main() {
   control_state.log2_height = std::log2(60.0*Rs);
   control_state.angular_position = glm::vec2(45.0f, 30.0f) * 3.14159f/180.0f;
 
-  length procedural_terrain_far_distance(3e3*si::kilometer);
+  // length procedural_terrain_far_distance(3e3*si::kilometer);
   length planet_billboard_near_distance(1e8*si::kilometer); // ~10 * solar radius 
   length point_source_near_distance(1e3*si::astronomical_unit);
 

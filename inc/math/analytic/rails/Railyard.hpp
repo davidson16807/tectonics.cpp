@@ -243,7 +243,7 @@ namespace analytic {
     };
 
     template<typename T, typename F>
-    constexpr std::string to_string(const Railyard<T,F>& yard)
+    std::string to_string(const Railyard<T,F>& yard)
     {
         std::string output("\r\n");
         for (std::size_t i=0; i<yard.cars.size(); i++)

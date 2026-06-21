@@ -85,7 +85,7 @@ namespace view
 			        	vec3 instance_element_position = (instance_matrix * element_position) + instance_origin;
 			        	// NOTE: for a heads up display, set all `*_matrix` parameters to identity
 			            gl_Position = projection_matrix * view_matrix * model_matrix * vec4(instance_element_position,1);
-			        };
+			        }
 				)"
 			),
 			fragmentShaderGlsl(

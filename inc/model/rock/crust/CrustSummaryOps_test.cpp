@@ -32,9 +32,9 @@ TEST_CASE( "CrustSummary absorb() commutative monoid", "[rock]" ) {
     using density = si::density<float>;
     using length = si::length<float>;
 
-    rock::CrustSummaryOps ops(
-        rock::ColumnSummaryOps(
-            length(si::centimeter)));
+    rock::CrustSummaryOps ops{
+        rock::ColumnSummaryOps{
+            length{si::centimeter}}};
     rock::CrustSummaryAdapter inexact;
 
     float oo = std::numeric_limits<float>::max();
@@ -47,7 +47,7 @@ TEST_CASE( "CrustSummary absorb() commutative monoid", "[rock]" ) {
     rock::StratumSummary subducting (std::bitset<8>(1), density(3300.0*si::kilogram/si::meter3), length( 5.0*si::kilometer));
     rock::StratumSummary oceanic    (std::bitset<8>(4), density(3000.0*si::kilogram/si::meter3), length( 4.0*si::kilometer));
     rock::StratumSummary continental(std::bitset<8>(2), density(2700.0*si::kilogram/si::meter3), length(7.0*si::kilometer));
-    rock::StratumSummary mountain   (std::bitset<8>(2), density(2700.0*si::kilogram/si::meter3), length(70.0*si::kilometer));
+    // rock::StratumSummary mountain   (std::bitset<8>(2), density(2700.0*si::kilogram/si::meter3), length(70.0*si::kilometer));
 
     rock::ColumnSummary columnless11(strataless1, strataless1);
     rock::ColumnSummary columnless12(strataless1, strataless2);
@@ -120,9 +120,9 @@ TEST_CASE( "CrustSummary absorb() mass conservation", "[rock]" ) {
     using density = si::density<float>;
     using area_density = si::area_density<float>;
 
-    rock::CrustSummaryOps ops(
-        rock::ColumnSummaryOps(
-            length(si::centimeter)));
+    rock::CrustSummaryOps ops{
+        rock::ColumnSummaryOps{
+            length{si::centimeter}}};
     rock::CrustSummaryAdapter inexact;
 
     float oo = std::numeric_limits<float>::max();
@@ -135,7 +135,7 @@ TEST_CASE( "CrustSummary absorb() mass conservation", "[rock]" ) {
     rock::StratumSummary subducting (std::bitset<8>(1), density(3300.0*si::kilogram/si::meter3), length( 5.0*si::kilometer));
     rock::StratumSummary continental(std::bitset<8>(2), density(2700.0*si::kilogram/si::meter3), length( 7.0*si::kilometer));
     rock::StratumSummary oceanic    (std::bitset<8>(4), density(3000.0*si::kilogram/si::meter3), length( 4.0*si::kilometer));
-    rock::StratumSummary mountain   (std::bitset<8>(2), density(2700.0*si::kilogram/si::meter3), length(70.0*si::kilometer));
+    // rock::StratumSummary mountain   (std::bitset<8>(2), density(2700.0*si::kilogram/si::meter3), length(70.0*si::kilometer));
 
     rock::ColumnSummary columnless11(strataless1, strataless1);
     rock::ColumnSummary columnless12(strataless1, strataless2);

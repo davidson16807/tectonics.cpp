@@ -75,7 +75,6 @@ namespace orbit {
 		const vec3 north_pole_direction;
 		const scalar standard_gravitational_parameter;
 		const scalar pi;
-
 		Properties(
 			const vec3& vernal_equinox_direction, 
 			const vec3& north_pole_direction, 

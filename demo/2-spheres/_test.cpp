@@ -242,7 +242,7 @@ int main() {
 
   using length = si::length<float>;
   length meter(si::meter);
-  length procedural_terrain_far_distance(3e3*si::kilometer);
+  // length procedural_terrain_far_distance(3e3*si::kilometer);
   length planet_billboard_near_distance(1e7*si::kilometer); // ~10 * solar radius 
   length point_source_near_distance(30.0*si::astronomical_unit); // semi-major axis of pluto
 

@@ -120,7 +120,7 @@ namespace analytic {
 
 
     template<typename T, int Plo, int Phi, int Qlo, int Qhi>
-    constexpr std::string to_string(const Rational<T,Plo,Phi,Qlo,Qhi>& r)
+    std::string to_string(const Rational<T,Plo,Phi,Qlo,Qhi>& r)
     {
         std::string numerator   = to_string(r.p);
         std::string denominator = to_string(r.q);

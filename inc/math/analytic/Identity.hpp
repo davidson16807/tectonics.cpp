@@ -28,7 +28,7 @@ namespace analytic {
     };
     
     template<typename T>
-    constexpr std::string to_string(const Identity<T>& p)
+    std::string to_string(const Identity<T>& p)
     {
         return "x";
     }
