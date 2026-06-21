@@ -55,7 +55,7 @@ TEST_CASE( "NaiveMultipole()", "[field]" ) {
         procedural::uniform(10.0)
     );
 
-    field::NaiveMultipole<double, glm::dvec3> naive(1.0);
+    field::NaiveMultipole<2, double, glm::dvec3> naive(1.0);
 
     for (int i = 0; i < 200; ++i) {
         naive.add(particle_positions[i], particle_weights[i]);
@@ -75,8 +75,8 @@ TEST_CASE( "NaiveMultipole()", "[field]" ) {
         sample_positions
     ));
 
-    field::NaiveMultipole<double, vec3> forward(1.0);
-    field::NaiveMultipole<double, vec3> reverse(1.0);
+    field::NaiveMultipole<2, double, vec3> forward(1.0);
+    field::NaiveMultipole<2, double, vec3> reverse(1.0);
 
     for (int i = 0; i < 200; ++i) {
         forward.add(particle_positions[i], particle_weights[i]);
@@ -92,8 +92,8 @@ TEST_CASE( "NaiveMultipole()", "[field]" ) {
         sample_positions
     ));
 
-    field::NaiveMultipole<double, vec3> base(1.0);
-    field::NaiveMultipole<double, vec3> scaled(1.0);
+    field::NaiveMultipole<2, double, vec3> base(1.0);
+    field::NaiveMultipole<2, double, vec3> scaled(1.0);
 
     const double k = 7.0;
 
