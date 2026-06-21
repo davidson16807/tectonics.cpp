@@ -10,7 +10,7 @@
 #include <glm/geometric.hpp>
 
 // in-house libraries
-#include <field/SphericalHarmonic.hpp>              // field::SphericalHarmonic
+#include <field/harmonics/SphericalHarmonic.hpp>              // field::SphericalHarmonic
 
 namespace field
 {
@@ -26,7 +26,7 @@ namespace field
         f(z,ϕ) = Σᴸₗ₌₀Σˡₘ₌₋ₗ fₗₘYₗₘ(z,ϕ)
 
     where Yₗₘ(z,ϕ) is the 4π-normalized spherical harmonic of degree l and order m 
-    (implemented as `field::SphericalHarmonic<T,M,L>` in field/SphericalHarmonic.hpp)
+    (implemented as `field::SphericalHarmonic<T,M,L>` in field/harmonics/SphericalHarmonic.hpp)
 	*/
 
     template<typename T, int Lhi>
