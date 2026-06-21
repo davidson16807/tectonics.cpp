@@ -20,10 +20,11 @@ FLAGS-Darwin  =-Wall -Werror -pedantic-errors -g -D GLM_FORCE_SWIZZLE -D GLM_FOR
 
 all: $(TEST) ./Makefile
 	rm -f test.cpp && \
+	cp $(ROOT)/lib/glew/bin/Release/x64/glew32.dll . && \
 	find ./ -type f -name '*_specialization.*pp' -exec echo "#include \"{}\"" >> test.cpp \; && \
 	find ./ -type f -name '*_test.*pp' -exec echo "#include \"{}\"" >> test.cpp \; && \
 	$(CPP) -std=c++20 -o test.out test.cpp  $(FLAGS-$(OS)) \
-	-I $(ROOT)/lib/ -I $(ROOT)/inc/ $(LIBS-$(OS)) && \
+	-I $(ROOT)/lib/ -I $(ROOT)/inc/ -I $(ROOT)/src/ $(LIBS-$(OS)) && \
 	chmod a+x test.out && \
 	./test.out
 
