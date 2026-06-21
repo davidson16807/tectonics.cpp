@@ -68,24 +68,6 @@ brew install glew
 brew install glfw
 ```
 
-### Scons with g++
-
-Install python if you have not done so already:
-
-```zsh
-brew install python
-```
-
-Brew automatically updates python, so for stability you may want to setup a virtual environment. Navigate to a folder that's easy for you to access and run:
-
-```zsh
-python3 -m venv venv-path
-source venv-path/bin/activate
-python -m pip install scons
-```
-
-Once scons is installed, run `scons -u` from any project folder and scons will build the functionality that's defined within the folder. This will create a `test.out` file that you can execute. Remember that whenever you start a new terminal session, you'll need to restart your virtual environment before you use scons. This is done by calling `source venv-path/bin/activate` again.
-
 ## Windows
 
 ### g++ in Cygwin
