@@ -141,6 +141,8 @@ int main() {
   const auto mass_of_charon        = 1.5e21 * kg; 
   const auto mass_of_pluto_charon  = mass_of_pluto + mass_of_charon;
 
+  using mat4s = std::vector<mat4>;
+
   using Elements = orbit::Elements<double>;
   using ElementsAndState = orbit::ElementsAndState<double>;
   using Propagator = orbit::UniversalPropagator<double>;
@@ -240,6 +242,8 @@ int main() {
   spins.add(7, Spin(K, pole(257.31,-15.18), K,  97.8 *si::degree,  0.0,    17.2 * si::hour/s, 0.0 ));  
   spins.add(8, Spin(K, pole(299.33, 42.95), K,  28.3 *si::degree,  0.0,    16.1 * si::hour/s, 0.0 ));  
   spins.add(9, Spin(K, pole(132.99, -6.16), K, 122.5 *si::degree,  0.0,   153.3 * si::hour/s, 0.0 ));  
+
+  mat4s global_for_local(parent_ids.size());
 
   // TODO: store this using `Components<vec4>`
   std::vector<glm::vec4> instance_color(parent_ids.size(), vec4(1));
@@ -389,6 +393,11 @@ int main() {
         instance_origins
       );
 
+      for (std::size_t i = 0; i< parent_ids.size(); i++)
+      {
+        global_for_local[i] = !spins.has(origin_id)? mat4(1) : mat4(spins.component_for_entity(origin_id).local_for_global(t/si::second));
+      }
+
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -399,7 +408,7 @@ int main() {
         vec3(0,0,1), // light direction
         // vec3(0.5,0.5,1), // light direction
         vec3(1.0), // ambient light
-        (!spins.has(origin_id)? mat4(1) : mat4(spins.component_for_entity(origin_id).local_for_global(t/si::second))) * model_matrix,
+        global_for_local[origin_id] * model_matrix,
         view_state
       );
 
