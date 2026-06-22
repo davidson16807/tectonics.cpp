@@ -71,6 +71,30 @@ namespace track {
 			force_congruence(force_congruence)
 		{}
 
+		// constructor that assumes defaults for nutation
+		Spin(
+			const vec3 north_pole_in_local_space,
+			const vec3 initial_north_pole_in_global_space,
+			const vec3 precessional_north_pole_in_global_space,
+			const scalar mean_axial_tilt_in_radians,
+			const duration precession_period,
+			const duration spin_period,
+			const duration time_offset,
+			const bool force_congruence = true
+		) : 
+			north_pole_in_local_space(north_pole_in_local_space),
+			initial_north_pole_in_global_space(initial_north_pole_in_global_space),
+			precessional_north_pole_in_global_space(precessional_north_pole_in_global_space),
+			mean_axial_tilt_in_radians(mean_axial_tilt_in_radians),
+			nutation_amplitude_in_radians(0.0),
+			initial_nutation_phase_in_radians(0.0),
+			nutation_period(0.0),
+			precession_period(precession_period),
+			spin_period(spin_period),
+			time_offset(time_offset),
+			force_congruence(force_congruence)
+		{}
+
 		// constructor that assumes defaults for axial tilt, precession, and nutation
 		Spin(
 			const vec3 north_pole_in_local_space,
@@ -85,8 +109,8 @@ namespace track {
 			mean_axial_tilt_in_radians(0.0),
 			nutation_amplitude_in_radians(0.0),
 			initial_nutation_phase_in_radians(0.0),
-			nutation_period(1.0), // no nutation occurs so any period is applicable, this value allows congruence to be forced on as small a period as possible
-			precession_period(1.0), // no nutation occurs so any period is applicable, this value allows congruence to be forced on as small a period as possible
+			nutation_period(0.0),
+			precession_period(0.0),
 			spin_period(spin_period),
 			time_offset(time_offset),
 			force_congruence(force_congruence)
@@ -100,8 +124,8 @@ namespace track {
 			mean_axial_tilt_in_radians(0.0),
 			nutation_amplitude_in_radians(0.0),
 			initial_nutation_phase_in_radians(0.0),
-			nutation_period(1.0), // no nutation occurs so any period is applicable, this value allows congruence to be forced on as small a period as possible
-			precession_period(1.0), // no nutation occurs so any period is applicable, this value allows congruence to be forced on as small a period as possible
+			nutation_period(0.0),
+			precession_period(0.0),
 			spin_period(0.0),
 			time_offset(0.0),
 			force_congruence(false)
@@ -110,8 +134,13 @@ namespace track {
 		mat3 global_for_local(const duration time_step) const
 		{
 
+			const scalar period = 
+				(nutation_period > 0.0? nutation_period : 1.0) *
+				(precession_period > 0.0? precession_period : 1.0) *
+				spin_period;
+
 			const scalar phase = force_congruence? 
-				math::floormod(time_step+time_offset, nutation_period*precession_period*spin_period) 
+				math::floormod(time_step+time_offset, period) 
 			  : time_step+time_offset;
 
 			// TODO: apply time_offset to time_step, the code below assumes the result is stored in time_offset
@@ -124,10 +153,17 @@ namespace track {
 	        mat4 rotation(scalar(1));
 
 			// NOTE: we use mat4x4 since it is the only thing that rotate() works with
-	        rotation = glm::rotate(rotation, (turn * phase/precession_period), precessional_north_pole_in_global_space);
-	        rotation = glm::rotate(rotation, 
-	        	mean_axial_tilt_in_radians + nutation_amplitude_in_radians * std::sin(initial_nutation_phase_in_radians + turn*phase/nutation_period),
-	        	nutation_north_pole_in_global_space);
+	        if (precession_period > 0.0)
+	        {
+		        rotation = glm::rotate(rotation, (turn * phase/precession_period), precessional_north_pole_in_global_space);
+	        }
+
+	        if (nutation_period > 0.0)
+	        {
+		        rotation = glm::rotate(rotation, 
+		        	mean_axial_tilt_in_radians + nutation_amplitude_in_radians * std::sin(initial_nutation_phase_in_radians + turn*phase/nutation_period),
+		        	nutation_north_pole_in_global_space);
+	        }
 
 	        rotation = glm::rotate(rotation, (turn * phase/spin_period), north_pole_in_local_space);
 
