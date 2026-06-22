@@ -39,15 +39,33 @@ using vec3 = glm::vec3;
 // using mat3 = glm::mat3;
 using mat4 = glm::mat4;
 
-vec3 direction(const float right_ascension, const float declination)
+[[nodiscard]] vec3 spherical_to_cartesian(const float right_ascension, const float declination) noexcept
 {
-   float z = std::sin(declination * si::degree);
-   float r = std::cos(declination * si::degree);
+   const float z = std::sin(declination * si::degree);
+   const float r = std::cos(declination * si::degree);
    return vec3(
      r * std::sin(right_ascension * si::degree),
      r * std::cos(right_ascension * si::degree),
      z
    );
+}
+
+[[nodiscard]] vec3 earth_centered_inertial_to_ecliptic(const vec3& u) noexcept
+{
+    // mean obliquity of the ecliptic at J2000.0, 23° 26' 21.448"
+    const float obliquity( 23.439291 * si::degree );
+    const float c = glm::cos(obliquity);
+    const float s = glm::sin(obliquity);
+    return {
+        u.x,
+         c * u.y + s * u.z,
+        -s * u.y + c * u.z
+    };
+}
+
+[[nodiscard]] vec3 pole(const float right_ascension, const float declination) noexcept
+{
+  return earth_centered_inertial_to_ecliptic(spherical_to_cartesian(right_ascension, declination));
 }
 
 int main() {
@@ -211,18 +229,17 @@ int main() {
   vec3 K(0,0,1);
   Spin default_spin(K, K, 24 * si::hour/s, 0.0 * s/s );
   Spins spins(parent_ids.size(), default_spin, false);
-  auto earth_north_pole = direction(90.0, 66.56 );
   //        local pole  inital global pole   proc pole   axial tilt   prec period   spin period          time offset
-  spins.add(0, Spin(K, earth_north_pole, K,   7.25*si::degree,  0.0,   26.67 * si::day/s,  0.0 ));
-  spins.add(1, Spin(K, earth_north_pole, K,   0.01*si::degree,  0.0,  1407.6 * si::hour/s, 0.0 ));
-  spins.add(2, Spin(K, earth_north_pole, K,  177.4*si::degree,  0.0, -5832.5 * si::hour/s, 0.0 ));
-  spins.add(3, Spin(K, earth_north_pole, K,  23.44*si::degree,  9.2*si::arcsecond, 0.0, 18.6*si::year/s, T/s, 23.93 * si::hour/s, 0.0 ));
-  spins.add(4, Spin(K, earth_north_pole, K,  25.2 *si::degree,  0.0,    24.6 * si::hour/s, 0.0 ));  
-  spins.add(5, Spin(K, earth_north_pole, K,   3.1 *si::degree,  0.0,     9.9 * si::hour/s, 0.0 ));  
-  spins.add(6, Spin(K, earth_north_pole, K,  26.7 *si::degree,  0.0,    10.7 * si::hour/s, 0.0 ));  
-  spins.add(7, Spin(K, earth_north_pole, K,  97.8 *si::degree,  0.0,   -17.2 * si::hour/s, 0.0 ));  
-  spins.add(8, Spin(K, earth_north_pole, K,  28.3 *si::degree,  0.0,    16.1 * si::hour/s, 0.0 ));  
-  spins.add(9, Spin(K, earth_north_pole, K, 122.5 *si::degree,  0.0,  -153.3 * si::hour/s, 0.0 ));  
+  spins.add(0, Spin(K, pole(286.13, 63.87), K,   7.25*si::degree,  0.0,   26.67 * si::day/s,  0.0 ));
+  spins.add(1, Spin(K, pole(281.01, 61.41), K,   0.01*si::degree,  0.0,  1407.6 * si::hour/s, 0.0 ));
+  spins.add(2, Spin(K, pole( 92.76,-67.16), K,  177.4*si::degree,  0.0,  5832.5 * si::hour/s, 0.0 ));
+  spins.add(3, Spin(K, pole(  0.0,  90.0 ), K,  23.44*si::degree,  9.2*si::arcsecond, 0.0, 18.6*si::year/s, T/s, 23.93 * si::hour/s, 0.0 ));
+  spins.add(4, Spin(K, pole(317.68, 52.89), K,  25.2 *si::degree,  0.0,    24.6 * si::hour/s, 0.0 ));  
+  spins.add(5, Spin(K, pole(268.06, 64.50), K,   3.1 *si::degree,  0.0,     9.9 * si::hour/s, 0.0 ));  
+  spins.add(6, Spin(K, pole( 40.59, 83.54), K,  26.7 *si::degree,  0.0,    10.7 * si::hour/s, 0.0 ));  
+  spins.add(7, Spin(K, pole(257.31,-15.18), K,  97.8 *si::degree,  0.0,    17.2 * si::hour/s, 0.0 ));  
+  spins.add(8, Spin(K, pole(299.33, 42.95), K,  28.3 *si::degree,  0.0,    16.1 * si::hour/s, 0.0 ));  
+  spins.add(9, Spin(K, pole(132.99, -6.16), K, 122.5 *si::degree,  0.0,   153.3 * si::hour/s, 0.0 ));  
 
   // TODO: store this using `Components<vec4>`
   std::vector<glm::vec4> instance_color(parent_ids.size(), vec4(1));

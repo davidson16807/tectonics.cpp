@@ -155,13 +155,11 @@ namespace track {
 	        mat4 rotation(scalar(1));
 
 	        scalar precession_phase = precession_period > s0? turn * time/precession_period : s0;
-	        scalar nutation_offset = nutation_period > s0? 
-	        	nutation_amplitude_in_radians * std::sin(initial_nutation_phase_in_radians + turn*time/nutation_period) 
-	          : s0;
+	        scalar nutation_phase = nutation_period > s0? initial_nutation_phase_in_radians + turn*time/nutation_period : s0;
 
 			// NOTE: we use mat4x4 since it is the only thing that rotate() works with
 	        rotation = glm::rotate(rotation, precession_phase, precessional_north_pole_in_global_space);
-	        rotation = glm::rotate(rotation, mean_axial_tilt_in_radians + nutation_offset, nutation_north_pole_in_global_space);
+	        rotation = glm::rotate(rotation, mean_axial_tilt_in_radians + nutation_amplitude_in_radians * std::sin(nutation_phase), nutation_north_pole_in_global_space);
 	        rotation = glm::rotate(rotation, (turn * time/spin_period), north_pole_in_local_space);
 	        return rotation;
 
