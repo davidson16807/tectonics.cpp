@@ -209,7 +209,7 @@ int main() {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-      mat4 model_matrix(spin.orientation(t/s));
+      mat4 model_matrix(spin.global_for_local(t/s));
       // auto model_matrix = mat4(float(timestep_id));
       model_matrix[3][3] = float(1);
 
@@ -235,7 +235,6 @@ int main() {
         orbit_updater.update(control_state, message, control_state);
         timestep_id = timewarp_updater.update(timestep_id, timesteps, message);
         timestep_id = pause_updater.update(timestep_id, message);
-        std::cout << std::to_string(timestep_id) << std::endl;
         message_poll.pop();
       }
 

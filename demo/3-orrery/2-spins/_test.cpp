@@ -372,7 +372,7 @@ int main() {
         vec3(0,0,1), // light direction
         // vec3(0.5,0.5,1), // light direction
         vec3(1.0), // ambient light
-        glm::inverse(!spins.has(origin_id)? mat4(1) : mat4(spins.component_for_entity(origin_id).orientation(t/si::second))) * model_matrix,
+        (!spins.has(origin_id)? mat4(1) : mat4(spins.component_for_entity(origin_id).local_for_global(t/si::second))) * model_matrix,
         view_state
       );
 

@@ -107,8 +107,7 @@ namespace track {
 			force_congruence(false)
 		{}
 
-
-		mat3 orientation(const duration time_step) const
+		mat3 global_for_local(const duration time_step) const
 		{
 
 			const scalar phase = force_congruence? 
@@ -134,6 +133,11 @@ namespace track {
 
 	        return rotation;
 
+		}
+
+		mat3 local_for_global(const duration time_step) const
+		{
+	        return glm::transpose(global_for_local(time_step));
 		}
 
 		// Spin<scalar,duration> advance(const duration time_step) const
