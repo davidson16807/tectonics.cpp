@@ -17,6 +17,8 @@ namespace track {
 
 		static constexpr scalar pi = 3.14159265358979323848264338327950288419716;
 		static constexpr scalar turn = scalar(2) * pi;
+		static constexpr scalar s0 = scalar(0);
+		static constexpr scalar s1 = scalar(1);
 
 	public:
 
@@ -86,9 +88,9 @@ namespace track {
 			initial_north_pole_in_global_space(initial_north_pole_in_global_space),
 			precessional_north_pole_in_global_space(precessional_north_pole_in_global_space),
 			mean_axial_tilt_in_radians(mean_axial_tilt_in_radians),
-			nutation_amplitude_in_radians(0.0),
-			initial_nutation_phase_in_radians(0.0),
-			nutation_period(0.0),
+			nutation_amplitude_in_radians(0),
+			initial_nutation_phase_in_radians(0),
+			nutation_period(0),
 			precession_period(precession_period),
 			spin_period(spin_period),
 			time_offset(time_offset),
@@ -106,11 +108,11 @@ namespace track {
 			north_pole_in_local_space(north_pole_in_local_space),
 			initial_north_pole_in_global_space(initial_north_pole_in_global_space),
 			precessional_north_pole_in_global_space(initial_north_pole_in_global_space),
-			mean_axial_tilt_in_radians(0.0),
-			nutation_amplitude_in_radians(0.0),
-			initial_nutation_phase_in_radians(0.0),
-			nutation_period(0.0),
-			precession_period(0.0),
+			mean_axial_tilt_in_radians(0),
+			nutation_amplitude_in_radians(0),
+			initial_nutation_phase_in_radians(0),
+			nutation_period(0),
+			precession_period(0),
 			spin_period(spin_period),
 			time_offset(time_offset),
 			force_congruence(force_congruence)
@@ -121,13 +123,13 @@ namespace track {
 			north_pole_in_local_space(),
 			initial_north_pole_in_global_space(),
 			precessional_north_pole_in_global_space(),
-			mean_axial_tilt_in_radians(0.0),
-			nutation_amplitude_in_radians(0.0),
-			initial_nutation_phase_in_radians(0.0),
-			nutation_period(0.0),
-			precession_period(0.0),
-			spin_period(0.0),
-			time_offset(0.0),
+			mean_axial_tilt_in_radians(0),
+			nutation_amplitude_in_radians(0),
+			initial_nutation_phase_in_radians(0),
+			nutation_period(0),
+			precession_period(0),
+			spin_period(0),
+			time_offset(0),
 			force_congruence(false)
 		{}
 
@@ -135,11 +137,11 @@ namespace track {
 		{
 
 			const scalar period = 
-				(nutation_period > 0.0? nutation_period : 1.0) *
-				(precession_period > 0.0? precession_period : 1.0) *
+				(nutation_period > s0? nutation_period : s1) *
+				(precession_period > s0? precession_period : s1) *
 				spin_period;
 
-			const scalar phase = force_congruence? 
+			const scalar time = force_congruence? 
 				math::floormod(time_step+time_offset, period) 
 			  : time_step+time_offset;
 
@@ -152,21 +154,15 @@ namespace track {
 
 	        mat4 rotation(scalar(1));
 
+	        scalar precession_phase = precession_period > s0? turn * time/precession_period : s0;
+	        scalar nutation_offset = nutation_period > s0? 
+	        	nutation_amplitude_in_radians * std::sin(initial_nutation_phase_in_radians + turn*time/nutation_period) 
+	          : s0;
+
 			// NOTE: we use mat4x4 since it is the only thing that rotate() works with
-	        if (precession_period > 0.0)
-	        {
-		        rotation = glm::rotate(rotation, (turn * phase/precession_period), precessional_north_pole_in_global_space);
-	        }
-
-	        if (nutation_period > 0.0)
-	        {
-		        rotation = glm::rotate(rotation, 
-		        	mean_axial_tilt_in_radians + nutation_amplitude_in_radians * std::sin(initial_nutation_phase_in_radians + turn*phase/nutation_period),
-		        	nutation_north_pole_in_global_space);
-	        }
-
-	        rotation = glm::rotate(rotation, (turn * phase/spin_period), north_pole_in_local_space);
-
+	        rotation = glm::rotate(rotation, precession_phase, precessional_north_pole_in_global_space);
+	        rotation = glm::rotate(rotation, mean_axial_tilt_in_radians + nutation_offset, nutation_north_pole_in_global_space);
+	        rotation = glm::rotate(rotation, (turn * time/spin_period), north_pole_in_local_space);
 	        return rotation;
 
 		}
