@@ -6,7 +6,7 @@
 #include <unordered_map> // std::unordered_map
 
 /*
-`MixedComponents` represents a table of components within an Entity-Component-System ("ECS") pattern
+`RareMixedComponents` represents a table of components within an Entity-Component-System ("ECS") pattern
 that alternates between approaches used by `EphemeralComponents` and `EnduringComponents`. 
 Upon removal or addition, the vector will behave as `EphemeralComponents` if the entity id in is after a threshold, 
 otherwise it will use logic from `EnduringComponents`.
@@ -20,7 +20,7 @@ but such components will be inserted and removed in O(1) time.
 namespace orrery
 {
 template<typename id, typename Component>
-class MixedComponents
+class RareMixedComponents
 {
 	// The packed array of components (of generic type Component)
 	std::vector<Component> components;
@@ -36,10 +36,10 @@ class MixedComponents
 public:
 
 	/*
-	Create an empty `MixedComponents<id,Component>` instance
+	Create an empty `RareMixedComponents<id,Component>` instance
 	with a given threshold.
 	*/
-	MixedComponents(std::size_t threshold_ = 0):
+	RareMixedComponents(std::size_t threshold_ = 0):
 		components(),
 		entity_of_index(),
 		index_of_entity(),
@@ -49,11 +49,11 @@ public:
 	}
 
 	/*
-	Create a `MixedComponents<id,Component>` instance from the vector `components`
+	Create a `RareMixedComponents<id,Component>` instance from the vector `components`
 	where each component corresponds to a unique and newly constructed entity
 	whose id is equal to the component's index.
 	*/
-	MixedComponents(const std::vector<Component>& components_, std::size_t threshold_ = 0):
+	RareMixedComponents(const std::vector<Component>& components_, std::size_t threshold_ = 0):
 		components(components_),
 		entity_of_index(),
 		index_of_entity(),
@@ -68,10 +68,10 @@ public:
 	}
 
 	/*
-	Create a `MixedComponents<id,Component>`
+	Create a `RareMixedComponents<id,Component>`
 	that has memory preallocated to serve a given number of entities.
 	*/
-	MixedComponents(const id& entity_count, std::size_t threshold_):
+	RareMixedComponents(const id& entity_count, std::size_t threshold_):
 		components(),
 		entity_of_index(),
 		index_of_entity(),

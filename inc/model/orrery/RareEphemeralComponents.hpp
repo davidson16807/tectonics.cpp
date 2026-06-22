@@ -6,7 +6,7 @@
 #include <unordered_map> // std::unordered_map
 
 /*
-`EphemeralComponents` represents a table of components within an Entity-Component-System ("ECS") pattern
+`RareEphemeralComponents` represents a table of components within an Entity-Component-System ("ECS") pattern
 where components or entities are frequently added or removed. `add` and `remove` are done in O(1) time.
 It offers functionality beyond std::vector by managing lookups between component ids and entities,
 thereby accelerating checks for systems that operate on entities with several kinds of components.
@@ -15,9 +15,9 @@ Since we want to avoid expensive memory reallocation,
 The size of the std::vector is allocated according to the number of entities,
 and components in the std::vector are rearranged to minimize changes in memory when entities are added or removed.
 However this will mean that components are not sorted by their entity id,
-so avoid `EphemeralComponents` if sorting by entity id will better exploit cache memory in traversals involving multiple component types.
+so avoid `RareEphemeralComponents` if sorting by entity id will better exploit cache memory in traversals involving multiple component types.
 
-`EphemeralComponents` is best suited if components are expected to be added or removed frequently,
+`RareEphemeralComponents` is best suited if components are expected to be added or removed frequently,
 and interaction between multiple component types is not expected so that contents here can be traversed in-order.
 */
 
@@ -25,7 +25,7 @@ namespace orrery
 {
 
 template<typename id, typename Component>
-class EphemeralComponents
+class RareEphemeralComponents
 {
 
 	// The packed array of components (of generic type Component)
@@ -40,9 +40,9 @@ class EphemeralComponents
 public:
 
 	/*
-	Create an empty `EphemeralComponents<id,Component>` instance 
+	Create an empty `RareEphemeralComponents<id,Component>` instance 
 	*/
-	EphemeralComponents():
+	RareEphemeralComponents():
 		components(),
 		entity_of_index(),
 		index_of_entity(),
@@ -51,11 +51,11 @@ public:
 	}
 
 	/*
-	Create a `EphemeralComponents<id,Component>` instance from the vector `components`
+	Create a `RareEphemeralComponents<id,Component>` instance from the vector `components`
 	where each components corresponds to a unique and newly constructed entity
 	whose id is equal to the component's index.
 	*/
-	EphemeralComponents(const std::vector<Component>& components_):
+	RareEphemeralComponents(const std::vector<Component>& components_):
 		components(components_),
 		entity_of_index(),
 		index_of_entity(),
@@ -69,10 +69,10 @@ public:
 	}
 
 	/*
-	Create a `EphemeralComponents<id,Component>` 
+	Create a `RareEphemeralComponents<id,Component>` 
 	that has memory preallocated to serve a given number of entities.
 	*/
-	EphemeralComponents(const id& entity_count):
+	RareEphemeralComponents(const id& entity_count):
 		components(),
 		entity_of_index(),
 		index_of_entity(),

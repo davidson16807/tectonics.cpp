@@ -59,7 +59,7 @@ public:
 	/*
 	Create a `CommonComponents<id,Component>` instance
 	that has memory preallocated to serve a given number of entities 
-	and default components dependant on a the value of `existss`
+	and default components dependant on a the value of `exists`
 	*/
 	CommonComponents(const id& entity_count, const bool exists):
 		components(std::size_t(entity_count)),
@@ -74,6 +74,18 @@ public:
 	CommonComponents(const id& entity_count, const Component component):
 		components(std::size_t(entity_count), component),
 		exists(std::size_t(entity_count), true)
+	{
+	}
+
+	/*
+	Create a `CommonComponents<id,Component>` instance
+	that has memory preallocated to serve a given number of entities with a single given component.
+	The components may optionally exist only as placeholders if `exists` is false.
+	This is useful if no default constructor exists for the `Component` class
+	*/
+	CommonComponents(const id& entity_count, const Component component, const bool exists):
+		components(std::size_t(entity_count), component),
+		exists(std::size_t(entity_count), exists)
 	{
 	}
 

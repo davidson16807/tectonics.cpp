@@ -6,7 +6,7 @@
 #include <unordered_map> // std::unordered_map
 
 /*
-`EnduringComponents` represents a table of components within an Entity-Component-System ("ECS") pattern
+`RareEnduringComponents` represents a table of components within an Entity-Component-System ("ECS") pattern
 where components or entities are infrequently added or removed. `add` and `remove` are done in O(N) time.
 It offers functionality beyond std::vector by managing lookups between component ids and entities,
 thereby accelerating checks for systems that operate on entities with several kinds of components.
@@ -15,9 +15,9 @@ Since we want to avoid expensive memory reallocation,
 The size of the std::vector is allocated according to the number of entities,
 and components in the std::vector are rearranged to minimize changes in memory when entities are added or removed.
 However this will mean that components are not sorted by their entity id,
-so avoid `EnduringComponents` if sorting by entity id will better exploit cache memory in traversals involving multiple component types.
+so avoid `RareEnduringComponents` if sorting by entity id will better exploit cache memory in traversals involving multiple component types.
 
-`EnduringComponents` is best suited if components are expected to be added or removed frequently,
+`RareEnduringComponents` is best suited if components are expected to be added or removed frequently,
 and interaction between multiple component types is not expected so that contents here can be traversed in-order.
 */
 
@@ -25,7 +25,7 @@ namespace orrery
 {
 
 template<typename id, typename Component>
-class EnduringComponents
+class RareEnduringComponents
 {
 
 	// The packed array of components (of generic type Component)
@@ -40,9 +40,9 @@ class EnduringComponents
 public:
 
 	/*
-	Create an empty `EnduringComponents<id,Component>` instance 
+	Create an empty `RareEnduringComponents<id,Component>` instance 
 	*/
-	EnduringComponents():
+	RareEnduringComponents():
 		components(),
 		entity_of_index(),
 		index_of_entity(),
@@ -51,11 +51,11 @@ public:
 	}
 
 	/*
-	Create a `EnduringComponents<id,Component>` instance from the vector `components`
+	Create a `RareEnduringComponents<id,Component>` instance from the vector `components`
 	where each components corresponds to a unique and newly constructed entity
 	whose id is equal to the component's index.
 	*/
-	EnduringComponents(const std::vector<Component>& components_):
+	RareEnduringComponents(const std::vector<Component>& components_):
 		components(components_),
 		entity_of_index(),
 		index_of_entity(),
@@ -69,10 +69,10 @@ public:
 	}
 
 	/*
-	Create a `EnduringComponents<id,Component>` 
+	Create a `RareEnduringComponents<id,Component>` 
 	that has memory preallocated to serve a given number of entities.
 	*/
-	EnduringComponents(const id& entity_count):
+	RareEnduringComponents(const id& entity_count):
 		components(),
 		entity_of_index(),
 		index_of_entity(),

@@ -6,7 +6,8 @@
 #include <vector>        // std::vector
 
 /*
-`OptionalComponents` represents a table of components within an Entity-Component-System ("ECS") pattern
+`OptionalComponents` is an alternate implementation of `CommonComponents` that uses std::optionals
+It represents a table of components within an Entity-Component-System ("ECS") pattern
 where most entities are likely to have this component type. It stores components using std::optional
 inside a std::vector to improve cache locality between components and their existance flags.
 
