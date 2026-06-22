@@ -26,24 +26,24 @@ namespace track {
 
 		// the position of the north pole of the spin axis in local coordinates 
 		// this is useful to model true polar wander, and to support different "up" axis standards
-		const vec3 north_pole_in_local_space;
+		vec3 north_pole_in_local_space;
 		// the position of the north pole of the spin axis in global coordinates when time_offset = 0 and initial_nutation_phase_in_radians = 0
-		const vec3 initial_north_pole_in_global_space; 
+		vec3 initial_north_pole_in_global_space; 
 		// the position in global coordinates about which the north pole rotates
-		const vec3 precessional_north_pole_in_global_space;
+		vec3 precessional_north_pole_in_global_space;
 		// 
-		const scalar mean_axial_tilt_in_radians;
+		scalar mean_axial_tilt_in_radians;
 		// the amount by which precessional_north_pole_in_global_space differs differs during nutation
 		// when precessional_north_pole_in_global_space is measured as radians from initial_north_pole_in_global_space
-		const scalar nutation_amplitude_in_radians; 
+		scalar nutation_amplitude_in_radians; 
 		// the phase of nutation in radians when time_offset = 0
-		const duration initial_nutation_phase_in_radians;
+		duration initial_nutation_phase_in_radians;
 		// the time it takes to 
-		const duration nutation_period; 
-		const duration precession_period;
-		const duration spin_period;
-		const duration time_offset;
-		const bool force_congruence;
+		duration nutation_period; 
+		duration precession_period;
+		duration spin_period;
+		duration time_offset;
+		bool force_congruence;
 
 		Spin(
 			const vec3 north_pole_in_local_space,
@@ -71,10 +71,49 @@ namespace track {
 			force_congruence(force_congruence)
 		{}
 
+		// constructor that assumes defaults for axial tilt, precession, and nutation
+		Spin(
+			const vec3 north_pole_in_local_space,
+			const vec3 initial_north_pole_in_global_space,
+			const duration spin_period,
+			const duration time_offset,
+			const bool force_congruence = true
+		) : 
+			north_pole_in_local_space(north_pole_in_local_space),
+			initial_north_pole_in_global_space(initial_north_pole_in_global_space),
+			precessional_north_pole_in_global_space(initial_north_pole_in_global_space),
+			mean_axial_tilt_in_radians(0.0),
+			nutation_amplitude_in_radians(0.0),
+			initial_nutation_phase_in_radians(0.0),
+			nutation_period(1.0), // no nutation occurs so any period is applicable, this value allows congruence to be forced on as small a period as possible
+			precession_period(1.0), // no nutation occurs so any period is applicable, this value allows congruence to be forced on as small a period as possible
+			spin_period(spin_period),
+			time_offset(time_offset),
+			force_congruence(force_congruence)
+		{}
+
+		// default constructor, needed for ECS component lists
+		Spin() : 
+			north_pole_in_local_space(),
+			initial_north_pole_in_global_space(),
+			precessional_north_pole_in_global_space(),
+			mean_axial_tilt_in_radians(0.0),
+			nutation_amplitude_in_radians(0.0),
+			initial_nutation_phase_in_radians(0.0),
+			nutation_period(1.0), // no nutation occurs so any period is applicable, this value allows congruence to be forced on as small a period as possible
+			precession_period(1.0), // no nutation occurs so any period is applicable, this value allows congruence to be forced on as small a period as possible
+			spin_period(0.0),
+			time_offset(0.0),
+			force_congruence(false)
+		{}
+
+
 		mat3 orientation(const duration time_step) const
 		{
 
-			const scalar phase = math::floormod(time_step+time_offset, nutation_period*precession_period*spin_period);
+			const scalar phase = force_congruence? 
+				math::floormod(time_step+time_offset, nutation_period*precession_period*spin_period) 
+			  : time_step+time_offset;
 
 			// TODO: apply time_offset to time_step, the code below assumes the result is stored in time_offset
 			vec3 nutation_north_pole_in_global_space = glm::normalize(
@@ -83,19 +122,17 @@ namespace track {
 					precessional_north_pole_in_global_space
 				));
 
-	        mat4 matrix2(scalar(1));
-	        // TODO: multiply by a rotation matrix that moves north_pole_in_local_space to point at north_pole_in_global_space
+	        mat4 rotation(scalar(1));
 
 			// NOTE: we use mat4x4 since it is the only thing that rotate() works with
-	        matrix2 = glm::rotate(matrix2, (turn * phase/precession_period), precessional_north_pole_in_global_space);
-	        matrix2 = glm::rotate(matrix2, 
+	        rotation = glm::rotate(rotation, (turn * phase/precession_period), precessional_north_pole_in_global_space);
+	        rotation = glm::rotate(rotation, 
 	        	mean_axial_tilt_in_radians + nutation_amplitude_in_radians * std::sin(initial_nutation_phase_in_radians + turn*phase/nutation_period),
 	        	nutation_north_pole_in_global_space);
-	        // TODO: use matrix1 to calculate north_pole_in_global_space
 
-	        matrix2 = glm::rotate(matrix2, (turn * phase/spin_period), north_pole_in_local_space);
+	        rotation = glm::rotate(rotation, (turn * phase/spin_period), north_pole_in_local_space);
 
-	        return matrix2;
+	        return rotation;
 
 		}
 

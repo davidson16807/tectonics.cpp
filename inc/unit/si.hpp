@@ -656,8 +656,8 @@ namespace si{
   constexpr time<double> day       (hour*24.0);
   constexpr float radian   (1.0);
   constexpr float degree   (3.1415926535897932384626433 / 180.0);
-  constexpr float arcminute(degree/60);
-  constexpr float arcsecond(arcminute/60);
+  constexpr float arcminute(degree/60.0);
+  constexpr float arcsecond(arcminute/60.0);
   constexpr mass<double> dalton    (1.660538921e-27);
 
   constexpr area<double> are (100.0);
