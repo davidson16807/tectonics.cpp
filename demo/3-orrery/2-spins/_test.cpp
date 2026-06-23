@@ -231,17 +231,18 @@ int main() {
   vec3 K(0,0,1);
   Spin default_spin(K, K, 24 * si::hour/s, 0.0 * s/s );
   Spins spins(parent_ids.size(), default_spin, false);
-  //        local pole  inital global pole   proc pole   axial tilt   prec period   spin period          time offset
+  //       local pole  inital global pole  proc pole  axial tilt   prec period   spin period          time offset
   spins.add(0, Spin(K, pole(286.13, 63.87), K,   7.25*si::degree,  0.0,   26.67 * si::day/s,  0.0 ));
   spins.add(1, Spin(K, pole(281.01, 61.41), K,   0.01*si::degree,  0.0,  1407.6 * si::hour/s, 0.0 ));
-  spins.add(2, Spin(K, pole( 92.76,-67.16), K,  177.4*si::degree,  0.0,  5832.5 * si::hour/s, 0.0 ));
-  spins.add(3, Spin(K, pole(  0.0,  90.0 ), K,  23.44*si::degree,  9.2*si::arcsecond, 0.0, 18.6*si::year/s, T/s, 23.93 * si::hour/s, 0.0 ));
+  spins.add(2, Spin(K, pole( 92.76,-67.16), K,  177.4*si::degree,  0.0, 0.0, 0.0, 29000*si::year/s, 5832.5 * si::hour/s, 0.0 ));
+  spins.add(3, Spin(K, pole(  0.0,  90.0 ), K,  23.439291*si::degree,  9.2*si::arcsecond, 0.0, 18.6*si::year/s, T/s, 23.93 * si::hour/s, 0.0 ));
   spins.add(4, Spin(K, pole(317.68, 52.89), K,  25.2 *si::degree,  0.0,    24.6 * si::hour/s, 0.0 ));  
   spins.add(5, Spin(K, pole(268.06, 64.50), K,   3.1 *si::degree,  0.0,     9.9 * si::hour/s, 0.0 ));  
   spins.add(6, Spin(K, pole( 40.59, 83.54), K,  26.7 *si::degree,  0.0,    10.7 * si::hour/s, 0.0 ));  
   spins.add(7, Spin(K, pole(257.31,-15.18), K,  97.8 *si::degree,  0.0,    17.2 * si::hour/s, 0.0 ));  
   spins.add(8, Spin(K, pole(299.33, 42.95), K,  28.3 *si::degree,  0.0,    16.1 * si::hour/s, 0.0 ));  
   spins.add(9, Spin(K, pole(132.99, -6.16), K, 122.5 *si::degree,  0.0,   153.3 * si::hour/s, 0.0 ));  
+  spins.add(13, Spin(K, pole(266.86, 65.64), K, 6.687 *si::degree,  0.0, 655.73 * si::hour/s, 0.0 ));  // moon
 
   mat4s global_for_local(parent_ids.size());
 
@@ -393,7 +394,7 @@ int main() {
         instance_origins
       );
 
-      for (std::size_t i = 0; i< parent_ids.size(); i++)
+      for (std::size_t i = 0; i < parent_ids.size(); i++)
       {
         global_for_local[i] = !spins.has(origin_id)? mat4(1) : mat4(spins.component_for_entity(origin_id).local_for_global(t/si::second));
       }
