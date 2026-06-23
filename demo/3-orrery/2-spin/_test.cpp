@@ -14,7 +14,7 @@
 
 #include <unit/si.hpp>                       // si::unit
 
-#include <model/track/Spin.hpp>                      // track::Spin
+#include <model/orrery/Spin.hpp>                      // orrery::Spin
 
 #include <buffer/PyramidBuffers.hpp>                 // buffer::PyramidBuffers
 
@@ -89,8 +89,8 @@ int main() {
 
   //                                                         precession              nutation          nutation       nutation precession   spin                 time
   //                    local north pole      lon       lat    pole      axial tilt amplitude          phase          period    period    period               offset
-  track::Spin<double,double> spin(K, direction(90.0, 66.56 ), K, 23.44*si::degree, 10.0*si::degree,    0.0, 18.6*si::year/s, T/s,      23.93 * si::hour/s, 0.0 * s/s );  // 3 Earth, exaggerated nutation for demonstration
-//track::Spin<double,double> spin(K, direction(90.0, 66.56 ), K, 23.44*si::degree, 9.2 *si::arcsecond, 0.0, 18.6*si::year/s, T/s,      23.93 * si::hour/s, 0.0 * s/s );  // 3 Earth, real nutation
+  orrery::Spin<double,double> spin(K, direction(90.0, 66.56 ), K, 23.44*si::degree, 10.0*si::degree,    0.0, 18.6*si::year/s, T/s,      23.93 * si::hour/s, 0.0 * s/s );  // 3 Earth, exaggerated nutation for demonstration
+//orrery::Spin<double,double> spin(K, direction(90.0, 66.56 ), K, 23.44*si::degree, 9.2 *si::arcsecond, 0.0, 18.6*si::year/s, T/s,      23.93 * si::hour/s, 0.0 * s/s );  // 3 Earth, real nutation
 
   // flatten vector raster for OpenGL
   buffer::PyramidBuffers<int, float> pyramids;
@@ -209,7 +209,7 @@ int main() {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-      mat4 model_matrix(spin.globalize(t/s));
+      mat4 model_matrix(spin.inertial_for_fixed(t/s));
       // auto model_matrix = mat4(float(timestep_id));
       model_matrix[3][3] = float(1);
 

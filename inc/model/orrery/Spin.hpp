@@ -9,7 +9,7 @@
 
 #include <glm/gtc/matrix_transform.hpp> // glm::rotate
 
-namespace track {
+namespace orrery {
 
 	template <typename scalar, typename duration>
 	class Spin
@@ -133,7 +133,7 @@ namespace track {
 			force_congruence(false)
 		{}
 
-		mat3 global_for_local(const duration time_step) const
+		mat3 inertial_for_fixed(const duration time_step) const
 		{
 
 			const scalar period = 
@@ -165,9 +165,9 @@ namespace track {
 
 		}
 
-		mat3 local_for_global(const duration time_step) const
+		mat3 fixed_for_inertial(const duration time_step) const
 		{
-	        return glm::transpose(global_for_local(time_step));
+	        return glm::transpose(inertial_for_fixed(time_step));
 		}
 
 		// Spin<scalar,duration> advance(const duration time_step) const

@@ -19,8 +19,9 @@
 
 #include <model/orbit/Elements.hpp>          // orbit::Elements
 #include <model/orbit/ElementsAndState.hpp>  // 
-#include <model/track/Spin.hpp>              // track::Spin
+#include <model/orrery/Spin.hpp>              // orrery::Spin
 #include <model/orrery/OrbitSystem.hpp>      // orrery:OrbitSystem
+#include <model/orrery/SpinSystem.hpp>        // orrery::SpinSystem
 #include <model/orrery/SceneTrees.hpp>       // orrery:SceneTrees
 #include <model/orrery/CommonComponents.hpp> // orrery:UnsortedEphemeralComponents
 
@@ -148,7 +149,7 @@ int main() {
   using Propagator = orbit::UniversalPropagator<double>;
   using Properties = orbit::Properties<double>;
   using Orbit = orbit::Universals<double>;
-  using Spin = track::Spin<double,double>;
+  using Spin = orrery::Spin<float,float>;
   using Orbits = orrery::CommonComponents<int,Orbit>;
   using Spins = orrery::CommonComponents<int,Spin>;
   using TrackPositions = std::vector<orrery::TrackPosition<int,double>>;
@@ -177,6 +178,7 @@ int main() {
   */
 
   orrery::OrbitSystem<int,double> orbit_system(propagator, properties);
+  orrery::SpinSystem<int,float> spin_system;
   orrery::SceneTrees<int,double> scene_trees;
 
   // within the confines of this ECS implementation, parent_ids are one-to-one with entities, so we store them using a std::vector
@@ -244,7 +246,7 @@ int main() {
   spins.add(9, Spin(K, pole(132.99, -6.16), K, 122.5 *si::degree,  0.0,   153.3 * si::hour/s, 0.0 ));  
   spins.add(13, Spin(K, pole(266.86, 65.64), K, 6.687 *si::degree,  0.0, 655.73 * si::hour/s, 0.0 ));  // moon
 
-  mat4s global_for_local(parent_ids.size());
+  mat4s inertial_for_fixed(parent_ids.size());
 
   // TODO: store this using `Components<vec4>`
   std::vector<glm::vec4> instance_color(parent_ids.size(), vec4(1));
@@ -394,10 +396,7 @@ int main() {
         instance_origins
       );
 
-      for (std::size_t i = 0; i < parent_ids.size(); i++)
-      {
-        global_for_local[i] = !spins.has(origin_id)? mat4(1) : mat4(spins.component_for_entity(origin_id).local_for_global(t/si::second));
-      }
+      spin_system.inertial_for_fixed(spins, t/si::second, inertial_for_fixed);
 
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -409,7 +408,7 @@ int main() {
         vec3(0,0,1), // light direction
         // vec3(0.5,0.5,1), // light direction
         vec3(1.0), // ambient light
-        global_for_local[origin_id] * model_matrix,
+        inertial_for_fixed[origin_id],
         view_state
       );
 
