@@ -19,12 +19,15 @@ namespace orrery
     class SceneTrees{
 
         using vec3 = glm::vec<3,scalar,precision>;
+        using vec4 = glm::vec<4,scalar,precision>;
+        using mat4 = glm::mat<4,4,scalar,precision>;
 
         using TrackPositions = std::vector<TrackPosition<id,scalar>>;
 
+        using bools = std::vector<bool>;
         using ids = std::vector<id>;
         using vec3s = std::vector<vec3>;
-        using bools = std::vector<bool>;
+        using mat4s = std::vector<mat4>;
 
         const iterated::Identity copy;
 
@@ -34,17 +37,17 @@ namespace orrery
         {}
 
         // (Nℝ³)ᵐ(ℝ³)ⁿ → (ℝ³)ⁿ
-        // the contents of `updated` after invocation are those of `parent_offsets` merged with `updates`
+        // the contents of `updated` after invocation are those of `child_from_parent` merged with `updates`
         void update(
             const TrackPositions& updates,
-            const vec3s& parent_offsets,
+            const vec3s& child_from_parent,
             vec3s& updated
         ) const {
-            if(&updated != &parent_offsets) {
+            if(&updated != &child_from_parent) {
                 updated.clear();
-                updated.reserve(parent_offsets.size());
-                for (std::size_t i = 0; i < parent_offsets.size(); ++i) {
-                    updated.emplace_back(parent_offsets[i]);
+                updated.reserve(child_from_parent.size());
+                for (std::size_t i = 0; i < child_from_parent.size(); ++i) {
+                    updated.emplace_back(child_from_parent[i]);
                 }
             }
             for (std::size_t i = 0; i < updates.size(); ++i) {
@@ -72,10 +75,10 @@ namespace orrery
 
         // the contents of `results` after invocation are the positions of nodes in a scene tree
         // in a coordinate system where the node given by `origin_id` is the origin.
-        // nodes have parents given by `parent_ids` and are offset from their parents by `parent_offsets`.
+        // nodes have parents given by `parent_ids` and are offset from their parents by `child_from_parent`.
         template<typename ovec3s> // output vec3s
-        void positions(
-            const vec3s& parent_offsets,
+        void offsets_from_origin(
+            const vec3s& child_from_parent,
             const ids& parent_ids,
             const bools& is_origin_ancestor,
             const id origin_id,
@@ -84,15 +87,15 @@ namespace orrery
 
             using ovec3 = typename ovec3s::value_type;
 
-            auto size = parent_offsets.size();
-            copy(parent_offsets, results);
+            auto size = child_from_parent.size();
+            copy(child_from_parent, results);
 
             id ancestor_id(origin_id);
             vec3 ancestor_offset(0);
             vec3 parent_to_child_offset(0);
             while(ancestor_id > 0)
             {
-                parent_to_child_offset = parent_offsets[ancestor_id];
+                parent_to_child_offset = child_from_parent[ancestor_id];
                 results[ancestor_id] = ovec3(ancestor_offset);
                 ancestor_offset -= parent_to_child_offset;
                 ancestor_id = parent_ids[ancestor_id];
@@ -104,9 +107,25 @@ namespace orrery
                 results[i] = 
                     is_origin_ancestor[i]? 
                         results[i] 
-                      : results[parent_ids[i]] + ovec3(parent_offsets[i]);
-            }
+                      : results[parent_ids[i]] + ovec3(child_from_parent[i]);
+            } 
 
+        }
+
+        // the contents of `results` after invocation are transformations that map 
+        // the fixed coordinate system for each node in a scene tree
+        // to an inertial coordinate system for the node given by `reference_id`.
+        void inertial_reference_for_fixed_frames(
+            const vec3s& offsets_from_origin_,
+            const mat4s& inertial_for_fixed_,
+            const id reference_id,
+            const mat4s& results
+        ) const {
+            for (std::size_t i = 0; i < inertial_for_fixed_.size(); i++)
+            {
+                results[i] = inertial_for_fixed_[i];
+                results[i][3] = vec4(offsets_from_origin_[i],1);
+            }
         }
 
     };

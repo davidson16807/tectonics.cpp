@@ -209,7 +209,7 @@ int main() {
       // wipe drawing surface clear
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-      mat4 model_matrix(spin.global_for_local(t/s));
+      mat4 model_matrix(spin.globalize(t/s));
       // auto model_matrix = mat4(float(timestep_id));
       model_matrix[3][3] = float(1);
 

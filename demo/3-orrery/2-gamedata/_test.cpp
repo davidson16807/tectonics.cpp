@@ -322,7 +322,7 @@ int main() {
         is_origin_ancestor
       );
 
-      scene_trees.positions(
+      scene_trees.offsets_from_origin(
         parent_offsets,
         parent_ids,
         is_origin_ancestor,
