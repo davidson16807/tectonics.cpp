@@ -14,7 +14,7 @@
 
 // in-house libraries
 #include "Spin.hpp"
-#include "CommonComponents.hpp"
+#include "DenseContiguousComponents.hpp"
 
 namespace orrery
 {
@@ -22,7 +22,7 @@ namespace orrery
     template<typename id, typename scalar, typename duration, glm::qualifier precision = glm::defaultp>
     class SpinSystem{
 
-        using Spins = CommonComponents<id, orrery::Spin<scalar,duration>>;
+        using Spins = DenseContiguousComponents<id, orrery::Spin<scalar,duration>>;
 
         using mat4 = glm::mat<4,4,scalar,precision>;
 

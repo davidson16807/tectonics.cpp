@@ -22,7 +22,7 @@
 #include "CycleSample.hpp"
 #include "TrackPosition.hpp"
 #include "Resonance.hpp"
-#include "CommonComponents.hpp"
+#include "DenseContiguousComponents.hpp"
 
 namespace orrery
 {
@@ -38,7 +38,7 @@ namespace orrery
 
         using vec3 = glm::vec<3,scalar,precision>;
 
-        using Orbits = CommonComponents<id, orbit::Universals<scalar>>;
+        using Orbits = DenseContiguousComponents<id, orbit::Universals<scalar>>;
         using Cycles = std::vector<Cycle<id,scalar>>;
         using CycleSamples = std::vector<CycleSample<id,scalar,scalar>>;
         using TrackPositions = std::vector<TrackPosition<id,scalar>>;

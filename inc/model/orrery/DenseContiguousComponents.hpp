@@ -6,19 +6,19 @@
 #include <optional>      // std::optional
 
 /*
-`CommonComponents` represents a table of components within an Entity-Component-System ("ECS") pattern
+`DenseContiguousComponents` represents a table of components within an Entity-Component-System ("ECS") pattern
 where most entities are likely to have this component type. It stores components using std::vector.
 this allows components to be stored in the same order as the entities, 
 so in-order traversals involving multiple component types are much easier to obtain.
 
-`CommonComponents` is best suited if components are likely to exist for most entities.
+`DenseContiguousComponents` is best suited if components are likely to exist for most entities.
 */
 
 namespace orrery
 {
 
 template<typename id, typename Component>
-class CommonComponents
+class DenseContiguousComponents
 {
 	// Components stored directly at the entity's index.
 	std::vector<Component> components;
@@ -28,62 +28,62 @@ class CommonComponents
 public:
 
 	/*
-	Create an empty `CommonComponents<id,Component>` instance.
+	Create an empty `DenseContiguousComponents<id,Component>` instance.
 	*/
-	CommonComponents():
+	DenseContiguousComponents():
 		components()
 	{
 	}
 
 	/*
-	Create a `CommonComponents<id,Component>` instance from the vector `components_`
+	Create a `DenseContiguousComponents<id,Component>` instance from the vector `components_`
 	where each component corresponds to a unique and newly constructed entity
 	whose id is equal to the component's index.
 	*/
-	CommonComponents(const std::vector<Component>& components_):
+	DenseContiguousComponents(const std::vector<Component>& components_):
 		components(components_),
 		exists(components_.size(), true)
 	{
 	}
 
 	/*
-	Create a `CommonComponents<id,Component>` instance
+	Create a `DenseContiguousComponents<id,Component>` instance
 	that has memory preallocated to serve a given number of entities.
 	*/
-	CommonComponents(const id& entity_count):
+	DenseContiguousComponents(const id& entity_count):
 		components(std::size_t(entity_count)),
 		exists(std::size_t(entity_count), false)
 	{
 	}
 
 	/*
-	Create a `CommonComponents<id,Component>` instance
+	Create a `DenseContiguousComponents<id,Component>` instance
 	that has memory preallocated to serve a given number of entities 
 	and default components dependant on a the value of `exists`
 	*/
-	CommonComponents(const id& entity_count, const bool exists):
+	DenseContiguousComponents(const id& entity_count, const bool exists):
 		components(std::size_t(entity_count)),
 		exists(std::size_t(entity_count), exists)
 	{
 	}
 
 	/*
-	Create a `CommonComponents<id,Component>` instance
+	Create a `DenseContiguousComponents<id,Component>` instance
 	that has memory preallocated to serve a given number of entities with a single given component.
 	*/
-	CommonComponents(const id& entity_count, const Component component):
+	DenseContiguousComponents(const id& entity_count, const Component component):
 		components(std::size_t(entity_count), component),
 		exists(std::size_t(entity_count), true)
 	{
 	}
 
 	/*
-	Create a `CommonComponents<id,Component>` instance
+	Create a `DenseContiguousComponents<id,Component>` instance
 	that has memory preallocated to serve a given number of entities with a single given component.
 	The components may optionally exist only as placeholders if `exists` is false.
 	This is useful if no default constructor exists for the `Component` class
 	*/
-	CommonComponents(const id& entity_count, const Component component, const bool exists):
+	DenseContiguousComponents(const id& entity_count, const Component component, const bool exists):
 		components(std::size_t(entity_count), component),
 		exists(std::size_t(entity_count), exists)
 	{

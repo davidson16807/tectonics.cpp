@@ -21,7 +21,7 @@
 #include <model/orbit/ElementsAndState.hpp>  // 
 #include <model/orrery/OrbitSystem.hpp>      // orrery:OrbitSystem
 #include <model/orrery/SceneTrees.hpp>       // orrery:SceneTrees
-#include <model/orrery/CommonComponents.hpp> // orrery:UnsortedEphemeralComponents
+#include <model/orrery/DenseContiguousComponents.hpp> // orrery:UnsortedEphemeralComponents
 
 #include <update/OrbitalNavigationState.hpp>    // update::OrbitalNavigationState
 #include <update/OrbitalNavigationUpdater.hpp>  // update::OrbitalNavigationUpdater
@@ -119,7 +119,7 @@ int main() {
   using Propagator = orbit::UniversalPropagator<double>;
   using Properties = orbit::Properties<double>;
   using Orbit = orbit::Universals<double>;
-  using Orbits = orrery::CommonComponents<int,Orbit>;
+  using Orbits = orrery::DenseContiguousComponents<int,Orbit>;
   using TrackPositions = std::vector<orrery::TrackPosition<int,double>>;
 
   Properties properties(
@@ -189,7 +189,7 @@ int main() {
 
   body_tsvs.read("elliptics-j2000.tsv", elliptics, parent_ids, masses, times, label_for_id, id_for_label);
 
-  orrery::CommonComponents<int,vec4> colors(elliptics.size());
+  orrery::DenseContiguousComponents<int,vec4> colors(elliptics.size());
   color_tsvs.read("color.tsv", id_for_label, colors);
   colors.complete(vec4(vec3(0.5),1));
   // body_rows.encode(scratch_table,  elliptics, parent_ids, masses, times, label_for_id, colors);

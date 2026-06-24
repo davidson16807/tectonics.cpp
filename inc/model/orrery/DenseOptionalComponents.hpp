@@ -6,12 +6,12 @@
 #include <vector>        // std::vector
 
 /*
-`OptionalComponents` is an alternate implementation of `CommonComponents` that uses std::optionals
+`DenseOptionalComponents` is an alternate implementation of `DenseContiguousComponents` that uses std::optionals
 It represents a table of components within an Entity-Component-System ("ECS") pattern
 where most entities are likely to have this component type. It stores components using std::optional
 inside a std::vector to improve cache locality between components and their existance flags.
 
-`OptionalComponents` is best suited if components are likely to exist for most entities 
+`DenseOptionalComponents` is best suited if components are likely to exist for most entities 
 and components never need to be cast to std::vector such as when using OpenGL draw calls.
 */
 
@@ -19,26 +19,26 @@ namespace orrery
 {
 
 template<typename id, typename Component>
-class OptionalComponents
+class DenseOptionalComponents
 {
 	std::vector<std::optional<Component>> components;
 
 public:
 
 	/*
-	Create an empty `OptionalComponents<id,Component>` instance.
+	Create an empty `DenseOptionalComponents<id,Component>` instance.
 	*/
-	OptionalComponents():
+	DenseOptionalComponents():
 		components()
 	{
 	}
 
 	/*
-	Create an `OptionalComponents<id,Component>` instance from the vector `components_`
+	Create an `DenseOptionalComponents<id,Component>` instance from the vector `components_`
 	where each component corresponds to a unique and newly constructed entity
 	whose id is equal to the component's index.
 	*/
-	OptionalComponents(const std::vector<Component>& components_):
+	DenseOptionalComponents(const std::vector<Component>& components_):
 		components()
 	{
 		components.reserve(components_.size());
@@ -49,20 +49,20 @@ public:
 	}
 
 	/*
-	Create an `OptionalComponents<id,Component>` instance
+	Create an `DenseOptionalComponents<id,Component>` instance
 	that has memory preallocated to serve a given number of entities.
 	*/
-	OptionalComponents(const id& entity_count):
+	DenseOptionalComponents(const id& entity_count):
 		components(std::size_t(entity_count))
 	{
 	}
 
 	/*
-	Create an `OptionalComponents<id,Component>` instance
+	Create an `DenseOptionalComponents<id,Component>` instance
 	that has memory preallocated to serve a given number of entities
 	and default components dependant on the value of `exists`.
 	*/
-	OptionalComponents(const id& entity_count, const bool exists):
+	DenseOptionalComponents(const id& entity_count, const bool exists):
 		components(std::size_t(entity_count))
 	{
 		if (exists)
@@ -75,10 +75,10 @@ public:
 	}
 
 	/*
-	Create an `OptionalComponents<id,Component>` instance
+	Create an `DenseOptionalComponents<id,Component>` instance
 	that has memory preallocated to serve a given number of entities with a single given component.
 	*/
-	OptionalComponents(const id& entity_count, const Component component):
+	DenseOptionalComponents(const id& entity_count, const Component component):
 		components(std::size_t(entity_count), component)
 	{
 	}

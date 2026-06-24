@@ -6,8 +6,8 @@
 #include <unordered_map> // std::unordered_map
 
 /*
-`RareEnduringComponents` represents a table of components within an Entity-Component-System ("ECS") pattern
-where components or entities are infrequently added or removed. `add` and `remove` are done in O(N) time.
+`SparseEphemeralComponents` represents a table of components within an Entity-Component-System ("ECS") pattern
+where components or entities are frequently added or removed. `add` and `remove` are done in O(1) time.
 It offers functionality beyond std::vector by managing lookups between component ids and entities,
 thereby accelerating checks for systems that operate on entities with several kinds of components.
 
@@ -15,9 +15,9 @@ Since we want to avoid expensive memory reallocation,
 The size of the std::vector is allocated according to the number of entities,
 and components in the std::vector are rearranged to minimize changes in memory when entities are added or removed.
 However this will mean that components are not sorted by their entity id,
-so avoid `RareEnduringComponents` if sorting by entity id will better exploit cache memory in traversals involving multiple component types.
+so avoid `SparseEphemeralComponents` if sorting by entity id will better exploit cache memory in traversals involving multiple component types.
 
-`RareEnduringComponents` is best suited if components are expected to be added or removed frequently,
+`SparseEphemeralComponents` is best suited if components are expected to be added or removed frequently,
 and interaction between multiple component types is not expected so that contents here can be traversed in-order.
 */
 
@@ -25,7 +25,7 @@ namespace orrery
 {
 
 template<typename id, typename Component>
-class RareEnduringComponents
+class SparseEphemeralComponents
 {
 
 	// The packed array of components (of generic type Component)
@@ -40,9 +40,9 @@ class RareEnduringComponents
 public:
 
 	/*
-	Create an empty `RareEnduringComponents<id,Component>` instance 
+	Create an empty `SparseEphemeralComponents<id,Component>` instance 
 	*/
-	RareEnduringComponents():
+	SparseEphemeralComponents():
 		components(),
 		entity_of_index(),
 		index_of_entity(),
@@ -51,11 +51,11 @@ public:
 	}
 
 	/*
-	Create a `RareEnduringComponents<id,Component>` instance from the vector `components`
+	Create a `SparseEphemeralComponents<id,Component>` instance from the vector `components`
 	where each components corresponds to a unique and newly constructed entity
 	whose id is equal to the component's index.
 	*/
-	RareEnduringComponents(const std::vector<Component>& components_):
+	SparseEphemeralComponents(const std::vector<Component>& components_):
 		components(components_),
 		entity_of_index(),
 		index_of_entity(),
@@ -69,10 +69,10 @@ public:
 	}
 
 	/*
-	Create a `RareEnduringComponents<id,Component>` 
+	Create a `SparseEphemeralComponents<id,Component>` 
 	that has memory preallocated to serve a given number of entities.
 	*/
-	RareEnduringComponents(const id& entity_count):
+	SparseEphemeralComponents(const id& entity_count):
 		components(),
 		entity_of_index(),
 		index_of_entity(),
@@ -86,19 +86,20 @@ public:
 	{
 		assert(index_of_entity.find(entity) == index_of_entity.end() && "Component added to same entity more than once.");
 
-		// Put new entry at end and update the maps
-		std::size_t new_index = size;
-		index_of_entity[entity] = new_index;
-		++size;
-		if (components.size() < size)
+		// Insert while preserving order by entity id.
+		std::size_t insert_index = 0;
+		while (insert_index < entity_of_index.size() && entity_of_index[insert_index] < entity)
 		{
-			components.push_back(component);
-			entity_of_index.push_back(entity);
-		} 
-		else 
+			++insert_index;
+		}
+
+		components.insert(components.begin() + insert_index, component);
+		entity_of_index.insert(entity_of_index.begin() + insert_index, entity);
+
+		// Update indices from insertion point onward.
+		for (std::size_t i = insert_index; i < entity_of_index.size(); ++i)
 		{
-			entity_of_index[new_index] = entity;
-			components[new_index] = component;
+			index_of_entity[entity_of_index[i]] = i;
 		}
 	}
 
@@ -115,23 +116,17 @@ public:
 	{
 		assert(index_of_entity.find(entity) != index_of_entity.end() && "Removing non-existent component.");
 
-		// Copy element at end into deleted element's place to maintain density
-		std::size_t index_of_removed_entity = index_of_entity[entity];
-		std::size_t index_of_last_element = size - 1;
+		const std::size_t removed_index = index_of_entity.at(entity);
 
-		if (index_of_removed_entity != index_of_last_element)
-		{
-			components[index_of_removed_entity] = components[index_of_last_element];
-
-			// Update map to point to moved spot
-			id entity_of_last_element = entity_of_index[index_of_last_element];
-			index_of_entity[entity_of_last_element] = index_of_removed_entity;
-			entity_of_index[index_of_removed_entity] = entity_of_last_element;
-		}
-
+		components.erase(components.begin() + removed_index);
+		entity_of_index.erase(entity_of_index.begin() + removed_index);
 		index_of_entity.erase(entity);
 
-		--size;
+		// Update indices from removal point onward.
+		for (std::size_t i = removed_index; i < entity_of_index.size(); ++i)
+		{
+			index_of_entity[entity_of_index[i]] = i;
+		}
 	}
 
 	// `entity_count` returns the number of entities tracked by this component store

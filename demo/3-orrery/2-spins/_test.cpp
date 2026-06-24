@@ -23,7 +23,7 @@
 #include <model/orrery/OrbitSystem.hpp>      // orrery:OrbitSystem
 #include <model/orrery/SpinSystem.hpp>        // orrery::SpinSystem
 #include <model/orrery/SceneTrees.hpp>       // orrery:SceneTrees
-#include <model/orrery/CommonComponents.hpp> // orrery:UnsortedEphemeralComponents
+#include <model/orrery/DenseContiguousComponents.hpp> // orrery:UnsortedEphemeralComponents
 
 #include <update/OrbitalNavigationState.hpp>    // update::OrbitalNavigationState
 #include <update/OrbitalNavigationUpdater.hpp>  // update::OrbitalNavigationUpdater
@@ -150,8 +150,8 @@ int main() {
   using Properties = orbit::Properties<double>;
   using Orbit = orbit::Universals<double>;
   using Spin = orrery::Spin<float,double>;
-  using Orbits = orrery::CommonComponents<int,Orbit>;
-  using Spins = orrery::CommonComponents<int,Spin>;
+  using Orbits = orrery::DenseContiguousComponents<int,Orbit>;
+  using Spins = orrery::DenseContiguousComponents<int,Spin>;
   using TrackPositions = std::vector<orrery::TrackPosition<int,double>>;
 
   Properties properties(
