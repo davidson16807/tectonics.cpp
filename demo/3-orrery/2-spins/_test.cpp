@@ -149,7 +149,7 @@ int main() {
   using Propagator = orbit::UniversalPropagator<double>;
   using Properties = orbit::Properties<double>;
   using Orbit = orbit::Universals<double>;
-  using Spin = orrery::Spin<float,float>;
+  using Spin = orrery::Spin<float,double>;
   using Orbits = orrery::CommonComponents<int,Orbit>;
   using Spins = orrery::CommonComponents<int,Spin>;
   using TrackPositions = std::vector<orrery::TrackPosition<int,double>>;
@@ -178,7 +178,7 @@ int main() {
   */
 
   orrery::OrbitSystem<int,double> orbit_system(propagator, properties);
-  orrery::SpinSystem<int,float> spin_system;
+  orrery::SpinSystem<int,float,double> spin_system;
   orrery::SceneTrees<int,double> scene_trees;
 
   // within the confines of this ECS implementation, parent_ids are one-to-one with entities, so we store them using a std::vector

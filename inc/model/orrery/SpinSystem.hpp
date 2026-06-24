@@ -19,10 +19,10 @@
 namespace orrery
 {
 
-    template<typename id, typename scalar, glm::qualifier precision = glm::defaultp>
+    template<typename id, typename scalar, typename duration, glm::qualifier precision = glm::defaultp>
     class SpinSystem{
 
-        using Spins = CommonComponents<id, orrery::Spin<scalar,scalar>>;
+        using Spins = CommonComponents<id, orrery::Spin<scalar,duration>>;
 
         using mat4 = glm::mat<4,4,scalar,precision>;
 
