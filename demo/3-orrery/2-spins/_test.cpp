@@ -246,6 +246,7 @@ int main() {
   spins.add(9, Spin(K, pole(132.99, -6.16), K, 122.5 *si::degree,  0.0,   153.3 * si::hour/s, 0.0 ));  
   spins.add(13, Spin(K, pole(266.86, 65.64), K, 6.687 *si::degree,  0.0, 655.73 * si::hour/s, 0.0 ));  // moon
 
+  mat4s fixed_for_inertial(parent_ids.size());
   mat4s inertial_for_fixed(parent_ids.size());
 
   // TODO: store this using `Components<vec4>`
@@ -396,6 +397,7 @@ int main() {
         instance_origins
       );
 
+      spin_system.fixed_for_inertial(spins, t/si::second, fixed_for_inertial);
       spin_system.inertial_for_fixed(spins, t/si::second, inertial_for_fixed);
 
       // wipe drawing surface clear
@@ -408,7 +410,7 @@ int main() {
         vec3(0,0,1), // light direction
         // vec3(0.5,0.5,1), // light direction
         vec3(1.0), // ambient light
-        inertial_for_fixed[origin_id],
+        fixed_for_inertial[origin_id],
         view_state
       );
 
