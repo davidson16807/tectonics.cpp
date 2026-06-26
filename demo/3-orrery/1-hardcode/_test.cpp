@@ -113,7 +113,7 @@ int main() {
   using Properties = orbit::Properties<double>;
   using Orbit = orbit::Universals<double>;
   using Orbits = orrery::DenseContiguousComponents<int,Orbit>;
-  using TrackPositions = std::vector<orrery::TrackPosition<int,double>>;
+  using TrackPositions = orrery::EntityComponents<int,dvec3>;
 
   Properties properties(
     dvec3(1,0,0), 

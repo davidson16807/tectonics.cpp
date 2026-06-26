@@ -20,7 +20,7 @@
 
 #include "Cycle.hpp"
 #include "CycleSample.hpp"
-#include "TrackPosition.hpp"
+#include "EntityComponents.hpp"
 #include "Resonance.hpp"
 #include "DenseContiguousComponents.hpp"
 
@@ -39,9 +39,9 @@ namespace orrery
         using vec3 = glm::vec<3,scalar,precision>;
 
         using Orbits = DenseContiguousComponents<id, orbit::Universals<scalar>>;
+        using TrackPositions = EntityComponents<id,vec3>;
         using Cycles = std::vector<Cycle<id,scalar>>;
         using CycleSamples = std::vector<CycleSample<id,scalar,scalar>>;
-        using TrackPositions = std::vector<TrackPosition<id,scalar>>;
         using Resonances = std::vector<Resonance<id,scalar>>;
 
         using ids = std::vector<id>;
@@ -80,6 +80,7 @@ namespace orrery
 
         // Oⁿ → Nᵐ
         // partitions orbits among imperceptible cyclic and perceptible/noncyclic groups
+        // `Spins` must be a `*Components` object that has the ability to get entity ids, i.e. `entity_for_index`
         void group(
             const Orbits& orbits, 
             const scalar min_perceivable_period,
@@ -111,6 +112,33 @@ namespace orrery
             }
         }
 
+        // // `Spins` must be a `*Components` object that has the ability to get entity ids, i.e. `.entity_for_index()`
+        // void group(
+        //     const Spins& spins, 
+        //     const scalar min_perceivable_period,
+        //     const scalar max_perceivable_period,
+        //     Cycles& imperceptible, 
+        //     bools& perceptible
+        // ) const {
+        //     perceptible.resize(orbits.entity_count());
+        //     imperceptible.clear();
+        //     imperceptible.reserve(orbits.entity_count());
+        //     Spin spin;
+        //     for (std::size_t entity = 0; entity < orbits.entity_count(); ++entity) {
+        //         if (spins.has(entity)) {
+        //             spin = spins.component_for_entity(entity);
+        //             scalar period = spin.period();
+        //             if (min_perceivable_period <= period && period <= max_perceivable_period) {
+        //                 perceptible[entity] = true;
+        //             } else {
+        //                 perceptible[entity] = false;
+        //                 imperceptible.emplace_back(id(entity), period);
+        //             }
+        //         }
+        //     }
+        // }
+        // // lists of imperceptible cycles for orbits and spins will need to be concatenated after invocation in intended use case
+
         // Tⁿ→RⁿI
         // detects resonant systems between cycles
         void resonances(
@@ -140,7 +168,7 @@ namespace orrery
         }
 
         // TⁿRⁿI→Tʳ
-        // calculates the periods of resonant systems
+         // calculates the periods of resonant systems
         std::vector<scalar> periods(
             const Cycles& cycles,
             const ids& resonances,
@@ -204,7 +232,7 @@ namespace orrery
             CycleSample<id,scalar,scalar> sample;
             for (std::size_t i = 0; i < samples.size(); ++i) {
                 sample = samples[i];
-                results.emplace_back(
+                results.add(
                     sample.node, 
                     propagator.state(
                         orbits.component_for_entity(sample.cycle),
@@ -226,7 +254,7 @@ namespace orrery
             results.reserve(orbits.entity_count());
             for (std::size_t i = 0; i < orbits.entity_count(); ++i) {
                 if (filter[i]){
-                    results.emplace_back(
+                    results.add(
                         i,
                         propagator.state(
                             orbits.component_for_entity(i),

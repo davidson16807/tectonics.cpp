@@ -10,7 +10,7 @@
 // in-house libraries
 #include <index/iterated/Nary.hpp>    // iterated::Identity
 
-#include "TrackPosition.hpp"
+#include "EntityComponents.hpp"
 
 namespace orrery
 {
@@ -22,7 +22,7 @@ namespace orrery
         using vec4 = glm::vec<4,scalar,precision>;
         using mat4 = glm::mat<4,4,scalar,precision>;
 
-        using TrackPositions = std::vector<TrackPosition<id,scalar>>;
+        using TrackPositions = EntityComponents<int,vec3>;
 
         using bools = std::vector<bool>;
         using ids = std::vector<id>;
@@ -51,7 +51,7 @@ namespace orrery
                 }
             }
             for (std::size_t i = 0; i < updates.size(); ++i) {
-                updated[updates[i].node] = updates[i].position;
+                updated[updates.entity_for_index(i)] = updates.component_for_index(i);
             }
         }
 

@@ -23,10 +23,12 @@ namespace orrery
 {
 
 template<typename id, typename Component>
-struct EntityComponents
+class EntityComponents
 {
 
 	std::vector<std::pair<id,Component>> components;
+
+public:
 
 	/*
 	Create an empty `EntityComponents<id,Component>` instance.
@@ -46,13 +48,17 @@ struct EntityComponents
 		components.resize(size);
 	}
 
+	void reserve(std::size_t size)
+	{
+		components.reserve(size);
+	}
+
 	void add(const id entity, const Component& component)
 	{
 		components.emplace_back(entity, component);
 	}
 
-	template<Component2>
-	void add(const EntityComponents<id,Component2>& other)
+	void add(const EntityComponents<id,Component>& other)
 	{
 		for (int i = 0; i < other.components.size(); ++i)
 		{
@@ -75,6 +81,18 @@ struct EntityComponents
 	const id entity_for_index(std::size_t component) const
 	{
 		return components[component].first;
+	}
+
+	Component& component_for_index(std::size_t component)
+	{
+		assert(component < components.size() && "Retrieving non-existent component.");
+		return components[component].second;
+	}
+
+	const Component& component_for_index(std::size_t component) const
+	{
+		assert(component < components.size() && "Retrieving non-existent component.");
+		return components[component].second;
 	}
 
 };
