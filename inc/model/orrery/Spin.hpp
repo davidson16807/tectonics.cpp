@@ -136,13 +136,8 @@ namespace orrery {
 		mat3 inertial_for_fixed(const duration time_step) const
 		{
 
-			const duration period = 
-				(nutation_period > s0? nutation_period : s1) *
-				(precession_period > s0? precession_period : s1) *
-				spin_period;
-
 			const duration time = force_congruence? 
-				math::floormod(time_step+time_offset, period) 
+				math::floormod(time_step+time_offset, period()) 
 			  : time_step+time_offset;
 
 			// TODO: apply time_offset to time_step, the code below assumes the result is stored in time_offset
@@ -168,6 +163,14 @@ namespace orrery {
 		mat3 fixed_for_inertial(const duration time_step) const
 		{
 	        return glm::transpose(inertial_for_fixed(time_step));
+		}
+
+		scalar period() const
+		{
+	        return 
+	        	(nutation_period > s0? nutation_period : s1) *
+				(precession_period > s0? precession_period : s1) *
+				spin_period;
 		}
 
 		// Spin<scalar,duration> advance(const duration time_step) const
