@@ -63,8 +63,8 @@ Expressions above are named/implemented as follows in C++:
 	Sⁿ 	Components<Spin>
 	Bⁿ 	Components<Beeline>
 	Nⁿ 	std::vector<Node>
-	NPCT 	CycleSample
-	RPCT 	CycleSample
+	NPCT 	PeriodSamples
+	RPCT 	PeriodSamples
 	Nℝ³ 	TrackPosition
 	NRCT 	Resonance
 	ℝ³  	vec3

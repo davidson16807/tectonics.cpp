@@ -18,8 +18,7 @@
 #include <model/orbit/Universals.hpp> // orbit::Universals
 #include <model/orbit/UniversalPropagator.hpp> // orbit::UniversalPropagator
 
-#include "Cycle.hpp"
-#include "CycleSample.hpp"
+#include "PeriodSample.hpp"
 #include "EntityComponents.hpp"
 #include "Resonance.hpp"
 #include "DenseContiguousComponents.hpp"
@@ -36,13 +35,14 @@ namespace orrery
         static constexpr scalar i1 = id(1);
         static constexpr scalar i2 = id(2);
 
+        using duration = scalar;
         using vec3 = glm::vec<3,scalar,precision>;
 
         using Orbits = DenseContiguousComponents<id, orbit::Universals<scalar>>;
         using TrackPositions = EntityComponents<id,vec3>;
-        using Cycles = std::vector<Cycle<id,scalar>>;
-        using CycleSamples = std::vector<CycleSample<id,scalar,scalar>>;
-        using Resonances = std::vector<Resonance<id,scalar>>;
+        using Periods = EntityComponents<id,duration>;
+        using PeriodSamples = EntityComponents<id,PeriodSample<scalar,duration>>;
+        using Resonances = EntityComponents<id,Resonance<id,duration>>;
 
         using ids = std::vector<id>;
         using vec3s = std::vector<vec3>;
@@ -85,7 +85,7 @@ namespace orrery
             const Orbits& orbits, 
             const scalar min_perceivable_period,
             const scalar max_perceivable_period,
-            Cycles& imperceptible, 
+            Periods& imperceptible, 
             bools& perceptible
         ) const {
             perceptible.resize(orbits.entity_count());
@@ -117,7 +117,7 @@ namespace orrery
         //     const Spins& spins, 
         //     const scalar min_perceivable_period,
         //     const scalar max_perceivable_period,
-        //     Cycles& imperceptible, 
+        //     Periods& imperceptible, 
         //     bools& perceptible
         // ) const {
         //     perceptible.resize(orbits.entity_count());
@@ -137,21 +137,23 @@ namespace orrery
         //         }
         //     }
         // }
-        // // lists of imperceptible cycles for orbits and spins will need to be concatenated after invocation in intended use case
+        // // lists of imperceptible Periods for orbits and spins will need to be concatenated after invocation in intended use case
 
         // Tⁿ→RⁿI
-        // detects resonant systems between cycles
+        // detects resonant systems between Periods
         void resonances(
-            const Cycles& cycles,
+            const Periods& periods,
             ids& resonances,
             id& resonance_count
         ) const {
-            resonances.assign(cycles.size(), -i1);
+            resonances.assign(periods.size(), -i1);
             resonance_count = i0;
-            for (std::size_t j = 0; j < cycles.size(); ++j) {
+            for (std::size_t j = 0; j < periods.size(); ++j) {
                 for (std::size_t i = 0; i < j; ++i) {
-                    const scalar fraction = cycles[i].period / cycles[j].period;
-                    const id p = closest_resonance_index(fraction, id(cycles.size()));
+                    const auto period1 = periods.component_for_index(i);
+                    const auto period2 = periods.component_for_index(j);
+                    const scalar fraction = period1 / period2;
+                    const id p = closest_resonance_index(fraction, id(periods.size()));
                     if (std::abs(math::roundfract(scalar(p) * fraction)) < scalar(1e-3)) {
                         id resonance_id;
                         if (resonances[i] >= i0) {
@@ -170,7 +172,7 @@ namespace orrery
         // TⁿRⁿI→Tʳ
          // calculates the periods of resonant systems
         std::vector<scalar> periods(
-            const Cycles& cycles,
+            const Periods& periods,
             const ids& resonances,
             const id resonance_count
         ) {
@@ -180,13 +182,14 @@ namespace orrery
                 { oo, scalar(0) }
             );
 
-            for (std::size_t node = 0; node < cycles.size(); ++node)
+            for (std::size_t node = 0; node < periods.size(); ++node)
             {
                 const id resonance = id(resonances[node]);
                 if (0 <= resonance&&resonance < resonance_count) {
+                    const duration period = periods.component_for_index(node);
                     auto& pr = resonance_period_range[resonance];
-                    pr.first  = std::min(pr.first,  cycles[node].period); // lo
-                    pr.second = std::max(pr.second, cycles[node].period); // hi
+                    pr.first  = std::min(pr.first,  period); // lo
+                    pr.second = std::max(pr.second, period); // hi
                 }
             }
 
@@ -203,18 +206,20 @@ namespace orrery
         // (IT)ⁿII → (NPCT)ⁿ
         // for a given sample id, this generates that sample's cycle configuration
         void sample(
-            const Cycles& cycles, 
+            const Periods& periods, 
             const id samples_per_cycle, 
             const id sample, 
-            CycleSamples& samples
+            PeriodSamples& samples
         ) const {
             samples.clear();
-            samples.reserve(cycles.size());
-            for (std::size_t i = 0; i < cycles.size(); ++i) {
-                samples.emplace_back(
-                    cycles[i], 
-                    id(sample/std::pow(samples_per_cycle,i))%samples_per_cycle,
-                    samples_per_cycle
+            samples.reserve(periods.size());
+            for (std::size_t i = 0; i < periods.size(); ++i) {
+                samples.add(
+                    periods[i], 
+                    PeriodSample(
+                        id(sample/std::pow(samples_per_cycle,i))%samples_per_cycle,
+                        samples_per_cycle
+                    )
                 );
             }
         }
@@ -224,16 +229,16 @@ namespace orrery
         // this is motivated by the need to quickly track imperceptible elliptic orbits
         void offsets(
             const Orbits& orbits,
-            const CycleSamples& samples,
+            const PeriodSamples& samples,
             TrackPositions& results
         ) const {
             results.clear();
             results.reserve(samples.size());
-            CycleSample<id,scalar,scalar> sample;
+            PeriodSample<scalar,scalar> sample;
             for (std::size_t i = 0; i < samples.size(); ++i) {
-                sample = samples[i];
+                sample = samples.component_for_index(i);
                 results.add(
-                    sample.node, 
+                    samples.entity_for_index(i), 
                     propagator.state(
                         orbits.component_for_entity(sample.cycle),
                         sample.time()
@@ -265,13 +270,13 @@ namespace orrery
         }
 
         // (NPCT)ⁿ(RPCT)ᵐ → (NPCT)ⁿ
-        // updates the given sample configuration of cycles, `subsamples`, 
+        // updates the given sample configuration of Periods, `subsamples`, 
         // to reflect a given sample configuration for resonance systems, `samples`
         void update(
             const Resonances& resonances,
-            const CycleSamples& samples,
-            const CycleSamples& subsamples,
-            CycleSamples& updated
+            const PeriodSamples& samples,
+            const PeriodSamples& subsamples,
+            PeriodSamples& updated
         ) const {
             if(&updated != &subsamples) {
                 updated.clear();
@@ -280,12 +285,12 @@ namespace orrery
                     updated.emplace_back(subsamples[i]);
                 }
             }
-            CycleSample<id,scalar,scalar> period;
-            CycleSample<id,scalar,scalar> subperiod;
+            PeriodSample<scalar,scalar> sample;
+            PeriodSample<scalar,scalar> subsample;
             for (std::size_t i = 0; i < samples.size(); ++i) {
-                period = samples[resonances[i].resonance];
-                subperiod = updated[resonances[i].node];
-                updated[resonances[i].node] = updated[subperiod].with_time(period.time());
+                sample = samples.component_for_index(resonances.component_for_entity(i).resonance);
+                subsample = updated[resonances.entity_for_index(i)];
+                updated[resonances.entity_for_index(i)] = updated[subsample].with_time(sample.time());
             }
         }
 
