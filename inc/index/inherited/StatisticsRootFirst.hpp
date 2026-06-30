@@ -5,58 +5,56 @@
 
 // in-house libraries
 
-namespace branched
+namespace inherited
 {
 
 	template <typename ElementArithmetic>
-	class Statistics
+	class StatisticsRootFirst
 	{
 		const ElementArithmetic arithmetic;
 		const iterated::Identity copy;
 	public:
-		Statistics(const ElementArithmetic& arithmetic):
+		StatisticsRootFirst(const ElementArithmetic& arithmetic):
 			arithmetic(arithmetic),
 			copy()
 		{}
-		Statistics():
+		StatisticsRootFirst():
 			arithmetic(),
 			copy()
 		{}
 
 		template <typename Ids, typename Out>
-		void count (const Ids& group_ids, Out& out) const
+		void count (const Ids& parent_ids, Out& out) const
 		{
-			copy(a, out);
-			auto size = group_ids.size();
+			auto size = parent_ids.size();
 			for (std::size_t i = 0; i < size; ++i)
 			{
-				out[group_ids[i]] += 1;
+				out[i] = out[parent_ids[i]] + 1;
 			}
 		}
 
 		template <typename Ids, typename In, typename Out>
-		void sum (const Ids& group_ids, const In& a, Out& out) const
+		void sum (const Ids& parent_ids, const In& a, Out& out) const
 		{
 			copy(a, out);
 			auto size = a.size();
 			for (std::size_t i = 0; i < size; ++i)
 			{
-				out[group_ids[i]] = arithmetic.add(out[group_ids[i]], a[i]);
+				out[i] = arithmetic.add(out[parent_ids[i]], a[i]);
 			}
 		}
 
 		template <typename Ids, typename In, typename Out>
-		void product (const Ids& group_ids, const In& a, Out& out) const
+		void product (const Ids& parent_ids, const In& a, Out& out) const
 		{
 			copy(a, out);
 			auto size = a.size();
 			for (std::size_t i = 0; i < size; ++i)
 			{
-				out[group_ids[i]] = arithmetic.multiply(out[group_ids[i]], a[i]);
+				out[i] = arithmetic.multiply(out[parent_ids[i]], a[i]);
 			}
 		}
 
 	};
 
 }
-

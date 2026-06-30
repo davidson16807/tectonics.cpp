@@ -9,16 +9,16 @@ namespace inherited
 {
 
 	template <typename ElementArithmetic>
-	class Statistics
+	class StatisticsRootLast
 	{
 		const ElementArithmetic arithmetic;
 		const iterated::Identity copy;
 	public:
-		Statistics(const ElementArithmetic& arithmetic):
+		StatisticsRootLast(const ElementArithmetic& arithmetic):
 			arithmetic(arithmetic),
 			copy()
 		{}
-		Statistics():
+		StatisticsRootLast():
 			arithmetic(),
 			copy()
 		{}
@@ -26,8 +26,7 @@ namespace inherited
 		template <typename Ids, typename Out>
 		void count (const Ids& parent_ids, Out& out) const
 		{
-			copy(a, out);
-			auto size = a.size();
+			auto size = parent_ids.size();
 			for (std::size_t i = size-1; i >= 0; --i)
 			{
 				out[i] = out[parent_ids[i]] + 1;

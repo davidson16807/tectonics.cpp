@@ -10,16 +10,16 @@ namespace branched
 {
 
 	template <typename ElementOrder>
-	class Order
+	class OrderRootLast
 	{
 		const ElementOrder elements;
 		const iterated::Identity copy;
 	public:
-		Order(const ElementOrder& elements):
+		OrderRootLast(const ElementOrder& elements):
 			elements(elements),
 			copy()
 		{}
-		Order():
+		OrderRootLast():
 			elements(),
 			copy()
 		{}
