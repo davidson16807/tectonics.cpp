@@ -207,6 +207,7 @@ namespace orrery
         // for a given sample id, this generates that sample's cycle configuration
         void sample(
             const Periods& periods, 
+            const ids& generations, 
             const id samples_per_cycle, 
             const id sample, 
             PeriodSamples& samples
@@ -217,7 +218,7 @@ namespace orrery
                 samples.add(
                     periods[i], 
                     PeriodSample(
-                        id(sample/std::pow(samples_per_cycle,i))%samples_per_cycle,
+                        id(sample/std::pow(samples_per_cycle,generations[i]))%samples_per_cycle,
                         samples_per_cycle
                     )
                 );
