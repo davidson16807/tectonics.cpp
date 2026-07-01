@@ -58,21 +58,21 @@ namespace dymaxion
 			return (i*i2) + is_polar;
 		}
 
-		inline constexpr bool is_inverted_square_id(
+		[[nodiscard]] inline constexpr bool is_inverted_square_id(
 			const id i,
 			const bool is_polar
 		) const noexcept {
 			return is_polar == bool(i%2);
 		}
 
-		inline constexpr bool is_polar_square_id(
+		[[nodiscard]] inline constexpr bool is_polar_square_id(
 			const id i,
 			const bool is_inverted
 		) const noexcept {
 			return is_inverted == i%2;
 		}
 
-		inline constexpr bool is_inverted_grid_position(
+		[[nodiscard]] inline constexpr bool is_inverted_grid_position(
 			const vec2 V2
 		) const noexcept {
 			return V2.y > V2.x;

@@ -39,12 +39,12 @@ namespace table {
             rows.insert(list.begin(), list.end());
 	    }
 
-	    T operator[](const int i) const
+	    [[nodiscard]] T operator[](const int i) const
 	    {
 	        return rows.at(i);
 	    }
 
-	    PartialTable<T> operator[](const FullTable<int>& ids) const
+	    [[nodiscard]] PartialTable<T> operator[](const FullTable<int>& ids) const
 	    {
 	    	PartialTable<T> y;
 		    for (std::size_t i = 0; i < ids.size(); ++i)
@@ -57,7 +57,7 @@ namespace table {
 	        return y;
 	    }
 
-	    bool has(const int i) const
+	    [[nodiscard]] bool has(const int i) const
 	    {
 	        return rows.count(i) > 0;
 	    }
@@ -66,7 +66,7 @@ namespace table {
 
 	// allows creating a FullTable from a PartialTable, filling in missing values with a constant as a fallback
 	template<typename T>
-	FullTable<T> complete(const PartialTable<T>& x, const T fallback, const std::size_t size)
+	[[nodiscard]] FullTable<T> complete(const PartialTable<T>& x, const T fallback, const std::size_t size)
 	{
 	    FullTable<T> y;
 	    for (std::size_t i = 0; i < size; ++i)
@@ -78,7 +78,7 @@ namespace table {
 
 	// allows creating a FullTable from a PartialTable, filling in missing values with fallback values from a FullTable
 	template<typename T>
-	FullTable<T> complete(const PartialTable<T>& x, const FullTable<T>& fallback)
+	[[nodiscard]] FullTable<T> complete(const PartialTable<T>& x, const FullTable<T>& fallback)
 	{
 	    FullTable<T> y;
 	    for (std::size_t i = 0; i < fallback.size(); ++i)
@@ -90,7 +90,7 @@ namespace table {
 
 	// attempts to populate a PartialTable, filling in missing values with other values in the table as determined by the ids in `imitated`
 	template<typename T>
-	PartialTable<T> imitate(const PartialTable<T>& x, const FullTable<int>& imitated)
+	[[nodiscard]] PartialTable<T> imitate(const PartialTable<T>& x, const FullTable<int>& imitated)
 	{
 	    PartialTable<T> y;
 	    for (int i = 0; i < int(imitated.size()); ++i)
@@ -108,7 +108,7 @@ namespace table {
 
 	// returns x1 map that contains the first (key,value) pair having x1 key in x1 list of `attempts`
 	template<typename T>
-	PartialTable<T> first(const std::vector<PartialTable<T>>& attempts)
+	[[nodiscard]] PartialTable<T> first(const std::vector<PartialTable<T>>& attempts)
 	{
 	    PartialTable<T> y;
 	    for (std::size_t j = 0; j < attempts.size(); ++j)

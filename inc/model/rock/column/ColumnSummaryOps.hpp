@@ -13,12 +13,12 @@ namespace rock{
         const StratumSummaryOps ops;
         const length threshold;
 
-        inline bool exists(const StratumSummary& stratum) const
+        [[nodiscard]] inline bool exists(const StratumSummary& stratum) const
         {
             return stratum.thickness() > threshold;
         }
 
-        inline bool above(const StratumSummary& top, const StratumSummary& bottom) const
+        [[nodiscard]] inline bool above(const StratumSummary& top, const StratumSummary& bottom) const
         {
             return exists(top) && (!exists(bottom) || (exists(bottom) && top.density() < bottom.density()));
         }
@@ -30,33 +30,33 @@ namespace rock{
             threshold(threshold)
         {}
 
-        inline StratumSummary flatten (const ColumnSummary& column) const
+        [[nodiscard]] inline StratumSummary flatten (const ColumnSummary& column) const
         {
             return ops.combine(column.top, column.rest);
         }
 
-        ColumnSummary absorb (const StratumSummary& stratum1, const StratumSummary& stratum2) const
+        [[nodiscard]] ColumnSummary absorb (const StratumSummary& stratum1, const StratumSummary& stratum2) const
         {
             return above(stratum1, stratum2)?
                 ColumnSummary(stratum1, stratum2):
                 ColumnSummary(stratum2, stratum1);
         }
 
-        ColumnSummary absorb (const ColumnSummary& column1, const ColumnSummary& column2) const
+        [[nodiscard]] ColumnSummary absorb (const ColumnSummary& column1, const ColumnSummary& column2) const
         {
             return above(column1.top, column2.top)?
                 ColumnSummary(column1.top, ops.combine(column1.rest, flatten(column2))):
                 ColumnSummary(column2.top, ops.combine(column2.rest, flatten(column1)));
         }
 
-        ColumnSummary absorb (const ColumnSummary& column, const StratumSummary& stratum) const
+        [[nodiscard]] ColumnSummary absorb (const ColumnSummary& column, const StratumSummary& stratum) const
         {
             return above(column.top, stratum)?
                 ColumnSummary(column.top, ops.combine(column.rest, stratum)):
                 ColumnSummary(stratum,    flatten(column));
         }
 
-        ColumnSummary absorb (const StratumSummary& stratum, const ColumnSummary& column) const
+        [[nodiscard]] ColumnSummary absorb (const StratumSummary& stratum, const ColumnSummary& column) const
         {
             return above(column.top, stratum)?
                 ColumnSummary(column.top, ops.combine(column.rest, stratum)):
@@ -66,4 +66,3 @@ namespace rock{
     };
 
 }
-

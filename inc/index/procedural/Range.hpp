@@ -42,20 +42,20 @@ namespace procedural
 			reported_size(size)
 		{}
 
-		constexpr inline size_type size() const { return reported_size; }
+		[[nodiscard]] constexpr inline size_type size() const { return reported_size; }
 
-		constexpr inline bool includes(T value) const 
+		[[nodiscard]] constexpr inline bool includes(T value) const 
 		{ 
 			auto i = (value - start_value) / step_size;
 			return 0 <= i && i < reported_size;
 		}
 
-		constexpr inline value_type operator()(const size_type memory_id ) const
+		[[nodiscard]] constexpr inline value_type operator()(const size_type memory_id ) const
 		{
 			return step_size*T(memory_id)+start_value;
 		}
 
-		constexpr inline value_type operator[](const size_type memory_id ) const
+		[[nodiscard]] constexpr inline value_type operator[](const size_type memory_id ) const
 		{
 			return step_size*T(memory_id)+start_value;
 		}
@@ -68,29 +68,28 @@ namespace procedural
 	Typical C++ conventions might append these with `make_*`, but we forego this convention for brevity.
 	For consistency, we create one such function for `Range` here.
 	*/
-	constexpr inline Range<std::size_t> range()
+	[[nodiscard]] constexpr inline Range<std::size_t> range()
 	{
 		return Range();
 	}
 
 	template<typename T>
-	constexpr inline Range<T> range(const T reported_size)
+	[[nodiscard]] constexpr inline Range<T> range(const T reported_size)
 	{
 		return Range<T>(reported_size);
 	}
 
 	template<typename T>
-	constexpr inline Range<T> range(const T start_value, const T end_value)
+	[[nodiscard]] constexpr inline Range<T> range(const T start_value, const T end_value)
 	{
 		return Range<T>(start_value, end_value);
 	}
 
 	template<typename T>
-	constexpr inline Range<T> range(const T start_value, const T end_value, const std::size_t size)
+	[[nodiscard]] constexpr inline Range<T> range(const T start_value, const T end_value, const std::size_t size)
 	{
 		return Range<T>(start_value, end_value, size);
 	}
 
 
 }
-

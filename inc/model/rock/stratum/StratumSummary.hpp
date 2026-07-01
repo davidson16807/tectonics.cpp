@@ -49,7 +49,7 @@ namespace rock{
             plate_ids_bitset_(summary.plate_ids_bitset_)
         {}
 
-        si::density<float> density() const
+        [[nodiscard]] si::density<float> density() const
         {
             return density_in_kilograms_per_meter3 * kilogram_per_meter3;
         }
@@ -58,7 +58,7 @@ namespace rock{
             density_in_kilograms_per_meter3 = (uint(density/kilogram_per_meter3));
         }
 
-        si::length<float> thickness() const
+        [[nodiscard]] si::length<float> thickness() const
         {
             return thickness_in_meters * meter;
         }
@@ -67,7 +67,7 @@ namespace rock{
             thickness_in_meters = thickness/meter;
         }
 
-        std::bitset<8> plate_ids_bitset() const
+        [[nodiscard]] std::bitset<8> plate_ids_bitset() const
         {
             return plate_ids_bitset_;
         }
@@ -77,22 +77,22 @@ namespace rock{
         }
 
 
-        si::area_density<float> area_density() const
+        [[nodiscard]] si::area_density<float> area_density() const
         {
             return density() * thickness();
         }
 
-        int largest_plate_id() const
+        [[nodiscard]] int largest_plate_id() const
         {
             return int(std::log2(float(plate_ids_bitset_.to_ulong())));
         }
 
-        int plate_count() const
+        [[nodiscard]] int plate_count() const
         {
             return plate_ids_bitset_.count();
         }
 
-        bool includes(const int plate_id) const
+        [[nodiscard]] bool includes(const int plate_id) const
         {
             return plate_ids_bitset_.test(plate_id);
         }
@@ -100,4 +100,3 @@ namespace rock{
     };
 
 }
-

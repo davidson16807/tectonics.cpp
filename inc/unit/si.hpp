@@ -171,22 +171,22 @@ namespace si{
       return units<M1*N,KG1*N,S1*N,K1*N,MOL1*N,A1*N,CD1*N,T1>(std::pow(raw, N));
     }
     template<int N>
-    units<M1/N,KG1/N,S1/N,K1/N,MOL1/N,A1/N,CD1/N,T1> root() const
+    [[nodiscard]] units<M1/N,KG1/N,S1/N,K1/N,MOL1/N,A1/N,CD1/N,T1> root() const
     {
       return units<M1/N,KG1/N,S1/N,K1/N,MOL1/N,A1/N,CD1/N,T1>(std::pow(raw,1.0/double(N)));
     }
     // NOTE: `inverse()` is a faster, non-template, constexpr alternative to pow() for a restricted use case
-    constexpr units<-M1,-KG1,-S1,-K1,-MOL1,-A1,-CD1,T1> inverse() const
+    [[nodiscard]] constexpr units<-M1,-KG1,-S1,-K1,-MOL1,-A1,-CD1,T1> inverse() const
     {
       return units<-M1,-KG1,-S1,-K1,-MOL1,-A1,-CD1,T1>(T1(1)/raw);
     }
 
-    constexpr bool isinf() const
+    [[nodiscard]] constexpr bool isinf() const
     {
       return std::isinf(raw);
     }
 
-    constexpr bool isnan() const
+    [[nodiscard]] constexpr bool isnan() const
     {
       return std::isnan(raw);
     }
@@ -330,13 +330,13 @@ namespace si{
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr bool isinf(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+  [[nodiscard]] constexpr bool isinf(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
   {
     return a.isinf();
   }
 
   template <int M1, int KG1, int S1, int K1, int MOL1, int A1, int CD1, typename T1>
-  constexpr bool isnan(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
+  [[nodiscard]] constexpr bool isnan(const units<M1,KG1,S1,K1,MOL1,A1,CD1,T1> a)
   {
     return a.isnan();
   }
@@ -1090,4 +1090,3 @@ namespace si{
   }
 
 }
-

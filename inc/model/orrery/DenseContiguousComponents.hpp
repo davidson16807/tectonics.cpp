@@ -132,12 +132,12 @@ public:
 	}
 
 	// `entity_count` returns the number of entities tracked by this component store
-	std::size_t entity_count() const
+	[[nodiscard]] std::size_t entity_count() const
 	{
 		return components.size();
 	}
 
-	inline bool has(const id entity) const
+	[[nodiscard]] inline bool has(const id entity) const
 	{
 		const std::size_t index = std::size_t(entity);
 		return index < exists.size() && exists[index];
@@ -154,24 +154,24 @@ public:
 		}
 	}
 
-	const id entity_for_index(std::size_t component) const
+	[[nodiscard]] const id entity_for_index(std::size_t component) const
 	{
 		return id(component);
 	}
 
-	const Component& component_for_entity(const id entity) const
+	[[nodiscard]] const Component& component_for_entity(const id entity) const
 	{
 		assert(has(entity) && "Retrieving non-existent component.");
 		return components[std::size_t(entity)];
 	}
 
-	Component& component_for_entity(const id entity)
+	[[nodiscard]] Component& component_for_entity(const id entity)
 	{
 		assert(has(entity) && "Retrieving non-existent component.");
 		return components[std::size_t(entity)];
 	}
 
-	const std::vector<Component>& vector() const
+	[[nodiscard]] const std::vector<Component>& vector() const
 	{
 		return components;
 	}
@@ -179,4 +179,3 @@ public:
 };
 
 }
-

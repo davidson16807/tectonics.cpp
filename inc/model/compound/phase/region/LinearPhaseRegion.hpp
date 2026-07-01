@@ -26,19 +26,19 @@ namespace phase {
             phase_id(phase_id)
         {
         }
-        constexpr bool contains(const si::pressure<double> p, const si::temperature<double> T) const
+        [[nodiscard]] constexpr bool contains(const si::pressure<double> p, const si::temperature<double> T) const
         {
             return Tlo(p) < T&&T < Thi(p) &&
                    Plo(T) < p&&p < Phi(T);
         }
-        constexpr bool contains(const point<double> pT) const
+        [[nodiscard]] constexpr bool contains(const point<double> pT) const
         {
             return contains(pT.pressure, pT.temperature);
         }
     }
 
 
-    constexpr LinearPhaseRegion supercritical(const si::pressure<double> p, const si::temperature<double> T)
+    [[nodiscard]] constexpr LinearPhaseRegion supercritical(const si::pressure<double> p, const si::temperature<double> T)
     {
         return LinearPhaseRegion(
             phase::supercritical,
@@ -49,7 +49,7 @@ namespace phase {
         );
     }
 
-    constexpr LinearPhaseRegion supercritical(const si::temperature<double> T, const si::pressure<double> p)
+    [[nodiscard]] constexpr LinearPhaseRegion supercritical(const si::temperature<double> T, const si::pressure<double> p)
     {
         return LinearPhaseRegion(
             phase::supercritical,
@@ -60,7 +60,7 @@ namespace phase {
         );
     }
 
-    constexpr LinearPhaseRegion supercritical(point<double> critical_point)
+    [[nodiscard]] constexpr LinearPhaseRegion supercritical(point<double> critical_point)
     {
         return supercritical(critical_point.pressure, critical_point.temperature);
     }

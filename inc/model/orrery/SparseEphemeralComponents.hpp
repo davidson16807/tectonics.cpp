@@ -130,49 +130,49 @@ public:
 	}
 
 	// `entity_count` returns the number of entities tracked by this component store
-	std::size_t entity_count() const
+	[[nodiscard]] std::size_t entity_count() const
 	{
 		return components.size();
 	}
 
 	// `component_count` returns the number of components in this component store
-	std::size_t component_count() const
+	[[nodiscard]] std::size_t component_count() const
 	{
 		return size;
 	}
 
-	bool has(id entity) const
+	[[nodiscard]] bool has(id entity) const
 	{
 		return index_of_entity.find(entity) != index_of_entity.end();
 	}
 
-	const id entity_for_index(std::size_t component) const
+	[[nodiscard]] const id entity_for_index(std::size_t component) const
 	{
 		assert(component < components.size() && "Retrieving non-existent component.");
 		return index_of_entity.at(component);
 	}
 
-	const Component& component_for_entity(id entity) const
+	[[nodiscard]] const Component& component_for_entity(id entity) const
 	{
 		assert(has(entity) && "Retrieving non-existent component.");
 		// Return a reference to the entity's component
 		return components.at(index_of_entity.at(entity));
 	}
 
-	Component& component_for_entity(id entity)
+	[[nodiscard]] Component& component_for_entity(id entity)
 	{
 		assert(has(entity) && "Retrieving non-existent component.");
 		// Return a reference to the entity's component
 		return components.at(index_of_entity.at(entity));
 	}
 
-	const Component& component_for_index(std::size_t component) const
+	[[nodiscard]] const Component& component_for_index(std::size_t component) const
 	{
 		assert(component < components.size() && "Retrieving non-existent component.");
 		return components[component];
 	}
 
-	Component& component_for_index(std::size_t component)
+	[[nodiscard]] Component& component_for_index(std::size_t component)
 	{
 		assert(component < components.size() && "Retrieving non-existent component.");
 		return components[component];
@@ -180,4 +180,3 @@ public:
 };
 
 }
-
