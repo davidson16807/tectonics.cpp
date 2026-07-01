@@ -18,7 +18,6 @@
 #include <model/orbit/Universals.hpp> // orbit::Universals
 #include <model/orbit/UniversalPropagator.hpp> // orbit::UniversalPropagator
 
-#include "PeriodSample.hpp"
 #include "EntityComponents.hpp"
 #include "Resonance.hpp"
 #include "DenseContiguousComponents.hpp"
@@ -41,12 +40,12 @@ namespace orrery
         using Orbits = DenseContiguousComponents<id, orbit::Universals<scalar>>;
         using TrackPositions = EntityComponents<id,vec3>;
         using Periods = EntityComponents<id,duration>;
-        using PeriodSamples = EntityComponents<id,PeriodSample<scalar,duration>>;
         using Resonances = EntityComponents<id,Resonance<id,duration>>;
 
         using ids = std::vector<id>;
         using vec3s = std::vector<vec3>;
         using bools = std::vector<bool>;
+        using scalars = std::vector<scalar>;
 
         const orbit::UniversalPropagator<scalar> propagator;
         const orbit::Properties<scalar> elliptics;
@@ -210,42 +209,51 @@ namespace orrery
             const ids& generations, 
             const id samples_per_cycle, 
             const id sample, 
-            PeriodSamples& samples
+            scalars& fractions
         ) const {
-            samples.clear();
-            samples.reserve(periods.size());
+            fractions.clear();
+            fractions.reserve(periods.size());
             for (std::size_t i = 0; i < periods.size(); ++i) {
-                samples.add(
-                    periods[i], 
-                    PeriodSample(
-                        id(sample/std::pow(samples_per_cycle,generations[i]))%samples_per_cycle,
-                        samples_per_cycle
-                    )
-                );
+                fractions.push_back(
+                    ((scalar(sample)/scalar(std::pow(samples_per_cycle,generations[i])))%scalar(samples_per_cycle)) / 
+                    scalar(samples_per_cycle));
             }
         }
 
         // Oⁿ(NPCT)ⁿ → (Nℝ³)ᵐ
         // generates barycentric offsets for each cyclic orbit and configuration
         // this is motivated by the need to quickly track imperceptible elliptic orbits
+        template<typename Fractions>
         void offsets(
             const Orbits& orbits,
-            const PeriodSamples& samples,
+            const Periods& periods,
+            const Fractions& fractions,
             TrackPositions& results
         ) const {
             results.clear();
-            results.reserve(samples.size());
-            PeriodSample<scalar,scalar> sample;
-            for (std::size_t i = 0; i < samples.size(); ++i) {
-                sample = samples.component_for_index(i);
+            results.reserve(periods.size());
+            for (std::size_t i = 0; i < periods.size(); ++i) {
+                auto cycle = periods.entity_for_index(i);
+                auto period = periods.component_for_index(i);
+                auto fraction = fractions[i];
                 results.add(
-                    samples.entity_for_index(i), 
+                    cycle, 
                     propagator.state(
-                        orbits.component_for_entity(sample.cycle),
-                        sample.time()
+                        orbits.component_for_entity(cycle),
+                        fraction * period
                     ).position); // TODO: add logic to consider time offsets in the orbit itself
             }
         }
+
+        /*
+        TODO: 
+        sample(sample, samples_per_cycle) → phases
+        offset(orbits, time_offsets) → offsets
+
+        this will allow:
+        noise(seed) → phases
+        periods * phases → time_offsets
+        */
 
         // OⁿNᵐt→(Nℝ³)ᵐ
         // generates barycentric offsets at a given time offset for each orbit
@@ -273,27 +281,27 @@ namespace orrery
         // (NPCT)ⁿ(RPCT)ᵐ → (NPCT)ⁿ
         // updates the given sample configuration of Periods, `subsamples`, 
         // to reflect a given sample configuration for resonance systems, `samples`
-        void update(
-            const Resonances& resonances,
-            const PeriodSamples& samples,
-            const PeriodSamples& subsamples,
-            PeriodSamples& updated
-        ) const {
-            if(&updated != &subsamples) {
-                updated.clear();
-                updated.reserve(subsamples.size());
-                for (std::size_t i = 0; i < subsamples.size(); ++i) {
-                    updated.emplace_back(subsamples[i]);
-                }
-            }
-            PeriodSample<scalar,scalar> sample;
-            PeriodSample<scalar,scalar> subsample;
-            for (std::size_t i = 0; i < samples.size(); ++i) {
-                sample = samples.component_for_index(resonances.component_for_entity(i).resonance);
-                subsample = updated[resonances.entity_for_index(i)];
-                updated[resonances.entity_for_index(i)] = updated[subsample].with_time(sample.time());
-            }
-        }
+        // void update(
+        //     const Resonances& resonances,
+        //     const PeriodSamples& samples,
+        //     const PeriodSamples& subsamples,
+        //     PeriodSamples& updated
+        // ) const {
+        //     if(&updated != &subsamples) {
+        //         updated.clear();
+        //         updated.reserve(subsamples.size());
+        //         for (std::size_t i = 0; i < subsamples.size(); ++i) {
+        //             updated.emplace_back(subsamples[i]);
+        //         }
+        //     }
+        //     PeriodSample<scalar,scalar> sample;
+        //     PeriodSample<scalar,scalar> subsample;
+        //     for (std::size_t i = 0; i < samples.size(); ++i) {
+        //         sample = samples.component_for_index(resonances.component_for_entity(i).resonance);
+        //         subsample = updated[resonances.entity_for_index(i)];
+        //         updated[resonances.entity_for_index(i)] = updated[subsample].with_time(sample.time());
+        //     }
+        // }
 
     };
 
