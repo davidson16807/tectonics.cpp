@@ -245,16 +245,6 @@ namespace orrery
             }
         }
 
-        /*
-        TODO: 
-        sample(sample, samples_per_cycle) → phases
-        offset(orbits, time_offsets) → offsets
-
-        this will allow:
-        noise(seed) → phases
-        periods * phases → time_offsets
-        */
-
         // OⁿNᵐt→(Nℝ³)ᵐ
         // generates barycentric offsets at a given time offset for each orbit
         // this is motivated by the need to track hyperbolic, parabolic, and perceptible elliptic orbits
