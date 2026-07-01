@@ -25,7 +25,7 @@ namespace codecs {
 	public:
 		GlmVectorCodec() = default;
 
-		vec decode(const strings& fields) const
+		[[nodiscard]] vec decode(const strings& fields) const
 		{
 			if (fields.size() != std::size_t(L)) {
 				throw std::invalid_argument(std::format(
@@ -51,4 +51,3 @@ namespace codecs {
 	};
 
 }
-

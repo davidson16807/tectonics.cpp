@@ -314,7 +314,7 @@ namespace view
 	    resources like shaders or programs, we simply wipe the slate clean
 	    on the first sign that anything falls out of sync.
 	    */
-		bool canDepict(
+		[[nodiscard]] bool canDepict(
 			const ColorscaleSurfacesViewState& colorscale_state, 
 			const ViewState& view_state
 		){
@@ -404,4 +404,3 @@ namespace view
 		}
 	};
 }
-

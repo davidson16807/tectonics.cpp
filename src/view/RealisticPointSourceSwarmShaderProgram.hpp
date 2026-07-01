@@ -363,7 +363,7 @@ namespace view
 
 	    /*
 	    */
-		bool canDepict(const ViewState& view_state){
+		[[nodiscard]] bool canDepict(const ViewState& view_state){
 			return !isDisposed;
 		}
 

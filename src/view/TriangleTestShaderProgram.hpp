@@ -140,7 +140,7 @@ namespace view
 		}
 
 		template <typename T>
-		bool canDepict(const std::vector<T>& points, const std::vector<T>& colors){
+		[[nodiscard]] bool canDepict(const std::vector<T>& points, const std::vector<T>& colors){
 			return !isDisposed;
 		}
 

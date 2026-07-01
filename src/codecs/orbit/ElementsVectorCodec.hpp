@@ -29,14 +29,14 @@ namespace codecs {
 
 		using strings = std::vector<std::string>;
 
-	    static scalar decode(const std::string& s) {
+	    [[nodiscard]] static scalar decode(const std::string& s) {
 	        std::istringstream iss(s);
 	        scalar value;
 	        iss >> value;
 	        return value;
 	    }
 
-	    static std::string encode(const scalar& value) {
+	    [[nodiscard]] static std::string encode(const scalar& value) {
 	        std::ostringstream oss;
 	        oss << std::setprecision(std::numeric_limits<scalar>::max_digits10) << value;
 	        return oss.str();
@@ -47,7 +47,7 @@ namespace codecs {
 			length_unit(length_unit)
 		{};
 
-		orbit::Elements<scalar> decode(const std::vector<std::string>& fields) const
+		[[nodiscard]] orbit::Elements<scalar> decode(const std::vector<std::string>& fields) const
 		{
 			if (fields.size() < 1) {
 				throw std::invalid_argument("An orbit must have at least a semi-major axis");
@@ -78,4 +78,3 @@ namespace codecs {
 	};
 
 }
-
