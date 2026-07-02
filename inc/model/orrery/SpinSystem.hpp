@@ -10,7 +10,7 @@
 #include <utility>  // std::pair
 
 // 3rd-party libraries
-#include <glm/mat4x4.hpp> // *mat4x4
+#include <glm/mat3x3.hpp> // *mat3x3
 
 // in-house libraries
 #include "Spin.hpp"
@@ -24,31 +24,31 @@ namespace orrery
 
         using Spins = DenseContiguousComponents<id, orrery::Spin<scalar,duration>>;
 
-        using mat4 = glm::mat<4,4,scalar,precision>;
-
-        using mat4s = std::vector<mat4>;
+        using mat3 = glm::mat<3,3,scalar,precision>;
 
     public:
 
         SpinSystem(){}
 
+        template<typename matrices>
         void fixed_for_inertial(
             const Spins& spins,
             const scalar time_offset,
-            mat4s& results
+            matrices& results
         ) const {
             for (std::size_t i = 0; i < results.size(); ++i) {
-                results[i] = !spins.has(i)? mat4(1) : mat4(spins.component_for_entity(i).fixed_for_inertial(time_offset));
+                results[i] = !spins.has(i)? mat3(1) : spins.component_for_entity(i).fixed_for_inertial(time_offset);
             }
         }
 
+        template<typename matrices>
         void inertial_for_fixed(
             const Spins& spins,
             const scalar time_offset,
-            mat4s& results
+            matrices& results
         ) const {
             for (std::size_t i = 0; i < results.size(); ++i) {
-                results[i] = !spins.has(i)? mat4(1) : mat4(spins.component_for_entity(i).inertial_for_fixed(time_offset));
+                results[i] = !spins.has(i)? mat3(1) : spins.component_for_entity(i).inertial_for_fixed(time_offset);
             }
         }
 
