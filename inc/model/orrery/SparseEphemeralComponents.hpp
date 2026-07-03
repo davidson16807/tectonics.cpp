@@ -146,10 +146,10 @@ public:
 		return index_of_entity.find(entity) != index_of_entity.end();
 	}
 
-	[[nodiscard]] const id entity_for_index(std::size_t component) const
+	[[nodiscard]] const id entity_for_index(std::size_t index) const
 	{
-		assert(component < components.size() && "Retrieving non-existent component.");
-		return index_of_entity.at(component);
+		assert(index < components.size() && "Retrieving non-existent component.");
+		return index_of_entity.at(index);
 	}
 
 	[[nodiscard]] const Component& component_for_entity(id entity) const
@@ -177,6 +177,7 @@ public:
 		assert(component < components.size() && "Retrieving non-existent component.");
 		return components[component];
 	}
+
 };
 
 }

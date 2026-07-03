@@ -154,9 +154,21 @@ public:
 		}
 	}
 
-	[[nodiscard]] const id entity_for_index(std::size_t component) const
+	[[nodiscard]] const id entity_for_index(std::size_t index) const
 	{
-		return id(component);
+		return id(index);
+	}
+
+	[[nodiscard]] const Component& component_for_index(std::size_t index) const
+	{
+		assert(has(index) && "Retrieving non-existent index.");
+		return components[index];
+	}
+
+	[[nodiscard]] Component& component_for_index(std::size_t index)
+	{
+		assert(has(index) && "Retrieving non-existent index.");
+		return components[index];
 	}
 
 	[[nodiscard]] const Component& component_for_entity(const id entity) const

@@ -82,13 +82,13 @@ public:
 		return components[component].first;
 	}
 
-	Component& component_for_index(std::size_t component)
+	const Component& component_for_index(std::size_t component) const
 	{
 		assert(component < components.size() && "Retrieving non-existent component.");
 		return components[component].second;
 	}
 
-	const Component& component_for_index(std::size_t component) const
+	Component& component_for_index(std::size_t component)
 	{
 		assert(component < components.size() && "Retrieving non-existent component.");
 		return components[component].second;

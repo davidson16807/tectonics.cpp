@@ -157,6 +157,18 @@ public:
 		return index_of_entity.at(component);
 	}
 
+	[[nodiscard]] const Component& component_for_index(std::size_t component) const
+	{
+		assert(component < components.size() && "Retrieving non-existent component.");
+		return components[component];
+	}
+
+	[[nodiscard]] Component& component_for_index(std::size_t component)
+	{
+		assert(component < components.size() && "Retrieving non-existent component.");
+		return components[component];
+	}
+
 	[[nodiscard]] const Component& component_for_entity(id entity) const
 	{
 		assert(has(entity) && "Retrieving non-existent component.");
@@ -169,18 +181,6 @@ public:
 		assert(has(entity) && "Retrieving non-existent component.");
 		// Return a reference to the entity's component
 		return components.at(index_of_entity.at(entity));
-	}
-
-	[[nodiscard]] const Component& component_for_index(std::size_t component) const
-	{
-		assert(component < components.size() && "Retrieving non-existent component.");
-		return components[component];
-	}
-
-	[[nodiscard]] Component& component_for_index(std::size_t component)
-	{
-		assert(component < components.size() && "Retrieving non-existent component.");
-		return components[component];
 	}
 };
 
