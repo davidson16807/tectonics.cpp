@@ -60,7 +60,54 @@ namespace orrery
 
     public:
 
-        PeriodicSystem() {}
+        const duration min_perceivable_period;
+        const duration max_perceivable_period;
+
+        PeriodicSystem():
+        {}
+
+        void imperceptibly_fast(
+            const Periods& periods,
+            const duration min_perceivable_period,
+            const Periods& imperceptibly_fast
+        ) {
+            for (std::size_t i = 0; i < periods.size(); ++i) {
+                id entity = periods.entity_for_index(i);
+                duration period = periods.component_for_index(i);
+                if (period < min_perceivable_period) {
+                    imperceptibly_fast.add(entity, period);
+                }
+            }
+        }
+
+        void imperceptibly_slow(
+            const Periods& periods,
+            const duration max_perceivable_period,
+            const Periods& imperceptibly_slow
+        ) {
+            for (std::size_t i = 0; i < periods.size(); ++i) {
+                id entity = periods.entity_for_index(i);
+                duration period = periods.component_for_index(i);
+                if (period > max_perceivable_period) {
+                    imperceptibly_slow.add(entity, period);
+                }
+            }
+        }
+
+        void perceptible(
+            const Periods& periods,
+            const duration min_perceivable_period,
+            const duration max_perceivable_period,
+            const Periods& perceptible
+        ) {
+            for (std::size_t i = 0; i < periods.size(); ++i) {
+                id entity = periods.entity_for_index(i);
+                duration period = periods.component_for_index(i);
+                if (min_perceivable_period < period && period < max_perceivable_period) {
+                    perceptible.add(entity, period);
+                }
+            }
+        }
 
         // Tⁿ→RⁿI
         // detects resonant systems between Periods
