@@ -12,7 +12,8 @@ Namespaces within `index/` include:
 * `branched::` functions that are analogous to `aggregated::` that calculate a singleton for each branch in a tree of a standard 1-dimensional representation
 * `inherited::` functions that are analogous to `aggregated::` that calculate a singleton for each depth traversal in a tree of the same representation used by `branched::`
 * `grouped::` functions that are analogous to `aggregated::` that calculate a singleton for each group in a collection of groups that are represented 1-dimensionally
-* `known::` classes that represent functions that are analogous to `iterated::` but are optimized for use when all arguments are known procedurally and require no storage. Always use this if and only if all arguments can be described procedurally.
 * `procedural::` classes that represent collections that are known procedurally and require no storage. Always try to use this if the collection can be described procedurally.
+* `systemic::` functions that act on adapted `*Components` objects as systems of the entity-component-system ("ECS") architecture that is used throughout the code base. See inc/components/ for sample components.
+* `known::` Deprecated. classes that represent functions that are analogous to `iterated::` but are optimized for use when all arguments are known procedurally and require no storage. Always use this if and only if all arguments can be described procedurally.
 * `whole::` Deprecated. It represents and earlier attempt to implement the `aggregated::` namespace of this library, but it could not easily handle other data types like `si::` units or `glm::` vectors
 
