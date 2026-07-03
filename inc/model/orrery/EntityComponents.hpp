@@ -66,8 +66,7 @@ public:
 		}
 	}
 
-	// `entity_count` returns the number of entities tracked by this component store
-	std::size_t entity_count() const
+	std::size_t component_count() const
 	{
 		return components.size();
 	}

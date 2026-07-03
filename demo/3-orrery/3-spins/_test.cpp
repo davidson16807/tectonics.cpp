@@ -371,12 +371,6 @@ int main() {
         orbital_parent_offsets
       );
 
-      /*
-      TODO: `update` should be unecessary when using components,
-      `.offsets` could instead set results to a `Components` objects,
-      and remove the need for `TrackPositions` and its `node` attribute.
-      The major downside is the loss of conceptual purity.
-      */ 
       scene_trees.update(
         orbital_parent_offsets,
         parent_offsets,

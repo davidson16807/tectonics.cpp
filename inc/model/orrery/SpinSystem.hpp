@@ -22,13 +22,33 @@ namespace orrery
     template<typename id, typename scalar, typename duration, glm::qualifier precision = glm::defaultp>
     class SpinSystem{
 
-        using Spins = DenseContiguousComponents<id, orrery::Spin<scalar,duration>>;
+        static constexpr scalar s0 = scalar(0);
 
         using mat3 = glm::mat<3,3,scalar,precision>;
+
+        using Spins = DenseContiguousComponents<id, orrery::Spin<scalar,duration>>;
+        using Periods = EntityComponents<id,duration>;
 
     public:
 
         SpinSystem(){}
+
+        void periods(
+            const Spins& spins, 
+            Periods& periods
+        ) const {
+            periods.clear();
+            periods.reserve(3*spins.component_count());
+            orrery::Spin<scalar,duration> spin;
+            id entity;
+            for (std::size_t i = 0; i < spins.component_count(); ++i) {
+                entity = spins.entity_for_index(i);
+                spin = spins.component_for_index(i);
+                periods.add(entity, spin.spin_period);
+                if (spin.precession_period > s0) { periods.add( entity, spin.precession_period ); }
+                if (spin.nutation_period > s0) { periods.add( entity, spin.nutation_period ); }
+            }
+        }
 
         template<typename matrices>
         void fixed_for_inertial(
