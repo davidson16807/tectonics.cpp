@@ -1,0 +1,64 @@
+sampling:
+	sample id
+	orbits
+	spins
+	→
+	positions 
+	rotations
+
+insolation implementation 1:
+	lights
+	positions
+	rotations
+	→
+	light exposures
+
+insolation implementation 2:
+	lighting quad tree
+	positions
+	rotations
+	→
+	light exposures
+
+gravity tug/tides:
+	gravity quad tree
+	positions
+	rotations
+	→
+	light exposures
+
+also need some way to concatenate light exposures
+
+alternatively, may calculate a running average of insolations across several timesteps
+increases to timestep may optionally require average insolation to be calculated up to the min_perceptible_duration of that timestep
+
+sampling
+	orbits.offsets
+	spins.fixed_for_inertial
+	scene_trees.update
+	scene_trees.offsets_from_origin
+
+lithosphere
+	initialize
+	move
+		motion
+		synchronization
+		rifting
+		subduction
+	erode(precipitation, maybe temperature swings?)
+	press(overburden)
+		lithify
+		metamorphoze
+	albedo
+		before influence of sea or atmosphere
+	astrobleme(mass, position, velocity)
+
+overarching principle of topmost abstraction layer is for functions to consolidate actions on the same data structure when they require the same information that is external to the data structure
+
+development of insolation calculation should proceed in this order:
+* new demo that displays correct orbital positions while also iterating through undisplayed configurations 
+* modified demo that calculates light exposure samples from each configuration
+* modified demo that calculates average insolation raster from light exposure samples
+* modified demo that accumulates average insolation raster across multiple timesteps?
+
+planets may wind up having a variable

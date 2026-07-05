@@ -1,3 +1,4 @@
+#pragma once
 
 template<typename id, typename duration>
 struct Resonance {

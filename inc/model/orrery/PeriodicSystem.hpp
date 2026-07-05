@@ -10,17 +10,12 @@
 #include <utility>  // std::pair
 
 // 3rd-party libraries
-#include <glm/vec3.hpp>          // *vec3
 
 // in-house libraries
 #include <math/special.hpp>           // math::roundfract
-#include <model/orbit/Properties.hpp> // orbit::Properties
-#include <model/orbit/Universals.hpp> // orbit::Universals
-#include <model/orbit/UniversalPropagator.hpp> // orbit::UniversalPropagator
 
 #include "EntityComponents.hpp"
 #include "Resonance.hpp"
-#include "DenseContiguousComponents.hpp"
 
 namespace orrery
 {
@@ -60,11 +55,22 @@ namespace orrery
 
     public:
 
-        const duration min_perceivable_period;
-        const duration max_perceivable_period;
+        // const duration min_perceivable_period;
+        // const duration max_perceivable_period;
 
-        PeriodicSystem():
-        {}
+        PeriodicSystem(){}
+
+        // TODO: systemic::AggregatedOrder::min?
+        duration shortest(
+            const Periods& periods
+        ) {
+            duration shortest_period = periods.component_for_index(0);
+            for (std::size_t i = 0; i < periods.size(); ++i) {
+                duration period = periods.component_for_index(i);
+                shortest_period = period < shortest_period? period : shortest_period;
+            }
+            return shortest_period;
+        }
 
         void imperceptibly_fast(
             const Periods& periods,

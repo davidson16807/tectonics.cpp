@@ -13,16 +13,17 @@
 
 // in house libraries
 
-#include <math/special.hpp>                  // math::floormod
+#include <math/special.hpp>                   // math::floormod, math::phi
 
-#include <unit/si.hpp>                       // si::unit
+#include <unit/si.hpp>                        // si::unit
 
-#include <model/orbit/Elements.hpp>          // orbit::Elements
-#include <model/orbit/ElementsAndState.hpp>  // 
+#include <model/orbit/Elements.hpp>           // orbit::Elements
+#include <model/orbit/ElementsAndState.hpp>   // 
 #include <model/orrery/Spin.hpp>              // orrery::Spin
-#include <model/orrery/OrbitSystem.hpp>      // orrery:OrbitSystem
+#include <model/orrery/OrbitSystem.hpp>       // orrery:OrbitSystem
 #include <model/orrery/SpinSystem.hpp>        // orrery::SpinSystem
-#include <model/orrery/SceneTrees.hpp>       // orrery:SceneTrees
+#include <model/orrery/PeriodicSystem.hpp>    // orrery::PeriodicSystem
+#include <model/orrery/SceneTrees.hpp>        // orrery:SceneTrees
 #include <model/orrery/DenseContiguousComponents.hpp> // orrery:UnsortedEphemeralComponents
 
 #include <update/OrbitalNavigationState.hpp>    // update::OrbitalNavigationState
@@ -30,8 +31,8 @@
 #include <update/TreeNavigationUpdater.hpp>     // update::TreeNavigationUpdater
 #include <update/ValueHotkeyPresetUpdater.hpp>  // update::ValueHotkeyPresetUpdater
 #include <update/ValueHotkeySliderUpdater.hpp>  // update::ValueHotkeySliderUpdater
-#include <update/ValueHotkeyRangeUpdater.hpp>  // update::ValueHotkeySliderUpdater
-#include <update/OptionHotkeyRangeUpdater.hpp> // update::OptionHotkeyRangeUpdater
+#include <update/ValueHotkeyRangeUpdater.hpp>   // update::ValueHotkeySliderUpdater
+#include <update/OptionHotkeyRangeUpdater.hpp>  // update::OptionHotkeyRangeUpdater
 #include <update/OptionHotkeyCarouselUpdater.hpp> // update::OptionHotkeyCarouselUpdater
 
 #include <view/IndicatorSphereSwarmShaderProgram.hpp>     // view::IndicatorSphereSwarmShaderProgram
@@ -153,7 +154,7 @@ int main() {
   using Orbits = orrery::DenseContiguousComponents<int,Orbit>;
   using Spins = orrery::DenseContiguousComponents<int,Spin>;
   using TrackPositions = orrery::EntityComponents<int,dvec3>;
-  using Periods = orrery::EntityComponents<int,scalar>;
+  using Periods = orrery::EntityComponents<int,double>;
 
   Properties properties(
     dvec3(1,0,0), 
@@ -174,14 +175,15 @@ int main() {
 
   orrery::OrbitSystem<int,double> orbit_system(propagator, properties);
   orrery::SpinSystem<int,float,double> spin_system;
+  orrery::PeriodicSystem<int,double> periodic_system;
   orrery::SceneTrees<int,double> scene_trees;
 
   // within the confines of this ECS implementation, parent_ids are one-to-one with entities, so we store them using a std::vector
   std::vector<int> parent_ids {0,0,0,0,0,0,0,0,0,0,0,10,10,3,5,5,5,5,6,6,6,6,6,6,6,6,7,7,7,7,7,8,9,9,9,9,9,9,}; 
-  // entities that have perceptible orbits, we use 32-bit ints for entity ids and more than 1 out of 32 are represented, so a bool mask is more sparse, but checking the mask introduces branching logic
-  std::vector<bool> perceptible(parent_ids.size(), true);
-  perceptible[0] = false;// 0 is sun
-  Periods periods;
+  // entities that have aperiodic orbits, we use 32-bit ints for entity ids and more than 1 out of 32 are represented, so a bool mask is more sparse, but checking the mask introduces branching logic
+  std::vector<bool> aperiodic(parent_ids.size(), true);
+  aperiodic[0] = false;// 0 is sun
+  Periods periods, scratch_periods;
   // entities that have orbits, this is just a temporary construct used for initialization 
   // so we don't care if we use std::vector or std::pair
   std::vector<std::pair<mass, Elements>> elliptics = {
@@ -364,11 +366,13 @@ int main() {
       time max_perceivable_period(timesteps[timestep_id] * si::week/si::second); // 1 week worth of real time
       // time above which user could no longer perceive the effects of a cycle
 
-      orbit_system.periods(orbits, periods, perceptible);
       scene_trees.is_ancestor(parent_ids, origin_id, is_origin_ancestor);
+      orbit_system.periods(orbits, scratch_periods, aperiodic); periods.add(scratch_periods);
+      spin_system.periods(spins, scratch_periods); periods.add(scratch_periods);
+      double shortest_period = periodic_system.shortest(periods);
 
       // identify shorted period
-      time sample_time_offset = shortest_period * 1.618033;
+      time sample_time_offset = shortest_period * math::phi * si::second;
 
       const int sample_count(10);
       time sample_time = t;
@@ -376,59 +380,24 @@ int main() {
       {
         sample_time += sample_time_offset;
 
-        orbit_system.offsets(
-          orbits, 
-          periods, 
-          sample_time/si::second, // time_offset
-          orbital_parent_offsets
-        );
+        orbit_system.offsets(orbits, periods, sample_time/si::second, orbital_parent_offsets);
+        scene_trees.update(orbital_parent_offsets, parent_offsets, parent_offsets);
+        scene_trees.offsets_from_origin(parent_offsets, parent_ids, is_origin_ancestor, origin_id, instance_origins);
+        spin_system.fixed_for_inertial(spins, sample_time/si::second, fixed_for_inertial);
 
-        scene_trees.update(
-          orbital_parent_offsets,
-          parent_offsets,
-          parent_offsets
-        );
-
-        scene_trees.offsets_from_origin(
-          parent_offsets,
-          parent_ids,
-          is_origin_ancestor,
-          origin_id,
-          instance_origins
-        );
-
-        spin_system.fixed_for_inertial(ultrafast_spins, sample_time/si::second, fixed_for_inertial);
-
-        light_system.exposures(
-          instance_origins,
-          fixed_for_inertial,
-          periods, // TOOD: repeat light sampling for perceptibles and ultraslow_orbits, then merge results
-          light_sources,
-          light_sample_exposures
-        );
+        // light_system.exposures(
+        //   instance_origins,
+        //   fixed_for_inertial,
+        //   nonlight_sources, // TOOD: populate this
+        //   light_sources,
+        //   light_sample_exposures
+        // );
 
       }
 
-      orbit_system.offsets(
-        orbits, 
-        perceptible, 
-        t/si::second, // time_offset
-        orbital_parent_offsets
-      );
-
-      scene_trees.update(
-        orbital_parent_offsets,
-        parent_offsets,
-        parent_offsets
-      );
-
-      scene_trees.offsets_from_origin(
-        parent_offsets,
-        parent_ids,
-        is_origin_ancestor,
-        origin_id,
-        instance_origins
-      );
+      orbit_system.offsets(orbits, t/si::second, orbital_parent_offsets);
+      scene_trees.update(orbital_parent_offsets, parent_offsets, parent_offsets);
+      scene_trees.offsets_from_origin(parent_offsets, parent_ids, is_origin_ancestor,origin_id,instance_origins);
 
       spin_system.fixed_for_inertial(spins, t/si::second, fixed_for_inertial);
       spin_system.inertial_for_fixed(spins, t/si::second, inertial_for_fixed);

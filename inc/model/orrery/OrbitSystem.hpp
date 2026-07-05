@@ -6,20 +6,16 @@
 // std libraries
 #include <limits>   // std::numeric_limits
 #include <vector>   // std::vector
-#include <algorithm>// std::min/max
-#include <utility>  // std::pair
 
 // 3rd-party libraries
 #include <glm/vec3.hpp>          // *vec3
 
 // in-house libraries
-#include <math/special.hpp>           // math::roundfract
 #include <model/orbit/Properties.hpp> // orbit::Properties
 #include <model/orbit/Universals.hpp> // orbit::Universals
 #include <model/orbit/UniversalPropagator.hpp> // orbit::UniversalPropagator
 
 #include "EntityComponents.hpp"
-#include "Resonance.hpp"
 #include "DenseContiguousComponents.hpp"
 
 namespace orrery
@@ -33,7 +29,6 @@ namespace orrery
         using duration = scalar;
         using vec3 = glm::vec<3,scalar,precision>;
 
-        using vec3s = std::vector<vec3>;
         using bools = std::vector<bool>;
 
         using Orbit = orbit::Universals<scalar>;
@@ -57,12 +52,12 @@ namespace orrery
 
         // partitions orbits among periodic an nonperiodic
         void periods(
-            const Orbits& orbits, 
+            const Orbits& orbits,
             Periods& periods,
             bools& aperiodic
         ) const {
             periods.clear();
-            periods.reserve(orbits.component_count());
+            periods.reserve(orbits.entity_count());
             Orbit orbit;
             scalar inverse_semi_major_axis;
             for (std::size_t entity = 0; entity < orbits.entity_count(); ++entity) {
@@ -84,11 +79,10 @@ namespace orrery
         // Oⁿ… → (Nℝ³)ᵐ
         // generates barycentric offsets for each cyclic orbit and configuration
         // this is motivated by the need to quickly track imperceptible elliptic orbits
-        template<typename Fractions>
         void offsets(
             const Orbits& orbits,
             const Periods& periods,
-            const Fractions& fractions,
+            const std::vector<scalar>& fractions,
             TrackPositions& results
         ) const {
             results.clear();
@@ -109,7 +103,6 @@ namespace orrery
         // Oⁿ… → (Nℝ³)ᵐ
         // generates barycentric offsets for each cyclic orbit and configuration
         // this is motivated by the need to quickly track imperceptible elliptic orbits
-        template<typename Fractions>
         void offsets(
             const Orbits& orbits,
             const Periods& periods,
@@ -119,7 +112,7 @@ namespace orrery
             results.clear();
             results.reserve(orbits.entity_count());
             for (std::size_t entity = 0; entity < orbits.entity_count(); ++entity) {
-                if (orbits.has(entity) && periods.has(entity)){
+                if (orbits.has(entity)){
                     results.add(
                         entity,
                         propagator.state(

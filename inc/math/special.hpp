@@ -10,6 +10,7 @@
 namespace math{
 
 	constexpr double pi = 3.14159265358979323846264338327950288419716939937;
+	constexpr double phi = 1.618033988749895;
 	constexpr double right_angle = pi/2.0;
 
 	#define MATH_UNARY_STD_WRAPPER(NAME) template <typename In1> inline auto NAME (const In1 a) { return std::NAME(a); }

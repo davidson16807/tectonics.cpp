@@ -38,15 +38,17 @@ namespace orrery
             Periods& periods
         ) const {
             periods.clear();
-            periods.reserve(3*spins.component_count());
+            periods.reserve(3*spins.entity_count());
             orrery::Spin<scalar,duration> spin;
             id entity;
-            for (std::size_t i = 0; i < spins.component_count(); ++i) {
+            for (std::size_t i = 0; i < spins.entity_count(); ++i) {
                 entity = spins.entity_for_index(i);
-                spin = spins.component_for_index(i);
-                periods.add(entity, spin.spin_period);
-                if (spin.precession_period > s0) { periods.add( entity, spin.precession_period ); }
-                if (spin.nutation_period > s0) { periods.add( entity, spin.nutation_period ); }
+                if(spins.has(entity)) {
+                    spin = spins.component_for_index(i);
+                    periods.add(entity, spin.spin_period);
+                    if (spin.precession_period > s0) { periods.add( entity, spin.precession_period ); }
+                    if (spin.nutation_period > s0) { periods.add( entity, spin.nutation_period ); }
+                }
             }
         }
 

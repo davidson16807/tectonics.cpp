@@ -55,18 +55,21 @@ namespace orrery
         void sample(
             const PointLightSources& sources,
             const vec3s& positions,
+            const mat3s& fixed_for_inertial,
             LightExposures& exposures
         ) const {
             exposures.clear();
             vec3 L,V;
+            mat3 frame;
             PointLightSource source;  
             for (std::size_t i = 0; i < positions.size(); ++i) {
                 for (int j = 0; j < sources.size(); ++j)
                 {
                     V = positions[i];
                     L = positions[sources.entity_for_index(j)];
+                    frame = fixed_for_inertial[i];
                     source = sources.component_for_index(j);
-                    exposures.add(i, LightExposure(V-L, source, time));
+                    exposures.add(i, LightExposure(frame*(V-L), source, time));
                 }
             }
         }

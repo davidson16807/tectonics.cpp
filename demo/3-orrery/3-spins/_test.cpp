@@ -183,9 +183,6 @@ int main() {
 
   // within the confines of this ECS implementation, parent_ids are one-to-one with entities, so we store them using a std::vector
   std::vector<int> parent_ids {0,0,0,0,0,0,0,0,0,0,0,10,10,3,5,5,5,5,6,6,6,6,6,6,6,6,7,7,7,7,7,8,9,9,9,9,9,9,}; 
-  // entities that have perceptible orbits, we use 32-bit ints for entity ids and more than 1 out of 32 are represented, so a bool mask is more sparse, but checking the mask introduces branching logic
-  std::vector<bool> perceptible(parent_ids.size(), true);
-  perceptible[0] = false;// 0 is sun
   // entities that have orbits, this is just a temporary construct used for initialization 
   // so we don't care if we use std::vector or std::pair
   std::vector<std::pair<mass, Elements>> elliptics = {
@@ -366,7 +363,6 @@ int main() {
 
       orbit_system.offsets(
         orbits, 
-        perceptible, 
         t/si::second, // time_offset
         orbital_parent_offsets
       );

@@ -60,7 +60,7 @@ public:
 
 	void add(const EntityComponents<id,Component>& other)
 	{
-		for (int i = 0; i < other.components.size(); ++i)
+		for (std::size_t i = 0; i < other.components.size(); ++i)
 		{
 			components.emplace_back(other.components[i].first, other.components[i].second);
 		}
