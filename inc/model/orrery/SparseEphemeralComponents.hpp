@@ -84,22 +84,27 @@ public:
 
 	void add(const id entity, const Component& component)
 	{
-		assert(index_of_entity.find(entity) == index_of_entity.end() && "Component added to same entity more than once.");
-
-		// Insert while preserving order by entity id.
-		std::size_t insert_index = 0;
-		while (insert_index < entity_of_index.size() && entity_of_index[insert_index] < entity)
+		auto index = index_of_entity.find(entity)
+		if (index != index_of_entity.end())
 		{
-			++insert_index;
-		}
+			// replace existing entity
+			components[index_of_entity[entity]] = component;
+		} else {
+			// Insert while preserving order by entity id.
+			std::size_t insert_index = 0;
+			while (insert_index < entity_of_index.size() && entity_of_index[insert_index] < entity)
+			{
+				++insert_index;
+			}
 
-		components.insert(components.begin() + insert_index, component);
-		entity_of_index.insert(entity_of_index.begin() + insert_index, entity);
+			components.insert(components.begin() + insert_index, component);
+			entity_of_index.insert(entity_of_index.begin() + insert_index, entity);
 
-		// Update indices from insertion point onward.
-		for (std::size_t i = insert_index; i < entity_of_index.size(); ++i)
-		{
-			index_of_entity[entity_of_index[i]] = i;
+			// Update indices from insertion point onward.
+			for (std::size_t i = insert_index; i < entity_of_index.size(); ++i)
+			{
+				index_of_entity[entity_of_index[i]] = i;
+			}
 		}
 	}
 

@@ -84,21 +84,26 @@ public:
 
 	void add(const id entity, const Component& component)
 	{
-		assert(index_of_entity.find(entity) == index_of_entity.end() && "Component added to same entity more than once.");
-
-		// Put new entry at end and update the maps
-		std::size_t new_index = size;
-		index_of_entity[entity] = new_index;
-		++size;
-		if (components.size() < size)
+		auto index = index_of_entity.find(entity)
+		if (index != index_of_entity.end())
 		{
-			components.push_back(component);
-			entity_of_index.push_back(entity);
-		} 
-		else 
-		{
-			entity_of_index[new_index] = entity;
-			components[new_index] = component;
+			// replace existing entity
+			components[index_of_entity[entity]] = component;
+		} else {
+			// Put new entry at end and update the maps
+			std::size_t new_index = size;
+			index_of_entity[entity] = new_index;
+			++size;
+			if (components.size() < size)
+			{
+				components.push_back(component);
+				entity_of_index.push_back(entity);
+			} 
+			else 
+			{
+				entity_of_index[new_index] = entity;
+				components[new_index] = component;
+			}
 		}
 	}
 

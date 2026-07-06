@@ -110,8 +110,6 @@ public:
 			exists.resize(index + 1, false);
 		}
 
-		assert(!exists[index] && "Component added to same entity more than once.");
-
 		components[index] = component;
 		exists[index] = true;
 	}

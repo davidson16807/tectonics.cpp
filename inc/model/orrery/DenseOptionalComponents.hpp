@@ -101,8 +101,6 @@ public:
 			components.resize(index + 1);
 		}
 
-		assert(!components[index].has_value() && "Component added to same entity more than once.");
-
 		components[index] = component;
 	}
 

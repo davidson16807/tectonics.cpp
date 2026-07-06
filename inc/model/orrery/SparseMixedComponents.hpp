@@ -94,57 +94,62 @@ public:
 
 	void add(const id entity, const Component& component)
 	{
-		assert(index_of_entity.find(entity) == index_of_entity.end() && "Component added to same entity more than once.");
-
-		// Determine where this entity would be inserted to preserve ascending entity order.
-		std::size_t insert_index = 0;
-		while (insert_index < size && entity_of_index[insert_index] < entity)
+		auto index = index_of_entity.find(entity)
+		if (index != index_of_entity.end())
 		{
-			++insert_index;
-		}
-
-		// preserve order by shifting elements right.
-		if (insert_index < threshold)
-		{
-			if (components.size() < size + 1)
+			// replace existing entity
+			components[index_of_entity[entity]] = component;
+		} else {
+			// Determine where this entity would be inserted to preserve ascending entity order.
+			std::size_t insert_index = 0;
+			while (insert_index < size && entity_of_index[insert_index] < entity)
 			{
-				components.push_back(component);
-				entity_of_index.push_back(entity);
+				++insert_index;
 			}
+
+			// preserve order by shifting elements right.
+			if (insert_index < threshold)
+			{
+				if (components.size() < size + 1)
+				{
+					components.push_back(component);
+					entity_of_index.push_back(entity);
+				}
+				else
+				{
+					components[size] = component;
+					entity_of_index[size] = entity;
+				}
+
+				for (std::size_t i = size; i > insert_index; --i)
+				{
+					components[i] = components[i - 1];
+					entity_of_index[i] = entity_of_index[i - 1];
+					index_of_entity[entity_of_index[i]] = i;
+				}
+
+				components[insert_index] = component;
+				entity_of_index[insert_index] = entity;
+				index_of_entity[entity] = insert_index;
+				++size;
+			}
+			// append at end.
 			else
 			{
-				components[size] = component;
-				entity_of_index[size] = entity;
-			}
+				std::size_t new_index = size;
+				index_of_entity[entity] = new_index;
+				++size;
 
-			for (std::size_t i = size; i > insert_index; --i)
-			{
-				components[i] = components[i - 1];
-				entity_of_index[i] = entity_of_index[i - 1];
-				index_of_entity[entity_of_index[i]] = i;
-			}
-
-			components[insert_index] = component;
-			entity_of_index[insert_index] = entity;
-			index_of_entity[entity] = insert_index;
-			++size;
-		}
-		// append at end.
-		else
-		{
-			std::size_t new_index = size;
-			index_of_entity[entity] = new_index;
-			++size;
-
-			if (components.size() < size)
-			{
-				components.push_back(component);
-				entity_of_index.push_back(entity);
-			}
-			else
-			{
-				components[new_index] = component;
-				entity_of_index[new_index] = entity;
+				if (components.size() < size)
+				{
+					components.push_back(component);
+					entity_of_index.push_back(entity);
+				}
+				else
+				{
+					components[new_index] = component;
+					entity_of_index[new_index] = entity;
+				}
 			}
 		}
 	}
