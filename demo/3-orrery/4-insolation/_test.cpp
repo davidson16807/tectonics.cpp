@@ -147,8 +147,8 @@ int main() {
   const auto mass_of_charon        = 1.5e21 * kg; 
   const auto mass_of_pluto_charon  = mass_of_pluto + mass_of_charon;
 
-  using LightSource = orrery::PointLightSource<power, temperature>;
-  using LightExposure = orrery::LightExposure<double,double,LightSource>;
+  using LightSource = light::PointSource<power, temperature>;
+  using LightExposure = light::Exposure<double,double,LightSource>;
 
   using mat3s = std::vector<mat3>;
 

@@ -14,9 +14,11 @@
 #include <glm/vec3.hpp>   // *vec3
 
 // in-house libraries
+#include <model/light/Exposure.hpp>
+#include <model/light/PointSource.hpp>
+
 #include "Spin.hpp"
 #include "EntityComponents.hpp"
-#include "LightExposure.hpp"
 
 namespace orrery
 {
@@ -27,8 +29,10 @@ namespace orrery
         using vec3 = glm::vec<3,scalar,precision>;
         using mat3 = glm::mat<3,3,scalar,precision>;
 
+        using LightExposure = light::Exposure<scalar,Time,LightSource>;
+
         using ids = std::vector<id>;
-        using LightExposures = EntityComponents<id,LightExposure<scalar,Time,LightSource>>;
+        using LightExposures = EntityComponents<id,LightExposure>;
 
     public:
 
@@ -52,7 +56,7 @@ namespace orrery
                     auto L = positions[sources.entity_for_index(j)];
                     auto V = positions[entity];
                     auto frame = fixed_for_inertial[entity];
-                    exposures.add(entity, LightExposure<scalar,Time,LightSource>(sources.component_for_index(j), frame*(V-L), time));
+                    exposures.add(entity, LightExposure(sources.component_for_index(j), frame*(V-L), time));
                 }
             }
         }
