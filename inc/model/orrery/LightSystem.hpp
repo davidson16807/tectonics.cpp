@@ -11,65 +11,83 @@
 
 // 3rd-party libraries
 #include <glm/mat4x4.hpp> // *mat4x4
+#include <glm/vec3.hpp>   // *vec3
 
 // in-house libraries
 #include "Spin.hpp"
-#include "DenseContiguousComponents.hpp"
+#include "EntityComponents.hpp"
 
 namespace orrery
 {
 
     template<typename Luminosity, typename Temperature>
-    class PointLightSource{
+    struct PointLightSource{
 
         Luminosity luminosity;
         Temperature temperature;
 
-    }
+        PointLightSource(
+            const Luminosity luminosity,
+            const Temperature temperature
+        ): 
+            luminosity(luminosity),
+            temperature(temperature)
+        {}
+    };
 
     template<typename scalar, typename Time, typename LightSource, glm::qualifier precision = glm::defaultp>
-    class LightExposure{
+    struct LightExposure{
 
-        using vec3 = glm::vec3<3,scalar,precision>;
-
-        vec3 offset;
+        using vec3 = glm::vec<3,scalar,precision>;
 
         LightSource source;
-
+        vec3 offset;
         Time time;
 
-    }
+        LightExposure(
+            const LightSource& source,
+            const vec3& offset,
+            const Time& time
+        ):
+            source(source),
+            offset(offset),
+            time(time)
+        {}
 
-    template<typename scalar, glm::qualifier precision = glm::defaultp>
+    };
+
+    template<typename id, typename scalar, typename Time, typename LightSource, glm::qualifier precision = glm::defaultp>
     class LightSystem{
 
-        using vec3 = glm::vec3<3,scalar,precision>;
+        using vec3 = glm::vec<3,scalar,precision>;
+        using mat3 = glm::mat<3,3,scalar,precision>;
 
-        using vec3s = std::vector<vec3>;
+        using ids = std::vector<id>;
+        using LightExposures = EntityComponents<id,LightExposure<scalar,Time,LightSource>>;
 
     public:
 
         LightSystem(){}
 
-        template <typename PointLightSources, typename LightExposures>
+        template <typename vec3s, typename mat3s, typename PointLightSources>
         void sample(
-            const PointLightSources& sources,
             const vec3s& positions,
             const mat3s& fixed_for_inertial,
+            const ids& targets,
+            const PointLightSources& sources,
+            const Time time,
             LightExposures& exposures
         ) const {
             exposures.clear();
-            vec3 L,V;
-            mat3 frame;
-            PointLightSource source;  
-            for (std::size_t i = 0; i < positions.size(); ++i) {
-                for (int j = 0; j < sources.size(); ++j)
+            id entity;
+            for (std::size_t i = 0; i < targets.size(); ++i) {
+                for (id j = 0; j < sources.entity_count(); ++j)
                 {
-                    V = positions[i];
-                    L = positions[sources.entity_for_index(j)];
-                    frame = fixed_for_inertial[i];
-                    source = sources.component_for_index(j);
-                    exposures.add(i, LightExposure(frame*(V-L), source, time));
+                    entity = targets[i];
+                    auto L = positions[sources.entity_for_index(j)];
+                    auto V = positions[entity];
+                    auto frame = fixed_for_inertial[entity];
+                    exposures.add(entity, LightExposure<scalar,Time,LightSource>(sources.component_for_index(j), frame*(V-L), time));
                 }
             }
         }

@@ -23,8 +23,10 @@
 #include <model/orrery/OrbitSystem.hpp>       // orrery:OrbitSystem
 #include <model/orrery/SpinSystem.hpp>        // orrery::SpinSystem
 #include <model/orrery/PeriodicSystem.hpp>    // orrery::PeriodicSystem
-#include <model/orrery/SceneTrees.hpp>        // orrery:SceneTrees
-#include <model/orrery/DenseContiguousComponents.hpp> // orrery:UnsortedEphemeralComponents
+#include <model/orrery/LightSystem.hpp>       // orrery::LightSystem
+#include <model/orrery/SceneTrees.hpp>        // orrery::SceneTrees
+#include <model/orrery/DenseContiguousComponents.hpp> // orrery::DenseContiguousComponents
+#include <model/orrery/SparseEnduringComponents.hpp>  // orrery::SparseEnduringComponents
 
 #include <update/OrbitalNavigationState.hpp>    // update::OrbitalNavigationState
 #include <update/OrbitalNavigationUpdater.hpp>  // update::OrbitalNavigationUpdater
@@ -38,7 +40,7 @@
 #include <view/IndicatorSphereSwarmShaderProgram.hpp>     // view::IndicatorSphereSwarmShaderProgram
 
 using vec3 = glm::vec3;
-// using mat3 = glm::mat3;
+using mat3 = glm::mat3;
 using mat4 = glm::mat4;
 
 [[nodiscard]] vec3 spherical_to_cartesian(const float right_ascension, const float declination) noexcept
@@ -122,6 +124,8 @@ int main() {
   using mass = si::mass<double>;
   using time = si::time<double>;
   using length = si::length<double>;
+  using temperature = si::temperature<double>;
+  using power = si::power<double>;
 
   constexpr double pi = 3.141592653589793238462643383271;
 
@@ -143,7 +147,10 @@ int main() {
   const auto mass_of_charon        = 1.5e21 * kg; 
   const auto mass_of_pluto_charon  = mass_of_pluto + mass_of_charon;
 
-  using mat4s = std::vector<mat4>;
+  using LightSource = orrery::PointLightSource<power, temperature>;
+  using LightExposure = orrery::LightExposure<double,double,LightSource>;
+
+  using mat3s = std::vector<mat3>;
 
   using Elements = orbit::Elements<double>;
   using ElementsAndState = orbit::ElementsAndState<double>;
@@ -155,6 +162,7 @@ int main() {
   using Spins = orrery::DenseContiguousComponents<int,Spin>;
   using TrackPositions = orrery::EntityComponents<int,dvec3>;
   using Periods = orrery::EntityComponents<int,double>;
+  using LightExposures = orrery::EntityComponents<int,LightExposure>;
 
   Properties properties(
     dvec3(1,0,0), 
@@ -176,6 +184,7 @@ int main() {
   orrery::OrbitSystem<int,double> orbit_system(propagator, properties);
   orrery::SpinSystem<int,float,double> spin_system;
   orrery::PeriodicSystem<int,double> periodic_system;
+  orrery::LightSystem<int,double,double,LightSource> light_system;
   orrery::SceneTrees<int,double> scene_trees;
 
   // within the confines of this ECS implementation, parent_ids are one-to-one with entities, so we store them using a std::vector
@@ -244,8 +253,8 @@ int main() {
   spins.add(9, Spin(K, pole(132.99, -6.16), K, 122.5 *si::degree,  0.0,   153.3 * si::hour/s, 0.0 ));  
   spins.add(13, Spin(K, pole(266.86, 65.64), K, 6.687 *si::degree,  0.0, 655.73 * si::hour/s, 0.0 ));  // moon
 
-  mat4s fixed_for_inertial(parent_ids.size());
-  mat4s inertial_for_fixed(parent_ids.size());
+  mat3s fixed_for_inertial(parent_ids.size());
+  mat3s inertial_for_fixed(parent_ids.size());
 
   // TODO: store this using `Components<vec4>`
   std::vector<glm::vec4> instance_color(parent_ids.size(), vec4(1));
@@ -282,6 +291,13 @@ int main() {
 
   std::vector<dvec3> body_origins(parent_ids.size());    // stores positions at double precision
   std::vector<vec3> instance_origins(parent_ids.size()); // stores positions for the shader
+
+  orrery::SparseEnduringComponents<int,LightSource> light_sources;
+  light_sources.add(0, LightSource(si::solar_luminosity, si::solar_temperature)); // sun
+
+  std::vector<int> light_targets{3};
+
+  LightExposures light_sample_exposures;
 
   mat4 model_matrix(1);
 
@@ -385,13 +401,14 @@ int main() {
         scene_trees.offsets_from_origin(parent_offsets, parent_ids, is_origin_ancestor, origin_id, instance_origins);
         spin_system.fixed_for_inertial(spins, sample_time/si::second, fixed_for_inertial);
 
-        // light_system.exposures(
-        //   instance_origins,
-        //   fixed_for_inertial,
-        //   nonlight_sources, // TOOD: populate this
-        //   light_sources,
-        //   light_sample_exposures
-        // );
+        light_system.sample(
+          instance_origins,
+          fixed_for_inertial,
+          light_targets, 
+          light_sources,
+          sample_time_offset/si::second,
+          light_sample_exposures
+        );
 
       }
 

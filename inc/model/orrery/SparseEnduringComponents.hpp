@@ -35,7 +35,7 @@ class SparseEnduringComponents
 	// Map from an entity ID to an array index.
 	std::unordered_map<id, std::size_t> index_of_entity;
 	// Total size of valid entries in the array.
-	std::size_t size;
+	std::size_t size_;
 
 public:
 
@@ -46,7 +46,7 @@ public:
 		components(),
 		entity_of_index(),
 		index_of_entity(),
-		size(0)
+		size_(0)
 	{
 	}
 
@@ -59,9 +59,9 @@ public:
 		components(components_),
 		entity_of_index(),
 		index_of_entity(),
-		size(components_.size())
+		size_(components_.size_())
 	{
-		for (std::size_t i = 0; i < components_.size(); ++i)
+		for (std::size_t i = 0; i < components_.size_(); ++i)
 		{
 			entity_of_index.push_back(id(i));
 			index_of_entity[i] = std::size_t(i);
@@ -76,7 +76,7 @@ public:
 		components(),
 		entity_of_index(),
 		index_of_entity(),
-		size(0)
+		size_(0)
 	{
 	    components.reserve(std::size_t(entity_count));
 	    entity_of_index.reserve(std::size_t(entity_count));
@@ -84,17 +84,17 @@ public:
 
 	void add(const id entity, const Component& component)
 	{
-		auto index = index_of_entity.find(entity)
+		auto index = index_of_entity.find(entity);
 		if (index != index_of_entity.end())
 		{
 			// replace existing entity
 			components[index_of_entity[entity]] = component;
 		} else {
 			// Put new entry at end and update the maps
-			std::size_t new_index = size;
+			std::size_t new_index = size_;
 			index_of_entity[entity] = new_index;
-			++size;
-			if (components.size() < size)
+			++size_;
+			if (components.size() < size_)
 			{
 				components.push_back(component);
 				entity_of_index.push_back(entity);
@@ -122,7 +122,7 @@ public:
 
 		// Copy element at end into deleted element's place to maintain density
 		std::size_t index_of_removed_entity = index_of_entity[entity];
-		std::size_t index_of_last_element = size - 1;
+		std::size_t index_of_last_element = size_ - 1;
 
 		if (index_of_removed_entity != index_of_last_element)
 		{
@@ -136,19 +136,19 @@ public:
 
 		index_of_entity.erase(entity);
 
-		--size;
+		--size_;
 	}
 
 	// `entity_count` returns the number of entities tracked by this component store
-	[[nodiscard]] std::size_t entity_count() const
+	[[nodiscard]] id entity_count() const
 	{
-		return components.size();
+		return id(components.size());
 	}
 
 	// `component_count` returns the number of components in this component store
 	[[nodiscard]] std::size_t component_count() const
 	{
-		return size;
+		return size_;
 	}
 
 	[[nodiscard]] bool has(id entity) const
