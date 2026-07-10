@@ -50,7 +50,7 @@ namespace field
 
 	    inline auto value_for_offset(const Vector& offset) const
 	    {
-		    return weight * std::pow(glm::length(offset), -exponent-1); // incremented exponent is needed to quickly normalize the offset
+		    return weight * std::pow(glm::length(offset), -exponent);
 	    }
 
 	    static inline auto zero()
