@@ -43,7 +43,7 @@ namespace field {
         */
         [[nodiscard]] inline auto operator()(const vector& position ) const
         {
-            auto result = Monopole::zero;
+            auto result = Monopole::zero();
             for (const auto& monopole : monopoles) {
                 vector offset = monopole.offset_for_position(position);
                 scalar distance2 = glm::dot(offset, offset);

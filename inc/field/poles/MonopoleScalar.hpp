@@ -7,18 +7,16 @@
 namespace field
 {
 
-	template<int exponent, typename scalar, typename vector>
+	template<int exponent, typename Weight, typename Vector>
 	struct MonopoleScalar
 	{
 
-		static constexpr scalar zero = scalar(0);
-
-		vector weighted_position;
-		scalar weight;
+		Vector weighted_position;
+		Weight weight;
 
 		MonopoleScalar(
-			const vector position,
-			const scalar weight
+			const Vector position,
+			const Weight weight
 		): 
 			weighted_position(weight*position),
 			weight(weight)
@@ -30,33 +28,37 @@ namespace field
 			weight(0)
 		{}
 
-	    inline MonopoleScalar<exponent,scalar,vector>& operator+=(const MonopoleScalar<exponent,scalar,vector>& other) noexcept
+	    inline MonopoleScalar<exponent,Weight,Vector>& operator+=(const MonopoleScalar<exponent,Weight,Vector>& other) noexcept
 	    {
 	    	weighted_position += other.weighted_position;
 	    	weight += other.weight;
 	        return *this;
 	    }
 
-	    inline MonopoleScalar<exponent,scalar,vector>& operator-=(const MonopoleScalar<exponent,scalar,vector>& other) noexcept
+	    inline MonopoleScalar<exponent,Weight,Vector>& operator-=(const MonopoleScalar<exponent,Weight,Vector>& other) noexcept
 	    {
 	    	weighted_position -= other.weighted_position;
 	    	weight -= other.weight;
 	        return *this;
 	    }
 
-	    inline vector offset_for_position(const vector& position) const
+	    inline Vector offset_for_position(const Vector& position) const
 	    {
-			vector center_of_weight = weighted_position/weight;
+			Vector center_of_weight = weighted_position/weight;
             return center_of_weight - position;
 	    }
 
-	    inline scalar value_for_offset(const vector& offset) const
+	    inline auto value_for_offset(const Vector& offset) const
 	    {
-            scalar distance = glm::length(offset);
-		    return weight * std::pow(distance, -exponent-1); // incremented exponent is needed to quickly normalize the offset
+		    return weight * std::pow(glm::length(offset), -exponent-1); // incremented exponent is needed to quickly normalize the offset
 	    }
 
-		[[nodiscard]] constexpr inline vector operator()(const vector& position) const
+	    static inline auto zero()
+	    {
+		    return Weight(0); // incremented exponent is needed to quickly normalize the offset
+	    }
+
+		[[nodiscard]] constexpr inline Vector operator()(const Vector& position) const
 		{
 			return value_for_offset(offset_for_position(position));
 		}

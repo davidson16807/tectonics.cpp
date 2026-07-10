@@ -169,7 +169,7 @@ namespace field
 		{
 			vector cell_center(grid_center);
 			scalar cell_width(grid_width);
-            auto value = Monopole::zero;
+            auto value = Monopole::zero();
 			ivector nesting(0);
 			ivector orthant;
 			for (id level = id(1); level < level_count; ++level)
