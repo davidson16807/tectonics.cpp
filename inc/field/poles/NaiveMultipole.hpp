@@ -34,7 +34,7 @@ namespace field {
         /*
         `add` modifies the field to also consider a particle of given `position` and `weight`
         */
-        void add(const vector& position, const scalar weight) {
+        void add(const vector& position, const auto weight) {
             monopoles.emplace_back(position, weight);
         }
 

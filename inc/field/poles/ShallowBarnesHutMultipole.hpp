@@ -79,7 +79,7 @@ namespace field
 		/*
 		`add` modifies the field to also consider a particle of given `position` and `weight`
 		*/
-		void add(const vector position, const scalar weight)
+		void add(const vector position, const auto weight)
 		{
 			id nesting_id(0);
 			id neighbor_id, orthant_id;
