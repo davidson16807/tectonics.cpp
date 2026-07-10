@@ -5,8 +5,6 @@
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
 
-#include "Monopole.hpp"
-
 namespace field {
 
     /*
@@ -16,11 +14,11 @@ namespace field {
     `NaiveMultipole` implements a naive O(N²) algorithm and exists primarily to verify correctness of `BarnesHutMultipole`
     You almost certainly want to use `BarnesHutMultipole` unless particle count is very low and accuracy is extremely important.
     */
-    template<int exponent, typename scalar, typename vector>
+    template<typename scalar, typename vector, typename Monopole>
     class NaiveMultipole {
 
         scalar self_interaction_distance2_threshold;
-        std::vector<Monopole<exponent,scalar,vector>> monopoles;
+        std::vector<Monopole> monopoles;
 
     public:
 
@@ -43,9 +41,9 @@ namespace field {
         /*
         `operator()` returns the value acting at a given `position` in the field
         */
-        [[nodiscard]] inline vector operator()(const vector& position ) const
+        [[nodiscard]] inline auto operator()(const vector& position ) const
         {
-            vector result(0);
+            auto result = Monopole::zero;
             for (const auto& monopole : monopoles) {
                 vector offset = monopole.offset_for_position(position);
                 scalar distance2 = glm::dot(offset, offset);

@@ -7,35 +7,37 @@
 namespace field
 {
 
-	template<int exponent, typename value_type, typename vector>
-	struct Monopole
+	template<int exponent, typename scalar, typename vector>
+	struct MonopoleVector
 	{
 
-		vector weighted_position;
-		value_type weight;
+		static constexpr vector zero = vector(0);
 
-		Monopole(
+		vector weighted_position;
+		scalar weight;
+
+		MonopoleVector(
 			const vector position,
-			const value_type weight
+			const scalar weight
 		): 
 			weighted_position(weight*position),
 			weight(weight)
 		{}
 
 		// zero constuctor
-		Monopole(): 
+		MonopoleVector(): 
 			weighted_position(0),
 			weight(0)
 		{}
 
-	    inline Monopole<exponent,value_type,vector>& operator+=(const Monopole<exponent,value_type,vector>& other) noexcept
+	    inline MonopoleVector<exponent,scalar,vector>& operator+=(const MonopoleVector<exponent,scalar,vector>& other) noexcept
 	    {
 	    	weighted_position += other.weighted_position;
 	    	weight += other.weight;
 	        return *this;
 	    }
 
-	    inline Monopole<exponent,value_type,vector>& operator-=(const Monopole<exponent,value_type,vector>& other) noexcept
+	    inline MonopoleVector<exponent,scalar,vector>& operator-=(const MonopoleVector<exponent,scalar,vector>& other) noexcept
 	    {
 	    	weighted_position -= other.weighted_position;
 	    	weight -= other.weight;
@@ -50,7 +52,7 @@ namespace field
 
 	    inline vector value_for_offset(const vector& offset) const
 	    {
-            value_type distance = glm::length(offset);
+            scalar distance = glm::length(offset);
 		    return offset * weight * std::pow(distance, -exponent-1); // incremented exponent is needed to quickly normalize the offset
 	    }
 

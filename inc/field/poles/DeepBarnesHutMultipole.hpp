@@ -8,8 +8,6 @@
 
 #include <grid/cartesian/OrthantIndexing.hpp>
 
-#include "Monopole.hpp"
-
 namespace field
 {
 
@@ -28,10 +26,10 @@ namespace field
 
 	`DeepBarnesHutMultipole` represents a field using an orthtree that is stored as a std::unordered_map.
 	A `std::unordered_map` is able to represent orthtrees of arbitrary depth in a reasonable amount of memory,
-	however it is not stored in contiguous memory, and it requires running additional hasing logic,
-	which in some cases make `DeepBarnesHutMultipole` slower than `ShallowBarnesHutMultipole`.
+	however it is not stored in contiguous memory, and it requires running additional hashing logic,
+	so a `ShallowBarnesHutMultipole` may be faster if required accuracy is low enough to have a small memory footprint.
 	*/
-	template<int dimension_count, int exponent, typename id, typename scalar, glm::qualifier quality = glm::defaultp>
+	template<int dimension_count, typename id, typename scalar, typename Monopole, glm::qualifier quality = glm::defaultp>
 	class DeepBarnesHutMultipole
 	{
 
@@ -91,7 +89,7 @@ namespace field
 
 		};	
 
-		using Map = std::unordered_map<CellKey, Monopole<exponent,double,vector>, CellKeyHash>;
+		using Map = std::unordered_map<CellKey, Monopole, CellKeyHash>;
 
 		static constexpr scalar half = 0.5;
 
@@ -120,13 +118,13 @@ namespace field
 			first_id_for_level(level_count),
 			orthtree(0, CellKeyHash(level_count, orthant_count))
 		{
-			// orthtree.resize(cell_count, Monopole<exponent,scalar,vector>()); // if orthtree is std::vector
+			// orthtree.resize(cell_count, Monopole()); // if orthtree is std::vector
 		}
 
 		void clear()
 		{
 			orthtree.clear();
-			// std::fill(orthtree.begin(), orthtree.end(), Monopole<exponent,scalar,vector>()); // if orthtree is std::vector
+			// std::fill(orthtree.begin(), orthtree.end(), Monopole()); // if orthtree is std::vector
 		}
 
 		/*
@@ -153,8 +151,8 @@ namespace field
 							neighbor = orthants.grid_id(neighbor_id);
 							orthtree.emplace(
 									CellKey(level, id(2) * nesting + neighbor), 
-									Monopole<exponent,scalar,vector>{}
-								).first->second += Monopole<exponent,scalar,vector>(position, weight);
+									Monopole{}
+								).first->second += Monopole(position, weight);
 						}
 					}
 					nesting = id(2) * nesting + orthant;
@@ -167,11 +165,11 @@ namespace field
 		/*
 		`sample` returns the value acting at a given `position` in the field
 		*/
-		[[nodiscard]] inline vector operator()(const vector& position ) const
+		[[nodiscard]] inline auto operator()(const vector& position ) const
 		{
 			vector cell_center(grid_center);
 			scalar cell_width(grid_width);
-			vector value(0);
+            auto value = Monopole::zero;
 			ivector nesting(0);
 			ivector orthant;
 			for (id level = id(1); level < level_count; ++level)
@@ -180,7 +178,7 @@ namespace field
 				nesting = id(2) * nesting + orthant;
 				auto it = orthtree.find(CellKey(level, nesting));
 				if (it != orthtree.end()) {
-					const Monopole<exponent,scalar,vector>& monopole = it->second;
+					const Monopole& monopole = it->second;
 					vector offset = monopole.offset_for_position(position);
                 	scalar distance2 = glm::dot(offset, offset);
                 	if (distance2 > min_cell_width*min_cell_width) {

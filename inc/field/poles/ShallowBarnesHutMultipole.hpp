@@ -7,8 +7,6 @@
 
 #include <grid/cartesian/OrthantIndexing.hpp>
 
-#include "Monopole.hpp"
-
 namespace field
 {
 
@@ -30,7 +28,7 @@ namespace field
 	In some cases this may allow faster retrieval than `DeepBarnesHutMultipole`
 	however it presents the risk of consuming large amounts of memory if the orthtree is too deep.
 	*/
-	template<int dimension_count, int exponent, typename id, typename scalar, glm::qualifier quality = glm::defaultp>
+	template<int dimension_count, typename id, typename scalar, typename Monopole, glm::qualifier quality = glm::defaultp>
 	class ShallowBarnesHutMultipole
 	{
 
@@ -47,7 +45,7 @@ namespace field
 		const scalar min_cell_width;
 		id cell_count;
 		std::vector<id> first_id_for_level;
-		std::vector<Monopole<exponent,scalar,vector>> orthtree;
+		std::vector<Monopole> orthtree;
 
 	public:
 
@@ -70,12 +68,12 @@ namespace field
 				first_id_for_level[level] = cell_count;
 				cell_count += std::pow(orthant_count, level);
 			}
-			orthtree.resize(cell_count, Monopole<exponent,scalar,vector>());
+			orthtree.resize(cell_count, Monopole());
 		}
 
 		void clear()
 		{
-			std::fill(orthtree.begin(), orthtree.end(), Monopole<exponent,scalar,vector>());
+			std::fill(orthtree.begin(), orthtree.end(), Monopole());
 		}
 
 		/*
@@ -99,7 +97,7 @@ namespace field
 						if (neighbor_id != orthant_id)
 						{
 							orthtree[first_id_for_level[level] + orthant_count * nesting_id + neighbor_id] 
-								+= Monopole<exponent,scalar,vector>(position, weight);
+								+= Monopole(position, weight);
 						}
 					}
 					nesting_id = orthant_count * nesting_id + orthant_id;
@@ -116,17 +114,17 @@ namespace field
 		{
 			id nesting_id(0);
 			id orthant_id;
-			Monopole<exponent,scalar,vector> monopole;
+			Monopole monopole;
 			vector cell_center(grid_center);
 			scalar cell_width(grid_width);
-			vector value(0);
+            vector value(Monopole::zero);
 			ivector orthant;
 			for (id level = id(1); level < level_count; ++level)
 			{
 				orthant = ivector(glm::greaterThan(position-cell_center,vector(0)));
 				orthant_id = orthants.memory_id(orthant);
 				nesting_id = orthant_count * nesting_id + orthant_id;
-				const Monopole<exponent,scalar,vector>& monopole = orthtree[first_id_for_level[level] + nesting_id];
+				const Monopole& monopole = orthtree[first_id_for_level[level] + nesting_id];
 				vector offset = monopole.offset_for_position(position);
             	scalar distance2 = glm::dot(offset, offset);
             	if (distance2 > min_cell_width*min_cell_width) {

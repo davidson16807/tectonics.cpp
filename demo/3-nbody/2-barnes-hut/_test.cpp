@@ -15,7 +15,8 @@
 
 #include <math/special.hpp>                  // math::floormod
 
-#include <field/poles/DeepBarnesHutMultipole.hpp>// field::DeepBarnesHutMultipole
+#include <field/poles/MonopoleVector.hpp>          // field::MonopoleVector
+#include <field/poles/DeepBarnesHutMultipole.hpp>  // field::DeepBarnesHutMultipole
 
 #include <unit/si.hpp>                       // si::unit
 
@@ -101,24 +102,16 @@ int main() {
 
   using Elements = orbit::Elements<double>;
   using ElementsAndState = orbit::ElementsAndState<double>;
-  using Propagator = orbit::UniversalPropagator<double>;
   using Properties = orbit::Properties<double>;
-  using Orbit = orbit::Universals<double>;
-  using Orbits = orrery::DenseContiguousComponents<int,Orbit>;
+
+  using Monopole = field::MonopoleVector<2,double,dvec3>;
+  using Multipole = field::DeepBarnesHutMultipole<3,std::size_t,double,Monopole>;
 
   Properties properties(
     dvec3(1,0,0), 
     dvec3(0,0,1), 
     si::gravitational_constant / (m3/(kg*s*s)), 
     pi
-  );
-
-  Propagator propagator(
-    si::gravitational_constant / (m3/(kg*s*s)), 
-    35,    // max_refinement_count
-    1e-15, // max_precision
-    5,     // laguerre_method_n
-    true   // force_congruence
   );
 
   ElementsAndState converter(properties);
@@ -191,7 +184,6 @@ int main() {
   // instance_color[33] = vec4(1.0, 0.5, 0.5, 1.0); // Charon
 
   // (mass, Universals)
-  Orbits orbits;
   // Elliptics
   // start by populating with the sun as a special case
   std::vector<dvec3> parent_offsets(1,dvec3(0)); 
@@ -286,8 +278,7 @@ int main() {
   };
 
   // now introduce the Multipole field
-  field::DeepBarnesHutMultipole<3,2,std::size_t,double> gravitational_acceleration(
-    dvec3(0), 1e13, 1e5);
+  Multipole gravitational_acceleration(dvec3(0), 1e13, 1e5);
 
   int timestep_id(0);
   time t(0);
