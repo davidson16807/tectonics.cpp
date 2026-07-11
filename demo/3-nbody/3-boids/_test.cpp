@@ -182,20 +182,23 @@ int main() {
   using Separation = field::MonopoleVector< 2,float,vec3>;
   using Cohesion   = field::MonopoleVector<-2,float,vec3>;
   using Alignment  = field::MonopoleScalar< 2,vec3,vec3>;
+  using Weight     = field::MonopoleScalar< 2,float,vec3>;
 
   using Separations  = field::DeepBarnesHutMultipole<3,std::size_t,float,Separation>;
   using Cohesions    = field::DeepBarnesHutMultipole<3,std::size_t,float,Cohesion>;
   using Alignments   = field::DeepBarnesHutMultipole<3,std::size_t,float,Alignment>;
+  using Weights      = field::DeepBarnesHutMultipole<3,std::size_t,float,Weight>;
 
   // now introduce the Multipole field
   Separations  separations  (vec3(0), 1000.0, 0.001);
   Cohesions    cohesions    (vec3(0), 1000.0, 0.001);
   Alignments   alignments   (vec3(0), 1000.0, 0.001);
+  Weights      weights      (vec3(0), 1000.0, 0.001);
 
   const float separation_weight = 0.1f;
   const float cohesion_weight = 0.1f;
   const float alignment_weight = 0.1f;
-  const float drag_coefficient = 0.1f;
+  const float drag_coefficient = 0.3f;
 
   time t(0);
   auto real_time_now = clock::now();
@@ -214,17 +217,19 @@ int main() {
       separations.clear();
       cohesions.clear();
       alignments.clear();
+      weights.clear();
 
       for (std::size_t i = 0; i < instance_position.size(); ++i)
       {
         separations.add(instance_position[i], separation_weight);
         cohesions  .add(instance_position[i], cohesion_weight);
         alignments .add(instance_position[i], instance_velocity[i]);
+        weights    .add(instance_position[i], 1.0f);
       }
 
       for (std::size_t i = 0; i < instance_position.size(); ++i)
       {
-        vec3 average_velocity = alignments (instance_position[i]) / float(instance_position.size());
+        vec3 average_velocity = alignments(instance_position[i]) / weights(instance_position[i]);
         vec3 alignment = (average_velocity - instance_velocity[i]) * alignment_weight;
         vec3 cohesion = cohesions  (instance_position[i]);
         vec3 separation = -separations(instance_position[i]);
