@@ -8,7 +8,7 @@ This library is not just designed for use by tectonics.js. Numerous space simula
 As of completing major milestones in May 2025, permission to use all code going forward is provided under the Creative Commons Attribution-NonCommercial-Sharealike 4.0 license. This code is written with fellow hobby developers in mind, and noncommercial hobby projects are always welcome to use it freely. Drop me a line if you use it, since it's encouraging to hear my work is getting used, and it's always fun to hear from someone with fellow interests! Commercial licensing is also available by prior agreement - drop me a line if interested. 
 
 # Overview
-tectonics.cpp is adheres to a strict design philosophy that is meant to prioritize functional programming concerns in a way that also leverages object-oriented paradigms. See `doc/general-design-approach.md` for more information.
+tectonics.cpp adheres to a strict design philosophy that is meant to prioritize functional programming concerns in a way that also leverages object-oriented paradigms. See `doc/general-design-approach.md` for more information.
 
 tectonics.cpp can be broken down into several subcomponents. Users can pick and choose which subcomponents they'd like to include in their project at their discretion. Some optional dependencies exist between subcomponents, which are indicated clearly by the folder structure (e.g. `index/adapted/glm` stores behavior that requires `glm`). Using optional dependencies this way allows the use of functionality that wouldn't otherwise be possible without requiring people to copy over other unwanted components. 
 
@@ -26,7 +26,7 @@ Unit tests and documentation are placed alongside the folder or file they descri
 # Getting Started
 Tectonics.cpp has been tested on many combinations of operating system, build system, and compiler. Here are a few of the most common approaches.
 
-Numerous makefiles exist throuhgout the library. These are used to build demos and run isolated unit tests. Simply run `make` in any project folder with a `Makefile` to run all the functionality that's defined within that folder. Alternatively, you can run `scons -u` from any directory and generate an executable. Building graphical demos requires two additional libraries: [GLEW](http://glew.sourceforge.net/) and [GLFW](https://www.glfw.org/). For more OS-specific details, see below.
+Numerous makefiles exist throughout the library. These are used to build demos and run isolated unit tests. Simply run `make` in any project folder with a `Makefile` to run all the functionality that's defined within that folder. Alternatively, you can run `scons -u` from any directory and generate an executable. Building graphical demos requires two additional libraries: [GLEW](http://glew.sourceforge.net/) and [GLFW](https://www.glfw.org/). For more OS-specific details, see below.
 
 ## Ubuntu
 
@@ -196,7 +196,7 @@ g++ -std=c++17 -o test.exe test.cpp -g -D GLM_FORCE_SWIZZLE -D GLEW_STATIC -I ..
 
 ### MSVC with Scons
 
-For this you can either install [Visual Studio](https://visualstudio.microsoft.com/vs/community/) or the [MSVC redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#visual-studio-2015-2017-2019-and-2022). The MSVC redistributable is much smaller and easier to install so it is reccomended if you have no plan to develop using Visual Studio. If you prefer to install Visual Studio, the free Community edition is sufficient.
+For this you can either install [Visual Studio](https://visualstudio.microsoft.com/vs/community/) or the [MSVC redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#visual-studio-2015-2017-2019-and-2022). The MSVC redistributable is much smaller and easier to install so it is recommended if you have no plan to develop using Visual Studio. If you prefer to install Visual Studio, the free Community edition is sufficient.
 
 You will also need to install Python. You will need version 3 or higher, and you will need to check the "Add Python to PATH" option in the installer:
 

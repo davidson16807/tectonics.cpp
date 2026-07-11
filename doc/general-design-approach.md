@@ -18,9 +18,9 @@ Start with the following:
 
 A category results from this, typically one per entity, or one for several entities if other entities are needed to describe its construction. The objects and morphisms of categories may themselves be implemented using the objects and morphisms of another category. In this way, a hierarchy of categories emerges.
 
-* decide whether any of the states require privitization, e.g. to prevent illegal values, note the privitization (perhaps draw a box around their object in the category diagram) and express their morphisms using methods rather than static functions 
-* run through the list of data structures, for each one write a file containing only that data structure (exclude morphisms unless required by privitization)
-* run through the list of homsets, for each one write a file containing on functions of that homset (exclude morphisms unless required by privitization)
+* decide whether any of the states require privatization, e.g. to prevent illegal values, note the privatization (perhaps draw a box around their object in the category diagram) and express their morphisms using methods rather than static functions 
+* run through the list of data structures, for each one write a file containing only that data structure (exclude morphisms unless required by privatization)
+* run through the list of homsets, for each one write a file containing on functions of that homset (exclude morphisms unless required by privatization)
 * for each homset file, write a set of unit tests in a separate file of the same folder, and give it a similar name. In this way you can keep track of how far along you are to vetting the namespace/category, after which you can move on and build the code that executes the morphisms between its objects.
 * The unit tests only test for basic properties that rely on abstract algebra, so they are formulaic and don't require knowledge of the class to write. Add more specialized tests if you feel so compelled, but don't feel obligated. Include the unit test file in the same directory as the data structure and give it a similar name.
 * if data structures have any additional considerations (e.g. memory footprint below a certain threshold), write a unit test file for that data structure. Include it in the same directory as the data structure and give it a similar name. 
@@ -28,21 +28,21 @@ A category results from this, typically one per entity, or one for several entit
 Categories may be constructed either top-down (starting with high level objectives, describing flow from storage variables to derived attributes and storage deltas) or bottom-up (starting with the smallest categories that can be constructed using only primitives). 
 
 # Design by abstract algebra
-* consolidate the number of states or objects in your diagram that are behave similarly to abstract algabraic structures,
+* consolidate the number of states or objects in your diagram that are behave similarly to abstract algebraic structures,
   e.g. find degenerate cases where one object is described by another
-* use algabraic properties of operations within unit tests, e.g. closure, identity, associativity, invertibility, commutativity, distributivity
+* use algebraic properties of operations within unit tests, e.g. closure, identity, associativity, invertibility, commutativity, distributivity
 
 # Design by type theory
 * an instantiation of an object in a category diagram is a sort of proof that such an entity exists,
   if you provide the data that's needed for construction, then that counts as a sort of demonstration of how that entity can exist,
   and the fact the entity exists allow you to prove other entities exist by feeding that entity to other functions
   functions then behave similarly to if-then statements, and the category diagram reflects a flow chart of how things can be proved 
-  when referring to states, to posess a state object in a pure function is evidence that the program has entered such a state,
+  when referring to states, to possess a state object in a pure function is evidence that the program has entered such a state,
   objects become something like "tokens of proof"
   though in a procedural paradigm, it only demonstrates such as state existed at one point in time,
   e.g. you can prove that an object has been disposed if that object's dispose() method returns a disposal token, 
   but you can never use that object alone as proof that it is currently nondesposed, only that is once existed in a nondisposed state,
-  you can however have it return a token that could be a type union for disposed and nondispoed states, 
+  you can however have it return a token that could be a type union for disposed and nondisposed states, 
   then have those token serve as proof for other things via polymorphism
 
 # Design for Performance ("Data Oriented Design")
@@ -63,9 +63,9 @@ To prevent other similarly harmful programming fads from emerging to replace got
 
 So where are our efforts best spent exactly? Namely, anywhere besides tasks that require sequential reasoning. It's challenging to articulate how we avoid this, since our job as programmers is to specify behavior that occurs on computers, which are best leveraged if the behavior is sequential. How are we to consider sequential tasks without thinking sequentially?
 
-The best answer I can provide so far is to decompose a sequential task as much as possible into components that are nonsequential, then consider only the nonsequential tasks. For instance, rather than think about how a character's position updates, we might consider how the character's position is expressed as a data structure, how the change in the character's position is expressed as a delta, how the delta is a strict function of variables in the game world, and how the delta and state objects compose giving a new state object. We delay any thought of sequential reasoning as long as possible. If we consider the nonsequential tasks to form a hierarchy, the sequential task ought to form the apex of the heirarchy. 
+The best answer I can provide so far is to decompose a sequential task as much as possible into components that are nonsequential, then consider only the nonsequential tasks. For instance, rather than think about how a character's position updates, we might consider how the character's position is expressed as a data structure, how the change in the character's position is expressed as a delta, how the delta is a strict function of variables in the game world, and how the delta and state objects compose giving a new state object. We delay any thought of sequential reasoning as long as possible. If we consider the nonsequential tasks to form a hierarchy, the sequential task ought to form the apex of the hierarchy. 
 
-Some subtasks may require sequential operations, such as if we performed numerical optimization, a sorting algorithm, or a specialized algorithm like flood fill. However, these too are decomposed into nonsequential operations, and just like the example concerning a character's position, we put off sequential operations as long as possible until we get an opportunity to treat the result of the combined sequential operation as if it were the results of a single nonsequential operation, which is then encapsulated safely inside a function, allowing us to forget it was even sequential to begin with. The result produced by that encapsulating function may then holds some properties which are useful to us, such as those that allow us to get [theorems for free](), and those are the only properites that we use to reason about the function from the outside.
+Some subtasks may require sequential operations, such as if we performed numerical optimization, a sorting algorithm, or a specialized algorithm like flood fill. However, these too are decomposed into nonsequential operations, and just like the example concerning a character's position, we put off sequential operations as long as possible until we get an opportunity to treat the result of the combined sequential operation as if it were the results of a single nonsequential operation, which is then encapsulated safely inside a function, allowing us to forget it was even sequential to begin with. The result produced by that encapsulating function may then holds some properties which are useful to us, such as those that allow us to get [theorems for free](), and those are the only properties that we use to reason about the function from the outside.
 
 Now that I've fully discussed the principle, there is an important corrolary I'd like to mention:
 
@@ -80,12 +80,12 @@ Speaking of harmful programming fads...
 
 As of April 2026, use of large language models ("LLMs") is strictly limited to the following. The code files listed for each technique is a comprehensive list of where the technique is used
 
-* reviewing code
-**`*Components.hpp`
+* reviewing code that was written by a human
+**applied liberally to in-house code
 * porting code that was written by a human from a scripting language to C++
 **`*UniversalPropagator.hpp`
 * writing unit tests in addition to unit tests that are written by humans
-**`*UniversalPropagator.hpp`
+**`*UniversalPropagator_test.cpp`
 * writing classes that follow the same structure as an existing class designed by a human
 **`*Components.hpp`
 **`*Codec.hpp`

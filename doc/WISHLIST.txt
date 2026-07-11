@@ -54,4 +54,3 @@ injectivity
 Lipschitz continuity for a derivative bounds
 equivariance ("commutative square")
 
-
