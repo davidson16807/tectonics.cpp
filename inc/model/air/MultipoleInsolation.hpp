@@ -19,6 +19,8 @@
 `light::MultipoleInsolation` introduces several assumptions that are either intrinsic to the class or will be addressed in time:
 * it assumes all light sources are point sources 
   this is intrinsic to the class and will remain unchanged
+* it assumes all light sources are unobstructed by things like planets
+  this is intrinsic to the class - other classes will be introduced to relax this assumption
 * it assumes all light sources are unattenuated by things like atmosphere 
   this is intrinsic to the class - other classes will be introduced to relax this assumption
 
