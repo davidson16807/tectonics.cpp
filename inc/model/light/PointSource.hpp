@@ -2,14 +2,14 @@
 
 namespace light{
 
-    template<typename Luminosity, typename Temperature>
+    template<typename Power, typename Temperature>
     struct PointSource{
 
-        Luminosity luminosity;
+        Power luminosity;
         Temperature temperature;
 
         PointSource(
-            const Luminosity luminosity,
+            const Power luminosity,
             const Temperature temperature
         ): 
             luminosity(luminosity),
