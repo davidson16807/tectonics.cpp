@@ -26,7 +26,7 @@
 
 */
 
-namespace light
+namespace air
 {
 
     template <typename scalar, typename vector, typename Power>
