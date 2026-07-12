@@ -61,4 +61,3 @@ development of insolation calculation should proceed in this order:
 * modified demo that calculates average insolation raster from light exposure samples
 * modified demo that accumulates average insolation raster across multiple timesteps?
 
-planets may wind up having a variable

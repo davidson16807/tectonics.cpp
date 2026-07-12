@@ -1,5 +1,4 @@
 
-
 HOT PATH TO PARITY:
 insolation
 climate
@@ -10,6 +9,9 @@ metamorphosis
 pbr surfaces
 pbr atmospheres
 continent congestion
+
+AFTER PARITY:
+surface insolation for each wavelength bin
 
 NICE TO HAVES:
 pbr volumetric clouds
@@ -45,6 +47,17 @@ property based tests and working functionality for tiny::
 property based tests and working functionality for `VectorCalculusByCurvilinearMethod`
 property based tests and working functionality for `VectorCalculusByWeightedMultilinearMethod`
 parse 3d models from file
+
+TESTS:
+write unit test to verify global solar constant
+write unit tests for observed properties:
+	earth surface gravity
+	earth year length
+	earth aphelion
+	earth perihelion
+	earth average orbital velocity
+	earth direction of orbit
+	earth direction of spin
 
 TEST LIBRARY FUNCTIONALITY:
 covariance? (i.e. scaling laws)

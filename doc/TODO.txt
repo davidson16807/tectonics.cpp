@@ -1,6 +1,5 @@
 
 PROVEN DESIGN:
-  refactor: transform FormationGeneration to map: grid×id → stratum
   physically based surface rendering
   physically based atmospheric rendering
   physically based solar disc rendering
@@ -13,22 +12,19 @@ PROVEN DESIGN:
   temperature estimates via max entropy production principle (MEPP)
   ice as a mineral
   handwavey precipitation and fluid models from js
-  orbital mechanics assuming elliptical orbits
   stellar motion and orbital perturbation via barnes hutt algorithm
     needs universal formulation
   fix segfault when using incorporate refined parameters into crust initialization
 
 SIMPLE DESIGN:
-  csv reader 
-  deserializer for orbits
   deserializer for compound properties
 
 UNTESTED DESIGN:
   lod
   expanded mineral types
-  orbital mechanics via universal formulation
   density towers
   selection of points on a grid
+  surface insolation representing individual wavelength bins
 
 SPECULATIVE OR UNCERTAIN DESIGN:
   supercontinent cycle using more dynamic plate fracture

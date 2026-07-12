@@ -56,3 +56,4 @@ Our foremost concern is memory footprint, so we will dismiss `series<series<T>>`
 	SpheroidGrid
 		gradient, divergence, curl, laplacian, random
 </work-in-progress>
+

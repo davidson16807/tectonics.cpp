@@ -1,4 +1,4 @@
-We should like to design a way to model the effects of tidal forces between worlds. 
+We would like to design a way to model the effects of tidal forces between worlds. 
 
 We are mainly interested in reproducing the following observations:
 
@@ -34,27 +34,3 @@ What are our state variables?
 * there is a continuum of mass for the earth and the moon
 * there is a state of rotation for the earth and the moon
 * there is an orbit for the earth and the moon
-
-#Orbit
-An orbit can be expressed either in terms of orbital elements (such as semi major axis and eccentricity),
-or by state vectors (strictly including position and velocity). 
-Orbits can be converted effortlessly from either state with the following category diagram:
-
- O     P
- ⇣     ⇣
-OxM ⇆ PxV
- ⇡     ⇡
- M     V
-
-given the following elements:
-* **O** orbital elements
-* **M** mean anomaly
-* **P** position
-* **V** velocity
-
-where M and V can each be usefully updated in isolation 
-to represent advancements in time (M) and applications of force (V)
-
-#Mass Continuums
-We need to find some way to represent mass continuum. 
-Previously, we've used raster fields to describe how 
