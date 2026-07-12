@@ -147,7 +147,7 @@ int main() {
   const auto mass_of_charon        = 1.5e21 * kg; 
   const auto mass_of_pluto_charon  = mass_of_pluto + mass_of_charon;
 
-  using LightSource = light::PointSource<power, temperature>;
+  using LightSource = light::BlackBodyPointSource<power, temperature>;
   using LightExposure = light::Exposure<double,double,LightSource>;
 
   using mat3s = std::vector<mat3>;

@@ -15,7 +15,7 @@
 
 // in-house libraries
 #include <model/light/Exposure.hpp>
-#include <model/light/PointSource.hpp>
+#include <model/light/BlackBodyPointSource.hpp>
 
 #include "Spin.hpp"
 #include "EntityComponents.hpp"

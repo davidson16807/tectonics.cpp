@@ -3,12 +3,12 @@
 namespace light{
 
     template<typename Power, typename Temperature>
-    struct PointSource{
+    struct BlackBodyPointSource{
 
         Power luminosity;
         Temperature temperature;
 
-        PointSource(
+        BlackBodyPointSource(
             const Power luminosity,
             const Temperature temperature
         ): 
