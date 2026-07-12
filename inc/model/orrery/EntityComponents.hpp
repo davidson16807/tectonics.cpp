@@ -101,8 +101,17 @@ public:
 		{
 			if (pairs[i].first == entity)
 			{
-				components.push_back(pairs[i].second)
+				components.push_back(pairs[i].second);
 			}
+		}
+	}
+
+	void components(std::vector<Component>& components)
+	{
+		components.clear();
+		for (std::size_t i = 0; i < pairs.size(); ++i)
+		{
+			components.push_back(pairs[i].second);
 		}
 	}
 
