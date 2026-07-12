@@ -26,7 +26,7 @@ template<typename id, typename Component>
 class EntityComponents
 {
 
-	std::vector<std::pair<id,Component>> components;
+	std::vector<std::pair<id,Component>> pairs;
 
 public:
 
@@ -34,64 +34,76 @@ public:
 	Create an empty `EntityComponents<id,Component>` instance.
 	*/
 	EntityComponents():
-		components()
+		pairs()
 	{
 	}
 
 	void clear()
 	{
-		components.clear();
+		pairs.clear();
 	}
 
 	void resize(std::size_t size)
 	{
-		components.resize(size);
+		pairs.resize(size);
 	}
 
 	void reserve(std::size_t size)
 	{
-		components.reserve(size);
+		pairs.reserve(size);
 	}
 
 	void add(const id entity, const Component& component)
 	{
-		components.emplace_back(entity, component);
+		pairs.emplace_back(entity, component);
 	}
 
 	void add(const EntityComponents<id,Component>& other)
 	{
-		for (std::size_t i = 0; i < other.components.size(); ++i)
+		for (std::size_t i = 0; i < other.pairs.size(); ++i)
 		{
-			components.emplace_back(other.components[i].first, other.components[i].second);
+			pairs.emplace_back(other.pairs[i].first, other.pairs[i].second);
 		}
 	}
 
 	std::size_t component_count() const
 	{
-		return components.size();
+		return pairs.size();
 	}
 
 	// `size` mirrors std::vector-style sizing for callers that traverse entity slots directly.
 	std::size_t size() const
 	{
-		return components.size();
+		return pairs.size();
 	}
 
 	const id entity_for_index(std::size_t component) const
 	{
-		return components[component].first;
+		return pairs[component].first;
 	}
 
 	const Component& component_for_index(std::size_t component) const
 	{
-		assert(component < components.size() && "Retrieving non-existent component.");
-		return components[component].second;
+		assert(component < pairs.size() && "Retrieving non-existent component.");
+		return pairs[component].second;
 	}
 
 	Component& component_for_index(std::size_t component)
 	{
-		assert(component < components.size() && "Retrieving non-existent component.");
-		return components[component].second;
+		assert(component < pairs.size() && "Retrieving non-existent component.");
+		return pairs[component].second;
+	}
+
+	void components_for_entity(const id entity, std::vector<Component>& components)
+	{
+		components.clear();
+		for (std::size_t i = 0; i < pairs.size(); ++i)
+		{
+			if (pairs[i].first == entity)
+			{
+				components.push_back(pairs[i].second)
+			}
+		}
 	}
 
 };
