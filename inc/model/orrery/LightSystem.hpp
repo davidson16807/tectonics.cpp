@@ -42,6 +42,26 @@ namespace orrery
         void sample(
             const vec3s& positions,
             const mat3s& fixed_for_inertial,
+            const id& targets,
+            const PointLightSources& sources,
+            const Time time,
+            LightExposures& exposures
+        ) const {
+            exposures.clear();
+            id entity = target;
+            for (id j = 0; j < sources.entity_count(); ++j)
+            {
+                auto L = positions[sources.entity_for_index(j)];
+                auto V = positions[entity];
+                auto frame = fixed_for_inertial[entity];
+                exposures.add(entity, LightExposure(sources.component_for_index(j), frame*(V-L), time));
+            }
+        }
+
+        template <typename vec3s, typename mat3s, typename PointLightSources>
+        void sample(
+            const vec3s& positions,
+            const mat3s& fixed_for_inertial,
             const ids& targets,
             const PointLightSources& sources,
             const Time time,
