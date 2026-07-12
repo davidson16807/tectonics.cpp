@@ -1,4 +1,4 @@
-#First Pass
+# First Pass
 
 We need some way to represent how light of different wavelengths propogates through the atmosphere. 
 We need to do this in order to model the greenhouse gas effect, among other things. 
@@ -69,7 +69,7 @@ So what quantities should we represent? I can think of the following:
       reflection        the amount that is reflected immediately
       absorption        the amount that is absorbed as heat
       emission          the amount that is emitted when the material gets hot
-      transmission      the amount that passes through the 
+      transmission      the amount that passes through the material
 
 And what materials should we represent? For a first pass, I suggest we limit ourself to the air and the surface.
 Later on, we can represent other materials like clouds, once we have enough code to represent those materials.
@@ -88,10 +88,10 @@ That leaves us with the following quantities:
     intensity_of_incoming_light_received_by_surface
     intensity_of_incoming_light_reflected_by_surface
     intensity_of_incoming_light_absorbed_by_surface
-    intensity_of_incoming_light_emitted_by_surface
+    //intensity_of_incoming_light_emitted_by_surface
     //intensity_of_incoming_light_transmitted_by_surface
 
-    intensity_of_outgoing_light_received_by_surface
+    //intensity_of_outgoing_light_received_by_surface
     intensity_of_outgoing_light_reflected_by_surface
     intensity_of_outgoing_light_absorbed_by_surface
     intensity_of_outgoing_light_emitted_by_surface
@@ -102,7 +102,7 @@ That leaves us with the following quantities:
     intensity_of_outgoing_light_absorbed_by_air
     //intensity_of_outgoing_light_emitted_by_air
     intensity_of_outgoing_light_transmitted_by_air
- 
+
 We comment out the rasters that are likely not relevant in the general case
 (e.g. we will never need to model a planet that is completely transparent,
 so we do not have to track intensity_of_incoming_light_transmitted_by_surface)
@@ -137,11 +137,7 @@ the order is as follows:
     intensity_of_incoming_visible_light_emitted_by_surface
     intensity_of_outgoing_infrared_light_transmitted_by_air
 
-This has implications for our architecture.
-See more information about this in model-architecture.md
-
-Now let's discuss our second pass.
-In our second pass, we want to model 
+Now let's discuss our second pass at this implementation.
 Let's introduce an additional datastructure,
 to represent the way light from a certain source propogates within a material:
 
@@ -183,7 +179,7 @@ since these rasters are strictly computed using in-order memory access
 
 
 
-#Second Pass
+# Second Pass
 
 We need to convey the amount of energy absorbed from:
 
