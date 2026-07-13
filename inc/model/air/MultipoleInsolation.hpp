@@ -20,9 +20,26 @@
 * it assumes all light sources are point sources 
   this is intrinsic to the class and will remain unchanged
 * it assumes all light sources are unobstructed by things like planets
-  this is intrinsic to the class - other classes will be introduced to relax this assumption
+  this is intrinsic to the class - another class will be introduced to represent occlusion by a single body at the origin
 * it assumes all light sources are unattenuated by things like atmosphere 
-  this is intrinsic to the class - other classes will be introduced to relax this assumption
+  this is intrinsic to the class - another class will be introduced to relax this assumption
+
+TODO:
+* simplify logic so that light sources provide constant irradiance from a single direction
+* add logic for occlusion by the planet at the origin
+* add logic for atmospheric attenuation
+
+OUT OF SCOPE:
+* logic for occlusion by any body aside from the planet at the origin
+    If lights are represented here, they likely samples across time, 
+    in which case there is no way to efficiently represent lists of occlusive bodies for each sample.
+    Our climate modeling use case does not require calculating insolation with the precision
+    where it is necessary to model second order effects like umbrae and penumbrae.
+    In this case, it is sufficient to model light sources as point sources,
+    in which case a light source sample is removed from consideration if it is occluded by a sphere.
+    This can be done before constructing the MultipoleInsolation, when generating samples.
+    None of this discussion applies to occlusion by the body at the origin,
+    since a spherical body at the origin of a fixed reference frame will occlude the same regardless of time.
 
 */
 
