@@ -10,6 +10,7 @@
 /*
 
 `light::MultipoleInsolation` instantiates a field that represents the cross-spectrum "top-of-atmosphere" irradiance from an arbitrary number of light sources
+The light sources are modeled as point light sources where irradiance drops of as the inverse square of distance.
 
 `light::MultipoleInsolation` correctly models several aspects of the problem:
 * it correctly models drop off with distance for each point in the field
@@ -46,30 +47,22 @@ OUT OF SCOPE:
 namespace air
 {
 
-    template <typename scalar, typename vector, typename Power>
-    class MultipoleInsolation
+    template <typename scalar, typename vector, typename Power, typename LightExposures>
+    [[nodiscard]] auto MultipoleInsolation (const LightExposures& exposures)
     {
-
-        static constexpr scalar pi = 3.14159265358979323846264338327950288419;
-
-        static constexpr scalar s4pi_inverse = scalar(1) / (scalar(4) * pi);
 
         using Monopole = field::MonopoleScalar<2, Power, vector>;
         using Multipole = field::NaiveMultipole<scalar, vector, Monopole>;
 
-    public:
+        scalar pi = 3.14159265358979323846264338327950288419;
+        scalar s4pi_inverse = scalar(1) / (scalar(4) * pi);
 
-        MultipoleInsolation(){}
-
-        template<typename LightExposures>
-        [[nodiscard]] Multipole operator() (const LightExposures& exposures) const {
-            Multipole insolation;
-            for (const auto& exposure : exposures)
-            {
-                insolation.add(s4pi_inverse * exposure.source.luminosity(), exposure.offset);
-            }
-            return insolation;
+        Multipole insolation;
+        for (const auto& exposure : exposures)
+        {
+            insolation.add(s4pi_inverse * exposure.source.luminosity(), exposure.offset);
         }
+        return insolation;
 
     };
 
