@@ -10,7 +10,7 @@
 /*
 
 `light::CollimatedInsolation` represents a field (i.e. of the same signature of classes from `field::`) 
-that stores the cross-spectrum "top-of-atmosphere" irradiance for a world at the origin with arbitrary number of light sources.
+that stores the cross-spectrum "top-of-atmosphere" irradiance for a world at the origin with an arbitrary number of light sources.
 The light sources are modeled as collimated light sources where irradiance is constant for any distance.
 
 `light::CollimatedInsolation` correctly models several aspects of the problem:
@@ -38,8 +38,6 @@ namespace air
     class CollimatedInsolation
     {
 
-        constexpr scalar pi = 3.141592653589793238462643383279502884197169399;
-        constexpr scalar s4pi = 4*pi;
         constexpr scalar s0 = 0;
 
         using vec3 = glm::vec<3,scalar,precision>;
@@ -49,24 +47,27 @@ namespace air
 
         std::vector<LightExposure> exposures;
         scalar world_radius;
+        scalar s4pi;
 
     public:
 
         constexpr explicit CollimatedInsolation(
-            const std::vector<LightSource>& exposures, 
-            const scalar world_radius
+            const std::vector<LightExposure>& exposures, 
+            const scalar world_radius,
+            const scalar pi
         ):
             exposures(exposures),
-            world_radius(world_radius)
+            world_radius(world_radius),
+            s4pi(scalar(4)*pi)
         {}
 
         using value_type = Irradiance;
 
-        [[nodiscard]] Irradiance operator()(const vec3& V) const
+        [[nodiscard]] Irradiance operator()(const vec3& V) const noexcept
         {
             const scalar R2 = world_radius * world_radius;
-            vec3 Vhat(glm::normalize(V));
             Irradiance I(0);
+            Irradiance Ii(0);
             vec3 L, Lhat;
             scalar l, r2, VL;
             for (const auto& exposure : exposures) // denoted by "i"
@@ -74,9 +75,9 @@ namespace air
                 L = exposure.offset;
                 l = glm::length(L);
                 Lhat = L/l;
-                VL = glm::dot(Lhat, Vhat);
-                r2 = glm::length2(V - VL * V); // cross sectional 
-                Ii = r2 < R2 && VL > s0? Irradiance(0) : exposure.luminosity / (s4pi * l * l);
+                r2 = glm::length2(V - glm::dot(V, Lhat) * Lhat); // cross sectional radius
+                VL = glm::dot(V, L);
+                Ii = r2 < R2 && VL < s0? Irradiance(0) : exposure.luminosity / (s4pi * l * l);
                 I += Ii;
             }
             return I;
