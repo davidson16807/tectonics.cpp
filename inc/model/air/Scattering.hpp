@@ -1,9 +1,9 @@
 #pragma once
 
-#include <cmath>
+#include <cmath>      // sqrt, abs, etc.
 
-#include <algorithm>
-#include <vector>
+#include <algorithm>  // max
+#include <limits>     // numeric_limits
 
 #include <field/poles/MonopoleScalar.hpp>
 #include <field/poles/NaiveMultipole.hpp>
@@ -29,6 +29,7 @@ namespace air
         scalar tiny;
         scalar pi;
         scalar sqrt_half_pi;
+        scalar max_radii;
 
         /*
         GUIDE TO VARIABLE NAMES:
@@ -57,7 +58,7 @@ namespace air
             const scalar y,
             const scalar sqrty,
             const scalar r0
-        ) const {
+        ) const noexcept {
             const scalar k(0.6); // "k" is an empirically derived constant
             const scalar r = std::sqrt(x*x+y*y);
             const scalar Ch = (s1 - half/(y-x)) * sqrt_half_pi * sqrty + k*x;
@@ -66,8 +67,9 @@ namespace air
 
     public:
 
-        Scattering(const scalar pi, const scalar tiny):
-            tiny(tiny),
+        Scattering(const scalar max_radii, const scalar pi, const scalar tiny):
+            max_radii(max_radii),
+            tiny(std::max(tiny, std::numeric_limits<scalar>::epsilon())),
             pi(pi),
             sqrt_half_pi(std::sqrt(half*pi))
         {}
@@ -75,7 +77,7 @@ namespace air
         // Rayleigh phase function factor [-1, 1]
         scalar fraction_of_rayleigh_scattered_light_scattered_by_angle(
             const scalar cos_scatter_angle
-        ) const {
+        ) const noexcept {
             return  s3 * (s1 + cos_scatter_angle*cos_scatter_angle)
             / //------------------------
                         (scalar(16) * pi);
@@ -89,11 +91,11 @@ namespace air
         */
         scalar fraction_of_mie_scattered_light_scattered_by_angle(
             const scalar cos_scatter_angle
-        ) const {
+        ) const noexcept {
             const scalar g(0.76);
             return              (s1 - g*g)
             / //---------------------------------------------
-              ((s4 + pi) * std::pow(s1 + g*g - s2*g*cos_scatter_angle, scalar(1.5)));
+              (s4 * pi * std::pow(s1 + g*g - s2*g*cos_scatter_angle, scalar(1.5)));
         }
 
         /*
@@ -102,7 +104,7 @@ namespace air
         */
         scalar fast_fraction_of_mie_scattered_light_scattered_by_angle(
             const scalar cos_scatter_angle
-        ) const {
+        ) const noexcept {
             const scalar g(0.76);
             const scalar k = scalar(1.55)*g - scalar(0.55) * (g*g*g);
             return          (s1 - k*k)
@@ -127,7 +129,7 @@ namespace air
             const scalar b,
             const scalar y2,
             const scalar r0
-        ) const {
+        ) const noexcept {
             const scalar x0 = std::sqrt(std::max(r0*r0 - y2, tiny));
             const scalar y = std::sqrt(y2);
             const scalar sqrty = std::sqrt(y);
@@ -140,7 +142,7 @@ namespace air
             const vec3 view_origin, const vec3 view_direction, const scalar view_start_length, const scalar view_stop_length,
             const vec3 world_position, const scalar world_radius, const scalar atmosphere_scale_height,
             const spectrum beta_sum // sum of betas for attenuation effects (chiefly rayleigh, mie, and absorption)
-        ) const {
+        ) const noexcept {
             scalar h = atmosphere_scale_height;
             scalar r = world_radius / h;
             vec3 V0 = (view_origin + view_direction * view_start_length - world_position) / h;
@@ -160,7 +162,7 @@ namespace air
             const vec3 light_direction, const scalar atmosphere_scale_height,
             const spectrum beta_ray, const spectrum beta_mie, const spectrum beta_abs, 
             const scalar step_count
-        ) const {
+        ) const noexcept {
             /*
             For an excellent introduction to what we're try to do here, see Alan Zucconi: 
               https://www.alanzucconi.com/2017/10/10/atmospheric-scattering-3/
@@ -207,8 +209,8 @@ namespace air
             // "beta_*" indicates the rest of the fractional loss.
             // it is dependant on wavelength, and the density ratio, which is dependant on height
             // So all together, the fraction of sunlight that scatters to a given angle is: beta(wavelength) * gamma(angle) * density_ratio(height)
-            vec3 beta_sum = h*(beta_ray + beta_mie + beta_abs);
-            vec3 beta_gamma = h*(beta_ray * gamma_ray + beta_mie * gamma_mie);
+            spectrum beta_sum = h*(beta_ray + beta_mie + beta_abs);
+            spectrum beta_gamma = h*(beta_ray * gamma_ray + beta_mie * gamma_mie);
             // number of iterations within the raymarch
             scalar dv = (v1 - v0) / step_count;
             scalar dl = dv*VL;
@@ -227,7 +229,7 @@ namespace air
                 li = VL*(vi-v0) + l0;
                 zl2 = vi*vi + zv2 - li*li;
                 sigma = fast_air_column_density_ratio_through_atmosphere(v0, vi, y2+zv2, r )
-                      + fast_air_column_density_ratio_through_atmosphere(li, s3*r, y2+zl2, r );
+                      + fast_air_column_density_ratio_through_atmosphere(li, max_radii*r, y2+zl2, r );
                 F += glm::exp(r-std::sqrt(vi*vi+y2+zv2) - beta_sum*sigma) * beta_gamma * dv;
                 /*
                 NOTE: the above is equivalent to the incoming fraction multiplied by the outgoing fraction:
