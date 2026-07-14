@@ -102,7 +102,7 @@ namespace math{
 	inline constexpr auto vector_rejection (const glm::vec<L,T,Q>& a, const glm::vec<L,T,Q>& b) noexcept
 	{
 		auto bhat = glm::normalize(b);
-		return a - glm::dot(a, glm::normalize(bhat)) * bhat;
+		return a - glm::dot(a, bhat) * bhat;
 	}
 
 	/*
