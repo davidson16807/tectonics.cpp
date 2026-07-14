@@ -17,10 +17,13 @@ greenhouse gas effect:
 	represent atmospheric composition
 	calculate optical coefficients for atmospheric mixture
 	calculate surface insolation for each wavelength bin
+filter light exposure samples for occlusion
+switch use from BlackBodyPointSource to BlackBodySphereSource
 pbr volumetric clouds
 pinn based climate
 
 NICE TO HAVES:
+move Voronoi to field::, remove unlayered::Voronoi, change voronoi demo
 consolidate FullTable/PartialTable paradigm with *Component paradigm
 implement alternative to CommonComponent akin to FullTable
 remove remaining instances of index/whole.hpp
