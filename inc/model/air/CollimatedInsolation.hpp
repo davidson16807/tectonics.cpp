@@ -87,3 +87,15 @@ namespace air
 
 }
 
+/*
+tests:
+* insolations are non-negative
+* insolations are invariant to the order of exposures
+* contributions add independantly
+* given a single exposure, insolation is linear to luminosity
+* given a single exposure of offset L, insolation(Lhat*x) is positive where x>0 and zero where x<0
+* insolation is rotationally invariant
+
+exposure offsets such as Lhat can be sampled along a fibonacci grid
+*/
+

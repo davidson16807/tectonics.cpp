@@ -246,3 +246,11 @@ namespace air
 
 }
 
+/*
+tests:
+* F approximates the integral ∫ exp(r₀-√(x²+y²)) dx
+* phase functions are finite and non-negative
+* read Schlick (1990?) for properties used to derive phase factor approximations
+* phase functions are smallest at a right angle and largest when parallel
+*/
+
