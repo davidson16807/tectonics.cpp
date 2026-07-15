@@ -15,7 +15,7 @@
 
 // in-house libraries
 #include <model/light/Exposure.hpp>
-#include <model/light/BlackBodyPointSource.hpp>
+#include <model/light/sources/BlackBodyPointSource.hpp>
 
 #include <model/orrery/Spin.hpp>
 #include <model/orrery/components/EntityComponents.hpp>
