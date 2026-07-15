@@ -1,0 +1,65 @@
+
+space ⟶ space
+space ⟶ light
+space ⟶ tide
+space × rock ⟶ rock
+	astroblemes
+rock × sea ⟶ sea
+	salination
+	melting
+rock × air ⟶ air
+	sublimation
+sea × rock ⟶ rock
+	tidal erosion
+	freezing
+sea × air ⟶ air
+	evaporation
+air ⟶ rain
+air ⟶ snow
+rain × rock ⟶ rock
+	weathering
+	erosion
+snow × rock ⟶ rock
+	deposition
+rain × sea ⟶ sea
+	deposition
+light × air ⟶ air
+	attenuation
+
+insolated
+cloud reflected 	removed from system
+air attenuated  	contributes to air temperature
+rock:
+	reflected    	removed from system  	
+		sea attenuated 	contributes to sea temperature
+		air attenuated 	contributes to air temperature
+	absorbed   	contributes to ground temperature
+	radiated
+		sea attenuated 	contributes to sea temperature
+		air attenuated 	contributes to air temperature
+sea:
+	reflected    	removed from system
+		air attenuated 	contributes to air temperature
+	absorbed 	contributes to ground temperature
+	radiated
+		air attenuated 	contributes to air temperature
+
+* once light is reflected or emitted, this model assumes all directionality is lost
+* we might approximate direction of reflected/emitted light as "straight up", 
+  which gives a minimum estimate of absorption
+* the alternate implementation is to create a dynamic surrogate f:L→F that for a direction of incoming light L 
+  estimates the fraction F that reflects as the integration over the sphere of all possible directions of reflection
+
+aspects that completely determine the climate model:
+* light exposures
+* grid properties (surface area, surface normal)
+* world radius, surface gravity
+* rock albedo, height
+* sea albedo, sea composition, depth
+* air composition, scale height
+
+aspects of climate that affect other components:
+* temperature
+* rainfall
+* snowfall
+

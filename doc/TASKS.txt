@@ -12,6 +12,7 @@ pbr atmospheres
 continent congestion
 
 AFTER PARITY:
+phase transitions
 greenhouse gas effect:
 	represent spectra of light
 	represent atmospheric composition
@@ -21,6 +22,11 @@ filter light exposure samples for occlusion
 switch use from BlackBodyPointSource to BlackBodySphereSource
 pbr volumetric clouds
 pinn based climate
+magnetospheres
+stellar evolution
+plants
+animals
+civilizations
 
 NICE TO HAVES:
 move Voronoi to field::, remove unlayered::Voronoi, change voronoi demo
