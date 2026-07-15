@@ -14,8 +14,8 @@
 // in-house libraries
 #include <math/special.hpp>           // math::roundfract
 
-#include "EntityComponents.hpp"
-#include "Resonance.hpp"
+#include <model/orrery/Resonance.hpp>
+#include <model/orrery/components/EntityComponents.hpp>
 
 namespace orrery
 {

@@ -13,8 +13,8 @@
 #include <glm/mat3x3.hpp> // *mat3x3
 
 // in-house libraries
-#include "Spin.hpp"
-#include "DenseContiguousComponents.hpp"
+#include <model/orrery/Spin.hpp>
+#include <model/orrery/components/DenseContiguousComponents.hpp>
 
 namespace orrery
 {

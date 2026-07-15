@@ -10,7 +10,7 @@
 // in-house libraries
 #include <index/iterated/Nary.hpp>    // iterated::Identity
 
-#include "EntityComponents.hpp"
+#include <model/orrery/components/EntityComponents.hpp>
 
 namespace orrery
 {

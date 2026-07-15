@@ -17,8 +17,8 @@
 #include <model/light/Exposure.hpp>
 #include <model/light/BlackBodyPointSource.hpp>
 
-#include "Spin.hpp"
-#include "EntityComponents.hpp"
+#include <model/orrery/Spin.hpp>
+#include <model/orrery/components/EntityComponents.hpp>
 
 namespace orrery
 {

@@ -20,13 +20,13 @@
 #include <model/orbit/Elements.hpp>           // orbit::Elements
 #include <model/orbit/ElementsAndState.hpp>   // 
 #include <model/orrery/Spin.hpp>              // orrery::Spin
-#include <model/orrery/OrbitSystem.hpp>       // orrery:OrbitSystem
-#include <model/orrery/SpinSystem.hpp>        // orrery::SpinSystem
-#include <model/orrery/PeriodicSystem.hpp>    // orrery::PeriodicSystem
-#include <model/orrery/LightSystem.hpp>       // orrery::LightSystem
-#include <model/orrery/SceneTrees.hpp>        // orrery::SceneTrees
-#include <model/orrery/DenseContiguousComponents.hpp> // orrery::DenseContiguousComponents
-#include <model/orrery/SparseEnduringComponents.hpp>  // orrery::SparseEnduringComponents
+#include <model/orrery/systems/OrbitSystem.hpp>       // orrery:OrbitSystem
+#include <model/orrery/systems/SpinSystem.hpp>        // orrery::SpinSystem
+#include <model/orrery/systems/PeriodicSystem.hpp>    // orrery::PeriodicSystem
+#include <model/orrery/systems/LightSystem.hpp>       // orrery::LightSystem
+#include <model/orrery/systems/SceneTrees.hpp>        // orrery::SceneTrees
+#include <model/orrery/components/DenseContiguousComponents.hpp> // orrery::DenseContiguousComponents
+#include <model/orrery/components/SparseEnduringComponents.hpp>  // orrery::SparseEnduringComponents
 
 #include <update/OrbitalNavigationState.hpp>    // update::OrbitalNavigationState
 #include <update/OrbitalNavigationUpdater.hpp>  // update::OrbitalNavigationUpdater

@@ -20,10 +20,10 @@
 #include <model/orbit/Elements.hpp>          // orbit::Elements
 #include <model/orbit/ElementsAndState.hpp>  // 
 #include <model/orrery/Spin.hpp>              // orrery::Spin
-#include <model/orrery/OrbitSystem.hpp>      // orrery:OrbitSystem
-#include <model/orrery/SpinSystem.hpp>        // orrery::SpinSystem
-#include <model/orrery/SceneTrees.hpp>       // orrery:SceneTrees
-#include <model/orrery/DenseContiguousComponents.hpp> // orrery:UnsortedEphemeralComponents
+#include <model/orrery/systems/OrbitSystem.hpp>      // orrery:OrbitSystem
+#include <model/orrery/systems/SpinSystem.hpp>        // orrery::SpinSystem
+#include <model/orrery/systems/SceneTrees.hpp>       // orrery:SceneTrees
+#include <model/orrery/components/DenseContiguousComponents.hpp> // orrery:UnsortedEphemeralComponents
 
 #include <update/OrbitalNavigationState.hpp>    // update::OrbitalNavigationState
 #include <update/OrbitalNavigationUpdater.hpp>  // update::OrbitalNavigationUpdater

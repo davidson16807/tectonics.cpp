@@ -15,8 +15,8 @@
 #include <model/orbit/Universals.hpp> // orbit::Universals
 #include <model/orbit/UniversalPropagator.hpp> // orbit::UniversalPropagator
 
-#include "EntityComponents.hpp"
-#include "DenseContiguousComponents.hpp"
+#include <model/orrery/components/EntityComponents.hpp>
+#include <model/orrery/components/DenseContiguousComponents.hpp>
 
 namespace orrery
 {
