@@ -13,7 +13,7 @@
 namespace air
 {
 
-    template <typename scalar, glm::qualifier precision = glm::defaultp>
+    template <typename scalar, typename spectrum, typename SpectrumClosedForm, glm::qualifier precision = glm::defaultp>
     class Scattering
     {
 
@@ -25,6 +25,8 @@ namespace air
         static constexpr scalar s3 = scalar(3);
         static constexpr scalar s4 = scalar(4);
         static constexpr scalar half = scalar(0.5);
+
+        SpectrumClosedForm spectra;
 
         scalar tiny;
         scalar pi;
@@ -137,7 +139,6 @@ namespace air
             return std::max( glm::sign(b)*(F0-F(b,y,sqrty,r0)) - glm::sign(a)*(F0-F(a,y,sqrty,r0)), s0 );
         }
 
-        template<typename spectrum>
         spectrum fraction_of_light_transmitted_through_atmosphere(
             const vec3 view_origin, const vec3 view_direction, const scalar view_start_length, const scalar view_stop_length,
             const vec3 world_position, const scalar world_radius, const scalar atmosphere_scale_height,
@@ -152,10 +153,9 @@ namespace air
             scalar v1 = glm::dot(V1,V);
             scalar zv2 = glm::dot(V0,V0) - v0*v0;
             scalar sigma = fast_air_column_density_ratio_through_atmosphere(v0,v1,zv2,r);
-            return glm::exp(-sigma * beta_sum * h);
+            return spectra.exp(-sigma * beta_sum * h);
         }
 
-        template<typename spectrum>
         vec3 rgb_fraction_of_distant_light_scattered_by_atmosphere(
             const vec3 view_origin, const vec3 view_direction, const scalar view_start_length, const scalar view_stop_length,
             const vec3 world_position, const scalar world_radius,
@@ -230,7 +230,7 @@ namespace air
                 zl2 = vi*vi + zv2 - li*li;
                 sigma = fast_air_column_density_ratio_through_atmosphere(v0, vi, y2+zv2, r )
                       + fast_air_column_density_ratio_through_atmosphere(li, max_radii*r, y2+zl2, r );
-                F += glm::exp(r-std::sqrt(vi*vi+y2+zv2) - beta_sum*sigma) * beta_gamma * dv;
+                F += spectra.exp(r-std::sqrt(vi*vi+y2+zv2) - beta_sum*sigma) * beta_gamma * dv;
                 /*
                 NOTE: the above is equivalent to the incoming fraction multiplied by the outgoing fraction:
                 incoming fraction: the fraction of light that scatters towards camera
