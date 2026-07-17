@@ -1,7 +1,7 @@
 
 
 HOT PATH TO PARITY:
-insolation
+instellation
 climate
 precipitation
 erosion
@@ -17,7 +17,7 @@ greenhouse gas effect:
 	represent spectra of light
 	represent atmospheric composition
 	calculate optical coefficients for atmospheric mixture
-	calculate surface insolation for each wavelength bin
+	calculate surface instellation for each wavelength bin
 filter light exposure samples for occlusion
 switch use from BlackBodyPointSource to BlackBodySphereSource
 pbr volumetric clouds

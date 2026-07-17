@@ -24,7 +24,7 @@ UNTESTED DESIGN:
   expanded mineral types
   density towers
   selection of points on a grid
-  surface insolation representing individual wavelength bins
+  surface instellation representing individual wavelength bins
 
 SPECULATIVE OR UNCERTAIN DESIGN:
   supercontinent cycle using more dynamic plate fracture

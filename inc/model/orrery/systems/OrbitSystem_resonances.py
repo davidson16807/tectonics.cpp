@@ -8,7 +8,7 @@ Resonance is expressed as a ratio p:p+q where p is the "index" and q is the "ord
 Index and order reflect the most important aspects of the resonance to astronomers.
 The largest order q of any resonance of serious interest to astronomers appears to be 4.
 The index p can be anything, but it determines how often the planets assume the same absolute positions in space,
-and we have to track absolute positions to accurately estimate insolation (not just relative positions, determined by the order),
+and we have to track absolute positions to accurately estimate instellation (not just relative positions, determined by the order),
 so it affects the sample count of the resonance, and therefore it must be held low for performance reasons.
 '''
 def closest_resonance_index(fraction):

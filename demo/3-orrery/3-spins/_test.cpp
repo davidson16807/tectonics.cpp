@@ -174,7 +174,7 @@ int main() {
   /*
   TODO:
   * sampling for imperceptibles
-  * insolation
+  * instellation
   */
 
   orrery::OrbitSystem<int,double> orbit_system(propagator, properties);

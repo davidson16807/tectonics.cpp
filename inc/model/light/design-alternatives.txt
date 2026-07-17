@@ -6,14 +6,14 @@ sampling:
 	positions 
 	rotations
 
-insolation implementation 1:
+instellation implementation 1:
 	lights
 	positions
 	rotations
 	→
 	light exposures
 
-insolation implementation 2:
+instellation implementation 2:
 	lighting quad tree
 	positions
 	rotations
@@ -29,8 +29,8 @@ gravity tug/tides:
 
 also need some way to concatenate light exposures
 
-alternatively, may calculate a running average of insolations across several timesteps
-increases to timestep may optionally require average insolation to be calculated up to the min_perceptible_duration of that timestep
+alternatively, may calculate a running average of instellations across several timesteps
+increases to timestep may optionally require average instellation to be calculated up to the min_perceptible_duration of that timestep
 
 sampling
 	orbits.offsets
@@ -55,9 +55,9 @@ lithosphere
 
 overarching principle of topmost abstraction layer is for functions to consolidate actions on the same data structure when they require the same information that is external to the data structure
 
-development of insolation calculation should proceed in this order:
+development of instellation calculation should proceed in this order:
 * new demo that displays correct orbital positions while also iterating through undisplayed configurations 
 * modified demo that calculates light exposure samples from each configuration
-* modified demo that calculates average insolation raster from light exposure samples
-* modified demo that accumulates average insolation raster across multiple timesteps?
+* modified demo that calculates average instellation raster from light exposure samples
+* modified demo that accumulates average instellation raster across multiple timesteps?
 

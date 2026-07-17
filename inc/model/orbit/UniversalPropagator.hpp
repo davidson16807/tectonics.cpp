@@ -265,7 +265,7 @@ namespace orbit {
 /*
 
 We need Orbit to do the following:
-1 allow queries over phases, such as to find average insolations over many years
+1 allow queries over phases, such as to find average instellations over many years
 2 apply force to create a new orbit without updating or changing the epoch used in orbits for other bodies
 
 1) is accomplished using `state(t)`, however since `Orbit` can also represent hyperbolic or parabolic orbits,

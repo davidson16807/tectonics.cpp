@@ -143,7 +143,7 @@ int main() {
   TODO:
   * spins
   * sampling for imperceptibles
-  * insolation
+  * instellation
   * binned draw distances
   * comet dataset and highly eccentric orbits
   * space probes and hyperbolic orbits

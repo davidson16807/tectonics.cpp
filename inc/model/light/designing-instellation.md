@@ -15,22 +15,22 @@ Well, consider a body that is heated by the light of an arbitrary number of blac
 
 # Calculation
 
-If users visualize a world's climate while simulating at a fast rate, like a million simulated years for every real second, we will make the assumption that they do not care about that world's climate at a particular time of year, time of month, or time of day. We say this because, if they were concerned, the model allows them to slow the rate of simulation to a point where they could observe climate at these moments in time. We will instead assume the user only cares about the average climate when they run at these rates of simulation. This has consequences for what the code does. It absolutely must calculate some average of climate - that much is known. We further know that a single time step in this case covers many orbital configurations with different amounts of solar heating ("insolation"). The math that would allow us to integrate insolation over arbitrary orbital systems is not known to us and likely too complex to implement if it were available, so we are reduced to using some kind of averaging or numerical integration across several sample configurations. However there are still at least two approaches that this allows. In pseudo-code:
+If users visualize a world's climate while simulating at a fast rate, like a million simulated years for every real second, we will make the assumption that they do not care about that world's climate at a particular time of year, time of month, or time of day. We say this because, if they were concerned, the model allows them to slow the rate of simulation to a point where they could observe climate at these moments in time. We will instead assume the user only cares about the average climate when they run at these rates of simulation. This has consequences for what the code does. It absolutely must calculate some average of climate - that much is known. We further know that a single time step in this case covers many orbital configurations with different amounts of solar heating ("instellation"). The math that would allow us to integrate instellation over arbitrary orbital systems is not known to us and likely too complex to implement if it were available, so we are reduced to using some kind of averaging or numerical integration across several sample configurations. However there are still at least two approaches that this allows. In pseudo-code:
 
 ## Approach A
 
 ```python
 for sample in samples:
-	sum += insolation(sample)
-average_insolation = sum/sample_count
-climate = update_climate(average_insolation)
+	sum += instellation(sample)
+average_instellation = sum/sample_count
+climate = update_climate(average_instellation)
 ```
 
 ## Approach B
 
 ```python
 for sample in samples:
-	climate = f(insolation(sample))
+	climate = f(instellation(sample))
 	sum += climate
 average_climate = sum/sample_count
 ```

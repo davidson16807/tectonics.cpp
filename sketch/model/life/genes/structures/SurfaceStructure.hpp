@@ -14,7 +14,7 @@ namespace genes
     /*
     "SurfaceStructure" is any thin repeating surface structiure,
     made of a structural material such as chitin or keratin.
-    It can serve as insolation, heat resistance, waterproofing, 
+    It can serve as insulation, heat resistance, waterproofing, 
     protection from dessication, ornamentation, or armor.
     Examples include hair, feathers, spines, and (obviously) scales
     */

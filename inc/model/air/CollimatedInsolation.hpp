@@ -9,15 +9,15 @@
 
 /*
 
-`light::CollimatedInsolation` represents a field (i.e. of the same signature of classes from `field::`) 
+`light::CollimatedInstellation` represents a field (i.e. of the same signature of classes from `field::`) 
 that stores the cross-spectrum "top-of-atmosphere" irradiance for a world at the origin with an arbitrary number of light sources.
 The light sources are modeled as collimated light sources where irradiance is constant for any distance.
 
-`light::CollimatedInsolation` correctly models several aspects of the problem:
+`light::CollimatedInstellation` correctly models several aspects of the problem:
 * it supports light sources that represent luminosity as vectors of wavelength bins
 * it correctly models occlusion
 
-`light::CollimatedInsolation` introduces several assumptions that are either intrinsic to the class or will be addressed in time:
+`light::CollimatedInstellation` introduces several assumptions that are either intrinsic to the class or will be addressed in time:
 * it assumes all light sources are collimated
   this is a valid approximation for any light source where distance is much greater than the diameter of the world
   this is applicable for the vast majority of worlds, so it is intrinsic to the class and will remain unchanged
@@ -35,7 +35,7 @@ namespace air
 {
 
     template<typename scalar, typename Irradiance, typename Temperature, typename Time, glm::qualifier precision = glm::defaultp>
-    class CollimatedInsolation
+    class CollimatedInstellation
     {
 
         constexpr scalar s0 = 0;
@@ -51,7 +51,7 @@ namespace air
 
     public:
 
-        constexpr explicit CollimatedInsolation(
+        constexpr explicit CollimatedInstellation(
             const std::vector<LightExposure>& exposures, 
             const scalar world_radius,
             const scalar pi
@@ -89,13 +89,13 @@ namespace air
 
 /*
 tests:
-* insolations are non-negative
-* insolations are invariant to the order of exposures
+* instellations are non-negative
+* instellations are invariant to the order of exposures
 * contributions add independantly
-* given a single exposure, insolation is linear to luminosity
-* given a single exposure of offset L, insolation(Lhat*x) is positive where x>0 and zero where x<0
-* insolation is rotationally invariant
-* insolation at the earth approximates the global solar constant
+* given a single exposure, instellation is linear to luminosity
+* given a single exposure of offset L, instellation(Lhat*x) is positive where x>0 and zero where x<0
+* instellation is rotationally invariant
+* instellation at the earth approximates the global solar constant
 
 exposure offsets such as Lhat can be sampled along a fibonacci grid
 */

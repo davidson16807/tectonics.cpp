@@ -214,7 +214,7 @@ integration tests
 		combined column density  	(start position, stop position)
 		combined absorption			(start position, stop position)
 		
-		absorbed insolation			(lights, position(s))
+		absorbed instellation			(lights, position(s))
 		absorbed surface reflection	(lights, position(s), surface reflectivity)
 		absorbed surface emission	(lights, position(s), temperature)
 
