@@ -3,6 +3,11 @@
 HOT PATH TO PARITY:
 instellation
 climate
+	T 	MaxEntropyProductionEnergyBalanceModel
+	T 	MaxEntropyProductionDiffusiveEnergyBalanceModel
+	TΠ 	MaxEntropyProductionDiffusiveEnergyMoistureBalanceModel
+	TΠ	MaxEntropyProductionConvectiveCoriolis2LayerAirSeaModel
+	T	MaxEntropyProductionPaltridgeModelTemperature
 precipitation
 erosion
 lithification
@@ -20,6 +25,7 @@ greenhouse gas effect:
 	calculate surface instellation for each wavelength bin
 filter light exposure samples for occlusion
 switch use from BlackBodyPointSource to BlackBodySphereSource
+exploit higher fidelity models when simulation rate is slow
 pbr volumetric clouds
 pinn based climate
 magnetospheres
