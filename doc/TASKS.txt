@@ -6,8 +6,12 @@ climate
 	T 	MaxEntropyProductionEnergyBalanceModel
 	T 	MaxEntropyProductionDiffusiveEnergyBalanceModel
 	TΠ 	MaxEntropyProductionDiffusiveEnergyMoistureBalanceModel
-	TΠ	MaxEntropyProductionConvectiveCoriolis2LayerAirSeaModel
-	T	MaxEntropyProductionPaltridgeModelTemperature
+	TΠ	MaxEntropyProductionConvectiveJuppCoxModel
+	TΠ	MaxEntropyProductionPrescribedConvectiveModel
+			* models air and sea
+			* 2 layer for each pool
+			* maybe models arbitrary convection cells weighted by MEPP?
+	T	MaxEntropyProductionPaltridgeModel
 precipitation
 erosion
 lithification
