@@ -1,0 +1,291 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title></title>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <script>
+        MathJax = {
+            chtml: { displayAlign: 'left' }
+        };
+    </script>
+    <style>
+        td { padding-left: 1em; }
+    </style>
+</head>
+
+<body>
+
+<table>
+<thead>
+<tr>
+<th>Equation</th>
+<th>Long Form Notation</th>
+<th>Nabla Notation</th>
+<th>Nabla Notation </br> Material Derivative</th>
+<th>Tensor Notation</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td>Equation of State</td>
+<td>
+\[
+P=\rho R_dT_v
+\]
+<!-- P/ρ = RT -->
+</td>
+<td>
+\[
+P=\rho R_dT_v
+\]
+<!-- P = ρRT -->
+</td>
+<td>
+\[
+P=\rho R_dT_v
+\]
+<!-- P = ρRT -->
+</td>
+<td>
+\[
+P=\rho R_dT_v
+\]
+<!-- P = ρRT -->
+</td>
+</tr>
+
+<tr>
+<td>Mass Conservation Equation</td>
+<td>
+\[
+\frac{d\rho}{dt}
+=
+-u\frac{d\rho}{dx}
+-v\frac{d\rho}{dy}
+-w\frac{d\rho}{dz}
+-\rho\frac{du}{dx}
+-\rho\frac{dv}{dy}
+-\rho\frac{dw}{dz}
+\]
+</td>
+<td>
+\[
+\frac{d\rho}{dt}
+=
+-\mathbf{u}\cdot\nabla\rho
+-\rho\nabla\cdot\mathbf{u}
+\]
+<!--
+dρ/dt = -u·∇ρ - ρ∇·u
+-->
+</td>
+<td>
+\[
+\frac{D\rho}{Dt}
+=
+-\rho\nabla\cdot\mathbf{u}
+\]
+<!--
+Dρ/Dt = -ρ∇·u
+-->
+</td>
+<td>
+\[
+\frac{\partial\rho}{\partial t}
+=
+-u_i\frac{\partial\rho}{\partial x_i}
+-\rho\frac{\partial u_i}{\partial x_i}
+\]
+<!--
+∂ρ/∂t = -uᵢ ∂ρ/∂xᵢ - ρ ∂uᵢ/∂xᵢ
+-->
+</td>
+</tr>
+
+<tr>
+<td>Moisture Conservation Equation</td>
+<td>
+\[
+\frac{dm}{dt}
+=
+-u\frac{dm}{dx}
+-v\frac{dm}{dy}
+-w\frac{dm}{dz}
++P-E
+\]
+</td>
+<td>
+\[
+\frac{dm}{dt}
+=
+-\mathbf{u}\cdot\nabla m
++P-E
+\]
+<!--
+dm/dt = -u·∇m + P - E
+-->
+</td>
+<td>
+\[
+\frac{Dm}{Dt}
+=
+P-E
+\]
+<!--
+Dm/Dt = P - E
+-->
+</td>
+<td>
+\[
+\frac{\partial m}{\partial t}
+=
+-u_i\frac{\partial m}{\partial x_i}
++P-E
+\]
+<!--
+∂m/∂t = -uᵢ ∂m/∂xᵢ + P - E
+-->
+</td>
+</tr>
+
+<tr>
+<td>Thermodynamic Energy Equation</td>
+<td>
+\[
+\frac{dT}{dt}
+=
+-u\frac{dT}{dx}
+-v\frac{dT}{dy}
+-w\frac{dT}{dz}
++
+\frac{1}{C_p}\frac{dQ}{dt}
++
+\frac{1}{\rho C_p}\frac{dp}{dt}
+\]
+</td>
+<td>
+\[
+\frac{dT}{dt}
+=
+-\mathbf{u}\cdot\nabla T
++
+\frac{1}{C_p}\frac{dQ}{dt}
++
+\frac{1}{\rho C_p}\frac{dp}{dt}
+\]
+<!--
+dT/dt = -u·∇T + (1/Cp)dQ/dt + (1/(ρCp))dp/dt
+-->
+</td>
+<td>
+\[
+\frac{DT}{Dt}
+=
+\frac{1}{C_p}\frac{DQ}{Dt}
++
+\frac{1}{\rho C_p}\frac{Dp}{Dt}
+\]
+<!--
+DT/Dt = (1/Cp)DQ/Dt + (1/(ρCp))Dp/Dt
+-->
+</td>
+<td>
+\[
+\frac{\partial T}{\partial t}
+=
+-u_i\frac{\partial T}{\partial x_i}
++
+\frac{1}{C_p}\frac{\partial Q}{\partial t}
++
+\frac{1}{\rho C_p}\frac{\partial p}{\partial t}
+\]
+<!--
+∂T/∂t = -uᵢ ∂T/∂xᵢ + (1/Cp)∂Q/∂t + (1/(ρCp))∂p/∂t
+-->
+</td>
+</tr>
+
+<tr>
+<td>Navier–Stokes Equations</td>
+<td>
+\[
+\frac{du}{dt}
+=
+-u\frac{du}{dx}
+-v\frac{du}{dy}
+-w\frac{du}{dz}
+-\frac{1}{\rho}\frac{dp}{dx}
++F_x
++fv
+\]
+</br>
+\[
+\frac{dv}{dt}
+=
+-u\frac{dv}{dx}
+-v\frac{dv}{dy}
+-w\frac{dv}{dz}
+-\frac{1}{\rho}\frac{dp}{dy}
++F_y
++fu
+\]
+</br>
+\[
+\frac{dw}{dt}
+=
+-u\frac{dw}{dx}
+-v\frac{dw}{dy}
+-w\frac{dw}{dz}
+-\frac{1}{\rho}g
++F_z
+\]
+</td>
+<td>
+\[
+\frac{d\mathbf{u}}{dt}
+=
+-\mathbf{u}\cdot\nabla\mathbf{u}
+-\frac{1}{\rho}\nabla p
++\mathbf{F}
++f\mathbf{u}
+\]
+<!--
+du/dt = -u·∇u - ∇Φ + F + fv
+-->
+</td>
+<td>
+\[
+\frac{D\mathbf{u}}{Dt}
+=
+-\frac{1}{\rho}\nabla p
++\mathbf{F}
++f\mathbf{u}
+\]
+<!--
+Du/Dt = -∇Φ + F + fv
+-->
+</td>
+<td>
+\[
+\frac{\partial u_i}{\partial t}
+=
+-u_j\frac{\partial u_i}{\partial x_j}
+-\frac{1}{\rho} \frac{\partial p}{\partial x_i}
++F_i
++f\,v_i
+\]
+<!--
+∂uᵢ/∂t = -uⱼ ∂uᵢ/∂xⱼ - ∂Φ/∂xᵢ + Fᵢ + fvᵢ
+-->
+</td>
+</tr>
+
+</tbody>
+</table>
+
+</body>
+</html>
+```
