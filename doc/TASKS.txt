@@ -3,16 +3,24 @@
 HOT PATH TO PARITY:
 instellation
 climate
-	T 	MaxEntropyProductionEnergyBalanceModel
-	T 	MaxEntropyProductionDiffusiveEnergyBalanceModel
-	TΠ 	MaxEntropyProductionDiffusiveEnergyMoistureBalanceModel
-	TΠ	MaxEntropyProductionConvectiveJuppCoxModel
-	TΠ	MaxEntropyProductionPrescribedConvectiveModel
-			* models air and sea
-			* 2 layer for each pool
-			* maybe models arbitrary convection cells weighted by MEPP?
-	T	MaxEntropyProductionPaltridgeModel
-precipitation
+	ebm/
+		2	T 	BudykoSellers2dModel
+		2	T 	BudykoSellersDiffusive2dModel
+	embm/
+		2	TΠ 	FanningWeaverDiffusive2dModel
+	mepp/
+			T	PaltridgeIterative2boxModel
+		2	T	PaltridgeIterative2dModel
+	x		T	JuppCox2boxModel
+		2	TΠ	JuppCoxConvective2dModel
+		2.5	TΠ	PrescribedConvectiveCellModel
+				* models air and sea
+				* 2 layers for each pool
+				* MEPP chooses weights for prescribed fields
+				* maybe models arbitrary convection cells weighted by MEPP?
+	gcm/
+		3	TΠ	GlobalClimateModel
+	all *Model classes have an entropy(…) method where applicable
 erosion
 lithification
 metamorphosis
