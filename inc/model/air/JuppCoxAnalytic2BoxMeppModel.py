@@ -57,68 +57,68 @@ class JuppCoxAnalytic2BoxMeppModel:
         )
 
     # X→fₐ, 3.9
-    def unitless_wind_flux_for_X(self, X):
+    def scaled_wind_flux_for_X(self, X):
         return X**-2
 
     # X→tₑₚ, 3.9
-    def unitless_equator_pole_temp_change_for_X(self, X):
+    def scaled_equator_pole_temp_change_for_X(self, X):
         return 1.0 - X**-2
 
     # X→u, 3.9
-    def unitless_wind_speed_for_X(self, X, xi, omega, tan_wind_angle, zeta):
+    def scaled_wind_speed_for_X(self, X, xi, omega, tan_wind_angle, zeta):
         return sqrt(tan_wind_angle/(xi*omega)) * zeta / X
 
     # X→cd, 3.9
-    def unitless_drag_for_X(self, X, xi, omega, tan_wind_angle):
+    def scaled_drag_for_X(self, X, xi, omega, tan_wind_angle):
         return X * sqrt(xi*omega**3 / tan_wind_angle**3)
 
     # X→tₛₐ, 3.9
-    def unitless_surface_air_temp_change_for_X(self, X, tan_wind_angle, xi, omega):
+    def scaled_surface_air_temp_change_for_X(self, X, tan_wind_angle, xi, omega):
         return tan_wind_angle / (2.0 * xi * omega * X**2)
 
     # σ̇, 3.12, maximized when the result of the model is correct,
     # needed to verify correctness of model
-    def unitless_entropy_production(self, 
-            unitless_wind_flux, unitless_equator_pole_temp_change): 
-        return 4 * unitless_wind_flux * unitless_equator_pole_temp_change
+    def scaled_entropy_production(self, 
+            scaled_wind_flux, scaled_equator_pole_temp_change): 
+        return 4 * scaled_wind_flux * scaled_equator_pole_temp_change
 
     # Cd→cd, 3.2
-    def deunitize_drag(self, drag, eta):
+    def descale_drag(self, drag, eta):
         return drag / (4.0 * eta)
 
     # cd→Cd, 3.2, needed to process results of the model
-    def unitize_drag(self, unitless_drag, eta):
-        return unitless_drag * (4.0 * eta)
+    def scale_drag(self, scaled_drag, eta):
+        return scaled_drag * (4.0 * eta)
 
     # Fₐ→fₐ, 3.3, needed for σ̇
-    def deunitize_wind_flux(self, wind_flux, flux_change): 
+    def descale_wind_flux(self, wind_flux, flux_change): 
         return 2.0 * wind_flux / flux_change
 
     # fₐ→Fₐ, 3.3, needed to process results of model
-    def unitize_wind_flux(self, unitless_wind_flux, flux_change): 
-        return unitless_wind_flux * flux_change / 2.0
+    def scale_wind_flux(self, scaled_wind_flux, flux_change): 
+        return scaled_wind_flux * flux_change / 2.0
 
     # U→u, 3.3, needed for σ̇
-    def deunitize_wind_speed(self, wind_speed, zeta, gravity, scale_height): 
+    def descale_wind_speed(self, wind_speed, zeta, gravity, scale_height): 
         return (
             2.0 * zeta * wind_speed 
             / (sqrt(self.gamma * gravity * scale_height))
         )
 
     # u→U, 3.3, needed to process results of model
-    def unitize_wind_speed(self, unitless_wind_speed, zeta, gravity, scale_height): 
+    def scale_wind_speed(self, scaled_wind_speed, zeta, gravity, scale_height): 
         return (
-            unitless_wind_speed * sqrt(self.gamma * gravity * scale_height) 
+            scaled_wind_speed * sqrt(self.gamma * gravity * scale_height) 
             / (2.0 * zeta)
         )
 
     # T→t for any temperature or temperature change T, 3.3, needed for σ̇
-    def deunitize_temperature(self, 
+    def descale_temperature(self, 
             temperature, emission_slope, flux_change): 
         return emission_slope * temperature / flux_change
 
     # t→T for any temperature or temperature change T, 3.3, needed to process results of model
-    def unitize_temperature(self, 
-            unitless_temperature, emission_slope, flux_change): 
-        return unitless_temperature * flux_change / emission_slope
+    def scale_temperature(self, 
+            scaled_temperature, emission_slope, flux_change): 
+        return scaled_temperature * flux_change / emission_slope
 
