@@ -18,7 +18,6 @@
 #include "Shifting.hpp"
 #include "ScaledComplement.hpp"
 
-#include <math/inspected/CentralFiniteDifference.hpp>
 #include <math/combinatorics.hpp>
 
 namespace analytic {
@@ -1475,43 +1474,38 @@ namespace analytic {
     }
 
     template<typename T, typename F>
-    constexpr Polynomial<T,0,1> linear_taylor_series(const F f, const T x, const T dx)
+    constexpr Polynomial<T,0,1> linear_taylor_series(const F f, const T x)
     {
-        const T dx2 = dx*dx;
         return compose(
             Polynomial<T,0,1>(f(x), 
-                inspected::central_finite_difference(f, x, dx, 1) / dx),
-            Shifting<T>(-x)
+                higher_order_derivative<1>(f)(x)
+            ), Shifting<T>(-x)
         );
     }
 
     template<typename T, typename F>
-    constexpr Polynomial<T,0,2> quadratic_taylor_series(const F f, const T x, const T dx)
+    constexpr Polynomial<T,0,2> quadratic_taylor_series(const F f, const T x)
     {
-        const T dx2 = dx*dx;
         return compose(
             Polynomial<T,0,2>{f(x), 
-                inspected::central_finite_difference(f, x, dx, 1) / dx, 
-                inspected::central_finite_difference(f, x, dx, 2) /(dx2*T(2))},
-            Shifting<T>(-x)
+                higher_order_derivative<1>(f)(x) / combinatoric::factorial(1), 
+                higher_order_derivative<2>(f)(x) / combinatoric::factorial(2)
+            }, Shifting<T>(-x)
         );
     }
 
     template<typename T, typename F>
-    constexpr Polynomial<T,0,3> cubic_taylor_series(const F f, const T x, const T dx)
+    constexpr Polynomial<T,0,3> cubic_taylor_series(const F f, const T x)
     {
-        const T dx2 = dx*dx;
-        const T dx3 = dx2*dx;
         return 
             compose(
-                Polynomial<T,0,3>(f(x), 
-                    inspected::central_finite_difference(f, x, dx, 1) / dx, 
-                    inspected::central_finite_difference(f, x, dx, 2) /(dx2*T(2)), 
-                    inspected::central_finite_difference(f, x, dx, 3) /(dx3*T(6))),
-                Shifting<T>(-x)
+                Polynomial<T,0,3>{f(x), 
+                    higher_order_derivative<1>(f)(x) / combinatoric::factorial(1), 
+                    higher_order_derivative<2>(f)(x) / combinatoric::factorial(2),
+                    higher_order_derivative<3>(f)(x) / combinatoric::factorial(3)
+                }, Shifting<T>(-x)
             );
     }
-
 
     /* 
     NOTE: The following is an alternate implementation to "cubic_spline()".

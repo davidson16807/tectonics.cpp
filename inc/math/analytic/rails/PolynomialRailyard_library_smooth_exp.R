@@ -31,11 +31,11 @@ SampleCosts = function(comparison){
 			mean(abs(comparison$e(parameters)))
 		},
 		# max percent error
-		mxpe = function(parameters) {
+		Mpe = function(parameters) {
 			max(abs(comparison$pe(parameters)))
 		},
 		# max error
-		mxe = function(parameters) {
+		Me = function(parameters) {
 			max(abs(comparison$e(parameters)))
 		}
 	)
@@ -75,9 +75,9 @@ exp1p1d = list(
 
 comparison1 = SampledFunctionComparison(X, exp, exp1p1d$predict)
 costs = SampleCosts(comparison1)
-parameters1 = optim(exp1p1d$initialize(), costs$mxe)$par
+parameters1 = optim(exp1p1d$initialize(), costs$Me)$par
 comparison1$plot(exp1p1d$initialize(), parameters1)
-costs$mxe(parameters1)
+costs$Me(parameters1)
 parameters1
 
 # 1 piece of 2nd degree
@@ -100,9 +100,9 @@ exp1p2d = list(
 # 1 piece of 2nd degree
 comparison2 = SampledFunctionComparison(X, exp, exp1p2d$predict)
 costs = SampleCosts(comparison2)
-parameters2 = optim(exp1p2d$initialize(), costs$mxe)$par
+parameters2 = optim(exp1p2d$initialize(), costs$Me)$par
 comparison2$plot(exp1p2d$initialize(), parameters2)
-costs$mxe(parameters2)
+costs$Me(parameters2)
 parameters2
 
 
@@ -161,9 +161,9 @@ exp2 = list(
 X = seq(-4, 4, length.out=1000)
 comparison1 = SampledFunctionComparison(X, exp, exp2$predict)
 costs = SampleCosts(comparison1)
-parameters1 = optim(exp2$initialize(), costs$mxpe)$par
+parameters1 = optim(exp2$initialize(), costs$Mpe)$par
 comparison1$plot(exp2$initialize(), parameters1)
-costs$mxpe(parameters1)
+costs$Mpe(parameters1)
 exp2$decode(parameters1)
 parameters1
 
@@ -236,9 +236,9 @@ rho2 = list(
 X = (0:(xmax*100))/100
 comparison1 = SampledFunctionComparison(X, rho, rho2$predict)
 costs = SampleCosts(comparison1)
-parameters1 = optim(rho2$initialize(), costs$mxe)$par
+parameters1 = optim(rho2$initialize(), costs$Me)$par
 comparison1$plot(rho2$initialize(), parameters1)
-costs$mxe(parameters1)
+costs$Me(parameters1)
 rho2$decode(parameters1)
 
 
@@ -356,7 +356,7 @@ sqrt2 = list(
 X = (0:(xmax*100))/100
 comparison1 = SampledFunctionComparison(X, sqrt, sqrt2$predict)
 costs = SampleCosts(comparison1)
-parameters1 = optim(sqrt2$initialize(), costs$mxe)$par
+parameters1 = optim(sqrt2$initialize(), costs$Me)$par
 comparison1$plot(sqrt2$initialize(), parameters1)
-costs$mxe(parameters1)
+costs$Me(parameters1)
 sqrt2$decode(parameters1)
