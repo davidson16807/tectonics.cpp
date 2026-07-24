@@ -1,15 +1,15 @@
 from math import pi, sqrt
 
 '''
-see Jupp & Cox (2010), "MEP and planetary climates: 
-insights from a two-box climate model containing atmospheric dynamics".
-
-This approach solves for wind velocity and heat flux analytically
+`JuppCoxAnalytic2BoxMeppModel` solves for wind velocity and heat flux analytically
 using nondimensionalized equations for a 2-box climate model
 and the maximum entropy production principle (MEPP).
 
 It runs in O(1) time but works only for a single hemisphere
 of a planet with a single convection cell
+
+For more information, see Jupp & Cox (2010), "MEP and planetary climates: 
+insights from a two-box climate model containing atmospheric dynamics".
 '''
 
 class JuppCoxAnalytic2BoxMeppModel:
