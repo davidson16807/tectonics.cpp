@@ -235,7 +235,7 @@ def solution(p:Polynomial, y:float):
     Plo = min(exponents)
     Phi = max(exponents)
     if len(exponents) == 1:
-        return [y**-exponents[0]]
+        return y**-exponents[0]
     elif Plo==-1:
         # we know that for any laurent polynomial where Plo=-1:
         #  a/x + b + cx + … = y
@@ -402,14 +402,14 @@ def cubic_newton_polynomial(
 def linear_taylor_series(f, x:float, dx:float):
     dx2 = dx*dx
     return compose(
-        Polynomial(f(x), central_finite_difference(f, x, dx, 1) / dx),
+        Polynomial(f(x), central_finite_difference(f, x, dx, 1)),
         Shifting(-x)
     )
 
 def quadratic_taylor_series(f, x:float, dx:float):
     dx2 = dx*dx
     return compose(
-        Polynomial(f(x), central_finite_difference(f, x, dx, 1) / dx), 
+        Polynomial(f(x), central_finite_difference(f, x, dx, 1)), 
         Shifting(-x)
     )
 
@@ -418,9 +418,9 @@ def cubic_taylor_series(f, x:float, dx:float):
     dx3 = dx2*dx
     return compose(
         Polynomial(f(x), 
-            central_finite_difference(f, x, dx, 1) / dx, 
-            central_finite_difference(f, x, dx, 2) /(dx2*2.0), 
-            central_finite_difference(f, x, dx, 3) /(dx3*6.0)),
+            central_finite_difference(f, x, dx, 1), 
+            central_finite_difference(f, x, dx, 2) /2.0, 
+            central_finite_difference(f, x, dx, 3) /6.0),
         Shifting(-x)
     )
 
