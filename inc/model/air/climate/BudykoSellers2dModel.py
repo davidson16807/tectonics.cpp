@@ -28,12 +28,13 @@ class BudykoSellers2dModel:
         instellations: List[float]
     ): 
         return [
+            [solution 
+                for solution in solutions(
+                    - self.emission_approximator(mean_temperature)
+                    - heat_flow_for_temperature * Shifting(-mean_temperature)
+                    + instellation
+            ) if solution > 0][:1]
             for instellation in instellations
-            for solution in solutions(
-                - self.emission_approximator(mean_temperature)
-                - heat_flow_for_temperature * Shifting(-mean_temperature)
-                + instellation
-            ) if solution > 0
         ]
 
     def mean_temperature(temperatures):
