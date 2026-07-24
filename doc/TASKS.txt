@@ -9,7 +9,7 @@ climate
 	embm/
 		2	TΠ 	FanningWeaverDiffusive2dModel
 	mepp/
-	x		T	PaltridgeIterative2boxModel
+	x		T	LorenzIterative2boxModel
 		2	T	PaltridgeIterative2dModel
 	x		T	JuppCox2boxModel
 		2	TΠ	JuppCoxConvective2dModel
