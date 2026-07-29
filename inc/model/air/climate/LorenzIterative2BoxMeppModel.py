@@ -1,9 +1,9 @@
 
 '''
-`LorenzIterative2boxModel` iteratively solves for temperature and heat flow
+`LorenzIterative2boxMeppModel` iteratively solves for temperature and heat flux
 using a 2-box climate model and the maximum entropy production principle (MEPP).
 
-`LorenzIterative2boxModel` runs slower than `LorenzAnalytic2boxModel`
+`LorenzIterative2boxMeppModel` runs slower than `LorenzAnalytic2boxModel`
 however it does not require emission to approximate a linear response to temperature.
 Either still run extremely fast compared to a full climate model, 
 but they both only find estimates of polar and equatorial temperature,
@@ -29,12 +29,12 @@ class LorenzIterative2boxMeppModel:
         )
 
     '''
-    calculates entropic heat flow within a 2 box temperature model 
+    calculates entropic heat flux within a 2 box temperature model 
     using the Max Entropy Production Principle 
     `annealing_factor` reduce step_size by this fraction for each iteration 
     insights from a two-box climate model containing atmospheric dynamics".
     '''
-    def heat_flow(self, 
+    def heat_flux(self, 
             hot_instellation, cold_instellation, emission_coefficient=1.0, 
             iterations=10, annealing_factor = 0.8):
         def sign(x):
@@ -42,7 +42,7 @@ class LorenzIterative2boxMeppModel:
         Ih = hot_instellation
         Ic = cold_instellation
         beta = emission_coefficient
-        F = (Ih-Ic)/4 # heat flow 
+        F = (Ih-Ic)/4 # heat flux 
         dF = F/iterations # "dF" is a measure for how much F changes with each iteration 
         for i in range(iterations):
             dN = self.entropy_production(F-dF, Ih, Ic, beta) - self.entropy_production(F+dF, Ih, Ic, beta)
