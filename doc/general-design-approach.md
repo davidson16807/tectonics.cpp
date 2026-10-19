@@ -5,7 +5,7 @@ Categories are implemented either as namespaces or classes. If the category is i
 
 In order to create diagrams where commutativity is meaningful, it sometimes helps to remove certain function parameters from consideration and treat them as constants within a given category. In this case a value for the parameter might be fed into the constructor of the class that represents the category, in which case the parameter becomes a private `const` member. This evokes [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)) within object oriented programming, but since the member is `const`, the approach strictly avoids the problems that arise from that methodology due to state management. Another way to view this is to see the class as a cohesive set of functions that have collectively undergone [currying](https://en.wikipedia.org/wiki/Currying). 
 
-Beyond this description, we incorporate aspects of 
+Beyond this description, we incorporate aspects of...
 
 # Design by category theory
 Start with the following:
@@ -53,11 +53,18 @@ Categories may be constructed either top-down (starting with high level objectiv
    but if not then by maximizing reuse of cache operations
 
 # Design for Reasonability ("Functional Programming")
-Computers are terrific at sequential reasoning. The operations they perform have remarkably high fidelity, their memory is vast, and their focus is defined strictly by what we say it ought to be. 
 
-Humans on the other hand are terrible at sequential reasoning. We have limited working memory, the operations we perform are inherently error prone due to their neural network underpinnings, we often simplify repetitive tasks to less precise ones without conscious thought, and our focus is easily interrupted by subconcious impulse. When tasked with sequential reasoning, we often either forget where we started, make a mistake, gloss over details, or get distracted. We often get around these shortcomings by relying on tools to aid in sequential reasoning. For instance, we may write our thoughts onto paper to overcome limited working memory. Computers are just another example of such a tool.
+**Computer code exists as a means for humans to understand software behavior. The best code can be understood by humans with ease and precision.** Code must compile for there to be software behavior to describe, but if we didn't care to understand the code, then we simply would have spent the last few decades using write-once languages like assembly. Humans need the ability to understand code because we need the option to intervene when things do not go according to plan. 
 
-Dijkstra famously used this line of reasoning to argue against the use of [goto](https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf) statements. It has more recently been used to argue against [OOP](https://www.youtube.com/watch?v=pH-q2m5sb04&ab_channel=CppCon), as well. I have tried to articulate it here as best I can, in hopes of further clarifying it.
+Since computer code exists as a means for humans to understand software behavior, the best computer code leverages our strengths and makes up for our weaknesses. 
+
+To illustrate, humans are terrible at sequential reasoning. We have limited working memory, we make mistakes, we simplify repetitive tasks without consciously checking for accuracy, and our focus is easily interrupted by subconscious impulse. When tasked with sequential reasoning, we often either forget where we started, make a mistake, gloss over details, or get distracted. These are problems inherent to all neural networks. We often get around these shortcomings by relying on tools to aid in sequential reasoning. For instance, we may write our thoughts onto paper to overcome limited working memory. Computer code is just another example of such a tool.
+
+Computers are terrific at sequential reasoning, when executing software. The operations they perform have remarkably high fidelity, their memory is vast, and they cannot be distracted.
+
+Therefore, the best computer code avoids situations where a human must reason sequentially in order to correctly understand the behavior of the software. 
+
+[Dijkstra](https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf) famously used this last point to argue against the use of `goto` statements. It has more recently been used to argue against [OOP](https://www.youtube.com/watch?v=pH-q2m5sb04&ab_channel=CppCon), as well. I have tried to articulate the line of thought that leads to this principle as best I can, in the hope of clarifying it further.
 
 To prevent other similarly harmful programming fads from emerging to replace goto or OOP, it may be important to hold onto this idea as a general principle. The fact this isn't often articulated seems surprising. It seems like it ought to be one of the most important principles in programming, since it describes very broadly what humans and computers are best suited for, and where our efforts as programmers are best spent.
 
@@ -78,17 +85,21 @@ Sometimes in order to reduce memory consumption and simplify function signatures
 # AI policy
 Speaking of harmful programming fads...
 
-As of April 2026, use of large language models ("LLMs") is strictly limited to the following. The code files listed for each technique is a comprehensive list of where the technique is used
+The last section was written many years before this one, but it still applies remarkably well. To restate what was said earlier: humans need the ability to understand code because humans need the option to intervene when things do not go according to plan. Therefore, **the best code can be understood by humans with ease and precision.** 
 
-* reviewing code that was written by a human
-**applied liberally to in-house code
+Code that is written by humans has a much easier time satisfying this criteria, since we at least know that at one point it was possible for a human to understand it. If code is properly maintained, it remains possible to do so. But code that is written by an LLM cannot say the same. The "thought process" of an LLM writing code is not known to anyone, even the LLM. If you ask the LLM to explain itself, it simply offers a best guess as to why the code was written as it was, and it need not understand the code for it to do so. This doesn't change merely because the model has more weights.
+
+This fact informs our policy. As of August 2026, use of large language models ("LLMs") in code is strictly limited to the following techniques. Each technique is followed by a comprehensive list of files where that technique is used.
+
+* reviewing human code without offering revision
+** applied liberally throughout the code base ([Linus's Law](https://en.wikipedia.org/wiki/Linus%27s_law) applies here)
 * porting code that was written by a human from a scripting language to C++
-**`*UniversalPropagator.hpp`
-* writing unit tests in addition to unit tests that are written by humans
-**`*UniversalPropagator_test.cpp`
-* writing classes that follow the same structure as an existing class designed by a human
-**`*Components.hpp`
-**`*Codec.hpp`
+** `*UniversalPropagator.hpp`
+* writing unit tests for properties that are chosen by a human
+** `*UniversalPropagator_test.cpp`
+* writing classes that follow the same structure as an existing class that was written by a human
+** `*Components.hpp`
+** `*Codec.hpp`
 
-All LLM code is thoroughly reviewed by a human
+All LLM code is thoroughly reviewed by a human.
 

@@ -1,17 +1,25 @@
 
+read:
+	CH2O-CHOO TRAIN
+	flannery 1984
+	hwang frierson 2010
+	roe 2015
+	siler 2018
+	jellinek 2020
 
 HOT PATH TO PARITY:
 instellation
-climate
+temperature
 	ebm/
 		2	T 	BudykoSellers2dModel
 		2	T 	BudykoSellersDiffusive2dModel
-	embm/
-		2	TΠ 	FanningWeaverDiffusive2dModel
 	mepp/
 	x		T	LorenzIterative2boxModel
 		2	T	PaltridgeIterative2dModel
 	x		T	JuppCox2boxModel
+precipitation
+	embm/
+		2	TΠ 	FanningWeaverDiffusive2dModel
 		2	TΠ	JuppCoxConvective2dModel
 		2.5	TΠ	PrescribedConvectiveCellModel
 				* models air and sea
@@ -20,7 +28,6 @@ climate
 				* maybe models arbitrary convection cells weighted by MEPP?
 	gcm/
 		3	TΠ	GlobalClimateModel
-	all *Model classes have an entropy(…) method where applicable
 erosion
 lithification
 metamorphosis

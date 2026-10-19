@@ -37,8 +37,8 @@ but F for the middle values of theta slightly disagree.
 We correct by applying an exponent, `fudge`.
 '''
 
-fudge = 0.135 # this value minimizes error as measured by distance()
-fudge = 0.149 # this value minimizes error as measured by worst_case()
+fudge = 0.135 # this value minimizes error as measured by sum_squared_error()
+fudge = 0.149 # this value minimizes error as measured by max_absolute_error()
 
 figure = px.line(x=thetas, y=np.arccos(4*Fs-1)-thetas)
 figure.add_scatter(x=thetas, y=fudge*(1-np.cos(2*thetas))/2)
@@ -48,10 +48,13 @@ figure = px.line(x=thetas, y=Fs)
 figure.add_scatter(x=thetas, y=(np.cos(thetas + fudge*(1-np.cos(2*thetas))/2) + 1)/4)
 figure.show()
 
-def distance(fudge):
+def sum_squared_error(fudge):
 	F2s = (np.cos(thetas + fudge*(1-np.cos(2*thetas))/2)+1)/4
 	return np.sum((F2s-Fs)**2)
 
-def worst_case(fudge):
+def max_absolute_error(fudge):
 	F2s = (np.cos(thetas + fudge*(1-np.cos(2*thetas))/2)+1)/4
 	return np.max(np.abs(F2s-Fs))
+
+print(max_absolute_error(fudge))
+
